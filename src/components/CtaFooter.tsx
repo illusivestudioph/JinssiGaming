@@ -174,7 +174,7 @@ export function CtaFooter() {
 
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-sm font-semibold text-tan-400">
             <p>© 2026 Jinssi Gaming. All rights reserved.</p>
-            <p>Site developed by <span className="text-ink-900 font-bold">Mary Jane C. Cruz</span></p>
+            <p>Site developed by <span className="text-ink-900 font-bold">Mary Jane S. Cruz</span></p>
           </div>
         </div>
       </footer>
