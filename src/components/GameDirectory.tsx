@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { categories, type Game } from '@/data/games';
-import { useSiteContent } from '@/context/siteContent';
+import { useSiteContent } from '@/context/SiteContentContext';
 import { GameCard } from './GameCard';
 import { Search, SlidersHorizontal } from 'lucide-react';
 
@@ -12,25 +12,26 @@ interface GameDirectoryProps {
 // progressMap stores raw completed step counts per game id
 
 export function GameDirectory({ onSelectGame, progressMap }: GameDirectoryProps) {
-  const { games } = useSiteContent();
+  // Removed heroImage since it's now handled by the separate Hero component
+  const { games } = useSiteContent(); 
   const [search, setSearch] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
 
-  const availableCategories = [...new Set([...categories, ...games.map((game) => game.category)])];
-  const selectedCategory = availableCategories.includes(activeCategory) ? activeCategory : 'All';
   const filteredGames = useMemo(() => {
     return games.filter((game) => {
       const matchesSearch =
-        game.title.toLowerCase().includes(search.trim().toLowerCase()) ||
-        game.developer.toLowerCase().includes(search.trim().toLowerCase()) ||
-        game.description.toLowerCase().includes(search.trim().toLowerCase());
-      const matchesCategory = selectedCategory === 'All' || game.category === selectedCategory;
+        game.title.toLowerCase().includes(search.toLowerCase()) ||
+        game.developer.toLowerCase().includes(search.toLowerCase()) ||
+        game.description.toLowerCase().includes(search.toLowerCase());
+      const matchesCategory =
+        activeCategory === 'All' || game.category === activeCategory;
       return matchesSearch && matchesCategory;
     });
-  }, [games, search, selectedCategory]);
+  }, [search, activeCategory]);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+      
       {/* Search bar */}
       <div className="max-w-xl mx-auto mb-6">
         <div className="relative">
@@ -39,7 +40,6 @@ export function GameDirectory({ onSelectGame, progressMap }: GameDirectoryProps)
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            aria-label="Search games"
             placeholder="Search games, developers, or keywords..."
             className="w-full pl-14 pr-6 py-4 rounded-full bg-cream-50 border-2 border-cream-300 text-ink-900 placeholder-tan-400 font-medium focus:outline-none focus:border-peach-300 shadow-cozy-sm transition-all duration-300"
           />
@@ -49,13 +49,12 @@ export function GameDirectory({ onSelectGame, progressMap }: GameDirectoryProps)
       {/* Category filters */}
       <div className="flex items-center justify-center gap-2 sm:gap-3 mb-10 flex-wrap">
         <SlidersHorizontal className="w-4 h-4 text-tan-400 hidden sm:block" />
-        {availableCategories.map((cat) => (
+        {categories.map((cat) => (
           <button
             key={cat}
             onClick={() => setActiveCategory(cat)}
-            aria-pressed={selectedCategory === cat}
             className={`pill transition-all duration-300 ${
-              selectedCategory === cat
+              activeCategory === cat
                 ? 'bg-peach-400 text-cream-50 shadow-cozy-sm scale-105'
                 : 'bg-cream-200 text-tan-500 hover:bg-cream-300 hover:text-ink-900'
             }`}

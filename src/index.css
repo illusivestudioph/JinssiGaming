@@ -51,21 +51,3 @@
   background: #ffd0c2;
   color: #3a2e22;
 }
-
-@layer components {
-  .form-input {
-    @apply w-full min-w-0 rounded-xl border-2 border-tan-200 bg-white px-3 py-2 text-ink-900 font-normal focus:border-peach-400 focus:outline-none;
-  }
-}
-
-button:disabled, input:disabled {
-  cursor: not-allowed;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
-  }
-}
