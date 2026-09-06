@@ -21,3 +21,10 @@ dist-ssr
 *.sln
 *.sw?
 .env
+.env.*
+!.env.example
+supabase/.temp/
+supabase/.branches/
+coverage/
+playwright-report/
+test-results/

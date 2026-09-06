@@ -1,57 +1,40 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback, useMemo, useSyncExternalStore } from 'react';
+import { getProgress, setProgress, subscribeProgress } from '@/lib/progress';
 
-export function useProgress(gameId: string) {
-  const [completedSteps, setCompletedSteps] = useState<Set<string>>(new Set());
-  const [showSpoilers, setShowSpoilers] = useState(false);
+export function useProgress(gameId: string, validStepKeys: string[]) {
+  const getSnapshot = useCallback(() => getProgress(gameId), [gameId]);
+  const snapshot = useSyncExternalStore(subscribeProgress, getSnapshot);
+  const valid = useMemo(() => new Set(validStepKeys), [validStepKeys]);
+  const completedSteps = useMemo(
+    () => new Set(snapshot.completed.filter((id) => valid.has(id))),
+    [snapshot, valid],
+  );
 
-  const storageKey = `jinssi-progress-${gameId}`;
-  const spoilerKey = `jinssi-spoilers-${gameId}`;
-
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem(storageKey);
-      if (saved) setCompletedSteps(new Set(JSON.parse(saved)));
-      const spoilerSaved = localStorage.getItem(spoilerKey);
-      if (spoilerSaved) setShowSpoilers(JSON.parse(spoilerSaved));
-    } catch {
-      // ignore parse errors
-    }
-  }, [storageKey, spoilerKey]);
-
-  const toggleStep = useCallback((stepId: string) => {
-    setCompletedSteps((prev) => {
-      const next = new Set(prev);
-      if (next.has(stepId)) next.delete(stepId);
-      else next.add(stepId);
-      try {
-        localStorage.setItem(storageKey, JSON.stringify([...next]));
-      } catch {
-        // ignore storage errors
-      }
-      return next;
-    });
-  }, [storageKey]);
-
+  const toggleStep = useCallback(
+    (id: string) => {
+      if (!valid.has(id)) return;
+      const current = getProgress(gameId);
+      const next = new Set(current.completed.filter((key) => valid.has(key)));
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      setProgress(gameId, { completed: [...next], showSpoilers: current.showSpoilers });
+    },
+    [gameId, valid],
+  );
   const toggleSpoilers = useCallback(() => {
-    setShowSpoilers((prev) => {
-      const next = !prev;
-      try {
-        localStorage.setItem(spoilerKey, JSON.stringify(next));
-      } catch {
-        // ignore storage errors
-      }
-      return next;
-    });
-  }, [spoilerKey]);
-
+    const current = getProgress(gameId);
+    setProgress(gameId, { completed: current.completed, showSpoilers: !current.showSpoilers });
+  }, [gameId]);
   const resetProgress = useCallback(() => {
-    setCompletedSteps(new Set());
-    try {
-      localStorage.removeItem(storageKey);
-    } catch {
-      // ignore
-    }
-  }, [storageKey]);
+    setProgress(gameId, { completed: [], showSpoilers: getProgress(gameId).showSpoilers });
+  }, [gameId]);
 
-  return { completedSteps, toggleStep, showSpoilers, toggleSpoilers, resetProgress };
+  return {
+    completedSteps,
+    toggleStep,
+    showSpoilers: snapshot.showSpoilers,
+    toggleSpoilers,
+    resetProgress,
+    persisted: snapshot.persisted,
+  };
 }

@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import { progressPercent as calculatePercent, stepKeys } from '@/lib/progress';
 import type { Game, WalkthroughSection } from '@/data/games';
 import { useProgress } from '@/hooks/useProgress';
 import { CommentSection } from './CommentSection';
@@ -19,15 +20,13 @@ interface WalkthroughViewProps {
 }
 
 export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
-  const { completedSteps, toggleStep, showSpoilers, toggleSpoilers, resetProgress } =
-    useProgress(game.id);
+  const validStepKeys = useMemo(() => stepKeys(game), [game]);
+  const { completedSteps, toggleStep, showSpoilers, toggleSpoilers, resetProgress, persisted } =
+    useProgress(game.id, validStepKeys);
 
-  const totalSteps = game.walkthrough.reduce(
-    (sum, ch) => sum + ch.steps.length,
-    0
-  );
+  const totalSteps = game.walkthrough.reduce((sum, ch) => sum + ch.steps.length, 0);
   const completedCount = completedSteps.size;
-  const progressPercent = totalSteps > 0 ? Math.round((completedCount / totalSteps) * 100) : 0;
+  const progressPercent = calculatePercent(completedCount, totalSteps);
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -43,11 +42,7 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
       {/* Game header with cover image */}
       <div className="cozy-card overflow-hidden mb-8 animate-fade-in">
         <div className="h-48 sm:h-56 relative overflow-hidden">
-          <img
-            src={game.coverImage}
-            alt={game.coverAlt}
-            className="w-full h-full object-cover"
-          />
+          <img src={game.coverImage} alt={game.coverAlt} className="w-full h-full object-cover" />
           <div
             className="absolute inset-0"
             style={{
@@ -62,15 +57,11 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
           </span>
         </div>
         <div className="p-6">
-          <h2 className="font-display text-2xl sm:text-3xl font-700 text-ink-900 mb-1">
+          <h2 className="font-display text-2xl sm:text-3xl font-bold text-ink-900 mb-1">
             {game.title}
           </h2>
-          <p className="text-sm text-tan-400 font-semibold mb-3">
-            by {game.developer}
-          </p>
-          <p className="text-base text-ink-700 leading-relaxed">
-            {game.description}
-          </p>
+          <p className="text-sm text-tan-400 font-semibold mb-3">by {game.developer}</p>
+          <p className="text-base text-ink-700 leading-relaxed">{game.description}</p>
         </div>
       </div>
 
@@ -79,9 +70,7 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <BookOpen className="w-5 h-5" style={{ color: game.accentColor }} />
-            <h3 className="font-display text-lg font-600 text-ink-900">
-              Your Progress
-            </h3>
+            <h3 className="font-display text-lg font-semibold text-ink-900">Your Progress</h3>
           </div>
           <span className="text-sm font-bold text-tan-500">
             {completedCount} / {totalSteps} steps
@@ -96,9 +85,7 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
             }}
           >
             {progressPercent > 15 && (
-              <span className="text-xs font-bold text-cream-50">
-                {progressPercent}%
-              </span>
+              <span className="text-xs font-bold text-cream-50">{progressPercent}%</span>
             )}
           </div>
         </div>
@@ -110,10 +97,20 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
         )}
       </div>
 
+      <p className="text-xs text-tan-600 mb-4">
+        Progress is saved on this device, not synced to your account.
+      </p>
+      {!persisted && (
+        <p role="alert" className="text-sm text-red-700 mb-4">
+          Browser storage is unavailable. Progress will last only for this visit.
+        </p>
+      )}
+
       {/* Spoiler toggle + reset */}
       <div className="flex items-center justify-between mb-8 gap-4 flex-wrap">
         <button
           onClick={toggleSpoilers}
+          aria-pressed={showSpoilers}
           className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-cream-50 border-2 border-cream-300 shadow-cozy-sm hover:border-peach-300 transition-all duration-300"
         >
           {showSpoilers ? (
@@ -138,13 +135,21 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
         </button>
 
         <button
-          onClick={resetProgress}
+          onClick={() => {
+            if (window.confirm('Reset all progress for this game?')) resetProgress();
+          }}
           className="flex items-center gap-2 px-4 py-2.5 rounded-full text-tan-500 hover:text-rose-500 hover:bg-rose-100 transition-all duration-300 text-sm font-semibold"
         >
           <RotateCcw className="w-4 h-4" />
           Reset progress
         </button>
       </div>
+
+      {totalSteps === 0 && (
+        <p className="text-tan-600 mb-6">
+          This walkthrough is being prepared. Check back for steps soon.
+        </p>
+      )}
 
       {/* Walkthrough sections */}
       <div className="space-y-6">
@@ -187,16 +192,15 @@ function WalkthroughSectionCard({
   showSpoilers,
 }: WalkthroughSectionCardProps) {
   const [expanded, setExpanded] = useState(true);
-  
+
   const hasSteps = section.steps && section.steps.length > 0;
-  
-  const sectionCompleted = hasSteps && section.steps.every((s) =>
-    completedSteps.has(`${section.id}-${s.id}`)
-  );
-  
-  const completedInSection = hasSteps ? section.steps.filter((s) =>
-    completedSteps.has(`${section.id}-${s.id}`)
-  ).length : 0;
+
+  const sectionCompleted =
+    hasSteps && section.steps.every((s) => completedSteps.has(`${section.id}-${s.id}`));
+
+  const completedInSection = hasSteps
+    ? section.steps.filter((s) => completedSteps.has(`${section.id}-${s.id}`)).length
+    : 0;
 
   return (
     <div
@@ -206,23 +210,18 @@ function WalkthroughSectionCard({
       {/* Section header */}
       <button
         onClick={() => setExpanded(!expanded)}
+        aria-expanded={expanded}
         className="w-full flex items-center justify-between p-5 text-left hover:bg-cream-100 transition-colors"
       >
         <div className="flex items-center gap-3">
           <div
-            className="w-9 h-9 rounded-xl flex items-center justify-center font-display font-700 text-sm text-cream-50 flex-shrink-0"
+            className="w-9 h-9 rounded-xl flex items-center justify-center font-display font-bold text-sm text-cream-50 flex-shrink-0"
             style={{ backgroundColor: accentColor }}
           >
-            {sectionCompleted ? (
-              <Check className="w-5 h-5" strokeWidth={3} />
-            ) : (
-              sectionIndex + 1
-            )}
+            {sectionCompleted ? <Check className="w-5 h-5" strokeWidth={3} /> : sectionIndex + 1}
           </div>
           <div>
-            <h3 className="font-display text-lg font-600 text-ink-900">
-              {section.title}
-            </h3>
+            <h3 className="font-display text-lg font-semibold text-ink-900">{section.title}</h3>
             <p className="text-xs text-tan-400 font-semibold">
               {completedInSection} / {hasSteps ? section.steps.length : 0} steps completed
             </p>
@@ -244,7 +243,7 @@ function WalkthroughSectionCard({
             const isDone = completedSteps.has(stepKey);
             return (
               <WikiHowStep
-                key={step.id}
+                key={`${step.id}-${showSpoilers}`}
                 stepKey={stepKey}
                 stepNumber={idx + 1}
                 title={step.title}
@@ -307,13 +306,13 @@ function WikiHowStep({
       <div className="flex items-center justify-between px-4 pt-4 pb-2">
         <div className="flex items-center gap-2.5">
           <div
-            className="w-7 h-7 rounded-full flex items-center justify-center font-display font-700 text-xs text-cream-50 flex-shrink-0"
+            className="w-7 h-7 rounded-full flex items-center justify-center font-display font-bold text-xs text-cream-50 flex-shrink-0"
             style={{ backgroundColor: accentColor }}
           >
             {stepNumber}
           </div>
           <h4
-            className={`font-display text-base font-600 transition-all duration-300 ${
+            className={`font-display text-base font-semibold transition-all duration-300 ${
               isDone ? 'text-tan-400 line-through' : 'text-ink-900'
             }`}
           >
@@ -331,6 +330,7 @@ function WikiHowStep({
           }`}
           style={isDone ? { backgroundColor: accentColor } : undefined}
           aria-label={isDone ? 'Mark as incomplete' : 'Mark as complete'}
+          aria-pressed={isDone}
         >
           {isDone && <Check className="w-4 h-4" strokeWidth={3} />}
         </button>
@@ -342,7 +342,7 @@ function WikiHowStep({
           <div className="rounded-2xl overflow-hidden shadow-cozy-sm bg-cream-200/50 flex items-center justify-center max-h-[400px]">
             <img
               src={image}
-              alt={imageAlt || ""}
+              alt={imageAlt || ''}
               loading="lazy"
               className={`w-full h-auto max-h-[400px] object-contain transition-all duration-500 ${
                 isDone ? 'opacity-60 grayscale' : 'opacity-100'
@@ -381,9 +381,7 @@ function WikiHowStep({
                     Spoiler
                   </span>
                 </div>
-                <p className="text-sm text-ink-800 leading-relaxed">
-                  {spoilerText}
-                </p>
+                <p className="text-sm text-ink-800 leading-relaxed">{spoilerText}</p>
               </div>
             )}
           </div>

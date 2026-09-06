@@ -1,5 +1,6 @@
 import type { Game } from '@/data/games';
 import { ArrowRight } from 'lucide-react';
+import { progressPercent as calculatePercent } from '@/lib/progress';
 
 interface GameCardProps {
   game: Game;
@@ -9,8 +10,8 @@ interface GameCardProps {
 
 export function GameCard({ game, onClick, completedCount = 0 }: GameCardProps) {
   const totalSteps = game.walkthrough.reduce((sum, ch) => sum + ch.steps.length, 0);
-  const progressPercent = totalSteps > 0 ? Math.round((completedCount / totalSteps) * 100) : 0;
-  const allDone = completedCount === totalSteps && totalSteps > 0;
+  const progressPercent = calculatePercent(completedCount, totalSteps);
+  const allDone = completedCount >= totalSteps && totalSteps > 0;
 
   return (
     <button
@@ -47,15 +48,11 @@ export function GameCard({ game, onClick, completedCount = 0 }: GameCardProps) {
 
       {/* Card body */}
       <div className="p-5">
-        <h3 className="font-display text-lg font-600 text-ink-900 mb-1 leading-snug">
+        <h3 className="font-display text-lg font-semibold text-ink-900 mb-1 leading-snug">
           {game.title}
         </h3>
-        <p className="text-xs text-tan-400 font-semibold mb-3">
-          by {game.developer}
-        </p>
-        <p className="text-sm text-ink-700 leading-relaxed mb-4 line-clamp-2">
-          {game.description}
-        </p>
+        <p className="text-xs text-tan-400 font-semibold mb-3">by {game.developer}</p>
+        <p className="text-sm text-ink-700 leading-relaxed mb-4 line-clamp-2">{game.description}</p>
 
         {/* Progress bar */}
         <div className="flex items-center gap-3">
