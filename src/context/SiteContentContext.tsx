@@ -43,7 +43,7 @@ interface SavedContent {
 const defaultContent: SavedContent = {
   games: initialGames,
   heroImage: '/banner.jpeg',
-  logoImage: '/logo.jpeg',
+  logoImage: '/logo.png',
   ctaLinks: [
     { id: 'link-1', label: 'Email us', url: 'mailto:mjhanesultancruz1514@gmail.com' },
     { id: 'link-2', label: 'Threads @jinssi cruise', url: 'https://threads.net/' },
