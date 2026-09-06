@@ -8,13 +8,14 @@ export function AboutPage() {
           <Sparkles className="w-3.5 h-3.5" />
           <span className="font-bold">About us</span>
         </div>
-        <h2 className="font-display text-3xl sm:text-4xl font-bold text-ink-900 mb-4 leading-tight">
+        <h2 className="font-display text-3xl sm:text-4xl font-700 text-ink-900 mb-4 leading-tight">
           A cozy corner for
           <br className="sm:hidden" /> walkthrough lovers
         </h2>
         <p className="text-base sm:text-lg text-tan-500 max-w-2xl mx-auto leading-relaxed">
-          Jinssi Gaming is a warm, wholesome space for players who love relaxing games and clear,
-          visual walkthroughs. No ads, no clutter — just step-by-step guides with a planner feel.
+          Jinssi Gaming is a warm, wholesome space for players who love relaxing
+          games and clear, visual walkthroughs. No ads, no clutter — just
+          step-by-step guides with a planner feel.
         </p>
       </div>
 
@@ -23,7 +24,9 @@ export function AboutPage() {
           <div className="w-12 h-12 rounded-2xl bg-peach-100 flex items-center justify-center mx-auto mb-3">
             <Gamepad2 className="w-6 h-6 text-peach-400" />
           </div>
-          <h3 className="font-display text-base font-semibold text-ink-900 mb-1">Curated Games</h3>
+          <h3 className="font-display text-base font-600 text-ink-900 mb-1">
+            Curated Games
+          </h3>
           <p className="text-sm text-tan-500 leading-relaxed">
             Handpicked cozy and wholesome titles you will love.
           </p>
@@ -33,7 +36,9 @@ export function AboutPage() {
           <div className="w-12 h-12 rounded-2xl bg-earth-100 flex items-center justify-center mx-auto mb-3">
             <BookOpen className="w-6 h-6 text-earth-500" />
           </div>
-          <h3 className="font-display text-base font-semibold text-ink-900 mb-1">Visual Guides</h3>
+          <h3 className="font-display text-base font-600 text-ink-900 mb-1">
+            Visual Guides
+          </h3>
           <p className="text-sm text-tan-500 leading-relaxed">
             WikiHow-style walkthroughs with images for every step.
           </p>
@@ -43,7 +48,9 @@ export function AboutPage() {
           <div className="w-12 h-12 rounded-2xl bg-sage-100 flex items-center justify-center mx-auto mb-3">
             <Heart className="w-6 h-6 text-sage-400" />
           </div>
-          <h3 className="font-display text-base font-semibold text-ink-900 mb-1">Made with Care</h3>
+          <h3 className="font-display text-base font-600 text-ink-900 mb-1">
+            Made with Care
+          </h3>
           <p className="text-sm text-tan-500 leading-relaxed">
             Built by a fellow cozy gamer, for the community.
           </p>
@@ -51,14 +58,16 @@ export function AboutPage() {
       </div>
 
       <div className="cozy-card p-6 sm:p-8 bg-gradient-to-br from-cream-50 to-peach-50">
-        <h3 className="font-display text-xl font-semibold text-ink-900 mb-3">Get in touch</h3>
+        <h3 className="font-display text-xl font-600 text-ink-900 mb-3">
+          Get in touch
+        </h3>
         <p className="text-base text-ink-700 leading-relaxed mb-5">
-          Have a game suggestion, found a walkthrough error, or just want to say hi? We would love
-          to hear from you.
+          Have a game suggestion, found a walkthrough error, or just want to
+          say hi? We would love to hear from you.
         </p>
         <div className="flex flex-col sm:flex-row gap-3">
           <a
-            href="mailto:mjhanesultancruz1514@gmail.com"
+            href="mailto:mjhanesulatncruz1514@gmail.com"
             className="btn-cozy bg-peach-400 text-cream-50 hover:bg-peach-500 hover:shadow-cozy-lg flex items-center gap-2 justify-center"
           >
             <Mail className="w-4 h-4" />
@@ -70,7 +79,7 @@ export function AboutPage() {
             rel="noopener noreferrer"
             className="btn-cozy bg-cream-50 text-ink-900 border-2 border-cream-300 hover:border-peach-300 flex items-center gap-2 justify-center"
           >
-            <span className="font-display font-bold text-sm">Threads</span>
+            <span className="font-display font-700 text-sm">Threads</span>
             <span className="text-tan-400 text-sm">@jinssi cruise</span>
           </a>
           <a
@@ -79,7 +88,7 @@ export function AboutPage() {
             rel="noopener noreferrer"
             className="btn-cozy bg-cream-50 text-ink-900 border-2 border-cream-300 hover:border-peach-300 flex items-center gap-2 justify-center"
           >
-            <span className="font-display font-bold text-sm">TikTok</span>
+            <span className="font-display font-700 text-sm">TikTok</span>
             <span className="text-tan-400 text-sm">@jinssi cruise</span>
           </a>
         </div>
