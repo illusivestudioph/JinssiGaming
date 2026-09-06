@@ -50,3 +50,10 @@ Reviewed against the initial repository on **2026-09-06**. The changes are prepa
 5. **Asset lifecycle:** the public bucket is not suitable for private files. Discarding a draft or deleting a game leaves potentially shared images intact; clean up orphaned objects deliberately.
 6. **Content updates:** public content refreshes on load/retry; notes have manual pagination. Realtime subscriptions, multi-admin draft merging, browser history/deep links, cloud progress, and offline publishing are not implemented.
 7. **Verification scope:** tests improve confidence, but do not prove the absence of every bug or replace a full security/accessibility review. Re-run the checks and hosted smoke tests before release.
+
+## Main-branch synchronization follow-up — 2026-09-07
+
+- Pulled the user's newer branch and `main` commits and resolved the CMS/footer conflicts without restoring the local-only provider.
+- Repaired malformed header JSX and stale secret-login references that were causing the pull request's lint/build checks to fail. Kept the requested logo-only, unrounded header/footer styling and the authenticated navigation.
+- The newly added `public/logo.png` is only a CRLF (2 bytes), not PNG image data. The file is retained as received, while the existing JPEG stays the default. Header/footer images fall back to that JPEG if a saved setting points at the invalid PNG. Upload the actual replacement PNG before selecting it in the admin settings.
+- Added regression tests for a failed logo source and a subsequently changed logo URL. Existing seed migration history is unchanged.
