@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { categories, type Game } from '@/data/games';
 import { useSiteContent } from '@/context/SiteContentContext';
 import { GameCard } from './GameCard';
-import { Search, SlidersHorizontal } from 'lucide-react';
+import { Search, SlidersHorizontal, BookOpen, Sparkles } from 'lucide-react';
 
 interface GameDirectoryProps {
   onSelectGame: (game: Game) => void;
@@ -27,14 +27,25 @@ export function GameDirectory({ onSelectGame, progressMap }: GameDirectoryProps)
         activeCategory === 'All' || game.category === activeCategory;
       return matchesSearch && matchesCategory;
     });
-  }, [search, activeCategory]);
+  }, [games, search, activeCategory]);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+      <div className="game-directory-intro">
+        <div className="game-directory-kicker">
+          <BookOpen className="w-4 h-4" />
+          <span>The Jinssi field guide</span>
+          <Sparkles className="w-4 h-4" />
+        </div>
+        <h2 className="game-directory-title">Pick a little world to tidy up</h2>
+        <p className="game-directory-copy">
+          Cozy checklists for shelves, shops, ponds, cellars, and every charming mess in between.
+        </p>
+      </div>
       
       {/* Search bar */}
-      <div className="max-w-xl mx-auto mb-6">
-        <div className="relative">
+      <div className="game-directory-tools">
+        <div className="relative flex-1">
           <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-tan-400" />
           <input
             type="text"
