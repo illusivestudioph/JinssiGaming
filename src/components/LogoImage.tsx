@@ -11,7 +11,7 @@ export function LogoImage({
   className?: string;
 }) {
   const [failedSource, setFailedSource] = useState<string | null>(null);
-  const imageSource = !src || failedSource === src ? '/image.png' : src;
+  const imageSource = !src || failedSource === src ? '/logo.jpeg' : src;
 
   return (
     <img src={imageSource} alt={alt} className={className} onError={() => setFailedSource(src)} />
