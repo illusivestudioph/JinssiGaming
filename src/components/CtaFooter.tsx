@@ -149,7 +149,7 @@ export function CtaFooter() {
                 <img 
                   src={logoImage} 
                   alt="Jinssi Logo" 
-                  className="w-16 h-16 sm:w-20 sm:h-20 object-cover border-2 border-tan-300 shadow-sm" 
+                  className="w-16 h-16 sm:w-20 sm:h-20 object-contain" 
                 />
               ) : (
                 <div className="w-16 h-16 sm:w-20 sm:h-20 bg-peach-300 flex items-center justify-center text-white font-bold text-3xl">
