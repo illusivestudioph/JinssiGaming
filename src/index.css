@@ -55,7 +55,7 @@
 
   .game-directory-intro {
     max-width: 48rem;
-    margin: 0 auto 2rem;
+    margin: 0 auto 1.5rem;
     text-align: center;
   }
 
@@ -97,12 +97,29 @@
   .game-directory-tools {
     display: flex;
     max-width: 42rem;
-    margin: 0 auto 1.5rem;
+    margin: 0 auto 2rem;
     padding: 0.45rem;
     background: rgba(254, 252, 249, 0.72);
     border: 2px solid #e2d4bf;
     border-radius: 1.25rem 2.25rem 1.5rem 2rem;
     box-shadow: 4px 4px 0 rgba(208, 189, 158, 0.45);
+  }
+
+  .game-catalog-grid {
+    position: relative;
+    padding-top: 1.25rem;
+  }
+
+  .game-catalog-grid::before {
+    content: 'Choose your next tidy-up';
+    position: absolute;
+    top: 0;
+    left: 0.25rem;
+    color: #a88e63;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
   }
 
   .game-doodle-card::before {
@@ -129,13 +146,13 @@
 
   .game-card-photo {
     position: relative;
-    width: min(100%, 15rem);
-    aspect-ratio: 1;
+    width: 100%;
+    aspect-ratio: 16 / 10;
     margin-bottom: 1.2rem;
     overflow: hidden;
     background: var(--game-accent, #c0bbfe);
     border: 0.2rem solid var(--game-ink);
-    border-radius: 40% 60% 55% 45% / 50% 45% 55% 50%;
+    border-radius: 1.25rem 0.7rem 1rem 0.85rem;
     box-shadow: 0.3rem 0.3rem 0 var(--game-accent, #ff8ba7);
     animation: game-avatar-bounce 4s ease-in-out infinite;
     z-index: 2;
@@ -228,7 +245,7 @@
 
 @keyframes game-avatar-bounce {
   0%, 100% { transform: translateY(0) scale(1); border-radius: 40% 60% 55% 45% / 50% 45% 55% 50%; }
-  50% { transform: translateY(-0.3rem) scale(1.02); border-radius: 45% 55% 50% 50% / 45% 50% 50% 55%; }
+  50% { transform: translateY(-0.3rem) scale(1.02); border-radius: 1rem 0.55rem 0.8rem 0.7rem; }
 }
 
 /* Custom scrollbar */

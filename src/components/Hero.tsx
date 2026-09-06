@@ -5,7 +5,7 @@ export function Hero() {
 
   return (
     // Changed 'items-center' to 'items-end' to push the text to the bottom, and added 'pb-12' for spacing
-    <div className="relative w-full h-[60vh] min-h-[500px] flex items-end justify-center overflow-hidden pb-12">
+    <div className="relative w-full h-[46vh] min-h-[360px] max-h-[560px] flex items-end justify-center overflow-hidden pb-10">
       
       {/* Background Image */}
       <div 

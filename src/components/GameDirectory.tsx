@@ -30,7 +30,7 @@ export function GameDirectory({ onSelectGame, progressMap }: GameDirectoryProps)
   }, [games, search, activeCategory]);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
       <div className="game-directory-intro">
         <div className="game-directory-kicker">
           <BookOpen className="w-4 h-4" />
@@ -77,7 +77,7 @@ export function GameDirectory({ onSelectGame, progressMap }: GameDirectoryProps)
 
       {/* Game grid */}
       {filteredGames.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
+        <div className="game-catalog-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
           {filteredGames.map((game) => (
             <GameCard
               key={game.id}
