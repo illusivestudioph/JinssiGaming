@@ -48,8 +48,7 @@ export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View)
           
           {/* LOGO WITH SECRET TRIGGER */}
           <div className="flex items-center gap-3 cursor-pointer select-none" onClick={handleLogoClick}>
-            <img src={logoImage} alt="Site Logo" className="h-10 w-10 object-cover rounded-full border border-tan-300" />
-            <h1 className="font-display font-bold text-xl text-ink-900">Jinssi</h1>
+            <img src={logoImage} alt="Site Logo" className="h-10 w-10 object-cover border border-tan-300" />
           </div>
 
           <nav className="flex gap-4">
