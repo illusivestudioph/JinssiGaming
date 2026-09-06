@@ -156,6 +156,7 @@ export function CtaFooter() {
                   J
                 </div>
               )}
+              <span className="font-display font-bold text-2xl text-ink-900">Jinssi Gaming</span>
             </div>
 
             {/* Clickable Email & Social Handle */}
