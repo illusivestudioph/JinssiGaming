@@ -11,10 +11,10 @@ on public.site_content
 for select
 using (true);
 
-create policy "Authenticated users can manage site content"
+create policy "Anyone can manage site content"
 on public.site_content
 for all
-to authenticated
+to anon, authenticated
 using (true)
 with check (true);
 
@@ -35,3 +35,13 @@ for all
 to authenticated
 using (auth.uid() = user_id)
 with check (auth.uid() = user_id);
+
+insert into storage.buckets (id, name, public)
+values ('site-images', 'site-images', true)
+on conflict (id) do update set public = true;
+
+create policy "Anyone can upload site images"
+on storage.objects
+for insert
+to anon, authenticated
+with check (bucket_id = 'site-images');

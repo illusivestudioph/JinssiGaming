@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { games as initialGames, type Game, type WalkthroughSection } from '@/data/games';
+import { supabase } from '@/lib/supabase';
 
 export interface WalletOption {
   name: string;
@@ -63,22 +64,66 @@ const defaultContent: SavedContent = {
   ],
 };
 
+function normalizeContent(parsed: Partial<SavedContent> | null | undefined): SavedContent {
+  return {
+    games: Array.isArray(parsed?.games) ? parsed.games : initialGames,
+    heroImage: typeof parsed?.heroImage === 'string' ? parsed.heroImage : defaultContent.heroImage,
+    logoImage: typeof parsed?.logoImage === 'string' ? parsed.logoImage : defaultContent.logoImage,
+    ctaLinks: Array.isArray(parsed?.ctaLinks) ? parsed.ctaLinks : defaultContent.ctaLinks,
+  };
+}
+
 export function SiteContentProvider({ children }: { children: ReactNode }) {
+  const [remoteLoaded, setRemoteLoaded] = useState(false);
   const [content, setContent] = useState<SavedContent>(() => {
     try {
       const saved = localStorage.getItem(storageKey);
       if (!saved) return defaultContent;
       const parsed = JSON.parse(saved) as Partial<SavedContent>;
-      return {
-        games: Array.isArray(parsed.games) ? parsed.games : initialGames,
-        heroImage: typeof parsed.heroImage === 'string' ? parsed.heroImage : defaultContent.heroImage,
-        logoImage: typeof parsed.logoImage === 'string' ? parsed.logoImage : defaultContent.logoImage,
-        ctaLinks: Array.isArray(parsed.ctaLinks) ? parsed.ctaLinks : defaultContent.ctaLinks,
-      };
+      return normalizeContent(parsed);
     } catch {
       return defaultContent;
     }
   });
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadRemoteContent() {
+      const { data, error } = await supabase
+        .from('site_content')
+        .select('content')
+        .eq('id', 'default')
+        .maybeSingle();
+
+      if (cancelled) return;
+
+      if (error) {
+        console.error('Unable to load site content from Supabase:', error.message);
+        setRemoteLoaded(true);
+        return;
+      }
+
+      if (data?.content) {
+        setContent(normalizeContent(data.content as Partial<SavedContent>));
+      } else {
+        const { error: seedError } = await supabase.from('site_content').upsert({
+          id: 'default',
+          content: defaultContent,
+        });
+        if (seedError) {
+          console.error('Unable to seed site content in Supabase:', seedError.message);
+        }
+      }
+
+      setRemoteLoaded(true);
+    }
+
+    void loadRemoteContent();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     try {
@@ -87,6 +132,18 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
       // Keep usable if storage is blocked
     }
   }, [content]);
+
+  useEffect(() => {
+    if (!remoteLoaded) return;
+
+    void supabase.from('site_content').upsert({
+      id: 'default',
+      content,
+      updated_at: new Date().toISOString(),
+    }).then(({ error }) => {
+      if (error) console.error('Unable to save site content to Supabase:', error.message);
+    });
+  }, [content, remoteLoaded]);
 
   const value = useMemo<SiteContentContextValue>(() => ({
     games: content.games,

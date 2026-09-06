@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useSiteContent } from '@/context/SiteContentContext';
 import type { Game, WalkthroughSection } from '@/data/games';
+import { supabase } from '@/lib/supabase';
 import { Trash2, Plus, Image as ImageIcon, Edit2, ChevronLeft, Save, Upload } from 'lucide-react';
 
 export function AdminDashboard() {
@@ -8,7 +9,7 @@ export function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<'assets' | 'games'>('assets');
   const [editingGame, setEditingGame] = useState<Game | null>(null);
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>, onComplete: (base64: string) => void) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, onComplete: (url: string) => void) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -17,13 +18,20 @@ export function AdminDashboard() {
       return;
     }
 
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      if (typeof reader.result === 'string') {
-        onComplete(reader.result);
-      }
-    };
-    reader.readAsDataURL(file);
+    const filePath = `${crypto.randomUUID()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '-')}`;
+    const { error } = await supabase.storage.from('site-images').upload(filePath, file, {
+      cacheControl: '3600',
+      contentType: file.type,
+      upsert: false,
+    });
+
+    if (error) {
+      alert(`Image upload failed: ${error.message}`);
+      return;
+    }
+
+    const { data } = supabase.storage.from('site-images').getPublicUrl(filePath);
+    onComplete(data.publicUrl);
   };
 
   const handleAddGame = () => {
@@ -87,7 +95,7 @@ export function AdminDashboard() {
     setEditingGame({ ...editingGame, walkthrough: newWalkthrough });
   };
 
-  const updateStep = (sectionIndex: number, stepIndex: number, field: 'description' | 'image', value: string) => {
+  const updateStep = (sectionIndex: number, stepIndex: number, field: 'title' | 'description' | 'image', value: string) => {
     if (!editingGame) return;
     const newWalkthrough = [...editingGame.walkthrough];
     newWalkthrough[sectionIndex].steps[stepIndex] = { 
@@ -130,6 +138,15 @@ export function AdminDashboard() {
                 value={editingGame.title}
                 onChange={(e) => setEditingGame({...editingGame, title: e.target.value})}
                 className="w-full px-4 py-3 rounded-xl border-2 border-tan-200 focus:border-peach-400 focus:outline-none bg-cream-50 font-bold"
+                required
+              />
+            </div>
+            <div className="md:col-span-2">
+              <label className="block font-bold text-ink-900 mb-2">Game Description</label>
+              <textarea
+                value={editingGame.description}
+                onChange={(e) => setEditingGame({...editingGame, description: e.target.value})}
+                className="w-full px-4 py-3 rounded-xl border-2 border-tan-200 focus:border-peach-400 focus:outline-none bg-cream-50 min-h-[100px]"
                 required
               />
             </div>
@@ -200,11 +217,20 @@ export function AdminDashboard() {
                       </button>
                       
                       <div>
-                        <label className="text-xs font-bold text-tan-500 mb-1 block">Step {stepIndex + 1} Instructions</label>
+                        <label className="text-xs font-bold text-tan-500 mb-1 block">Step {stepIndex + 1} Title</label>
+                        <input
+                          value={step.title}
+                          onChange={(e) => updateStep(sIndex, stepIndex, 'title', e.target.value)}
+                          className="w-full px-3 py-2 rounded-lg border border-tan-200 focus:border-peach-400 focus:outline-none mb-3"
+                          placeholder="Step title"
+                          required
+                        />
+                        <label className="text-xs font-bold text-tan-500 mb-1 block">Instructions / Description</label>
                         <textarea 
                           value={step.description}
                           onChange={(e) => updateStep(sIndex, stepIndex, 'description', e.target.value)}
                           className="w-full px-3 py-2 rounded-lg border border-tan-200 focus:border-peach-400 focus:outline-none min-h-[80px]"
+                          required
                         />
                       </div>
                       <div>
