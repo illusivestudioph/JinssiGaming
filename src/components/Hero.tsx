@@ -1,4 +1,4 @@
-import { useSiteContent } from '@/context/SiteContentContext';
+import { useSiteContent } from '@/context/siteContent';
 
 export function Hero() {
   const { heroImage } = useSiteContent();
@@ -6,13 +6,12 @@ export function Hero() {
   return (
     // Changed 'items-center' to 'items-end' to push the text to the bottom, and added 'pb-12' for spacing
     <div className="relative w-full h-[60vh] min-h-[500px] flex items-end justify-center overflow-hidden pb-12">
-      
       {/* Background Image */}
-      <div 
+      <div
         className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat z-0"
         style={{ backgroundImage: `url(${heroImage})` }}
       />
-      
+
       {/* Gradient Fade: Slightly stronger 'via' opacity to help text readability */}
       <div className="absolute inset-0 bg-gradient-to-t from-cream-100 from-0% via-cream-100/60 via-30% to-transparent z-10" />
 
@@ -26,7 +25,6 @@ export function Hero() {
           Your cozy, step-by-step gaming companion.
         </p>
       </div>
-      
     </div>
   );
 }
