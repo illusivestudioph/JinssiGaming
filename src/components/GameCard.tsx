@@ -15,45 +15,43 @@ export function GameCard({ game, onClick, completedCount = 0 }: GameCardProps) {
   return (
     <button
       onClick={onClick}
-      className="cozy-card cozy-card-hover text-left w-full overflow-hidden group focus:outline-none focus:ring-2 focus:ring-peach-300"
+      className="game-doodle-card text-left w-full group focus:outline-none focus-visible:ring-2 focus-visible:ring-peach-300"
+      style={{ '--game-accent': game.accentColor } as React.CSSProperties}
     >
+      <span className="game-doodle game-doodle-star" aria-hidden="true">✦</span>
+      <span className="game-doodle game-doodle-sparkle" aria-hidden="true">✦</span>
+      <span className="game-doodle game-doodle-swirl" aria-hidden="true">〰</span>
+
       {/* Image header */}
-      <div className="h-44 relative overflow-hidden">
+      <div className="game-card-photo">
         <img
           src={game.coverImage}
           alt={game.coverAlt}
           loading="lazy"
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />
-        {/* Warm overlay for cohesion */}
-        <div
-          className="absolute inset-0"
-          style={{
-            background: `linear-gradient(135deg, ${game.accentColor}22, ${game.accentColor}44)`,
-          }}
-        />
         {allDone && (
-          <span className="absolute top-3 right-3 pill bg-sage-300 text-sage-500 font-bold shadow-cozy-sm animate-pop">
+          <span className="absolute -top-3 -right-3 pill bg-sage-300 text-sage-500 font-bold shadow-cozy-sm animate-pop z-10">
             Complete!
           </span>
         )}
-        <span
-          className="absolute bottom-3 left-3 pill text-cream-50 shadow-cozy-sm backdrop-blur-sm"
-          style={{ backgroundColor: game.accentColor + 'cc' }}
-        >
-          {game.category}
-        </span>
       </div>
 
       {/* Card body */}
-      <div className="p-5">
-        <h3 className="font-display text-lg font-600 text-ink-900 mb-1 leading-snug">
+      <div className="game-doodle-content">
+        <span
+          className="game-doodle-badge"
+          style={{ backgroundColor: game.accentColor }}
+        >
+          {game.category}
+        </span>
+        <h3 className="game-doodle-title">
           {game.title}
         </h3>
-        <p className="text-xs text-tan-400 font-semibold mb-3">
+        <p className="text-xs text-tan-500 font-semibold mb-3">
           by {game.developer}
         </p>
-        <p className="text-sm text-ink-700 leading-relaxed mb-4 line-clamp-2">
+        <p className="text-sm text-ink-700 leading-relaxed mb-4 line-clamp-3">
           {game.description}
         </p>
 

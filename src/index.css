@@ -29,6 +29,154 @@
   .check-circle {
     @apply w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300 cursor-pointer flex-shrink-0;
   }
+
+  .game-doodle-card {
+    --game-bg: #fdfbf7;
+    --game-ink: #2c2c2c;
+    --game-line: #e6e0d4;
+    --game-tape: rgba(255, 221, 161, 0.85);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100%;
+    padding: 2.5rem 1.5rem 1.5rem;
+    overflow: visible;
+    color: var(--game-ink);
+    background:
+      linear-gradient(var(--game-bg) 1.5rem, transparent 1.5rem) 0 0 / 100% 1.6rem,
+      linear-gradient(var(--game-line) 0.08rem, transparent 0.08rem) 0 1.5rem / 100% 1.6rem var(--game-bg);
+    border: 0.25rem solid var(--game-ink);
+    border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+    box-shadow: 0.5rem 0.5rem 0 var(--game-ink), inset 0 0 1.2rem rgba(0, 0, 0, 0.03);
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease, border-radius 0.4s ease;
+    animation: game-card-float 6s ease-in-out infinite;
+  }
+
+  .game-doodle-card::before {
+    content: '';
+    position: absolute;
+    top: -0.7rem;
+    left: 50%;
+    width: 5rem;
+    height: 1.4rem;
+    z-index: 10;
+    background: var(--game-tape);
+    border: 0.1rem solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0.1rem 0.1rem 0.2rem rgba(0, 0, 0, 0.1);
+    border-radius: 2px 4px 2px 5px;
+    transform: translateX(-50%) rotate(-4deg);
+    animation: game-tape-flutter 4s infinite alternate ease-in-out;
+  }
+
+  .game-doodle-card:hover {
+    transform: translateY(-0.8rem) rotate(1deg);
+    box-shadow: 0.7rem 0.9rem 0 var(--game-ink), inset 0 0 1.2rem rgba(0, 0, 0, 0.03);
+    border-radius: 15px 255px 15px 225px / 255px 15px 225px 15px;
+  }
+
+  .game-card-photo {
+    position: relative;
+    width: min(100%, 15rem);
+    aspect-ratio: 1;
+    margin-bottom: 1.2rem;
+    overflow: hidden;
+    background: var(--game-accent, #c0bbfe);
+    border: 0.2rem solid var(--game-ink);
+    border-radius: 40% 60% 55% 45% / 50% 45% 55% 50%;
+    box-shadow: 0.3rem 0.3rem 0 var(--game-accent, #ff8ba7);
+    animation: game-avatar-bounce 4s ease-in-out infinite;
+    z-index: 2;
+  }
+
+  .game-doodle-content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+  }
+
+  .game-doodle-title {
+    margin-bottom: 0.5rem;
+    color: var(--game-ink);
+    font-family: 'Fredoka', 'Nunito', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1.2;
+    text-align: center;
+    text-shadow: 0.08rem 0.08rem 0 #c0bbfe;
+  }
+
+  .game-doodle-badge {
+    display: table;
+    margin: 0 auto 0.65rem;
+    padding: 0.35rem 0.75rem;
+    color: var(--game-ink);
+    border: 0.15rem solid var(--game-ink);
+    border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+    box-shadow: 0.2rem 0.2rem 0 var(--game-ink);
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .game-doodle {
+    position: absolute;
+    z-index: 1;
+    color: var(--game-ink);
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  .game-doodle-star {
+    top: 1.5rem;
+    right: 1rem;
+    color: #ffdf6c;
+    font-size: 1.8rem;
+    animation: game-pulse-sparkle 3s infinite alternate ease-in-out;
+  }
+
+  .game-doodle-sparkle {
+    top: 5rem;
+    left: 1rem;
+    color: #c6e377;
+    font-size: 1.5rem;
+    animation: game-pulse-sparkle 2.5s infinite alternate-reverse ease-in-out;
+  }
+
+  .game-doodle-swirl {
+    right: 0.5rem;
+    bottom: 1.5rem;
+    color: #c0bbfe;
+    font-size: 2.5rem;
+    opacity: 0.7;
+    animation: game-rotate-doodle 15s linear infinite;
+  }
+}
+
+@keyframes game-card-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-0.4rem); }
+}
+
+@keyframes game-tape-flutter {
+  0% { transform: translateX(-50%) rotate(-4deg) scale(1); }
+  100% { transform: translateX(-50%) rotate(-2deg) scale(1.02); }
+}
+
+@keyframes game-pulse-sparkle {
+  0% { transform: scale(0.8); opacity: 0.6; }
+  100% { transform: scale(1.1); opacity: 1; }
+}
+
+@keyframes game-rotate-doodle {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes game-avatar-bounce {
+  0%, 100% { transform: translateY(0) scale(1); border-radius: 40% 60% 55% 45% / 50% 45% 55% 50%; }
+  50% { transform: translateY(-0.3rem) scale(1.02); border-radius: 45% 55% 50% 50% / 45% 50% 50% 55%; }
 }
 
 /* Custom scrollbar */
