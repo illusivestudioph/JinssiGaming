@@ -30,6 +30,9 @@ export function AdminDashboard() {
     const newGame: Game = {
       id: `game-${Date.now()}`,
       title: 'New Game',
+      developer: 'Your Studio',
+      category: 'Cozy Games',
+      description: 'Add a description for this game.',
       coverImage: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&q=80',
       coverAlt: 'Placeholder cover',
       accentColor: '#E2A88D',
@@ -51,6 +54,7 @@ export function AdminDashboard() {
   const addWalkthroughSection = () => {
     if (!editingGame) return;
     const newSection: WalkthroughSection = {
+      id: `section-${Date.now()}`,
       title: 'New Section',
       steps: []
     };
@@ -73,11 +77,17 @@ export function AdminDashboard() {
   const addStep = (sectionIndex: number) => {
     if (!editingGame) return;
     const newWalkthrough = [...editingGame.walkthrough];
-    newWalkthrough[sectionIndex].steps.push({ text: 'New step instruction', image: '' });
+    newWalkthrough[sectionIndex].steps.push({
+      id: `step-${Date.now()}`,
+      title: 'New step',
+      description: 'New step instruction',
+      image: '',
+      imageAlt: 'Step illustration',
+    });
     setEditingGame({ ...editingGame, walkthrough: newWalkthrough });
   };
 
-  const updateStep = (sectionIndex: number, stepIndex: number, field: 'text' | 'image', value: string) => {
+  const updateStep = (sectionIndex: number, stepIndex: number, field: 'description' | 'image', value: string) => {
     if (!editingGame) return;
     const newWalkthrough = [...editingGame.walkthrough];
     newWalkthrough[sectionIndex].steps[stepIndex] = { 
@@ -192,8 +202,8 @@ export function AdminDashboard() {
                       <div>
                         <label className="text-xs font-bold text-tan-500 mb-1 block">Step {stepIndex + 1} Instructions</label>
                         <textarea 
-                          value={step.text}
-                          onChange={(e) => updateStep(sIndex, stepIndex, 'text', e.target.value)}
+                          value={step.description}
+                          onChange={(e) => updateStep(sIndex, stepIndex, 'description', e.target.value)}
                           className="w-full px-3 py-2 rounded-lg border border-tan-200 focus:border-peach-400 focus:outline-none min-h-[80px]"
                         />
                       </div>
