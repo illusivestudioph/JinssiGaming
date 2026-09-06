@@ -44,7 +44,7 @@ interface SavedContent {
 const defaultContent: SavedContent = {
   games: initialGames,
   heroImage: '/banner.jpeg',
-  logoImage: '/logo.png',
+  logoImage: '/image.png',
   ctaLinks: [
     { id: 'link-1', label: 'Email us', url: 'mailto:mjhanesultancruz1514@gmail.com' },
     { id: 'link-2', label: 'Threads @jinssi cruise', url: 'https://threads.net/' },
@@ -68,7 +68,11 @@ function normalizeContent(parsed: Partial<SavedContent> | null | undefined): Sav
   return {
     games: Array.isArray(parsed?.games) ? parsed.games : initialGames,
     heroImage: typeof parsed?.heroImage === 'string' ? parsed.heroImage : defaultContent.heroImage,
-    logoImage: typeof parsed?.logoImage === 'string' ? parsed.logoImage : defaultContent.logoImage,
+    logoImage: parsed?.logoImage === '/logo.png'
+      ? defaultContent.logoImage
+      : typeof parsed?.logoImage === 'string'
+        ? parsed.logoImage
+        : defaultContent.logoImage,
     ctaLinks: Array.isArray(parsed?.ctaLinks) ? parsed.ctaLinks : defaultContent.ctaLinks,
   };
 }
