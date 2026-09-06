@@ -33,32 +33,32 @@ export function Header({
   };
 
   return (
-    <header className="bg-cream-100 border-b-2 border-tan-200 sticky top-0 z-40">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-wrap items-center justify-between gap-4">
-        <button
-          className="flex items-center gap-3"
-          onClick={() => onNavigate('home')}
-          aria-label="Jinssi Gaming home"
-        >
-          <img
-            src={logoImage}
-            alt=""
-            className="h-10 w-10 object-cover rounded-full border border-tan-300"
-          />
-          <span className="font-display font-bold text-xl text-ink-900">Jinssi</span>
-        </button>
-        <nav
-          aria-label="Main navigation"
-          className="flex flex-wrap items-center gap-4 text-sm sm:text-base"
-        >
-          {(['home', 'walkthroughs', 'about'] as const).map((destination) => (
-            <button
-              key={destination}
-              onClick={() => onNavigate(destination)}
-              aria-current={view === destination ? 'page' : undefined}
-              className={`font-semibold capitalize ${view === destination ? 'text-peach-500' : 'text-tan-600'}`}
-            >
-              {destination.charAt(0).toUpperCase() + destination.slice(1)}
+    <button
+
+    <>
+      <header className="bg-cream-100 border-b-2 border-tan-200 sticky top-0 z-40">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+          
+          {/* LOGO WITH SECRET TRIGGER */}
+          <div className="flex items-center gap-3 cursor-pointer select-none" onClick={handleLogoClick}>
+            <img src={logoImage} alt="Site Logo" className="h-10 w-10 object-cover border border-tan-300" />
+          </div>
+
+          <nav className="flex gap-4">
+            <button onClick={() => onNavigate('home')} className={`font-semibold ${view === 'home' ? 'text-peach-500' : 'text-tan-600'}`}>Home</button>
+            <button onClick={() => onNavigate('walkthroughs')} className={`font-semibold ${view === 'walkthroughs' ? 'text-peach-500' : 'text-tan-600'}`}>Walkthroughs</button>
+            {view === 'admin' && <span className="font-bold text-earth-500 ml-4">Admin Mode</span>}
+          </nav>
+        </div>
+      </header>
+
+      {/* SECRET AUTH MODAL */}
+      {showAuthModal && (
+        <div className="fixed inset-0 bg-ink-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-cream-100 rounded-2xl p-8 max-w-md w-full shadow-2xl border-4 border-earth-200 relative animate-fade-in">
+            <button onClick={() => setShowAuthModal(false)} className="absolute top-4 right-4 text-tan-400 hover:text-ink-900">
+              <X size={24} />
+
             </button>
           ))}
           {isAdmin && (
