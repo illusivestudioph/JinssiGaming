@@ -90,8 +90,12 @@ export function BackgroundMusic() {
 
   return (
     <div className="music-control notepad-card" aria-label="Background music controls">
-      <button type="button" className="music-control-button" onClick={() => void togglePlayback()} aria-label={playing ? 'Pause background music' : 'Play background music'} title={playing ? 'Pause music' : 'Play music'}>
-        {playing ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+      <button type="button" className={`vinyl-play-button ${playing ? 'vinyl-play-button-playing' : ''}`} onClick={() => void togglePlayback()} aria-label={playing ? 'Pause background music' : 'Tap to play background music'} title={playing ? 'Pause music' : 'Tap to play music'}>
+        <span className="vinyl-record" aria-hidden="true">
+          <span className="vinyl-record-label" />
+        </span>
+        <span className="vinyl-play-icon">{playing ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}</span>
+        <span className="vinyl-play-text">{playing ? 'Playing' : 'Tap to play'}</span>
       </button>
       <Music className="h-4 w-4 text-earth-600" aria-hidden="true" />
       <label className="sr-only" htmlFor="bgm-volume">Music volume</label>
