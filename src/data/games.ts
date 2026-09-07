@@ -20,6 +20,7 @@ export interface Game {
   developer: string;
   category: string;
   description: string;
+  editorNote?: string;
   accentColor: string;
   coverImage: string;
   coverAlt: string;

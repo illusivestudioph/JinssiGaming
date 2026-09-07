@@ -41,6 +41,7 @@ export function AdminDashboard() {
       developer: 'Your Studio',
       category: 'Cozy Games',
       description: 'Add a description for this game.',
+      editorNote: '',
       coverImage: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&q=80',
       coverAlt: 'Placeholder cover',
       accentColor: '#E2A88D',
@@ -149,6 +150,18 @@ export function AdminDashboard() {
                 className="w-full px-4 py-3 rounded-xl border-2 border-tan-200 focus:border-peach-400 focus:outline-none bg-cream-50 min-h-[100px]"
                 required
               />
+            </div>
+            <div className="md:col-span-2">
+              <label className="block font-bold text-ink-900 mb-2">Editor&apos;s Note / Review</label>
+              <textarea
+                value={editingGame.editorNote || ''}
+                onChange={(e) => setEditingGame({...editingGame, editorNote: e.target.value})}
+                className="w-full px-4 py-3 rounded-xl border-2 border-tan-200 focus:border-peach-400 focus:outline-none bg-cream-50 min-h-[120px]"
+                placeholder="Share a personal take, praise, warning, or bit of playful ranting about this game..."
+              />
+              <p className="mt-2 text-sm font-semibold text-tan-500">
+                This appears on the walkthrough page as your personal note about the game.
+              </p>
             </div>
             <div>
               <label className="block font-bold text-ink-900 mb-2">Accent Color (Hex)</label>

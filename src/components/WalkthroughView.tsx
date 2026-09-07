@@ -95,6 +95,16 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
           <p className="text-base text-ink-700 leading-relaxed">
             {game.description}
           </p>
+          {game.editorNote?.trim() && (
+            <div className="mt-5 rounded-2xl border-2 border-peach-200 bg-peach-50/70 p-4">
+              <p className="mb-1 text-xs font-bold uppercase tracking-wider text-peach-500">
+                Editor&apos;s note
+              </p>
+              <p className="text-sm leading-relaxed text-ink-800 whitespace-pre-line">
+                {game.editorNote}
+              </p>
+            </div>
+          )}
         </div>
       </div>
 
