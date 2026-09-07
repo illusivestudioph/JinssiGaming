@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Music, Pause, Play, Volume2, VolumeX } from 'lucide-react';
+import { Music, Pause, Volume2, VolumeX } from 'lucide-react';
 
 const volumeStorageKey = 'jinssi-bgm-volume';
 const mutedStorageKey = 'jinssi-bgm-muted';
@@ -94,13 +94,35 @@ export function BackgroundMusic({ compact = false }: BackgroundMusicProps) {
 
   return (
     <div className={`music-control notepad-card ${compact ? 'music-control-hero' : ''}`} aria-label="Background music controls">
-      <button type="button" className={`vinyl-play-button ${playing ? 'vinyl-play-button-playing' : ''}`} onClick={() => void togglePlayback()} aria-label={playing ? 'Pause background music' : 'Tap to play background music'} title={playing ? 'Pause music' : 'Tap to play music'}>
-        <span className="vinyl-record" aria-hidden="true">
-          <span className="vinyl-record-label" />
-        </span>
-        <span className="vinyl-play-icon">{playing ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}</span>
-        <span className="vinyl-play-text">{playing ? 'Playing' : 'Tap to play'}</span>
-      </button>
+      {compact ? (
+        <button
+          type="button"
+          className={`turntable-button ${playing ? 'turntable-button-playing' : ''}`}
+          onClick={() => void togglePlayback()}
+          aria-label={playing ? 'Pause background music' : 'Tap to relax with background music'}
+          title={playing ? 'Pause music' : 'Tap to relax'}
+        >
+          <span className="turntable-container" aria-hidden="true">
+            <span className="turntable-plate">
+              <span className="turntable-record">
+                <span className="turntable-record-border">
+                  <span className="turntable-record-center" />
+                </span>
+              </span>
+            </span>
+            <span className="turntable-player">
+              <span className="turntable-player-circ" />
+              <span className="turntable-player-rect" />
+            </span>
+          </span>
+          <span className="turntable-label">{playing ? 'Playing' : 'Tap to relax'}</span>
+        </button>
+      ) : (
+        <button type="button" className="vinyl-play-button" onClick={() => void togglePlayback()} aria-label={playing ? 'Pause background music' : 'Play background music'} title={playing ? 'Pause music' : 'Play music'}>
+          {playing ? <Pause className="h-4 w-4" /> : <Music className="h-4 w-4" />}
+          <span className="vinyl-play-text">{playing ? 'Playing' : 'Play music'}</span>
+        </button>
+      )}
       {!compact && (
         <>
           <Music className="h-4 w-4 text-earth-600" aria-hidden="true" />

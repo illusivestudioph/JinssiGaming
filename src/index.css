@@ -180,6 +180,111 @@
   .music-control-hero {
     position: relative;
     margin-top: 1.25rem;
+    padding: 0.65rem;
+    background: #f9ede0;
+  }
+
+  .turntable-button {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: #3a2e22;
+    text-align: left;
+  }
+
+  .turntable-button:focus-visible {
+    outline: 3px solid #ffb0a0;
+    outline-offset: 4px;
+    border-radius: 0.8rem;
+  }
+
+  .turntable-container {
+    position: relative;
+    display: flex;
+    width: 8rem;
+    height: 8rem;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: #a8c89e;
+    border-radius: 0.8rem 0.65rem 0.75rem 0.55rem;
+    box-shadow: 4px 4px 0 #8f764f;
+  }
+
+  .turntable-plate,
+  .turntable-record,
+  .turntable-record-border,
+  .turntable-record-center {
+    border-radius: 50%;
+  }
+
+  .turntable-plate,
+  .turntable-record,
+  .turntable-record-border {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .turntable-record {
+    width: 6.8rem;
+    height: 6.8rem;
+    background: #4a3a2c;
+  }
+
+  .turntable-record-border {
+    width: 5rem;
+    height: 5rem;
+    border-top: 3px solid #f4e6d1;
+    border-bottom: 3px solid #f4e6d1;
+    border-left: 3px solid #3a2e22;
+    border-right: 3px solid #3a2e22;
+  }
+
+  .turntable-record-center {
+    width: 1.2rem;
+    height: 1.2rem;
+    background: #8f764f;
+    border: 3px solid #f4e6d1;
+  }
+
+  .turntable-button-playing .turntable-record {
+    animation: turntable-rotation 2s linear infinite;
+  }
+
+  .turntable-player {
+    position: absolute;
+    right: 0.4rem;
+    bottom: 0.4rem;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    transform: rotate(-45deg);
+  }
+
+  .turntable-player-circ {
+    width: 1.2rem;
+    height: 1.2rem;
+    z-index: 1;
+    background: #f4e6d1;
+    border-radius: 50%;
+  }
+
+  .turntable-player-rect {
+    position: absolute;
+    bottom: 0;
+    width: 0.5rem;
+    height: 2.8rem;
+    margin-bottom: 0.25rem;
+    background: #f4e6d1;
+  }
+
+  .turntable-label {
+    max-width: 8rem;
+    font-family: 'Fredoka', 'Nunito', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    line-height: 1.15;
   }
 
   .music-control::before {
@@ -734,6 +839,11 @@
 @keyframes vinyl-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
+}
+
+@keyframes turntable-rotation {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(359deg); }
 }
 
 @keyframes game-photo-breathe {
