@@ -72,22 +72,16 @@ export function AboutPage() {
             <span>Subscribe to updates</span>
           </a>
           <a
-            href="https://www.threads.net/@jinssicruise"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="/contact"
             className="btn-cozy site-button bg-cream-50 text-ink-900 border-2 border-cream-300 hover:border-peach-300"
           >
-            <span className="font-display font-700 text-sm">Threads</span>
-            <span className="text-tan-400 text-sm">@jinssi cruise</span>
+            <span className="font-display font-700 text-sm">Contact us</span>
           </a>
           <a
-            href="https://www.tiktok.com/@jinssicruise"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="mailto:mjhanesultancruz1514@gmail.com"
             className="btn-cozy site-button bg-cream-50 text-ink-900 border-2 border-cream-300 hover:border-peach-300"
           >
-            <span className="font-display font-700 text-sm">TikTok</span>
-            <span className="text-tan-400 text-sm">@jinssi cruise</span>
+            <span className="font-display font-700 text-sm">Email us</span>
           </a>
         </div>
       </div>

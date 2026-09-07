@@ -107,6 +107,27 @@
     text-shadow: 3px 3px 0 #f4e6d1;
   }
 
+  .daily-challenge {
+    background:
+      linear-gradient(135deg, rgba(255, 232, 223, 0.65), transparent 55%),
+      linear-gradient(#fdfbf7 1.5rem, transparent 1.5rem) 0 0 / 100% 1.6rem,
+      linear-gradient(#e6e0d4 0.08rem, transparent 0.08rem) 0 1.5rem / 100% 1.6rem #fdfbf7;
+  }
+
+  .daily-challenge-mark {
+    display: flex;
+    width: 3rem;
+    height: 3rem;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    color: #8f5a33;
+    background: #f9ede0;
+    border: 2px solid #d9a472;
+    border-radius: 0.8rem 0.5rem 0.7rem 0.45rem;
+    box-shadow: 3px 3px 0 #d9a472;
+  }
+
   .legal-copy h2 {
     color: #3a2e22;
     font-family: 'Fredoka', 'Nunito', sans-serif;
