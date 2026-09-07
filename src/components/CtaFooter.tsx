@@ -48,7 +48,8 @@ export function CtaFooter({ onNavigate }: { onNavigate: (view: 'about' | 'privac
       { name: 'PayPal', accountName: 'mjhanesultancruz1514@gmail.com', accountNumber: 'mjhanesultancruz1514@gmail.com' },
       { name: 'Wise', accountName: 'Mary Jane C.', accountNumber: 'mjhanesultancruz1514@gmail.com' },
     ];
-    setSelectedWallet(wallets[0]);
+    const selected = wallets[0];
+    setSelectedWallet(selected);
     setActiveModalLink({ ...supportLink, wallets });
   };
 
@@ -63,8 +64,9 @@ export function CtaFooter({ onNavigate }: { onNavigate: (view: 'about' | 'privac
         { name: 'PayPal', accountName: 'mjhanesultancruz1514@gmail.com', accountNumber: 'mjhanesultancruz1514@gmail.com' },
         { name: 'Wise', accountName: 'Mary Jane C.', accountNumber: 'mjhanesultancruz1514@gmail.com' }
       ];
-      setActiveModalLink(link);
-      setSelectedWallet(defaultWallets[0]);
+      const selected = defaultWallets[0];
+      setActiveModalLink({ ...link, wallets: defaultWallets });
+      setSelectedWallet(selected);
     }
   };
 
@@ -208,7 +210,7 @@ export function CtaFooter({ onNavigate }: { onNavigate: (view: 'about' | 'privac
               <span className="text-xs font-bold text-tan-400 uppercase tracking-wider mb-1">Sending via {selectedWallet.name}</span>
               <h4 className="font-bold text-lg text-ink-900 mb-3">{selectedWallet.accountName || 'Jinssi Gaming'}</h4>
 
-              {selectedWallet.qrCode && (
+              {selectedWallet.qrCode?.trim() && (
                 <div className="mb-4 rounded-xl border-2 border-tan-200 bg-white p-3 shadow-cozy-sm">
                   <img
                     src={selectedWallet.qrCode}

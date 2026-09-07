@@ -65,6 +65,25 @@ const defaultContent: SavedContent = {
 };
 
 function normalizeContent(parsed: Partial<SavedContent> | null | undefined): SavedContent {
+  const normalizedCtaLinks = Array.isArray(parsed?.ctaLinks)
+    ? parsed.ctaLinks.map((link) => ({
+        ...link,
+        wallets: Array.isArray(link.wallets)
+          ? link.wallets.map((wallet) => {
+              const walletRecord = wallet as WalletOption & {
+                qr?: string;
+                qr_code?: string;
+                image?: string;
+              };
+              return {
+                ...wallet,
+                qrCode: wallet.qrCode || walletRecord.qr || walletRecord.qr_code || walletRecord.image || '',
+              };
+            })
+          : link.wallets,
+      }))
+    : defaultContent.ctaLinks;
+
   return {
     games: Array.isArray(parsed?.games) ? parsed.games : initialGames,
     heroImage: typeof parsed?.heroImage === 'string' ? parsed.heroImage : defaultContent.heroImage,
@@ -73,7 +92,7 @@ function normalizeContent(parsed: Partial<SavedContent> | null | undefined): Sav
       : typeof parsed?.logoImage === 'string'
         ? parsed.logoImage
         : defaultContent.logoImage,
-    ctaLinks: Array.isArray(parsed?.ctaLinks) ? parsed.ctaLinks : defaultContent.ctaLinks,
+    ctaLinks: normalizedCtaLinks,
   };
 }
 
