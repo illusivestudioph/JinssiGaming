@@ -62,7 +62,7 @@ export function CtaFooter() {
     <div className="site-footer-shell flex flex-col mt-12 relative">
       {/* Top CTA Section */}
       <div className="max-w-5xl mx-auto px-4 py-16 w-full">
-        <div className="site-cta-panel p-10 md:p-14 text-center">
+        <div className="site-cta-panel p-10 text-center">
           <div className="site-section-kicker inline-flex items-center gap-2 mb-3 px-4 py-1.5 rounded-full text-sm uppercase tracking-wider">
             <Sparkles size={16} />
             <span>Join the community</span>
@@ -95,11 +95,6 @@ export function CtaFooter() {
               {newsletterSubmitted ? 'Subscribed!' : 'Subscribe'}
             </button>
           </form>
-          <div className="site-newsletter-details" aria-label="Newsletter subscriber benefits">
-            <span>Subscribers get new walkthroughs</span>
-            <span>game updates</span>
-            <span>cozy recommendations</span>
-          </div>
           {newsletterSubmitted && (
             <p className="mt-3 text-sm font-semibold text-sage-500" role="status">
               You are on the list. Welcome to the cozy corner.
