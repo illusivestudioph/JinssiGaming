@@ -159,6 +159,34 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
             showSpoilers={showSpoilers}
           />
         ))}
+
+        {progressPercent === 100 && totalSteps > 0 && (
+          <div
+            className="cozy-card relative overflow-hidden border-2 border-sage-300 bg-sage-100 p-6 text-center animate-pop sm:p-8"
+            role="status"
+          >
+            <div
+              className="absolute -right-8 -top-8 h-24 w-24 rounded-full opacity-20"
+              style={{ backgroundColor: game.accentColor }}
+            />
+            <div
+              className="absolute -bottom-10 -left-6 h-24 w-24 rounded-full opacity-20"
+              style={{ backgroundColor: game.accentColor }}
+            />
+            <Sparkles
+              className="relative mx-auto mb-3 h-9 w-9"
+              style={{ color: game.accentColor }}
+              aria-hidden="true"
+            />
+            <p className="relative mb-1 font-display text-2xl font-700 text-ink-900">
+              Congratulations!
+            </p>
+            <p className="relative mx-auto max-w-lg text-sm font-semibold leading-relaxed text-ink-700">
+              You completed every step in the {game.title} walkthrough. Enjoy the
+              satisfaction of a job well done!
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Community Comments Section */}
