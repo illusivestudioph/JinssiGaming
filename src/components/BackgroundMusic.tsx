@@ -11,10 +11,22 @@ export function BackgroundMusic() {
   const [muted, setMuted] = useState(() => localStorage.getItem(mutedStorageKey) === 'true');
   const [playing, setPlaying] = useState(false);
   const [audioError, setAudioError] = useState(false);
+  const settingsRef = useRef({ muted, userVolume });
+  settingsRef.current = { muted, userVolume };
 
   const playMusic = async () => {
     const audio = audioRef.current;
-    if (!audio || muted || userVolume === 0) return;
+    if (!audio) return;
+    let volume = userVolume;
+    if (muted) {
+      setMuted(false);
+      volume = userVolume || 0.7;
+    } else if (userVolume === 0) {
+      volume = 0.7;
+      setUserVolume(volume);
+    }
+    audio.volume = volume * musicVolumeScale;
+    setAudioError(false);
     await audio.play().catch(() => setAudioError(true));
   };
 
@@ -29,12 +41,18 @@ export function BackgroundMusic() {
     audioRef.current = audio;
 
     const startAfterInteraction = () => {
-      if (!muted && userVolume > 0) void audio.play().catch(() => undefined);
-      window.removeEventListener('pointerdown', startAfterInteraction);
-      window.removeEventListener('keydown', startAfterInteraction);
+      const settings = settingsRef.current;
+      if (!settings.muted && settings.userVolume > 0) {
+        void audio.play()
+          .then(() => {
+            window.removeEventListener('pointerdown', startAfterInteraction);
+            window.removeEventListener('keydown', startAfterInteraction);
+          })
+          .catch(() => setAudioError(true));
+      }
     };
-    window.addEventListener('pointerdown', startAfterInteraction, { once: true });
-    window.addEventListener('keydown', startAfterInteraction, { once: true });
+    window.addEventListener('pointerdown', startAfterInteraction);
+    window.addEventListener('keydown', startAfterInteraction);
 
     return () => {
       audio.pause();
@@ -84,7 +102,7 @@ export function BackgroundMusic() {
       <button type="button" className="music-control-button" onClick={toggleMute} aria-label={muted ? 'Unmute background music' : 'Mute background music'} title={muted ? 'Unmute music' : 'Mute music'}>
         {muted || userVolume === 0 ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
       </button>
-      {audioError && <span className="music-control-error">Unavailable</span>}
+      {audioError && <span className="music-control-error">Click play</span>}
     </div>
   );
 }

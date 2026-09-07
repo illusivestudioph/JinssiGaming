@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { Game, WalkthroughSection } from '@/data/games';
 import { useProgress } from '@/hooks/useProgress';
 import { CommentSection } from './CommentSection';
@@ -39,10 +39,19 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
   const progressPercent = totalSteps > 0 ? Math.round((completedCount / totalSteps) * 100) : 0;
   const isComplete = progressPercent === 100 && totalSteps > 0;
   const [showCongratulations, setShowCongratulations] = useState(false);
+  const completionSoundRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     if (isComplete) setShowCongratulations(true);
   }, [isComplete]);
+
+  useEffect(() => {
+    if (!showCongratulations) return;
+    const sound = completionSoundRef.current || new Audio('/tuturu_1.mp3');
+    sound.volume = 0.5;
+    completionSoundRef.current = sound;
+    void sound.play().catch(() => undefined);
+  }, [showCongratulations]);
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
