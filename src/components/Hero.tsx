@@ -18,7 +18,8 @@ export function Hero() {
       {/* Hero Text Content */}
       <div className="hero-copy relative z-20 flex flex-col items-center px-4 text-center animate-fade-in">
         <h1 className="hero-title">
-          Your field guide to cozy games.
+          Your field guide
+          <span>to cozy games.</span>
         </h1>
         <p className="hero-description mt-4">
           Clear, step-by-step visual walkthroughs to help you get unstuck and back to relaxing.

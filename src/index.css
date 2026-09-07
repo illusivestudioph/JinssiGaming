@@ -119,6 +119,10 @@
     text-shadow: 0.12rem 0.14rem 0 #f9ede0, 0 0 1.2rem rgba(255, 255, 255, 0.9);
   }
 
+  .hero-title span {
+    display: block;
+  }
+
   .hero-description {
     max-width: 34rem;
     margin: 1rem auto 0;
