@@ -208,6 +208,16 @@ export function CtaFooter({ onNavigate }: { onNavigate: (view: 'about' | 'privac
               <span className="text-xs font-bold text-tan-400 uppercase tracking-wider mb-1">Sending via {selectedWallet.name}</span>
               <h4 className="font-bold text-lg text-ink-900 mb-3">{selectedWallet.accountName || 'Jinssi Gaming'}</h4>
 
+              {selectedWallet.qrCode && (
+                <div className="mb-4 rounded-xl border-2 border-tan-200 bg-white p-3 shadow-cozy-sm">
+                  <img
+                    src={selectedWallet.qrCode}
+                    alt={`${selectedWallet.name} payment QR code`}
+                    className="h-48 w-48 max-w-full object-contain"
+                  />
+                </div>
+              )}
+
               {selectedWallet.accountNumber && (
                 <div className="w-full flex items-center justify-between bg-cream-50 px-4 py-2.5 rounded-xl border border-tan-200">
                   <span className="font-mono font-bold text-ink-800 text-sm">{selectedWallet.accountNumber}</span>
