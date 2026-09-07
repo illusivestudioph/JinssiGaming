@@ -8,6 +8,9 @@ export function useProgress(gameId: string) {
   const spoilerKey = `jinssi-spoilers-${gameId}`;
 
   useEffect(() => {
+    setCompletedSteps(new Set());
+    setShowSpoilers(false);
+
     try {
       const saved = localStorage.getItem(storageKey);
       if (saved) setCompletedSteps(new Set(JSON.parse(saved)));
