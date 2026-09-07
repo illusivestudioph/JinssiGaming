@@ -166,6 +166,44 @@
     @apply w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300 cursor-pointer flex-shrink-0;
   }
 
+  .music-control {
+    position: fixed;
+    right: 1rem;
+    bottom: 1rem;
+    z-index: 80;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.55rem 0.7rem;
+    border-radius: 0.85rem 1rem 0.8rem 0.7rem;
+    box-shadow: 3px 4px 0 #d6c6b3;
+  }
+
+  .music-control::before {
+    display: none;
+  }
+
+  .music-control input[type='range'] {
+    width: 5rem;
+    accent-color: #c98a52;
+  }
+
+  .music-control-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.9rem;
+    height: 1.9rem;
+    color: #8f5a33;
+    border-radius: 0.5rem;
+    transition: background-color 180ms ease, color 180ms ease;
+  }
+
+  .music-control-button:hover {
+    color: #e05a3a;
+    background: #f9ede0;
+  }
+
   .completion-confetti {
     position: absolute;
     top: -2rem;

@@ -10,6 +10,7 @@ import { TermsPage } from '@/components/TermsPage';
 import { ContactPage } from '@/components/ContactPage';
 import { CookieConsent } from '@/components/CookieConsent';
 import { AdSenseUnit } from '@/components/AdSenseUnit';
+import { BackgroundMusic } from '@/components/BackgroundMusic';
 import { ArrowRight } from 'lucide-react';
 
 // 1. Context Provider
@@ -154,6 +155,7 @@ function AppContent() {
 
       <CtaFooter onNavigate={handleNavigate} />
       <CookieConsent />
+      <BackgroundMusic />
     </div>
   );
 }
