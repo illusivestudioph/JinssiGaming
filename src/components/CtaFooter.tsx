@@ -62,19 +62,19 @@ export function CtaFooter() {
     <div className="site-footer-shell flex flex-col mt-12 relative">
       {/* Top CTA Section */}
       <div className="max-w-5xl mx-auto px-4 py-16 w-full">
-        <div className="site-cta-panel p-8 sm:p-12 text-center">
-          <div className="site-section-kicker inline-flex items-center gap-2 mb-4 px-4 py-1.5 rounded-full text-sm uppercase tracking-wider">
+        <div className="site-cta-panel p-10 md:p-14 text-center">
+          <div className="site-section-kicker inline-flex items-center gap-2 mb-3 px-4 py-1.5 rounded-full text-sm uppercase tracking-wider">
             <Sparkles size={16} />
             <span>Join the community</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl font-display font-bold text-ink-900 mb-4">
+          <h2 className="text-3xl sm:text-4xl font-display font-bold text-ink-900 mb-3">
             Stay in the cozy loop
           </h2>
-          <p className="text-tan-600 mb-8 max-w-xl mx-auto font-medium leading-relaxed">
+          <p className="text-tan-600 mb-0 max-w-xl mx-auto font-medium leading-relaxed">
             Get new game updates, fresh walkthroughs, cozy recommendations, and tidy little tips delivered to your inbox.
           </p>
 
-          <form id="newsletter" onSubmit={handleNewsletterSubmit} className="mx-auto flex max-w-xl flex-col gap-3 sm:flex-row">
+          <form id="newsletter" onSubmit={handleNewsletterSubmit} className="mx-auto mt-10 mb-8 flex max-w-xl flex-col gap-3 sm:flex-row">
             <label htmlFor="newsletter-email" className="sr-only">Email address</label>
             <input
               id="newsletter-email"
@@ -127,7 +127,7 @@ export function CtaFooter() {
           </div>
 
           {supportLink && (
-            <div className="site-support-note">
+            <div className="site-support-note items-center gap-6 p-6">
               <div>
                 <span className="site-support-label"><Coffee size={15} /> Keep the guides cozy</span>
                 <p>Support the late-night sorting, shelving, and cleanup sessions.</p>
