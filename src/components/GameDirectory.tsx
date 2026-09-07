@@ -1,8 +1,8 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { categories, type Game } from '@/data/games';
 import { useSiteContent } from '@/context/SiteContentContext';
 import { GameCard } from './GameCard';
-import { Search, SlidersHorizontal, BookOpen, Sparkles } from 'lucide-react';
+import { Search, SlidersHorizontal, BookOpen, Sparkles, Quote } from 'lucide-react';
 
 interface GameDirectoryProps {
   onSelectGame: (game: Game) => void;
@@ -16,6 +16,14 @@ export function GameDirectory({ onSelectGame, progressMap }: GameDirectoryProps)
   const { games } = useSiteContent(); 
   const [search, setSearch] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
+  const [quoteIndex] = useState(() => Math.floor(Math.random() * 4));
+  const [gridColumns, setGridColumns] = useState(getGridColumns);
+
+  useEffect(() => {
+    const handleResize = () => setGridColumns(getGridColumns());
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const filteredGames = useMemo(() => {
     return games.filter((game) => {
@@ -77,7 +85,7 @@ export function GameDirectory({ onSelectGame, progressMap }: GameDirectoryProps)
 
       {/* Game grid */}
       {filteredGames.length > 0 ? (
-        <div className="game-catalog-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
+        <div className="game-catalog-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 animate-fade-in">
           {filteredGames.map((game) => (
             <GameCard
               key={game.id}
@@ -86,6 +94,9 @@ export function GameDirectory({ onSelectGame, progressMap }: GameDirectoryProps)
               completedCount={progressMap[game.id] || 0}
             />
           ))}
+          {filteredGames.length % gridColumns !== 0 && (
+            <QuoteCard games={filteredGames} quoteIndex={quoteIndex} />
+          )}
         </div>
       ) : (
         <div className="text-center py-20 animate-fade-in">
@@ -96,5 +107,34 @@ export function GameDirectory({ onSelectGame, progressMap }: GameDirectoryProps)
         </div>
       )}
     </div>
+  );
+}
+
+function getGridColumns() {
+  if (typeof window === 'undefined') return 1;
+  if (window.innerWidth >= 1024) return 3;
+  if (window.innerWidth >= 640) return 2;
+  return 1;
+}
+
+function QuoteCard({ games, quoteIndex }: { games: Game[]; quoteIndex: number }) {
+  const featuredGame = games[quoteIndex % games.length];
+  const quotes = [
+    `Every ${featuredGame.category.toLowerCase()} mess has a satisfying little system hiding inside it.`,
+    `A good walkthrough is like a tidy shelf: everything you need, exactly where you need it.`,
+    `Take it one small task at a time. Even the ${featuredGame.title.toLowerCase()} kind of chaos can be cozy.`,
+    `The best cozy games turn ordinary chores into tiny worlds worth getting lost in.`,
+  ];
+
+  return (
+    <article className="game-doodle-card game-quote-card" aria-label="A cozy gaming note">
+      <span className="game-doodle game-doodle-star" aria-hidden="true">✦</span>
+      <span className="game-doodle game-doodle-sparkle" aria-hidden="true">✦</span>
+      <div className="game-quote-content">
+        <Quote className="game-quote-icon" aria-hidden="true" />
+        <p className="game-quote-text">“{quotes[quoteIndex]}”</p>
+        <span className="game-quote-caption">A note from the field guide</span>
+      </div>
+    </article>
   );
 }
