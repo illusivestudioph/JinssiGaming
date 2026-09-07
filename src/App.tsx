@@ -91,7 +91,7 @@ function App() {
 
   return (
     <SiteContentProvider>
-      <div className="min-h-screen bg-cream-100 flex flex-col">
+      <div className="min-h-screen flex flex-col">
         <Header view={view} onNavigate={handleNavigate} />
 
         <main className="flex-1">{renderMainContent()}</main>

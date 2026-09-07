@@ -14,20 +14,14 @@
     isolation: isolate;
     background-color: #fdf8f1;
     background-image:
+      linear-gradient(rgba(253, 248, 241, 0.6), rgba(253, 248, 241, 0.6)),
+      url('/Background.jpeg'),
       radial-gradient(circle at 1px 1px, rgba(168, 142, 99, 0.12) 1px, transparent 1.2px),
       linear-gradient(90deg, rgba(255, 255, 255, 0.32) 1px, transparent 1px),
       linear-gradient(rgba(255, 255, 255, 0.24) 1px, transparent 1px);
-    background-size: 22px 22px, 88px 88px, 88px 88px;
-  }
-
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
-    background: linear-gradient(rgba(253, 248, 241, 0.6), rgba(253, 248, 241, 0.6)), url('/Background.jpeg') center / cover no-repeat;
-    opacity: 0.4;
+    background-position: center, center, 0 0, 0 0, 0 0;
+    background-size: cover, cover, 22px 22px, 88px 88px, 88px 88px;
+    background-attachment: fixed, fixed, scroll, scroll, scroll;
   }
 }
 
