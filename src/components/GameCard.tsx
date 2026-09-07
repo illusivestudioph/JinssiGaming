@@ -68,7 +68,7 @@ export function GameCard({ game, onClick, completedCount = 0 }: GameCardProps) {
         </p>
 
         {/* Progress bar */}
-        <div className="flex items-center gap-3">
+        <div className="game-card-progress flex items-center gap-3">
           <div className="flex-1 h-2.5 rounded-full bg-cream-300 overflow-hidden">
             <div
               className="h-full rounded-full transition-all duration-500"

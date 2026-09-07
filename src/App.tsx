@@ -219,7 +219,7 @@ function WalkthroughsPage({
             <button
               key={game.id}
               onClick={() => onSelectGame(game)}
-              className="cozy-card cozy-card-hover text-left w-full overflow-hidden group focus:outline-none focus:ring-2 focus:ring-peach-300"
+              className="game-summary-card cozy-card cozy-card-hover text-left w-full overflow-hidden group focus:outline-none focus:ring-2 focus:ring-peach-300"
             >
               <div className="h-32 relative overflow-hidden">
                 <img
@@ -235,11 +235,11 @@ function WalkthroughsPage({
                   }}
                 />
               </div>
-              <div className="p-5">
+              <div className="game-summary-content p-5">
                 <h3 className="font-display text-base font-600 text-ink-900 mb-2 leading-snug">
                   {game.title}
                 </h3>
-                <div className="flex items-center gap-3 mb-3">
+                <div className="game-summary-progress flex items-center gap-3 mb-3">
                   <div className="flex-1 h-2 rounded-full bg-cream-300 overflow-hidden">
                     <div
                       className="h-full rounded-full transition-all duration-500"
