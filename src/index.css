@@ -177,11 +177,83 @@
     box-shadow: 3px 4px 0 #d6c6b3;
   }
 
-  .music-control-hero {
+  .music-control-compact {
     position: relative;
     margin-top: 1.25rem;
     padding: 0.65rem;
     background: #f9ede0;
+  }
+
+  .quote-float {
+    position: absolute;
+    z-index: 1;
+    pointer-events: none;
+    color: #8f764f;
+    opacity: 0.8;
+  }
+
+  .quote-float-note {
+    top: 1.8rem;
+    right: 1.6rem;
+    color: #e05a3a;
+    font-family: 'Fredoka', 'Nunito', sans-serif;
+    font-size: 1.8rem;
+    animation: quote-float-drift 3.8s ease-in-out infinite;
+  }
+
+  .quote-float-dot {
+    top: 5.5rem;
+    left: 1.2rem;
+    width: 0.65rem;
+    height: 0.65rem;
+    background: #a8c89e;
+    border: 2px solid #5e5148;
+    border-radius: 50%;
+    animation: quote-float-drift 4.6s ease-in-out infinite reverse;
+  }
+
+  .quote-float-paper {
+    right: 1.4rem;
+    bottom: 2.4rem;
+    width: 1.1rem;
+    height: 0.8rem;
+    background: #f4e6d1;
+    border: 2px solid #5e5148;
+    transform: rotate(12deg);
+    animation: quote-float-drift 4.2s ease-in-out infinite;
+  }
+
+  .quote-float-dash {
+    bottom: 4.4rem;
+    left: 1.5rem;
+    font-size: 1.8rem;
+    transform: rotate(-12deg);
+    animation: quote-float-drift 3.4s ease-in-out infinite reverse;
+  }
+
+  .game-quote-card .music-control-compact {
+    margin-top: 1rem;
+    padding: 0.45rem;
+    background: rgba(249, 237, 224, 0.8);
+  }
+
+  .game-quote-card .turntable-container {
+    width: 6.5rem;
+    height: 6.5rem;
+  }
+
+  .game-quote-card .turntable-record {
+    width: 5.5rem;
+    height: 5.5rem;
+  }
+
+  .game-quote-card .turntable-record-border {
+    width: 4.1rem;
+    height: 4.1rem;
+  }
+
+  .game-quote-card .turntable-label {
+    font-size: 0.9rem;
   }
 
   .turntable-button {
@@ -844,6 +916,11 @@
 @keyframes turntable-rotation {
   from { transform: rotate(0deg); }
   to { transform: rotate(359deg); }
+}
+
+@keyframes quote-float-drift {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -0.35rem; }
 }
 
 @keyframes game-photo-breathe {

@@ -1,5 +1,4 @@
 import { useSiteContent } from '@/context/SiteContentContext';
-import { BackgroundMusic } from './BackgroundMusic';
 
 export function Hero() {
   const { heroImage } = useSiteContent();
@@ -24,7 +23,6 @@ export function Hero() {
         <p className="text-xl text-ink-900 font-bold drop-shadow-[0_0_10px_rgba(255,255,255,1)] max-w-2xl mx-auto">
           Your cozy, step-by-step gaming companion.
         </p>
-        <BackgroundMusic compact />
       </div>
       
     </div>

@@ -93,7 +93,7 @@ export function BackgroundMusic({ compact = false }: BackgroundMusicProps) {
   const toggleMute = () => setMuted((value) => !value);
 
   return (
-    <div className={`music-control notepad-card ${compact ? 'music-control-hero' : ''}`} aria-label="Background music controls">
+    <div className={`music-control notepad-card ${compact ? 'music-control-compact' : ''}`} aria-label="Background music controls">
       {compact ? (
         <button
           type="button"

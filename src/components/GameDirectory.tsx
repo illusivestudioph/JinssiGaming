@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { categories, type Game } from '@/data/games';
 import { useSiteContent } from '@/context/SiteContentContext';
 import { GameCard } from './GameCard';
+import { BackgroundMusic } from './BackgroundMusic';
 import { Search, SlidersHorizontal, BookOpen, Quote } from 'lucide-react';
 
 interface GameDirectoryProps {
@@ -152,10 +153,15 @@ function QuoteCard({ games }: { games: Game[] }) {
 
   return (
     <article className="game-doodle-card game-quote-card" aria-label="A cozy gaming note">
+      <span className="quote-float quote-float-note" aria-hidden="true">♪</span>
+      <span className="quote-float quote-float-dot" aria-hidden="true" />
+      <span className="quote-float quote-float-paper" aria-hidden="true" />
+      <span className="quote-float quote-float-dash" aria-hidden="true">~</span>
       <div className="game-quote-content">
         <Quote className="game-quote-icon" aria-hidden="true" />
         <p className="game-quote-text">“{featuredQuote}”</p>
         <span className="game-quote-caption">A note from the field guide</span>
+        <BackgroundMusic compact />
       </div>
     </article>
   );
