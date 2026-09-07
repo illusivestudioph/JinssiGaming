@@ -6,8 +6,12 @@ interface AdSenseUnitProps {
   responsive?: boolean;
 }
 
+const defaultAdsenseClient = 'ca-pub-1420119468310373';
+const defaultAdsenseSlot = '5980891855';
+
 export function AdSenseUnit({ slot, format = 'auto', responsive = true }: AdSenseUnitProps) {
-  const client = import.meta.env.VITE_ADSENSE_CLIENT as string | undefined;
+  const client = (import.meta.env.VITE_ADSENSE_CLIENT as string | undefined) || defaultAdsenseClient;
+  const configuredSlot = slot || (import.meta.env.VITE_ADSENSE_SLOT as string | undefined) || defaultAdsenseSlot;
   const [consent, setConsent] = useState(() => localStorage.getItem('jinssi-cookie-consent'));
 
   useEffect(() => {
@@ -17,7 +21,7 @@ export function AdSenseUnit({ slot, format = 'auto', responsive = true }: AdSens
   }, []);
 
   useEffect(() => {
-    if (!client || !slot || consent !== 'accepted') return;
+    if (!client || !configuredSlot || consent !== 'accepted') return;
     const scriptId = 'google-adsense-script';
     if (document.getElementById(scriptId)) return;
 
@@ -27,18 +31,18 @@ export function AdSenseUnit({ slot, format = 'auto', responsive = true }: AdSens
     script.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${client}`;
     script.crossOrigin = 'anonymous';
     document.head.appendChild(script);
-  }, [client, consent, slot]);
+  }, [client, consent, configuredSlot]);
 
   useEffect(() => {
-    if (!client || !slot || consent !== 'accepted') return;
+    if (!client || !configuredSlot || consent !== 'accepted') return;
     try {
       ((window as Window & { adsbygoogle?: unknown[] }).adsbygoogle ||= []).push({});
     } catch {
       // AdSense can be unavailable during local development or blocked by a browser extension.
     }
-  }, [client, consent, slot]);
+  }, [client, consent, configuredSlot]);
 
-  if (!client || !slot || consent !== 'accepted') return null;
+  if (!client || !configuredSlot || consent !== 'accepted') return null;
 
   return (
     <div className="mx-auto my-8 min-h-[100px] max-w-3xl overflow-hidden text-center" aria-label="Advertisement">
@@ -46,7 +50,7 @@ export function AdSenseUnit({ slot, format = 'auto', responsive = true }: AdSens
         className="adsbygoogle"
         style={{ display: 'block' }}
         data-ad-client={client}
-        data-ad-slot={slot}
+        data-ad-slot={configuredSlot}
         data-ad-format={format}
         data-full-width-responsive={responsive ? 'true' : 'false'}
       />
