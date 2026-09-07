@@ -30,7 +30,7 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
   const progressPercent = totalSteps > 0 ? Math.round((completedCount / totalSteps) * 100) : 0;
 
   return (
-    <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Back button */}
       <button
         onClick={onBack}
