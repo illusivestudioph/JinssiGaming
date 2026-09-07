@@ -309,6 +309,29 @@
     z-index: 1;
   }
 
+  .site-newsletter-details {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem 1.25rem;
+    margin: 1rem auto 0;
+    color: #a88e63;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+  }
+
+  .site-newsletter-details span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+  }
+
+  .site-newsletter-details span::before {
+    content: '✦';
+    color: #d47f63;
+  }
+
   .site-support-note {
     display: flex;
     align-items: center;

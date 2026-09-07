@@ -68,10 +68,10 @@ export function CtaFooter() {
             <span>Join the community</span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-display font-bold text-ink-900 mb-4">
-            Suggest a game or follow along!
+            Stay in the cozy loop
           </h2>
           <p className="text-tan-600 mb-8 max-w-xl mx-auto font-medium leading-relaxed">
-            Get the latest cozy walkthroughs, game recommendations, and tidy little updates in your inbox.
+            Get new game updates, fresh walkthroughs, cozy recommendations, and tidy little tips delivered to your inbox.
           </p>
 
           <form id="newsletter" onSubmit={handleNewsletterSubmit} className="mx-auto flex max-w-xl flex-col gap-3 sm:flex-row">
@@ -95,6 +95,11 @@ export function CtaFooter() {
               {newsletterSubmitted ? 'Subscribed!' : 'Subscribe'}
             </button>
           </form>
+          <div className="site-newsletter-details" aria-label="Newsletter topics">
+            <span>New walkthroughs</span>
+            <span>Game updates</span>
+            <span>Cozy recommendations</span>
+          </div>
           {newsletterSubmitted && (
             <p className="mt-3 text-sm font-semibold text-sage-500" role="status">
               You are on the list. Welcome to the cozy corner.
