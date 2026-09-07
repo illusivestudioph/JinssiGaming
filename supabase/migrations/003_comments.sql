@@ -4,8 +4,12 @@ create table if not exists public.comments (
   user_id uuid not null references auth.users(id) on delete cascade,
   user_name text not null,
   text text not null check (char_length(text) between 1 and 2000),
+  parent_id bigint references public.comments(id) on delete cascade,
   created_at timestamptz not null default now()
 );
+
+alter table public.comments
+add column if not exists parent_id bigint references public.comments(id) on delete cascade;
 
 alter table public.comments enable row level security;
 
@@ -18,4 +22,24 @@ drop policy if exists "Users can create their own comments" on public.comments;
 create policy "Users can create their own comments"
 on public.comments for insert
 to authenticated
+with check (auth.uid() = user_id);
+
+create table if not exists public.comment_reactions (
+  comment_id bigint not null references public.comments(id) on delete cascade,
+  user_id uuid not null references auth.users(id) on delete cascade,
+  reaction text not null default 'heart' check (reaction = 'heart'),
+  created_at timestamptz not null default now(),
+  primary key (comment_id, user_id, reaction)
+);
+
+alter table public.comment_reactions enable row level security;
+
+create policy "Anyone can read comment reactions"
+on public.comment_reactions for select
+using (true);
+
+create policy "Users can manage their own reactions"
+on public.comment_reactions for all
+to authenticated
+using (auth.uid() = user_id)
 with check (auth.uid() = user_id);

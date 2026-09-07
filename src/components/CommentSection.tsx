@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { MessageSquare, User, Send, LogIn, X } from 'lucide-react';
+import { MessageSquare, User, Send, LogIn, X, Heart, Reply } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 
 interface Comment {
@@ -7,12 +7,17 @@ interface Comment {
   user_name: string;
   text: string;
   created_at: string;
+  parent_id?: number | null;
 }
 
 export function CommentSection({ gameId }: { gameId: string }) {
   const [user, setUser] = useState<{ id: string; email?: string; user_metadata?: { display_name?: string } } | null>(null);
   const [newComment, setNewComment] = useState('');
   const [comments, setComments] = useState<Comment[]>([]);
+  const [reactionCounts, setReactionCounts] = useState<Record<string, number>>({});
+  const [likedComments, setLikedComments] = useState<Set<string>>(new Set());
+  const [replyingTo, setReplyingTo] = useState<string | null>(null);
+  const [replyText, setReplyText] = useState('');
   const [showAuth, setShowAuth] = useState(false);
   const [authMode, setAuthMode] = useState<'sign-in' | 'register'>('sign-in');
   const [email, setEmail] = useState('');
@@ -32,14 +37,35 @@ export function CommentSection({ gameId }: { gameId: string }) {
   useEffect(() => {
     void supabase
       .from('comments')
-      .select('id, user_name, text, created_at')
+      .select('id, user_name, text, created_at, parent_id')
       .eq('game_id', gameId)
       .order('created_at', { ascending: false })
       .then(({ data, error }) => {
         if (error) console.error('Unable to load comments:', error.message);
         setComments((data as Comment[]) || []);
       });
-  }, [gameId]);
+
+    void supabase
+      .from('comment_reactions')
+      .select('comment_id, user_id')
+      .eq('reaction', 'heart')
+      .then(({ data, error }) => {
+        if (error) {
+          console.error('Unable to load comment reactions:', error.message);
+          return;
+        }
+        const rows = data || [];
+        const counts: Record<string, number> = {};
+        rows.forEach((row) => {
+          const commentId = String(row.comment_id);
+          counts[commentId] = (counts[commentId] || 0) + 1;
+        });
+        setReactionCounts(counts);
+        if (user) {
+          setLikedComments(new Set(rows.filter((row) => row.user_id === user.id).map((row) => String(row.comment_id))));
+        }
+      });
+  }, [gameId, user]);
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,7 +93,7 @@ export function CommentSection({ gameId }: { gameId: string }) {
       user_id: user.id,
       user_name: userName,
       text: newComment.trim(),
-    }).select('id, user_name, text, created_at').single();
+    }).select('id, user_name, text, created_at, parent_id').single();
     if (error) {
       setAuthMessage(error.message);
       return;
@@ -75,6 +101,51 @@ export function CommentSection({ gameId }: { gameId: string }) {
     setComments((current) => [data as Comment, ...current]);
     setNewComment('');
   };
+
+  const postReply = async (commentId: string) => {
+    if (!replyText.trim() || !user) return;
+    const userName = user.user_metadata?.display_name || user.email?.split('@')[0] || 'Player';
+    const { data, error } = await supabase.from('comments').insert({
+      game_id: gameId,
+      user_id: user.id,
+      user_name: userName,
+      text: replyText.trim(),
+      parent_id: Number(commentId),
+    }).select('id, user_name, text, created_at, parent_id').single();
+    if (error) {
+      setAuthMessage(error.message);
+      return;
+    }
+    setComments((current) => [...current, data as Comment]);
+    setReplyText('');
+    setReplyingTo(null);
+  };
+
+  const toggleHeart = async (commentId: string) => {
+    if (!user) {
+      setAuthMode('sign-in');
+      setAuthMessage('Sign in to react to notes.');
+      setShowAuth(true);
+      return;
+    }
+    const isLiked = likedComments.has(commentId);
+    const query = supabase.from('comment_reactions');
+    const result = isLiked
+      ? await query.delete().match({ comment_id: Number(commentId), user_id: user.id, reaction: 'heart' })
+      : await query.insert({ comment_id: Number(commentId), user_id: user.id, reaction: 'heart' });
+    if (result.error) {
+      setAuthMessage(result.error.message);
+      return;
+    }
+    setLikedComments((current) => {
+      const next = new Set(current);
+      if (isLiked) next.delete(commentId); else next.add(commentId);
+      return next;
+    });
+    setReactionCounts((current) => ({ ...current, [commentId]: Math.max(0, (current[commentId] || 0) + (isLiked ? -1 : 1)) }));
+  };
+
+  const topLevelComments = comments.filter((comment) => !comment.parent_id);
 
   return (
     <div className="mt-16 max-w-3xl mx-auto animate-fade-in">
@@ -122,22 +193,27 @@ export function CommentSection({ gameId }: { gameId: string }) {
 
       {/* COMMENT LIST */}
       <div className="flex flex-col gap-4">
-        {comments.map((comment) => (
-          <div key={comment.id} className="bg-white p-5 rounded-2xl border border-tan-200 shadow-sm flex gap-4">
-            <div className="w-10 h-10 rounded-full bg-peach-200 text-peach-700 flex items-center justify-center font-bold text-lg flex-shrink-0">
-              {comment.user_name.charAt(0).toUpperCase()}
-            </div>
-            <div>
-              <div className="flex items-baseline gap-2 mb-1">
-                <span className="font-bold text-ink-900">{comment.user_name}</span>
-                <span className="text-xs text-tan-400 font-semibold">
-                  {new Date(comment.created_at).toLocaleDateString()}
-                </span>
-              </div>
-              <p className="text-ink-800 leading-relaxed">{comment.text}</p>
-            </div>
-          </div>
+        {topLevelComments.map((comment) => (
+          <CommentCard
+            key={comment.id}
+            comment={comment}
+            replies={comments.filter((reply) => reply.parent_id === Number(comment.id))}
+            reactionCount={reactionCounts[String(comment.id)] || 0}
+            isLiked={likedComments.has(String(comment.id))}
+            isLoggedIn={!!user}
+            onHeart={() => void toggleHeart(String(comment.id))}
+            onReply={() => setReplyingTo(String(comment.id))}
+            replying={replyingTo === String(comment.id)}
+            replyText={replyText}
+            onReplyTextChange={setReplyText}
+            onSubmitReply={() => void postReply(String(comment.id))}
+          />
         ))}
+        {comments.length === 0 && (
+          <p className="rounded-2xl border border-dashed border-tan-300 bg-cream-50/70 p-6 text-center text-sm font-semibold text-tan-500">
+            No notes yet. Be the first adventurer to leave one.
+          </p>
+        )}
       </div>
 
       {showAuth && (
@@ -154,6 +230,68 @@ export function CommentSection({ gameId }: { gameId: string }) {
           </form>
         </div>
       )}
+    </div>
+  );
+}
+
+function CommentCard({
+  comment,
+  replies,
+  reactionCount,
+  isLiked,
+  isLoggedIn,
+  onHeart,
+  onReply,
+  replying,
+  replyText,
+  onReplyTextChange,
+  onSubmitReply,
+}: {
+  comment: Comment;
+  replies: Comment[];
+  reactionCount: number;
+  isLiked: boolean;
+  isLoggedIn: boolean;
+  onHeart: () => void;
+  onReply: () => void;
+  replying: boolean;
+  replyText: string;
+  onReplyTextChange: (value: string) => void;
+  onSubmitReply: () => void;
+}) {
+  return (
+    <div className="flex flex-col gap-3">
+      <article className="rounded-2xl border border-tan-200 bg-white p-5 shadow-sm">
+        <div className="flex gap-4">
+          <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-peach-200 text-lg font-bold text-peach-700">
+            {comment.user_name.charAt(0).toUpperCase()}
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="mb-1 flex items-baseline gap-2">
+              <span className="font-bold text-ink-900">{comment.user_name}</span>
+              <span className="text-xs font-semibold text-tan-400">{new Date(comment.created_at).toLocaleDateString()}</span>
+            </div>
+            <p className="leading-relaxed text-ink-800">{comment.text}</p>
+            <div className="mt-3 flex items-center gap-4 text-xs font-bold text-tan-500">
+              <button onClick={onHeart} className={`flex items-center gap-1 transition-colors ${isLiked ? 'text-rose-500' : 'hover:text-rose-500'}`}>
+                <Heart size={15} fill={isLiked ? 'currentColor' : 'none'} /> {reactionCount || 'Heart'}
+              </button>
+              <button onClick={onReply} className="flex items-center gap-1 hover:text-peach-500"><Reply size={15} /> Reply</button>
+            </div>
+          </div>
+        </div>
+      </article>
+      {replying && isLoggedIn && (
+        <div className="ml-8 flex gap-2">
+          <input value={replyText} onChange={(e) => onReplyTextChange(e.target.value)} placeholder="Write a reply..." className="min-w-0 flex-1 rounded-xl border border-tan-200 bg-cream-50 px-3 py-2 text-sm focus:border-peach-400 focus:outline-none" />
+          <button onClick={onSubmitReply} disabled={!replyText.trim()} className="rounded-xl bg-earth-500 px-3 py-2 text-xs font-bold text-white disabled:opacity-50">Reply</button>
+        </div>
+      )}
+      {replies.map((reply) => (
+        <div key={reply.id} className="ml-8 border-l-2 border-peach-200 pl-4">
+          <CommentCard comment={reply} replies={[]} reactionCount={0} isLiked={false} isLoggedIn={isLoggedIn} onHeart={() => undefined} onReply={() => undefined} replying={false} replyText="" onReplyTextChange={() => undefined} onSubmitReply={() => undefined} />
+        </div>
+      ))}
     </div>
   );
 }
