@@ -95,10 +95,10 @@ export function CtaFooter() {
               {newsletterSubmitted ? 'Subscribed!' : 'Subscribe'}
             </button>
           </form>
-          <div className="site-newsletter-details" aria-label="Newsletter topics">
-            <span>New walkthroughs</span>
-            <span>Game updates</span>
-            <span>Cozy recommendations</span>
+          <div className="site-newsletter-details" aria-label="Newsletter subscriber benefits">
+            <span>Subscribers get new walkthroughs</span>
+            <span>game updates</span>
+            <span>cozy recommendations</span>
           </div>
           {newsletterSubmitted && (
             <p className="mt-3 text-sm font-semibold text-sage-500" role="status">
@@ -106,7 +106,7 @@ export function CtaFooter() {
             </p>
           )}
           
-          <div className="site-contact-links flex flex-wrap justify-center gap-3">
+          <div className="site-contact-links mt-6 flex flex-wrap justify-center gap-3">
             {contactLinks.map((link, index) => (
               <a 
                 key={link.id} 
