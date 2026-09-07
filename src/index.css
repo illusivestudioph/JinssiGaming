@@ -53,6 +53,57 @@
     animation: completion-confetti-fall linear infinite;
   }
 
+  .notepad-card {
+    position: relative;
+    overflow: visible;
+    color: #4a3f38;
+    background:
+      linear-gradient(#fdfbf7 1.5rem, transparent 1.5rem) 0 0 / 100% 1.6rem,
+      linear-gradient(#e6e0d4 0.08rem, transparent 0.08rem) 0 1.5rem / 100% 1.6rem #fdfbf7;
+    border: 0.16rem solid #5e5148;
+    border-radius: 1.2rem 0.7rem 1rem 0.85rem;
+    box-shadow: 0.35rem 0.4rem 0 #d6c6b3, inset 0 0 1.2rem rgba(92, 75, 59, 0.05);
+  }
+
+  .notepad-card::before {
+    content: '';
+    position: absolute;
+    top: -0.7rem;
+    left: 50%;
+    width: 5rem;
+    height: 1.4rem;
+    z-index: 10;
+    background: rgba(255, 221, 161, 0.85);
+    border: 0.1rem solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0.1rem 0.1rem 0.2rem rgba(0, 0, 0, 0.1);
+    border-radius: 2px 4px 2px 5px;
+    transform: translateX(-50%) rotate(-4deg);
+  }
+
+  .notepad-card > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .notepad-step {
+    overflow: visible;
+    border-width: 0.12rem;
+    border-radius: 1rem 0.65rem 0.85rem 0.7rem;
+    box-shadow: 0.2rem 0.25rem 0 #d6c6b3;
+  }
+
+  .notepad-step::before {
+    width: 3.5rem;
+    height: 1rem;
+    top: -0.55rem;
+  }
+
+  .notepad-step-done {
+    background:
+      linear-gradient(#f9f5ed 1.5rem, transparent 1.5rem) 0 0 / 100% 1.6rem,
+      linear-gradient(#e1d9cc 0.08rem, transparent 0.08rem) 0 1.5rem / 100% 1.6rem #f9f5ed;
+  }
+
   .game-doodle-card {
     --game-bg: #fdfbf7;
     --game-ink: #2c2c2c;

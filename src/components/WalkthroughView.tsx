@@ -56,7 +56,7 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
       </button>
 
       {/* Game header with cover image */}
-      <div className="cozy-card overflow-hidden mb-8 animate-fade-in">
+      <div className="cozy-card notepad-card mb-8 animate-fade-in">
         <div className="h-48 sm:h-56 relative overflow-hidden">
           <img
             src={game.coverImage}
@@ -90,7 +90,7 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
       </div>
 
       {/* Progress overview */}
-      <div className="cozy-card p-5 mb-6 bg-cream-50">
+      <div className="cozy-card notepad-card p-5 mb-6">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <BookOpen className="w-5 h-5" style={{ color: game.accentColor }} />
@@ -257,7 +257,7 @@ function WalkthroughSectionCard({
 
   return (
     <div
-      className="cozy-card overflow-hidden animate-slide-in"
+      className="cozy-card notepad-card animate-slide-in"
       style={{ animationDelay: `${sectionIndex * 80}ms` }}
     >
       {/* Section header */}
@@ -356,8 +356,8 @@ function WikiHowStep({
 
   return (
     <div
-      className={`rounded-2xl overflow-hidden transition-all duration-300 ${
-        isDone ? 'bg-cream-100' : 'bg-cream-50'
+      className={`notepad-card notepad-step transition-all duration-300 ${
+        isDone ? 'notepad-step-done' : ''
       }`}
     >
       {/* Step number bar */}

@@ -161,7 +161,7 @@ export function CommentSection({ gameId }: { gameId: string }) {
       {/* COMMENT INPUT FORM / LOGIN PROMPT */}
       <div className="mb-10">
         {user ? (
-          <form onSubmit={handlePostComment} className="bg-white p-4 rounded-2xl border-2 border-tan-200 shadow-sm flex flex-col gap-3">
+          <form onSubmit={handlePostComment} className="notepad-card p-4 flex flex-col gap-3">
             <textarea 
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
@@ -177,7 +177,7 @@ export function CommentSection({ gameId }: { gameId: string }) {
             </button>
           </form>
         ) : (
-          <div className="bg-cream-50 border-2 border-dashed border-tan-300 rounded-2xl p-8 text-center flex flex-col items-center justify-center">
+          <div className="notepad-card p-8 text-center flex flex-col items-center justify-center">
             <div className="bg-tan-100 text-tan-500 p-4 rounded-full mb-4">
               <User size={32} />
             </div>
@@ -210,7 +210,7 @@ export function CommentSection({ gameId }: { gameId: string }) {
           />
         ))}
         {comments.length === 0 && (
-          <p className="rounded-2xl border border-dashed border-tan-300 bg-cream-50/70 p-6 text-center text-sm font-semibold text-tan-500">
+          <p className="notepad-card p-6 text-center text-sm font-semibold text-tan-500">
             No notes yet. Be the first adventurer to leave one.
           </p>
         )}
@@ -218,7 +218,7 @@ export function CommentSection({ gameId }: { gameId: string }) {
 
       {showAuth && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink-900/40 p-4 backdrop-blur-sm">
-          <form onSubmit={handleAuth} className="relative w-full max-w-md rounded-2xl border-2 border-tan-200 bg-cream-50 p-6 shadow-2xl">
+          <form onSubmit={handleAuth} className="notepad-card relative w-full max-w-md p-6 shadow-2xl">
             <button type="button" onClick={() => setShowAuth(false)} className="absolute right-4 top-4 text-tan-500"><X size={20} /></button>
             <h4 className="mb-5 pr-8 text-2xl font-display font-bold text-ink-900">{authMode === 'register' ? 'Create your account' : 'Welcome back'}</h4>
             {authMode === 'register' && <input required value={displayName} onChange={(e) => setDisplayName(e.target.value)} placeholder="Display name" className="mb-3 w-full rounded-xl border-2 border-tan-200 bg-white px-4 py-3 focus:border-peach-400 focus:outline-none" />}
@@ -261,7 +261,7 @@ function CommentCard({
 }) {
   return (
     <div className="flex flex-col gap-3">
-      <article className="rounded-2xl border border-tan-200 bg-white p-5 shadow-sm">
+      <article className="notepad-card p-5">
         <div className="flex gap-4">
           <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-peach-200 text-lg font-bold text-peach-700">
             {comment.user_name.charAt(0).toUpperCase()}

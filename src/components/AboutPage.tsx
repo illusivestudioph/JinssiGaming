@@ -19,7 +19,7 @@ export function AboutPage() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
-        <div className="cozy-card p-6 text-center">
+        <div className="cozy-card notepad-card p-6 text-center">
           <div className="w-12 h-12 rounded-2xl bg-peach-100 flex items-center justify-center mx-auto mb-3">
             <Gamepad2 className="w-6 h-6 text-peach-400" />
           </div>
@@ -31,7 +31,7 @@ export function AboutPage() {
           </p>
         </div>
 
-        <div className="cozy-card p-6 text-center">
+        <div className="cozy-card notepad-card p-6 text-center">
           <div className="w-12 h-12 rounded-2xl bg-earth-100 flex items-center justify-center mx-auto mb-3">
             <BookOpen className="w-6 h-6 text-earth-500" />
           </div>
@@ -43,7 +43,7 @@ export function AboutPage() {
           </p>
         </div>
 
-        <div className="cozy-card p-6 text-center">
+        <div className="cozy-card notepad-card p-6 text-center">
           <div className="w-12 h-12 rounded-2xl bg-sage-100 flex items-center justify-center mx-auto mb-3">
             <Heart className="w-6 h-6 text-sage-400" />
           </div>
@@ -56,7 +56,7 @@ export function AboutPage() {
         </div>
       </div>
 
-      <div className="cozy-card p-6 sm:p-8 bg-gradient-to-br from-cream-50 to-peach-50">
+      <div className="cozy-card notepad-card p-6 sm:p-8 bg-gradient-to-br from-cream-50 to-peach-50">
         <h3 className="font-display text-xl font-600 text-ink-900 mb-3">
           Get in touch
         </h3>
