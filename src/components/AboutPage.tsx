@@ -67,7 +67,9 @@ export function AboutPage() {
         </p>
         <div className="flex flex-col sm:flex-row gap-3">
           <a
-            href="mailto:mjhanesulatncruz1514@gmail.com"
+            href="https://mail.google.com/mail/?view=cm&fs=1&to=mjhanesultancruz1514%40gmail.com"
+            target="_blank"
+            rel="noopener noreferrer"
             className="btn-cozy bg-peach-400 text-cream-50 hover:bg-peach-500 hover:shadow-cozy-lg flex items-center gap-2 justify-center"
           >
             <Mail className="w-4 h-4" />

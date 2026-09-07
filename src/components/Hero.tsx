@@ -14,7 +14,7 @@ export function Hero() {
       />
       
       {/* Gradient Fade: Slightly stronger 'via' opacity to help text readability */}
-      <div className="absolute inset-0 bg-gradient-to-t from-cream-100 from-0% via-cream-100/60 via-30% to-transparent z-10" />
+      <div className="absolute inset-0 bg-gradient-to-t from-cream-100/82 from-0% via-cream-100/45 via-30% to-transparent z-10" />
 
       {/* Hero Text Content */}
       <div className="relative z-20 text-center px-4 animate-fade-in">

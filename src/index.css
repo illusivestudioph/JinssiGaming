@@ -23,6 +23,10 @@
     background-size: cover, cover, 22px 22px, 88px 88px, 88px 88px;
     background-attachment: fixed, fixed, scroll, scroll, scroll;
   }
+
+  main {
+    background: transparent;
+  }
 }
 
 @layer components {
@@ -278,7 +282,7 @@
   }
 
   .site-footer-shell {
-    background: #fdf8f1;
+    background: rgba(253, 248, 241, 0.82);
   }
 
   .site-cta-panel {

@@ -13,6 +13,8 @@ export function CtaFooter() {
     link.label.toLowerCase().includes('support')
   ));
   const contactLinks = ctaLinks?.filter((link) => link.id !== supportLink?.id) || [];
+  const emailAddress = 'mjhanesultancruz1514@gmail.com';
+  const emailComposeUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(emailAddress)}`;
 
   const openSupport = () => {
     if (!supportLink) return;
@@ -69,9 +71,9 @@ export function CtaFooter() {
             {contactLinks.map((link, index) => (
               <a 
                 key={link.id} 
-                href={link.url}
-                target={link.url.startsWith('mailto:') ? undefined : '_blank'}
-                rel={link.url.startsWith('mailto:') ? undefined : 'noopener noreferrer'}
+                href={link.label.toLowerCase().includes('email') ? emailComposeUrl : link.url}
+                target="_blank"
+                rel="noopener noreferrer"
                 onClick={(e) => handleLinkClick(e, link)}
                 className={`font-bold py-3 px-7 rounded-full transition-all hover:-translate-y-1 flex items-center gap-2 border-2 cursor-pointer ${
                   index === 0 
