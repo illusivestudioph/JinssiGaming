@@ -58,8 +58,8 @@ export function CtaFooter() {
               <a 
                 key={link.id} 
                 href={link.url}
-                target="_blank"
-                rel="noopener noreferrer"
+                target={link.url.startsWith('mailto:') ? undefined : '_blank'}
+                rel={link.url.startsWith('mailto:') ? undefined : 'noopener noreferrer'}
                 onClick={(e) => handleLinkClick(e, link)}
                 className={`font-bold py-3 px-7 rounded-full transition-all hover:-translate-y-1 flex items-center gap-2 border-2 cursor-pointer ${
                   index === 0 
