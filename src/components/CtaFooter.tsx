@@ -14,6 +14,18 @@ export function CtaFooter() {
   ));
   const contactLinks = ctaLinks?.filter((link) => link.id !== supportLink?.id) || [];
 
+  const openSupport = () => {
+    if (!supportLink) return;
+    const wallets: WalletOption[] = supportLink.wallets?.length ? supportLink.wallets : [
+      { name: 'GCash', accountName: 'Mary Jane C.', accountNumber: '0912-345-6789' },
+      { name: 'Maya', accountName: 'Mary Jane C.', accountNumber: '0912-345-6789' },
+      { name: 'PayPal', accountName: 'mjhanesultancruz1514@gmail.com', accountNumber: 'mjhanesultancruz1514@gmail.com' },
+      { name: 'Wise', accountName: 'Mary Jane C.', accountNumber: 'mjhanesultancruz1514@gmail.com' },
+    ];
+    setSelectedWallet(wallets[0]);
+    setActiveModalLink({ ...supportLink, wallets });
+  };
+
   const handleLinkClick = (e: React.MouseEvent, link: CtaLink) => {
     // If the button has wallets configured or label mentions coffee/support, open the multi-wallet card
     if ((link.wallets && link.wallets.length > 0) || link.label.toLowerCase().includes('coffee') || link.label.toLowerCase().includes('support')) {
@@ -80,16 +92,14 @@ export function CtaFooter() {
                 <span className="site-support-label"><Coffee size={15} /> Keep the guides cozy</span>
                 <p>Support the late-night sorting, shelving, and cleanup sessions.</p>
               </div>
-              <a
-                href={supportLink.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(e) => handleLinkClick(e, supportLink)}
+              <button
+                type="button"
+                onClick={openSupport}
                 className="site-support-button"
               >
                 <Coffee size={17} />
                 {supportLink.label}
-              </a>
+              </button>
             </div>
           )}
         </div>
@@ -97,7 +107,7 @@ export function CtaFooter() {
 
       {/* MULTI-WALLET PAYMENT CARD MODAL */}
       {activeModalLink && selectedWallet && (
-        <div className="fixed inset-0 bg-ink-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-ink-900/50 p-4 backdrop-blur-sm animate-fade-in">
           <div className="bg-cream-50 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl border-4 border-tan-200 relative">
             <button 
               onClick={() => setActiveModalLink(null)} 
