@@ -10,7 +10,6 @@ import { TermsPage } from '@/components/TermsPage';
 import { ContactPage } from '@/components/ContactPage';
 import { CookieConsent } from '@/components/CookieConsent';
 import { AdSenseUnit } from '@/components/AdSenseUnit';
-import { DailyChallenge } from '@/components/DailyChallenge';
 import { ArrowRight } from 'lucide-react';
 
 // 1. Context Provider
@@ -120,7 +119,6 @@ function AppContent() {
         <>
           <Hero />
           <div className="py-8">
-            <DailyChallenge games={games} onSelectGame={handleSelectGame} />
             <GameDirectory onSelectGame={handleSelectGame} progressMap={progressMap} />
             <AdSenseUnit slot={import.meta.env.VITE_ADSENSE_SLOT || ''} />
           </div>

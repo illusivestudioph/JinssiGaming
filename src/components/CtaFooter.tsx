@@ -167,7 +167,7 @@ export function CtaFooter({ onNavigate }: { onNavigate: (view: 'about' | 'privac
       {/* MULTI-WALLET PAYMENT CARD MODAL */}
       {activeModalLink && selectedWallet && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-ink-900/50 p-4 backdrop-blur-sm animate-fade-in">
-          <div className="bg-cream-50 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl border-4 border-tan-200 relative">
+          <div className="notepad-card max-w-md w-full p-6 sm:p-8 relative">
             <button 
               onClick={() => setActiveModalLink(null)} 
               className="absolute top-4 right-4 text-tan-400 hover:text-ink-900 bg-white p-1 rounded-full border border-tan-200"
@@ -206,7 +206,7 @@ export function CtaFooter({ onNavigate }: { onNavigate: (view: 'about' | 'privac
             </div>
 
             {/* Selected Wallet Details Card */}
-            <div className="bg-white p-5 rounded-2xl border-2 border-tan-200 shadow-inner flex flex-col items-center text-center">
+            <div className="notepad-step p-5 flex flex-col items-center text-center">
               <span className="text-xs font-bold text-tan-400 uppercase tracking-wider mb-1">Sending via {selectedWallet.name}</span>
               <h4 className="font-bold text-lg text-ink-900 mb-3">{selectedWallet.accountName || 'Jinssi Gaming'}</h4>
 

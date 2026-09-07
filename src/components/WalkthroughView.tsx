@@ -197,7 +197,7 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
           </div>
 
           <div
-            className="game-doodle-card completion-notepad-card relative z-10 w-full max-w-md text-center animate-pop"
+            className="notepad-card completion-notepad-card relative z-10 w-full max-w-md text-center animate-pop"
             role="dialog"
             aria-modal="true"
             aria-labelledby="congratulations-title"

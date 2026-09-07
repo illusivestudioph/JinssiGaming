@@ -31,7 +31,6 @@ export function useProgress(gameId: string) {
       } catch {
         // ignore storage errors
       }
-      window.dispatchEvent(new Event('jinssi-progress-updated'));
       return next;
     });
   }, [storageKey]);

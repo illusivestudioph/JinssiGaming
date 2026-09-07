@@ -92,7 +92,7 @@ export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View)
       {/* SECRET AUTH MODAL */}
       {showAuthModal && (
         <div className="fixed inset-0 bg-ink-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-cream-100 rounded-2xl p-8 max-w-md w-full shadow-2xl border-4 border-earth-200 relative animate-fade-in">
+          <div className="notepad-card max-w-md w-full p-8 relative animate-fade-in">
             <button onClick={() => setShowAuthModal(false)} className="absolute top-4 right-4 text-tan-400 hover:text-ink-900">
               <X size={24} />
             </button>
