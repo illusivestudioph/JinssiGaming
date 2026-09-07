@@ -1,20 +1,28 @@
 import { useState } from 'react';
 import { useSiteContent, type CtaLink, type WalletOption } from '@/context/SiteContentContext';
-import { Mail, Sparkles, Coffee, X, Copy, Check } from 'lucide-react';
+import { Sparkles, Coffee, X, Copy, Check } from 'lucide-react';
 
 export function CtaFooter() {
   const { ctaLinks, logoImage } = useSiteContent();
   const [activeModalLink, setActiveModalLink] = useState<CtaLink | null>(null);
   const [selectedWallet, setSelectedWallet] = useState<WalletOption | null>(null);
   const [copiedField, setCopiedField] = useState<string | null>(null);
+  const [newsletterEmail, setNewsletterEmail] = useState('');
+  const [newsletterSubmitted, setNewsletterSubmitted] = useState(false);
   const supportLink = ctaLinks?.find((link) => (
     (link.wallets && link.wallets.length > 0) ||
     link.label.toLowerCase().includes('coffee') ||
     link.label.toLowerCase().includes('support')
   ));
-  const contactLinks = ctaLinks?.filter((link) => link.id !== supportLink?.id) || [];
-  const emailAddress = 'mjhanesultancruz1514@gmail.com';
-  const emailComposeUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(emailAddress)}`;
+  const contactLinks = ctaLinks?.filter((link) => (
+    link.id !== supportLink?.id && !link.label.toLowerCase().includes('email')
+  )) || [];
+
+  const handleNewsletterSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    localStorage.setItem('jinssi-newsletter-email', newsletterEmail);
+    setNewsletterSubmitted(true);
+  };
 
   const openSupport = () => {
     if (!supportLink) return;
@@ -63,15 +71,41 @@ export function CtaFooter() {
             Suggest a game or follow along!
           </h2>
           <p className="text-tan-600 mb-8 max-w-xl mx-auto font-medium leading-relaxed">
-            Know a cozy game that belongs here? Want to share your progress or just say
-            hi? Reach out anytime — we would love to hear from you.
+            Get the latest cozy walkthroughs, game recommendations, and tidy little updates in your inbox.
           </p>
+
+          <form id="newsletter" onSubmit={handleNewsletterSubmit} className="mx-auto flex max-w-xl flex-col gap-3 sm:flex-row">
+            <label htmlFor="newsletter-email" className="sr-only">Email address</label>
+            <input
+              id="newsletter-email"
+              type="email"
+              required
+              value={newsletterEmail}
+              onChange={(event) => {
+                setNewsletterEmail(event.target.value);
+                setNewsletterSubmitted(false);
+              }}
+              placeholder="Enter your email"
+              className="min-w-0 flex-1 rounded-xl border-2 border-tan-200 bg-cream-50 px-4 py-3 text-ink-900 placeholder-tan-400 focus:border-peach-400 focus:outline-none"
+            />
+            <button
+              type="submit"
+              className="rounded-xl bg-peach-400 px-5 py-3 font-bold text-white shadow-cozy-sm transition-colors hover:bg-peach-500"
+            >
+              {newsletterSubmitted ? 'Subscribed!' : 'Subscribe'}
+            </button>
+          </form>
+          {newsletterSubmitted && (
+            <p className="mt-3 text-sm font-semibold text-sage-500" role="status">
+              You are on the list. Welcome to the cozy corner.
+            </p>
+          )}
           
           <div className="site-contact-links flex flex-wrap justify-center gap-3">
             {contactLinks.map((link, index) => (
               <a 
                 key={link.id} 
-                href={link.label.toLowerCase().includes('email') ? emailComposeUrl : link.url}
+                href={link.url}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => handleLinkClick(e, link)}
@@ -81,7 +115,6 @@ export function CtaFooter() {
                     : 'bg-cream-50 border-tan-200 text-ink-900 hover:border-peach-400 hover:text-peach-600'
                 }`}
               >
-                {link.label.toLowerCase().includes('email') && <Mail size={18} />}
                 {link.label.toLowerCase().includes('coffee') && <Coffee size={18} className="text-amber-700" />}
                 {link.label}
               </a>
