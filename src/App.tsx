@@ -15,9 +15,30 @@ import { AdminDashboard } from '@/components/AdminDashboard';
 import { Hero } from '@/components/Hero';
 
 function App() {
-  const [view, setView] = useState<View>('home');
-  const [selectedGame, setSelectedGame] = useState<Game | null>(null);
+  return (
+    <SiteContentProvider>
+      <AppContent />
+    </SiteContentProvider>
+  );
+}
+
+function AppContent() {
+  const { games } = useSiteContent();
+  const [view, setView] = useState<View>(() => {
+    const savedView = sessionStorage.getItem('jinssi-view');
+    return savedView === 'walkthroughs' || savedView === 'about' || savedView === 'admin'
+      ? savedView
+      : 'home';
+  });
+  const [selectedGameId, setSelectedGameId] = useState<string | null>(() => sessionStorage.getItem('jinssi-selected-game'));
   const [progressMap, setProgressMap] = useState<Record<string, number>>({});
+  const selectedGame = games.find((game) => game.id === selectedGameId) || null;
+
+  useEffect(() => {
+    sessionStorage.setItem('jinssi-view', view);
+    if (selectedGameId) sessionStorage.setItem('jinssi-selected-game', selectedGameId);
+    else sessionStorage.removeItem('jinssi-selected-game');
+  }, [view, selectedGameId]);
 
   useEffect(() => {
     const map: Record<string, number> = {};
@@ -38,17 +59,17 @@ function App() {
 
   const handleNavigate = (newView: View) => {
     setView(newView);
-    setSelectedGame(null);
+    setSelectedGameId(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleSelectGame = (game: Game) => {
-    setSelectedGame(game);
+    setSelectedGameId(game.id);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleBack = () => {
-    setSelectedGame(null);
+    setSelectedGameId(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -90,15 +111,13 @@ function App() {
   };
 
   return (
-    <SiteContentProvider>
-      <div className="min-h-screen flex flex-col">
-        <Header view={view} onNavigate={handleNavigate} />
+    <div className="min-h-screen flex flex-col">
+      <Header view={view} onNavigate={handleNavigate} />
 
-        <main className="flex-1">{renderMainContent()}</main>
+      <main className="flex-1">{renderMainContent()}</main>
 
-        <CtaFooter />
-      </div>
-    </SiteContentProvider>
+      <CtaFooter />
+    </div>
   );
 }
 

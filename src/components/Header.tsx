@@ -15,6 +15,7 @@ export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View)
   const clickTimer = useRef<NodeJS.Timeout | null>(null);
 
   const handleLogoClick = () => {
+    onNavigate('home');
     setClickCount((prev) => prev + 1);
     
     // Reset the click count if they don't click again within 600ms (rapid succession)
