@@ -5,7 +5,11 @@ const volumeStorageKey = 'jinssi-bgm-volume';
 const mutedStorageKey = 'jinssi-bgm-muted';
 const musicVolumeScale = 0.5;
 
-export function BackgroundMusic() {
+interface BackgroundMusicProps {
+  compact?: boolean;
+}
+
+export function BackgroundMusic({ compact = false }: BackgroundMusicProps) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [userVolume, setUserVolume] = useState(() => readVolume());
   const [muted, setMuted] = useState(() => localStorage.getItem(mutedStorageKey) === 'true');
@@ -89,7 +93,7 @@ export function BackgroundMusic() {
   const toggleMute = () => setMuted((value) => !value);
 
   return (
-    <div className="music-control notepad-card" aria-label="Background music controls">
+    <div className={`music-control notepad-card ${compact ? 'music-control-hero' : ''}`} aria-label="Background music controls">
       <button type="button" className={`vinyl-play-button ${playing ? 'vinyl-play-button-playing' : ''}`} onClick={() => void togglePlayback()} aria-label={playing ? 'Pause background music' : 'Tap to play background music'} title={playing ? 'Pause music' : 'Tap to play music'}>
         <span className="vinyl-record" aria-hidden="true">
           <span className="vinyl-record-label" />
@@ -97,22 +101,26 @@ export function BackgroundMusic() {
         <span className="vinyl-play-icon">{playing ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}</span>
         <span className="vinyl-play-text">{playing ? 'Playing' : 'Tap to play'}</span>
       </button>
-      <Music className="h-4 w-4 text-earth-600" aria-hidden="true" />
-      <label className="sr-only" htmlFor="bgm-volume">Music volume</label>
-      <input
-        id="bgm-volume"
-        type="range"
-        min="0"
-        max="1"
-        step="0.05"
-        value={userVolume}
-        onChange={(event) => setUserVolume(Number(event.target.value))}
-        aria-label="Music volume"
-      />
-      <button type="button" className="music-control-button" onClick={toggleMute} aria-label={muted ? 'Unmute background music' : 'Mute background music'} title={muted ? 'Unmute music' : 'Mute music'}>
-        {muted || userVolume === 0 ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
-      </button>
-      {audioError && <span className="music-control-error">Click play</span>}
+      {!compact && (
+        <>
+          <Music className="h-4 w-4 text-earth-600" aria-hidden="true" />
+          <label className="sr-only" htmlFor="bgm-volume">Music volume</label>
+          <input
+            id="bgm-volume"
+            type="range"
+            min="0"
+            max="1"
+            step="0.05"
+            value={userVolume}
+            onChange={(event) => setUserVolume(Number(event.target.value))}
+            aria-label="Music volume"
+          />
+          <button type="button" className="music-control-button" onClick={toggleMute} aria-label={muted ? 'Unmute background music' : 'Mute background music'} title={muted ? 'Unmute music' : 'Mute music'}>
+            {muted || userVolume === 0 ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+          </button>
+          {audioError && <span className="music-control-error">Click play</span>}
+        </>
+      )}
     </div>
   );
 }

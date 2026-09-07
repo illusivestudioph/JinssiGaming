@@ -167,16 +167,19 @@
   }
 
   .music-control {
-    position: fixed;
-    right: 1rem;
-    bottom: 1rem;
-    z-index: 80;
+    position: relative;
+    z-index: 30;
     display: flex;
     align-items: center;
     gap: 0.65rem;
     padding: 0.55rem 0.7rem;
     border-radius: 0.85rem 1rem 0.8rem 0.7rem;
     box-shadow: 3px 4px 0 #d6c6b3;
+  }
+
+  .music-control-hero {
+    position: relative;
+    margin-top: 1.25rem;
   }
 
   .music-control::before {
