@@ -16,7 +16,6 @@ export function GameDirectory({ onSelectGame, progressMap }: GameDirectoryProps)
   const { games } = useSiteContent(); 
   const [search, setSearch] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
-  const [quoteIndex] = useState(() => Math.floor(Math.random() * 4));
   const [gridColumns, setGridColumns] = useState(getGridColumns);
 
   useEffect(() => {
@@ -95,7 +94,7 @@ export function GameDirectory({ onSelectGame, progressMap }: GameDirectoryProps)
             />
           ))}
           {filteredGames.length % gridColumns !== 0 && (
-            <QuoteCard games={filteredGames} quoteIndex={quoteIndex} />
+            <QuoteCard games={filteredGames} />
           )}
         </div>
       ) : (
@@ -117,14 +116,40 @@ function getGridColumns() {
   return 1;
 }
 
-function QuoteCard({ games, quoteIndex }: { games: Game[]; quoteIndex: number }) {
-  const featuredGame = games[quoteIndex % games.length];
+function QuoteCard({ games }: { games: Game[] }) {
   const quotes = [
-    `Every ${featuredGame.category.toLowerCase()} mess has a satisfying little system hiding inside it.`,
     `A good walkthrough is like a tidy shelf: everything you need, exactly where you need it.`,
-    `Take it one small task at a time. Even the ${featuredGame.title.toLowerCase()} kind of chaos can be cozy.`,
     `The best cozy games turn ordinary chores into tiny worlds worth getting lost in.`,
+    'There is no rush in a cozy game. The little details will still be there when you are ready.',
+    'A well-placed item can make an entire room feel like it has exhaled.',
+    'Small progress is still progress, especially when it comes with a lovely view.',
+    'The perfect game night includes a warm drink and absolutely no urgent objectives.',
+    'Sometimes the best strategy is to wander around until something charming happens.',
+    'Every inventory has a story, and every tidy corner is a tiny victory.',
+    'Good guides leave room for curiosity. Follow the steps, then enjoy the detour.',
+    'A peaceful little task can be exactly what a busy day needs.',
+    'The coziest achievement is making a place feel like your own.',
+    'Let the soundtrack play, take your time, and trust the next small step.',
+    'There is magic in turning a scattered space into somewhere you want to stay.',
+    'Even the messiest quest becomes manageable when you break it into gentle pieces.',
   ];
+  const [quoteIndex, setQuoteIndex] = useState(() => Math.floor(Math.random() * quotes.length));
+
+  useEffect(() => {
+    const rotationTimer = window.setInterval(() => {
+      setQuoteIndex((currentIndex) => (currentIndex + 1) % quotes.length);
+    }, 10000);
+
+    return () => window.clearInterval(rotationTimer);
+  }, [quotes.length]);
+
+  const featuredGame = games[quoteIndex % games.length];
+  const quote = quotes[quoteIndex];
+  const featuredQuote = quoteIndex === 0
+    ? `Every ${featuredGame.category.toLowerCase()} mess has a satisfying little system hiding inside it.`
+    : quoteIndex === 2
+      ? `Take it one small task at a time. Even the ${featuredGame.title.toLowerCase()} kind of chaos can be cozy.`
+      : quote;
 
   return (
     <article className="game-doodle-card game-quote-card" aria-label="A cozy gaming note">
@@ -132,7 +157,7 @@ function QuoteCard({ games, quoteIndex }: { games: Game[]; quoteIndex: number })
       <span className="game-doodle game-doodle-sparkle" aria-hidden="true">✦</span>
       <div className="game-quote-content">
         <Quote className="game-quote-icon" aria-hidden="true" />
-        <p className="game-quote-text">“{quotes[quoteIndex]}”</p>
+        <p className="game-quote-text">“{featuredQuote}”</p>
         <span className="game-quote-caption">A note from the field guide</span>
       </div>
     </article>

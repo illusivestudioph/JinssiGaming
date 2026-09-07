@@ -4,8 +4,7 @@ export function Hero() {
   const { heroImage } = useSiteContent();
 
   return (
-    // Changed 'items-center' to 'items-end' to push the text to the bottom, and added 'pb-12' for spacing
-    <div className="relative w-full h-[46vh] min-h-[360px] max-h-[560px] flex items-end justify-center overflow-hidden pb-10">
+    <div className="relative w-full h-[54vh] min-h-[420px] max-h-[680px] flex items-end justify-center overflow-hidden pb-12">
       
       {/* Background Image */}
       <div 
@@ -13,12 +12,11 @@ export function Hero() {
         style={{ backgroundImage: `url(${heroImage})` }}
       />
       
-      {/* Gradient Fade: Slightly stronger 'via' opacity to help text readability */}
-      <div className="absolute inset-0 bg-gradient-to-t from-cream-100/82 from-0% via-cream-100/45 via-30% to-transparent z-10" />
+      {/* Fade the artwork into the page background near the bottom. */}
+      <div className="absolute inset-0 bg-gradient-to-t from-cream-100/95 from-0% via-cream-100/55 via-45% to-transparent z-10" />
 
       {/* Hero Text Content */}
       <div className="relative z-20 text-center px-4 animate-fade-in">
-        {/* Added a strong white drop-shadow to make the dark text pop against the artwork */}
         <h1 className="text-5xl md:text-7xl font-display font-extrabold text-ink-900 drop-shadow-[0_0_15px_rgba(255,255,255,1)] mb-2">
           Welcome to Jinssi
         </h1>
