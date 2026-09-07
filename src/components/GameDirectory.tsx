@@ -38,7 +38,7 @@ export function GameDirectory({ onSelectGame, progressMap }: GameDirectoryProps)
   }, [games, search, activeCategory]);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+    <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
       <div className="game-directory-intro">
         <div className="game-directory-kicker">
           <BookOpen className="w-4 h-4" />

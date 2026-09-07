@@ -45,7 +45,7 @@ export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View)
   return (
     <>
       <header className="bg-cream-100 border-b-2 border-tan-200 sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+        <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           
           {/* LOGO WITH SECRET TRIGGER */}
           <div className="flex items-center gap-3 cursor-pointer select-none" onClick={handleLogoClick}>

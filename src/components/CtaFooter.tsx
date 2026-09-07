@@ -232,7 +232,7 @@ export function CtaFooter() {
 
       {/* Bottom Footer Section */}
       <footer className="site-footer-bottom">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6 border-b border-tan-200 pb-8 mb-8">
             
             {/* Enlarged Dynamic Logo */}
