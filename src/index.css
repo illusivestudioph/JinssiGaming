@@ -104,6 +104,47 @@
     outline-offset: 3px;
   }
 
+  .hero-copy {
+    max-width: 48rem;
+  }
+
+  .hero-kicker {
+    margin-bottom: 0.85rem;
+    color: #8f5a33;
+    font-size: 0.76rem;
+    font-weight: 900;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.9);
+  }
+
+  .hero-title {
+    margin: 0;
+    color: #3a2e22;
+    font-family: 'Fredoka', 'Nunito', sans-serif;
+    font-size: clamp(3.25rem, 8vw, 6.8rem);
+    font-weight: 700;
+    letter-spacing: 0;
+    line-height: 0.94;
+    text-shadow: 0.12rem 0.14rem 0 #f9ede0, 0 0 1.2rem rgba(255, 255, 255, 0.9);
+  }
+
+  .hero-title span {
+    display: block;
+    color: #8f5a33;
+    font-style: italic;
+  }
+
+  .hero-description {
+    max-width: 34rem;
+    margin: 1rem auto 0;
+    color: #4a3a2c;
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    font-weight: 800;
+    line-height: 1.45;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.95);
+  }
+
   .site-nav-link {
     position: relative;
     padding: 0.45rem 0.65rem;

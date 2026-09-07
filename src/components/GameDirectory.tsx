@@ -3,7 +3,7 @@ import { categories, type Game } from '@/data/games';
 import { useSiteContent } from '@/context/SiteContentContext';
 import { GameCard } from './GameCard';
 import { BackgroundMusic } from './BackgroundMusic';
-import { Search, SlidersHorizontal, BookOpen, Quote } from 'lucide-react';
+import { Search, SlidersHorizontal, Quote } from 'lucide-react';
 
 interface GameDirectoryProps {
   onSelectGame: (game: Game) => void;
@@ -40,10 +40,6 @@ export function GameDirectory({ onSelectGame, progressMap }: GameDirectoryProps)
   return (
     <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
       <div className="game-directory-intro">
-        <div className="game-directory-kicker">
-          <BookOpen className="w-4 h-4" />
-          <span>The Jinssi field guide</span>
-        </div>
         <h2 className="game-directory-title page-title">Pick a little world to tidy up</h2>
         <p className="game-directory-copy">
           Cozy checklists for shelves, shops, ponds, cellars, and every charming mess in between.

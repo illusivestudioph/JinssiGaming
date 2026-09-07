@@ -16,12 +16,14 @@ export function Hero() {
       <div className="absolute inset-0 bg-gradient-to-t from-cream-100/95 from-0% via-cream-100/55 via-45% to-transparent z-10" />
 
       {/* Hero Text Content */}
-      <div className="relative z-20 flex flex-col items-center px-4 text-center animate-fade-in">
-        <h1 className="text-5xl md:text-7xl font-display font-extrabold text-ink-900 drop-shadow-[0_0_15px_rgba(255,255,255,1)] mb-2">
-          Welcome to Jinssi
+      <div className="hero-copy relative z-20 flex flex-col items-center px-4 text-center animate-fade-in">
+        <p className="hero-kicker">Jinssi Gaming · a cozy field guide</p>
+        <h1 className="hero-title">
+          Make room for
+          <span>a little calm.</span>
         </h1>
-        <p className="text-xl text-ink-900 font-bold drop-shadow-[0_0_10px_rgba(255,255,255,1)] max-w-2xl mx-auto">
-          Your cozy, step-by-step gaming companion.
+        <p className="hero-description">
+          Visual walkthroughs for the small, satisfying worlds worth taking your time with.
         </p>
       </div>
       
