@@ -17,13 +17,11 @@ export function Hero() {
 
       {/* Hero Text Content */}
       <div className="hero-copy relative z-20 flex flex-col items-center px-4 text-center animate-fade-in">
-        <p className="hero-kicker">Jinssi Gaming · a cozy field guide</p>
         <h1 className="hero-title">
-          Make room for
-          <span>a little calm.</span>
+          Your field guide to cozy games.
         </h1>
-        <p className="hero-description">
-          Visual walkthroughs for the small, satisfying worlds worth taking your time with.
+        <p className="hero-description mt-4">
+          Clear, step-by-step visual walkthroughs to help you get unstuck and back to relaxing.
         </p>
       </div>
       

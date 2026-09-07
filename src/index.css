@@ -108,16 +108,6 @@
     max-width: 48rem;
   }
 
-  .hero-kicker {
-    margin-bottom: 0.85rem;
-    color: #8f5a33;
-    font-size: 0.76rem;
-    font-weight: 900;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.9);
-  }
-
   .hero-title {
     margin: 0;
     color: #3a2e22;
@@ -127,12 +117,6 @@
     letter-spacing: 0;
     line-height: 0.94;
     text-shadow: 0.12rem 0.14rem 0 #f9ede0, 0 0 1.2rem rgba(255, 255, 255, 0.9);
-  }
-
-  .hero-title span {
-    display: block;
-    color: #8f5a33;
-    font-style: italic;
   }
 
   .hero-description {
