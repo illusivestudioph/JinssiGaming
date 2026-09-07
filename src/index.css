@@ -308,6 +308,23 @@
     z-index: 2;
   }
 
+  .game-complete-sticker {
+    position: absolute;
+    top: 1.25rem;
+    right: -0.65rem;
+    z-index: 5;
+    padding: 0.45rem 0.85rem;
+    color: #3a2e22;
+    background: #cfe0c8;
+    border: 0.14rem solid #5e5148;
+    border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+    box-shadow: 0.18rem 0.22rem 0 #a8c89e;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    transform: rotate(4deg);
+  }
+
   .game-doodle-content {
     position: relative;
     z-index: 2;

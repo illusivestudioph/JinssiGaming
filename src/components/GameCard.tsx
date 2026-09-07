@@ -30,6 +30,12 @@ export function GameCard({ game, onClick, completedCount = 0 }: GameCardProps) {
     >
       <span className="game-doodle game-doodle-swirl" aria-hidden="true">〰</span>
 
+      {allDone && (
+        <span className="game-complete-sticker animate-pop">
+          Complete!
+        </span>
+      )}
+
       {/* Image header */}
       <div className="game-card-photo">
         <img
@@ -38,11 +44,6 @@ export function GameCard({ game, onClick, completedCount = 0 }: GameCardProps) {
           loading="lazy"
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />
-        {allDone && (
-          <span className="absolute -top-3 -right-3 pill bg-sage-300 text-sage-500 font-bold shadow-cozy-sm animate-pop z-10">
-            Complete!
-          </span>
-        )}
       </div>
 
       {/* Card body */}
