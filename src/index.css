@@ -123,13 +123,13 @@
 
   .game-catalog-grid {
     position: relative;
-    padding-top: 1.25rem;
+    padding-top: 2.25rem;
   }
 
   .game-catalog-grid::before {
     content: 'Choose your next tidy-up';
     position: absolute;
-    top: 0;
+    top: 0.35rem;
     left: 0.25rem;
     color: #a88e63;
     font-size: 0.7rem;
