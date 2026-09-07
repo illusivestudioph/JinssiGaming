@@ -204,6 +204,12 @@
     background: #f9ede0;
   }
 
+  .music-control-error {
+    color: #8f5a33;
+    font-size: 0.7rem;
+    font-weight: 800;
+  }
+
   .completion-confetti {
     position: absolute;
     top: -2rem;
