@@ -16,12 +16,11 @@ export function Hero() {
       <div className="absolute inset-0 bg-gradient-to-t from-cream-100/95 from-0% via-cream-100/55 via-45% to-transparent z-10" />
 
       {/* Hero Text Content */}
-      <div className="hero-copy relative z-20 flex flex-col items-center px-4 text-center animate-fade-in">
-        <h1 className="hero-title">
-          Your field guide
-          <span>to cozy games.</span>
+      <div className="hero-copy relative z-20 flex flex-col items-center justify-center px-4 text-center animate-fade-in">
+        <h1 className="hero-title max-w-3xl mx-auto">
+          Your field guide to cozy games.
         </h1>
-        <p className="hero-description mt-4">
+        <p className="hero-description mt-4 max-w-2xl mx-auto">
           Clear, step-by-step visual walkthroughs to help you get unstuck and back to relaxing.
         </p>
       </div>
