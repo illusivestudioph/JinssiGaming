@@ -40,7 +40,71 @@
     @apply rounded-full px-3 py-1 text-xs font-semibold;
   }
   .btn-cozy {
-    @apply rounded-full px-6 py-3 font-semibold transition-all duration-300 shadow-cozy-sm;
+    @apply site-button rounded-full px-6 py-3;
+  }
+
+  .site-button {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border-2 border-transparent px-4 py-2.5 font-bold transition-all duration-200;
+    box-shadow: 0 2px 0 rgba(180, 140, 100, 0.2);
+  }
+
+  .site-button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 0 rgba(180, 140, 100, 0.24);
+  }
+
+  .site-button:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 1px 0 rgba(180, 140, 100, 0.2);
+  }
+
+  .site-button:focus-visible,
+  .site-nav-link:focus-visible,
+  .page-title:focus-visible {
+    outline: 3px solid #ffb0a0;
+    outline-offset: 3px;
+  }
+
+  .site-nav-link {
+    position: relative;
+    padding: 0.45rem 0.65rem;
+    font-weight: 800;
+    transition: color 200ms ease, transform 200ms ease;
+  }
+
+  .site-nav-link::after {
+    content: '';
+    position: absolute;
+    right: 0.65rem;
+    bottom: 0.15rem;
+    left: 0.65rem;
+    height: 0.18rem;
+    border-radius: 999px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform 200ms ease;
+  }
+
+  .site-nav-link:hover {
+    color: #e05a3a;
+    transform: translateY(-1px);
+  }
+
+  .site-nav-link:hover::after,
+  .site-nav-link[aria-current='page']::after {
+    transform: scaleX(1);
+  }
+
+  .page-title {
+    display: inline-block;
+    transition: color 250ms ease, transform 250ms ease, text-shadow 250ms ease;
+  }
+
+  .page-title:hover {
+    color: #b07240;
+    transform: translateY(-2px) rotate(-1deg);
+    text-shadow: 3px 3px 0 #f4e6d1;
   }
   .check-circle {
     @apply w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300 cursor-pointer flex-shrink-0;

@@ -107,7 +107,7 @@ export function CtaFooter() {
             <button
               type="submit"
               disabled={newsletterSubmitting}
-              className="rounded-xl bg-peach-400 px-5 py-3 font-bold text-white shadow-cozy-sm transition-colors hover:bg-peach-500"
+              className="site-button bg-peach-400 text-white hover:bg-peach-500"
             >
               {newsletterSubmitting ? 'Saving...' : newsletterSubmitted ? 'Subscribed!' : 'Subscribe'}
             </button>
@@ -131,7 +131,7 @@ export function CtaFooter() {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => handleLinkClick(e, link)}
-                className={`font-bold py-3 px-7 rounded-full transition-all hover:-translate-y-1 flex items-center gap-2 border-2 cursor-pointer ${
+                className={`site-button py-3 px-7 cursor-pointer ${
                   index === 0 
                     ? 'bg-peach-400 border-peach-400 text-white hover:bg-peach-500 hover:border-peach-500 shadow-cozy-sm' 
                     : 'bg-cream-50 border-tan-200 text-ink-900 hover:border-peach-400 hover:text-peach-600'

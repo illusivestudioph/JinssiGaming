@@ -136,7 +136,7 @@ function WalkthroughsPage({
         <div className="inline-flex items-center gap-2 pill bg-earth-100 text-earth-500 mb-4">
           <span className="font-bold">Step-by-step guides</span>
         </div>
-        <h2 className="font-display text-3xl sm:text-5xl font-700 text-ink-900 mb-4 leading-tight">
+        <h2 className="page-title font-display text-3xl sm:text-5xl font-700 text-ink-900 mb-4 leading-tight">
           Walkthroughs
         </h2>
         <p className="text-base sm:text-lg text-tan-500 max-w-2xl mx-auto leading-relaxed">

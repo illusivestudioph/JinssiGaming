@@ -54,8 +54,8 @@ export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View)
           </div>
 
           <nav className="flex gap-4">
-            <button onClick={() => onNavigate('home')} className={`font-semibold ${view === 'home' ? 'text-peach-500' : 'text-tan-600'}`}>Home</button>
-            <button onClick={() => onNavigate('walkthroughs')} className={`font-semibold ${view === 'walkthroughs' ? 'text-peach-500' : 'text-tan-600'}`}>Walkthroughs</button>
+            <button aria-current={view === 'home' ? 'page' : undefined} onClick={() => onNavigate('home')} className={`site-nav-link ${view === 'home' ? 'text-peach-500' : 'text-tan-600'}`}>Home</button>
+            <button aria-current={view === 'walkthroughs' ? 'page' : undefined} onClick={() => onNavigate('walkthroughs')} className={`site-nav-link ${view === 'walkthroughs' ? 'text-peach-500' : 'text-tan-600'}`}>Walkthroughs</button>
             {view === 'admin' && <span className="font-bold text-earth-500 ml-4">Admin Mode</span>}
           </nav>
         </div>
@@ -86,7 +86,7 @@ export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View)
                 className="px-4 py-3 rounded-xl border-2 border-tan-200 focus:border-peach-400 focus:outline-none bg-white font-mono"
               />
               {error && <p className="text-red-500 text-sm font-semibold text-center">{error}</p>}
-              <button type="submit" className="bg-earth-500 text-white font-bold py-3 rounded-xl hover:bg-earth-600 transition-colors">
+              <button type="submit" className="site-button w-full bg-earth-500 text-white hover:bg-earth-600">
                 Unlock Dashboard
               </button>
             </form>

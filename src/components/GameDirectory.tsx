@@ -43,7 +43,7 @@ export function GameDirectory({ onSelectGame, progressMap }: GameDirectoryProps)
           <BookOpen className="w-4 h-4" />
           <span>The Jinssi field guide</span>
         </div>
-        <h2 className="game-directory-title">Pick a little world to tidy up</h2>
+        <h2 className="game-directory-title page-title">Pick a little world to tidy up</h2>
         <p className="game-directory-copy">
           Cozy checklists for shelves, shops, ponds, cellars, and every charming mess in between.
         </p>

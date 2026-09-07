@@ -126,7 +126,7 @@ export function AdminDashboard() {
         <form onSubmit={handleSaveGame} className="bg-white rounded-2xl p-8 border-2 border-tan-200 shadow-sm">
           <div className="flex justify-between items-center border-b-2 border-tan-100 pb-4 mb-6">
             <h2 className="text-3xl font-display font-bold text-ink-900">Edit Game</h2>
-            <button type="submit" className="bg-earth-500 hover:bg-earth-600 text-white px-6 py-2 rounded-xl font-bold flex items-center gap-2 transition-colors">
+            <button type="submit" className="site-button bg-earth-500 text-white hover:bg-earth-600">
               <Save size={18} /> Save Changes
             </button>
           </div>

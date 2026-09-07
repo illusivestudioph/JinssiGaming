@@ -171,7 +171,7 @@ export function CommentSection({ gameId }: { gameId: string }) {
             <button 
               type="submit"
               disabled={!newComment.trim()}
-              className="self-end bg-peach-500 hover:bg-peach-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-2 px-6 rounded-xl transition-colors flex items-center gap-2"
+              className="site-button self-end bg-peach-500 text-white hover:bg-peach-600 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Send size={16} /> Post Note
             </button>
@@ -183,7 +183,7 @@ export function CommentSection({ gameId }: { gameId: string }) {
             </div>
             <h4 className="text-lg font-bold text-ink-900 mb-2">Join the conversation</h4>
             <p className="text-tan-600 mb-6 font-medium">Create a free account to leave comments, ask questions, and help fellow gamers.</p>
-            <button onClick={() => { setAuthMode('sign-in'); setAuthMessage(''); setShowAuth(true); }} className="bg-earth-500 hover:bg-earth-600 text-white font-bold py-3 px-8 rounded-xl transition-colors flex items-center gap-2 shadow-sm">
+            <button onClick={() => { setAuthMode('sign-in'); setAuthMessage(''); setShowAuth(true); }} className="site-button bg-earth-500 text-white hover:bg-earth-600">
               <LogIn size={18} /> Sign In or Register
             </button>
             {authMessage && <p className="mt-4 text-sm font-semibold text-rose-500">{authMessage}</p>}
@@ -225,7 +225,7 @@ export function CommentSection({ gameId }: { gameId: string }) {
             <input required type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email address" className="mb-3 w-full rounded-xl border-2 border-tan-200 bg-white px-4 py-3 focus:border-peach-400 focus:outline-none" />
             <input required minLength={6} type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password (6+ characters)" className="mb-4 w-full rounded-xl border-2 border-tan-200 bg-white px-4 py-3 focus:border-peach-400 focus:outline-none" />
             {authMessage && <p className="mb-4 text-sm font-semibold text-rose-500">{authMessage}</p>}
-            <button disabled={busy} className="w-full rounded-xl bg-earth-500 py-3 font-bold text-white hover:bg-earth-600 disabled:opacity-50">{busy ? 'Please wait...' : authMode === 'register' ? 'Register' : 'Sign in'}</button>
+            <button disabled={busy} className="site-button w-full bg-earth-500 text-white hover:bg-earth-600 disabled:opacity-50">{busy ? 'Please wait...' : authMode === 'register' ? 'Register' : 'Sign in'}</button>
             <button type="button" onClick={() => { setAuthMode(authMode === 'register' ? 'sign-in' : 'register'); setAuthMessage(''); }} className="mt-4 w-full text-sm font-bold text-tan-600 hover:text-peach-500">{authMode === 'register' ? 'Already have an account? Sign in' : 'Need an account? Register'}</button>
           </form>
         </div>

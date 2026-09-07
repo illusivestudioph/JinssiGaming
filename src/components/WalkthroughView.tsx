@@ -77,7 +77,7 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
           </span>
         </div>
         <div className="p-6">
-          <h2 className="font-display text-2xl sm:text-3xl font-700 text-ink-900 mb-1">
+          <h2 className="page-title font-display text-2xl sm:text-3xl font-700 text-ink-900 mb-1">
             {game.title}
           </h2>
           <p className="text-sm text-tan-400 font-semibold mb-3">
@@ -123,7 +123,7 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
       <div className="flex items-center justify-between mb-8 gap-4 flex-wrap">
         <button
           onClick={toggleSpoilers}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-cream-50 border-2 border-cream-300 shadow-cozy-sm hover:border-peach-300 transition-all duration-300"
+          className="site-button bg-cream-50 text-ink-900 border-cream-300 hover:border-peach-300"
         >
           {showSpoilers ? (
             <Eye className="w-4 h-4 text-peach-400" />
@@ -148,7 +148,7 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
 
         <button
           onClick={resetProgress}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-full text-tan-500 hover:text-rose-500 hover:bg-rose-100 transition-all duration-300 text-sm font-semibold"
+          className="site-button border-transparent text-tan-500 hover:text-rose-500 hover:bg-rose-100 text-sm"
         >
           <RotateCcw className="w-4 h-4" />
           Reset progress

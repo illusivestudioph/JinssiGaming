@@ -7,7 +7,7 @@ export function AboutPage() {
         <div className="inline-flex items-center gap-2 pill bg-peach-100 text-peach-500 mb-4">
           <span className="font-bold">About us</span>
         </div>
-        <h2 className="font-display text-3xl sm:text-4xl font-700 text-ink-900 mb-4 leading-tight">
+        <h2 className="page-title font-display text-3xl sm:text-4xl font-700 text-ink-900 mb-4 leading-tight">
           A cozy corner for
           <br className="sm:hidden" /> walkthrough lovers
         </h2>
@@ -67,7 +67,7 @@ export function AboutPage() {
         <div className="flex flex-col sm:flex-row gap-3">
           <a
             href="#newsletter"
-            className="btn-cozy bg-peach-400 text-cream-50 hover:bg-peach-500 hover:shadow-cozy-lg flex items-center gap-2 justify-center"
+            className="btn-cozy site-button bg-peach-400 text-cream-50 hover:bg-peach-500 hover:shadow-cozy-lg"
           >
             <span>Subscribe to updates</span>
           </a>
@@ -75,7 +75,7 @@ export function AboutPage() {
             href="https://www.threads.net/@jinssicruise"
             target="_blank"
             rel="noopener noreferrer"
-            className="btn-cozy bg-cream-50 text-ink-900 border-2 border-cream-300 hover:border-peach-300 flex items-center gap-2 justify-center"
+            className="btn-cozy site-button bg-cream-50 text-ink-900 border-2 border-cream-300 hover:border-peach-300"
           >
             <span className="font-display font-700 text-sm">Threads</span>
             <span className="text-tan-400 text-sm">@jinssi cruise</span>
@@ -84,7 +84,7 @@ export function AboutPage() {
             href="https://www.tiktok.com/@jinssicruise"
             target="_blank"
             rel="noopener noreferrer"
-            className="btn-cozy bg-cream-50 text-ink-900 border-2 border-cream-300 hover:border-peach-300 flex items-center gap-2 justify-center"
+            className="btn-cozy site-button bg-cream-50 text-ink-900 border-2 border-cream-300 hover:border-peach-300"
           >
             <span className="font-display font-700 text-sm">TikTok</span>
             <span className="text-tan-400 text-sm">@jinssi cruise</span>
