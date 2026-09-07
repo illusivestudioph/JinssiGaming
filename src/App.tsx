@@ -5,6 +5,11 @@ import { GameDirectory } from '@/components/GameDirectory';
 import { WalkthroughView } from '@/components/WalkthroughView';
 import { CtaFooter } from '@/components/CtaFooter';
 import { AboutPage } from '@/components/AboutPage';
+import { PrivacyPolicyPage } from '@/components/PrivacyPolicyPage';
+import { TermsPage } from '@/components/TermsPage';
+import { ContactPage } from '@/components/ContactPage';
+import { CookieConsent } from '@/components/CookieConsent';
+import { AdSenseUnit } from '@/components/AdSenseUnit';
 import { ArrowRight } from 'lucide-react';
 
 // 1. Context Provider
@@ -25,8 +30,10 @@ function App() {
 function AppContent() {
   const { games } = useSiteContent();
   const [view, setView] = useState<View>(() => {
+    const hashView = getHashView();
+    if (hashView) return hashView;
     const savedView = sessionStorage.getItem('jinssi-view');
-    return savedView === 'walkthroughs' || savedView === 'about' || savedView === 'admin'
+    return savedView === 'walkthroughs' || savedView === 'about' || savedView === 'privacy' || savedView === 'terms' || savedView === 'contact' || savedView === 'admin'
       ? savedView
       : 'home';
   });
@@ -39,6 +46,18 @@ function AppContent() {
     if (selectedGameId) sessionStorage.setItem('jinssi-selected-game', selectedGameId);
     else sessionStorage.removeItem('jinssi-selected-game');
   }, [view, selectedGameId]);
+
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hashView = getHashView();
+      if (hashView) {
+        setSelectedGameId(null);
+        setView(hashView);
+      }
+    };
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
 
   useEffect(() => {
     const map: Record<string, number> = {};
@@ -60,6 +79,7 @@ function AppContent() {
   const handleNavigate = (newView: View) => {
     setView(newView);
     setSelectedGameId(null);
+    window.history.replaceState(null, '', newView === 'home' ? window.location.pathname : `#${newView}`);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -89,6 +109,7 @@ function AppContent() {
           <Hero />
           <div className="py-8">
             <GameDirectory onSelectGame={handleSelectGame} progressMap={progressMap} />
+            <AdSenseUnit slot={import.meta.env.VITE_ADSENSE_SLOT || ''} />
           </div>
         </>
       );
@@ -107,6 +128,10 @@ function AppContent() {
       return <AboutPage />;
     }
 
+    if (view === 'privacy') return <PrivacyPolicyPage />;
+    if (view === 'terms') return <TermsPage />;
+    if (view === 'contact') return <ContactPage />;
+
     return null;
   };
 
@@ -116,9 +141,18 @@ function AppContent() {
 
       <main className="flex-1">{renderMainContent()}</main>
 
-      <CtaFooter />
+      <CtaFooter onNavigate={handleNavigate} />
+      <CookieConsent />
     </div>
   );
+}
+
+function getHashView(): View | null {
+  if (typeof window === 'undefined') return null;
+  const hash = window.location.hash.slice(1);
+  return hash === 'privacy' || hash === 'terms' || hash === 'contact' || hash === 'about' || hash === 'walkthroughs'
+    ? hash
+    : null;
 }
 
 function WalkthroughsPage({
@@ -200,6 +234,7 @@ function WalkthroughsPage({
           );
         })}
       </div>
+      <AdSenseUnit slot={import.meta.env.VITE_ADSENSE_SLOT || ''} />
     </div>
   );
 }

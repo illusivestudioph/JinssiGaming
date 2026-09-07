@@ -3,7 +3,7 @@ import { useSiteContent, type CtaLink, type WalletOption } from '@/context/SiteC
 import { supabase } from '@/lib/supabase';
 import { Coffee, X, Copy, Check } from 'lucide-react';
 
-export function CtaFooter() {
+export function CtaFooter({ onNavigate }: { onNavigate: (view: 'about' | 'privacy' | 'terms' | 'contact') => void }) {
   const { ctaLinks, logoImage } = useSiteContent();
   const [activeModalLink, setActiveModalLink] = useState<CtaLink | null>(null);
   const [selectedWallet, setSelectedWallet] = useState<WalletOption | null>(null);
@@ -265,7 +265,12 @@ export function CtaFooter() {
 
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-sm font-semibold text-tan-400">
             <p>© 2026 Jinssi Gaming. All rights reserved.</p>
-            <p>Site developed by <span className="text-ink-900 font-bold">Mary Jane S. Cruz</span></p>
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              <button type="button" onClick={() => onNavigate('privacy')} className="hover:text-peach-500 transition-colors">Privacy</button>
+              <button type="button" onClick={() => onNavigate('terms')} className="hover:text-peach-500 transition-colors">Terms</button>
+              <button type="button" onClick={() => onNavigate('contact')} className="hover:text-peach-500 transition-colors">Contact</button>
+              <span>Site developed by <span className="text-ink-900 font-bold">Mary Jane S. Cruz</span></span>
+            </div>
           </div>
         </div>
       </footer>

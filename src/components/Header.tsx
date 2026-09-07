@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useSiteContent } from "@/context/SiteContentContext";
 import { Lock, X } from 'lucide-react';
 
-export type View = 'home' | 'walkthroughs' | 'about' | 'admin';
+export type View = 'home' | 'walkthroughs' | 'about' | 'privacy' | 'terms' | 'contact' | 'admin';
 
 export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View) => void }) {
   const { logoImage } = useSiteContent();
@@ -56,6 +56,7 @@ export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View)
           <nav className="flex gap-4">
             <button aria-current={view === 'home' ? 'page' : undefined} onClick={() => onNavigate('home')} className={`site-nav-link ${view === 'home' ? 'text-peach-500' : 'text-tan-600'}`}>Home</button>
             <button aria-current={view === 'walkthroughs' ? 'page' : undefined} onClick={() => onNavigate('walkthroughs')} className={`site-nav-link ${view === 'walkthroughs' ? 'text-peach-500' : 'text-tan-600'}`}>Walkthroughs</button>
+            <button aria-current={view === 'about' ? 'page' : undefined} onClick={() => onNavigate('about')} className={`site-nav-link ${view === 'about' ? 'text-peach-500' : 'text-tan-600'}`}>About</button>
             {view === 'admin' && <span className="font-bold text-earth-500 ml-4">Admin Mode</span>}
           </nav>
         </div>
