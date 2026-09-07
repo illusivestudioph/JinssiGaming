@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useSiteContent, type CtaLink, type WalletOption } from '@/context/SiteContentContext';
 import { supabase } from '@/lib/supabase';
-import { Sparkles, Coffee, X, Copy, Check } from 'lucide-react';
+import { Coffee, X, Copy, Check } from 'lucide-react';
 
 export function CtaFooter() {
   const { ctaLinks, logoImage } = useSiteContent();
@@ -80,7 +80,6 @@ export function CtaFooter() {
       <div className="max-w-5xl mx-auto px-4 py-16 w-full">
         <div className="site-cta-panel p-10 text-center">
           <div className="site-section-kicker inline-flex items-center gap-2 mb-3 px-4 py-1.5 rounded-full text-sm uppercase tracking-wider">
-            <Sparkles size={16} />
             <span>Join the community</span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-display font-bold text-ink-900 mb-3">

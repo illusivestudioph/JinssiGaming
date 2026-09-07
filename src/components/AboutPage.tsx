@@ -1,11 +1,10 @@
-import { Heart, Gamepad2, BookOpen, Sparkles } from 'lucide-react';
+import { Heart, Gamepad2, BookOpen } from 'lucide-react';
 
 export function AboutPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
       <div className="text-center mb-10 animate-fade-in">
         <div className="inline-flex items-center gap-2 pill bg-peach-100 text-peach-500 mb-4">
-          <Sparkles className="w-3.5 h-3.5" />
           <span className="font-bold">About us</span>
         </div>
         <h2 className="font-display text-3xl sm:text-4xl font-700 text-ink-900 mb-4 leading-tight">

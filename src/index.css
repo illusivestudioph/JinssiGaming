@@ -76,6 +76,18 @@
     animation: game-card-float 6s ease-in-out infinite;
   }
 
+  .completion-notepad-card {
+    display: block;
+    min-height: 0;
+    padding: 3rem 2rem 2rem;
+    overflow: visible;
+    animation: none;
+  }
+
+  .completion-notepad-card::before {
+    z-index: 20;
+  }
+
   .game-directory-intro {
     max-width: 48rem;
     margin: 0 auto 1.5rem;
@@ -220,22 +232,6 @@
     pointer-events: none;
   }
 
-  .game-doodle-star {
-    top: 1.5rem;
-    right: 1rem;
-    color: #ffdf6c;
-    font-size: 1.8rem;
-    animation: game-pulse-sparkle 3s infinite alternate ease-in-out;
-  }
-
-  .game-doodle-sparkle {
-    top: 5rem;
-    left: 1rem;
-    color: #c6e377;
-    font-size: 1.5rem;
-    animation: game-pulse-sparkle 2.5s infinite alternate-reverse ease-in-out;
-  }
-
   .game-doodle-swirl {
     right: 0.5rem;
     bottom: 1.5rem;
@@ -334,11 +330,6 @@
     display: inline-flex;
     align-items: center;
     gap: 0.45rem;
-  }
-
-  .site-newsletter-details span::before {
-    content: '✦';
-    color: #d47f63;
   }
 
   .site-support-note {

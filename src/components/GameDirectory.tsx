@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { categories, type Game } from '@/data/games';
 import { useSiteContent } from '@/context/SiteContentContext';
 import { GameCard } from './GameCard';
-import { Search, SlidersHorizontal, BookOpen, Sparkles, Quote } from 'lucide-react';
+import { Search, SlidersHorizontal, BookOpen, Quote } from 'lucide-react';
 
 interface GameDirectoryProps {
   onSelectGame: (game: Game) => void;
@@ -42,7 +42,6 @@ export function GameDirectory({ onSelectGame, progressMap }: GameDirectoryProps)
         <div className="game-directory-kicker">
           <BookOpen className="w-4 h-4" />
           <span>The Jinssi field guide</span>
-          <Sparkles className="w-4 h-4" />
         </div>
         <h2 className="game-directory-title">Pick a little world to tidy up</h2>
         <p className="game-directory-copy">
@@ -153,8 +152,6 @@ function QuoteCard({ games }: { games: Game[] }) {
 
   return (
     <article className="game-doodle-card game-quote-card" aria-label="A cozy gaming note">
-      <span className="game-doodle game-doodle-star" aria-hidden="true">✦</span>
-      <span className="game-doodle game-doodle-sparkle" aria-hidden="true">✦</span>
       <div className="game-quote-content">
         <Quote className="game-quote-icon" aria-hidden="true" />
         <p className="game-quote-text">“{featuredQuote}”</p>

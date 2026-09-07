@@ -28,8 +28,6 @@ export function GameCard({ game, onClick, completedCount = 0 }: GameCardProps) {
       className="game-doodle-card text-left w-full group focus:outline-none focus-visible:ring-2 focus-visible:ring-peach-300"
       style={{ '--game-accent': game.accentColor } as React.CSSProperties}
     >
-      <span className="game-doodle game-doodle-star" aria-hidden="true">✦</span>
-      <span className="game-doodle game-doodle-sparkle" aria-hidden="true">✦</span>
       <span className="game-doodle game-doodle-swirl" aria-hidden="true">〰</span>
 
       {/* Image header */}

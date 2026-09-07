@@ -10,7 +10,6 @@ import {
   RotateCcw,
   BookOpen,
   ChevronDown,
-  Sparkles,
   X,
 } from 'lucide-react';
 
@@ -198,7 +197,7 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
           </div>
 
           <div
-            className="relative z-10 w-full max-w-md overflow-hidden rounded-3xl border-4 border-cream-50 bg-cream-50 p-8 text-center shadow-cozy-lg animate-pop sm:p-10"
+            className="game-doodle-card completion-notepad-card relative z-10 w-full max-w-md text-center animate-pop"
             role="dialog"
             aria-modal="true"
             aria-labelledby="congratulations-title"
@@ -211,11 +210,8 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
             >
               <X className="h-5 w-5" />
             </button>
-            <div
-              className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full"
-              style={{ backgroundColor: `${game.accentColor}33`, color: game.accentColor }}
-            >
-              <Sparkles className="h-9 w-9" aria-hidden="true" />
+            <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-sage-200 text-sage-500">
+              <Check className="h-9 w-9" strokeWidth={3} aria-hidden="true" />
             </div>
             <p className="mb-2 font-display text-3xl font-700 text-ink-900" id="congratulations-title">
               Congratulations!
