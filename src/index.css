@@ -128,6 +128,29 @@
     box-shadow: 3px 3px 0 #d9a472;
   }
 
+  .daily-challenge-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.65rem;
+    color: #a88e63;
+    background: #f4e6d1;
+    border: 2px dashed #d0bd9e;
+    border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    transform: rotate(2deg);
+  }
+
+  .daily-challenge-badge-earned {
+    color: #3a2e22;
+    background: #cfe0c8;
+    border-style: solid;
+    border-color: #82ad76;
+    box-shadow: 2px 2px 0 #a8c89e;
+    animation: pop 0.3s ease-out;
+  }
+
   .legal-copy h2 {
     color: #3a2e22;
     font-family: 'Fredoka', 'Nunito', sans-serif;
