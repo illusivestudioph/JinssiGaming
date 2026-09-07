@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useSiteContent } from "@/context/SiteContentContext";
-import { Lock, X } from 'lucide-react';
+import { Lock, Menu, X } from 'lucide-react';
 
 export type View = 'home' | 'walkthroughs' | 'about' | 'privacy' | 'terms' | 'contact' | 'admin';
 
@@ -12,6 +12,7 @@ export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View)
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const clickTimer = useRef<NodeJS.Timeout | null>(null);
 
   const handleLogoClick = () => {
@@ -42,6 +43,11 @@ export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View)
     }
   };
 
+  const handleNavigate = (nextView: View) => {
+    setMobileMenuOpen(false);
+    onNavigate(nextView);
+  };
+
   return (
     <>
       <header className="bg-cream-100 border-b-2 border-tan-200 sticky top-0 z-40">
@@ -53,13 +59,34 @@ export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View)
             <h1 className="font-display font-bold text-xl text-ink-900">Jinssi</h1>
           </div>
 
-          <nav className="flex gap-4">
-            <button aria-current={view === 'home' ? 'page' : undefined} onClick={() => onNavigate('home')} className={`site-nav-link ${view === 'home' ? 'text-peach-500' : 'text-tan-600'}`}>Home</button>
-            <button aria-current={view === 'walkthroughs' ? 'page' : undefined} onClick={() => onNavigate('walkthroughs')} className={`site-nav-link ${view === 'walkthroughs' ? 'text-peach-500' : 'text-tan-600'}`}>Walkthroughs</button>
-            <button aria-current={view === 'about' ? 'page' : undefined} onClick={() => onNavigate('about')} className={`site-nav-link ${view === 'about' ? 'text-peach-500' : 'text-tan-600'}`}>About</button>
+          <nav className="hidden items-center gap-4 md:flex">
+            <button aria-current={view === 'home' ? 'page' : undefined} onClick={() => handleNavigate('home')} className={`site-nav-link ${view === 'home' ? 'text-peach-500' : 'text-tan-600'}`}>Home</button>
+            <button aria-current={view === 'walkthroughs' ? 'page' : undefined} onClick={() => handleNavigate('walkthroughs')} className={`site-nav-link ${view === 'walkthroughs' ? 'text-peach-500' : 'text-tan-600'}`}>Walkthroughs</button>
+            <button aria-current={view === 'about' ? 'page' : undefined} onClick={() => handleNavigate('about')} className={`site-nav-link ${view === 'about' ? 'text-peach-500' : 'text-tan-600'}`}>About</button>
             {view === 'admin' && <span className="font-bold text-earth-500 ml-4">Admin Mode</span>}
           </nav>
+
+          <button
+            type="button"
+            className="rounded-xl border-2 border-tan-200 bg-cream-50 p-2 text-tan-600 shadow-cozy-sm transition-colors hover:border-peach-300 hover:text-peach-500 md:hidden"
+            onClick={() => setMobileMenuOpen((open) => !open)}
+            aria-expanded={mobileMenuOpen}
+            aria-controls="mobile-navigation"
+            aria-label={mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+          >
+            {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
         </div>
+
+        {mobileMenuOpen && (
+          <nav id="mobile-navigation" className="border-t-2 border-tan-200 px-4 py-3 md:hidden">
+            <div className="flex flex-col gap-1">
+              <button aria-current={view === 'home' ? 'page' : undefined} onClick={() => handleNavigate('home')} className={`site-nav-link text-left ${view === 'home' ? 'text-peach-500' : 'text-tan-600'}`}>Home</button>
+              <button aria-current={view === 'walkthroughs' ? 'page' : undefined} onClick={() => handleNavigate('walkthroughs')} className={`site-nav-link text-left ${view === 'walkthroughs' ? 'text-peach-500' : 'text-tan-600'}`}>Walkthroughs</button>
+              <button aria-current={view === 'about' ? 'page' : undefined} onClick={() => handleNavigate('about')} className={`site-nav-link text-left ${view === 'about' ? 'text-peach-500' : 'text-tan-600'}`}>About</button>
+            </div>
+          </nav>
+        )}
       </header>
 
       {/* SECRET AUTH MODAL */}
