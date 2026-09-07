@@ -46,6 +46,13 @@
     @apply w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300 cursor-pointer flex-shrink-0;
   }
 
+  .completion-confetti {
+    position: absolute;
+    top: -2rem;
+    border-radius: 2px;
+    animation: completion-confetti-fall linear infinite;
+  }
+
   .game-doodle-card {
     --game-bg: #fdfbf7;
     --game-ink: #2c2c2c;
@@ -425,6 +432,18 @@
 @keyframes game-rotate-doodle {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+@keyframes completion-confetti-fall {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, -8vh, 0) rotate(0deg);
+  }
+  10% { opacity: 1; }
+  100% {
+    opacity: 0.9;
+    transform: translate3d(8vw, 112vh, 0) rotate(720deg);
+  }
 }
 
 @keyframes game-photo-breathe {

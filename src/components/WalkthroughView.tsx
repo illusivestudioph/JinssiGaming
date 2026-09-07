@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { Game, WalkthroughSection } from '@/data/games';
 import { useProgress } from '@/hooks/useProgress';
 import { CommentSection } from './CommentSection';
@@ -11,7 +11,17 @@ import {
   BookOpen,
   ChevronDown,
   Sparkles,
+  X,
 } from 'lucide-react';
+
+const confettiColors = ['#ff8c75', '#82ad76', '#e0bf91', '#c0bbfe', '#f0a8a8'];
+const confettiPieces = Array.from({ length: 56 }, (_, index) => ({
+  left: `${(index * 37) % 101}%`,
+  delay: `${(index % 14) * 0.17}s`,
+  duration: `${3.2 + (index % 7) * 0.35}s`,
+  color: confettiColors[index % confettiColors.length],
+  size: `${7 + (index % 4) * 2}px`,
+}));
 
 interface WalkthroughViewProps {
   game: Game;
@@ -28,6 +38,12 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
   );
   const completedCount = completedSteps.size;
   const progressPercent = totalSteps > 0 ? Math.round((completedCount / totalSteps) * 100) : 0;
+  const isComplete = progressPercent === 100 && totalSteps > 0;
+  const [showCongratulations, setShowCongratulations] = useState(false);
+
+  useEffect(() => {
+    if (isComplete) setShowCongratulations(true);
+  }, [isComplete]);
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -102,12 +118,6 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
             )}
           </div>
         </div>
-        {progressPercent === 100 && totalSteps > 0 && (
-          <div className="flex items-center gap-2 mt-3 text-sage-500 font-semibold text-sm animate-pop">
-            <Sparkles className="w-4 h-4" />
-            <span>You completed this walkthrough! Great job!</span>
-          </div>
-        )}
       </div>
 
       {/* Spoiler toggle + reset */}
@@ -160,39 +170,62 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
           />
         ))}
 
-        {progressPercent === 100 && totalSteps > 0 && (
-          <div
-            className="cozy-card relative overflow-hidden border-2 border-sage-300 bg-sage-100 p-6 text-center animate-pop sm:p-8"
-            role="status"
-          >
-            <div
-              className="absolute -right-8 -top-8 h-24 w-24 rounded-full opacity-20"
-              style={{ backgroundColor: game.accentColor }}
-            />
-            <div
-              className="absolute -bottom-10 -left-6 h-24 w-24 rounded-full opacity-20"
-              style={{ backgroundColor: game.accentColor }}
-            />
-            <Sparkles
-              className="relative mx-auto mb-3 h-9 w-9"
-              style={{ color: game.accentColor }}
-              aria-hidden="true"
-            />
-            <p className="relative mb-1 font-display text-2xl font-700 text-ink-900">
-              Congratulations!
-            </p>
-            <p className="relative mx-auto max-w-lg text-sm font-semibold leading-relaxed text-ink-700">
-              You completed every step in the {game.title} walkthrough. Enjoy the
-              satisfaction of a job well done!
-            </p>
-          </div>
-        )}
       </div>
 
       {/* Community Comments Section */}
       <div className="mt-16 pt-8 border-t-2 border-tan-200">
         <CommentSection gameId={game.id} />
       </div>
+
+      {showCongratulations && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center overflow-hidden p-4">
+          <div className="absolute inset-0 bg-ink-900/70 backdrop-blur-sm" aria-hidden="true" />
+          <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+            {confettiPieces.map((piece, index) => (
+              <span
+                key={index}
+                className="completion-confetti"
+                style={{
+                  left: piece.left,
+                  width: piece.size,
+                  height: `${Number.parseInt(piece.size, 10) * 1.6}px`,
+                  backgroundColor: piece.color,
+                  animationDelay: piece.delay,
+                  animationDuration: piece.duration,
+                }}
+              />
+            ))}
+          </div>
+
+          <div
+            className="relative z-10 w-full max-w-md overflow-hidden rounded-3xl border-4 border-cream-50 bg-cream-50 p-8 text-center shadow-cozy-lg animate-pop sm:p-10"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="congratulations-title"
+          >
+            <button
+              type="button"
+              onClick={() => setShowCongratulations(false)}
+              className="absolute right-4 top-4 rounded-full p-2 text-tan-500 transition-colors hover:bg-cream-200 hover:text-ink-900"
+              aria-label="Close congratulations"
+            >
+              <X className="h-5 w-5" />
+            </button>
+            <div
+              className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full"
+              style={{ backgroundColor: `${game.accentColor}33`, color: game.accentColor }}
+            >
+              <Sparkles className="h-9 w-9" aria-hidden="true" />
+            </div>
+            <p className="mb-2 font-display text-3xl font-700 text-ink-900" id="congratulations-title">
+              Congratulations!
+            </p>
+            <p className="text-base font-semibold leading-relaxed text-ink-700">
+              You completed every step in the {game.title} walkthrough. Great job!
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
