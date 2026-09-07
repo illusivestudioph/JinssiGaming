@@ -32,8 +32,10 @@ export function BackgroundMusic() {
 
   useEffect(() => {
     const audio = new Audio('/bgm.mp3');
+    audio.autoplay = true;
     audio.loop = true;
     audio.preload = 'auto';
+    audio.setAttribute('playsinline', 'true');
     audio.volume = muted ? 0 : userVolume * musicVolumeScale;
     audio.addEventListener('play', () => setPlaying(true));
     audio.addEventListener('pause', () => setPlaying(false));
@@ -53,6 +55,10 @@ export function BackgroundMusic() {
     };
     window.addEventListener('pointerdown', startAfterInteraction);
     window.addEventListener('keydown', startAfterInteraction);
+    audio.load();
+    if (!muted && userVolume > 0) {
+      void audio.play().catch(() => setAudioError(true));
+    }
 
     return () => {
       audio.pause();
