@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useSiteContent, type CtaLink, type WalletOption } from '@/context/SiteContentContext';
+import { supabase } from '@/lib/supabase';
 import { Sparkles, Coffee, X, Copy, Check } from 'lucide-react';
 
 export function CtaFooter() {
@@ -9,6 +10,8 @@ export function CtaFooter() {
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [newsletterSubmitted, setNewsletterSubmitted] = useState(false);
+  const [newsletterError, setNewsletterError] = useState('');
+  const [newsletterSubmitting, setNewsletterSubmitting] = useState(false);
   const supportLink = ctaLinks?.find((link) => (
     (link.wallets && link.wallets.length > 0) ||
     link.label.toLowerCase().includes('coffee') ||
@@ -18,10 +21,23 @@ export function CtaFooter() {
     link.id !== supportLink?.id && !link.label.toLowerCase().includes('email')
   )) || [];
 
-  const handleNewsletterSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleNewsletterSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    localStorage.setItem('jinssi-newsletter-email', newsletterEmail);
-    setNewsletterSubmitted(true);
+    setNewsletterSubmitting(true);
+    setNewsletterSubmitted(false);
+    setNewsletterError('');
+
+    const { error } = await supabase
+      .from('newsletter_subscribers')
+      .insert({ email: newsletterEmail.trim().toLowerCase() });
+
+    if (error && error.code !== '23505') {
+      setNewsletterError('We could not save your subscription. Please try again.');
+    } else {
+      setNewsletterSubmitted(true);
+    }
+
+    setNewsletterSubmitting(false);
   };
 
   const openSupport = () => {
@@ -84,20 +100,27 @@ export function CtaFooter() {
               onChange={(event) => {
                 setNewsletterEmail(event.target.value);
                 setNewsletterSubmitted(false);
+                setNewsletterError('');
               }}
               placeholder="Enter your email"
               className="min-w-0 flex-1 rounded-xl border-2 border-tan-200 bg-cream-50 px-4 py-3 text-ink-900 placeholder-tan-400 focus:border-peach-400 focus:outline-none"
             />
             <button
               type="submit"
+              disabled={newsletterSubmitting}
               className="rounded-xl bg-peach-400 px-5 py-3 font-bold text-white shadow-cozy-sm transition-colors hover:bg-peach-500"
             >
-              {newsletterSubmitted ? 'Subscribed!' : 'Subscribe'}
+              {newsletterSubmitting ? 'Saving...' : newsletterSubmitted ? 'Subscribed!' : 'Subscribe'}
             </button>
           </form>
           {newsletterSubmitted && (
             <p className="mt-3 text-sm font-semibold text-sage-500" role="status">
               You are on the list. Welcome to the cozy corner.
+            </p>
+          )}
+          {newsletterError && (
+            <p className="mt-3 text-sm font-semibold text-rose-500" role="alert">
+              {newsletterError}
             </p>
           )}
           
