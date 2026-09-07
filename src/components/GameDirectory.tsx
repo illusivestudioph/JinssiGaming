@@ -46,7 +46,7 @@ export function GameDirectory({ onSelectGame, progressMap }: GameDirectoryProps)
         </p>
       </div>
       
-      {/* Search bar */}
+      {/* Search and category controls */}
       <div className="game-directory-tools">
         <div className="relative flex-1">
           <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-tan-400" />
@@ -58,24 +58,22 @@ export function GameDirectory({ onSelectGame, progressMap }: GameDirectoryProps)
             className="w-full pl-14 pr-6 py-4 rounded-full bg-cream-50 border-2 border-cream-300 text-ink-900 placeholder-tan-400 font-medium focus:outline-none focus:border-peach-300 shadow-cozy-sm transition-all duration-300"
           />
         </div>
-      </div>
-
-      {/* Category filters */}
-      <div className="flex items-center justify-center gap-2 sm:gap-3 mb-10 flex-wrap">
-        <SlidersHorizontal className="w-4 h-4 text-tan-400 hidden sm:block" />
-        {categories.map((cat) => (
-          <button
-            key={cat}
-            onClick={() => setActiveCategory(cat)}
-            className={`pill transition-all duration-300 ${
-              activeCategory === cat
-                ? 'bg-peach-400 text-cream-50 shadow-cozy-sm scale-105'
-                : 'bg-cream-200 text-tan-500 hover:bg-cream-300 hover:text-ink-900'
-            }`}
-          >
-            {cat}
-          </button>
-        ))}
+        <div className="game-directory-filters">
+          <SlidersHorizontal className="w-4 h-4 text-tan-400" />
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setActiveCategory(cat)}
+              className={`pill transition-all duration-300 ${
+                activeCategory === cat
+                  ? 'bg-peach-400 text-cream-50 shadow-cozy-sm scale-105'
+                  : 'bg-cream-200 text-tan-500 hover:bg-cream-300 hover:text-ink-900'
+              }`}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Game grid */}

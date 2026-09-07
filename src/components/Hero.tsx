@@ -17,10 +17,10 @@ export function Hero() {
 
       {/* Hero Text Content */}
       <div className="hero-copy relative z-20 flex flex-col items-center justify-center px-4 text-center animate-fade-in">
-        <h1 className="hero-title max-w-3xl mx-auto">
+        <h1 className="hero-title">
           Your field guide to cozy games.
         </h1>
-        <p className="hero-description mt-4 max-w-2xl mx-auto">
+        <p className="hero-description mt-4">
           Clear, step-by-step visual walkthroughs to help you get unstuck and back to relaxing.
         </p>
       </div>
