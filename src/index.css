@@ -264,6 +264,94 @@
     letter-spacing: 0.1em;
     text-transform: uppercase;
   }
+
+  .site-footer-shell {
+    background: #fdf8f1;
+  }
+
+  .site-cta-panel {
+    position: relative;
+    overflow: hidden;
+    background:
+      linear-gradient(135deg, rgba(255, 232, 223, 0.35), transparent 48%),
+      linear-gradient(#fdfbf7 1.5rem, transparent 1.5rem) 0 0 / 100% 1.6rem,
+      linear-gradient(#e6e0d4 0.08rem, transparent 0.08rem) 0 1.5rem / 100% 1.6rem #fdfbf7;
+    border: 0.16rem solid #d8c8b6;
+    border-radius: 1.4rem 1rem 1.25rem 0.9rem;
+    box-shadow: 0.35rem 0.4rem 0 #e5d6c4;
+  }
+
+  .site-section-kicker {
+    color: #8f764f;
+    background: #f4e6d1;
+    border: 1px solid #e2d4bf;
+    font-weight: 800;
+  }
+
+  .site-contact-links {
+    position: relative;
+    z-index: 1;
+  }
+
+  .site-support-note {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    max-width: 34rem;
+    margin: 2rem auto 0;
+    padding: 1rem 1.15rem;
+    text-align: left;
+    background: rgba(255, 232, 223, 0.65);
+    border: 1px solid #e6b4a4;
+    border-radius: 0.85rem 1.2rem 0.8rem 1rem;
+    box-shadow: 3px 3px 0 #e8cabc;
+  }
+
+  .site-support-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: #8f5a33;
+    font-family: 'Fredoka', 'Nunito', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+  }
+
+  .site-support-note p {
+    margin: 0.25rem 0 0;
+    color: #a88e63;
+    font-size: 0.78rem;
+    font-weight: 600;
+  }
+
+  .site-support-button {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.75rem 1rem;
+    color: #fff;
+    background: #d47f63;
+    border: 2px solid #8f5a33;
+    border-radius: 0.7rem 1rem 0.65rem 0.9rem;
+    box-shadow: 3px 3px 0 #8f5a33;
+    font-size: 0.8rem;
+    font-weight: 800;
+    transition: transform 180ms ease, box-shadow 180ms ease;
+  }
+
+  .site-support-button:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 4px 4px 0 #8f5a33;
+  }
+
+  .site-footer-bottom {
+    border-top: 2px solid #e2d4bf;
+    background:
+      linear-gradient(#fdfbf7 1.5rem, transparent 1.5rem) 0 0 / 100% 1.6rem,
+      linear-gradient(#e6e0d4 0.08rem, transparent 0.08rem) 0 1.5rem / 100% 1.6rem #fdfbf7;
+  }
 }
 
 @keyframes game-card-float {

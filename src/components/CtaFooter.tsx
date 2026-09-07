@@ -7,6 +7,12 @@ export function CtaFooter() {
   const [activeModalLink, setActiveModalLink] = useState<CtaLink | null>(null);
   const [selectedWallet, setSelectedWallet] = useState<WalletOption | null>(null);
   const [copiedField, setCopiedField] = useState<string | null>(null);
+  const supportLink = ctaLinks?.find((link) => (
+    (link.wallets && link.wallets.length > 0) ||
+    link.label.toLowerCase().includes('coffee') ||
+    link.label.toLowerCase().includes('support')
+  ));
+  const contactLinks = ctaLinks?.filter((link) => link.id !== supportLink?.id) || [];
 
   const handleLinkClick = (e: React.MouseEvent, link: CtaLink) => {
     // If the button has wallets configured or label mentions coffee/support, open the multi-wallet card
@@ -31,11 +37,11 @@ export function CtaFooter() {
   };
 
   return (
-    <div className="bg-cream-100 flex flex-col mt-12 relative">
+    <div className="site-footer-shell flex flex-col mt-12 relative">
       {/* Top CTA Section */}
       <div className="max-w-5xl mx-auto px-4 py-16 w-full">
-        <div className="bg-cream-50 border-2 border-tan-100 rounded-3xl p-8 sm:p-12 text-center shadow-sm">
-          <div className="inline-flex items-center gap-2 bg-tan-100/50 text-tan-500 font-bold mb-4 px-4 py-1.5 rounded-full text-sm uppercase tracking-wider">
+        <div className="site-cta-panel p-8 sm:p-12 text-center">
+          <div className="site-section-kicker inline-flex items-center gap-2 mb-4 px-4 py-1.5 rounded-full text-sm uppercase tracking-wider">
             <Sparkles size={16} />
             <span>Join the community</span>
           </div>
@@ -47,19 +53,18 @@ export function CtaFooter() {
             hi? Reach out anytime — we would love to hear from you.
           </p>
           
-          {/* Dynamic Links */}
-          <div className="flex flex-wrap justify-center gap-4">
-            {ctaLinks?.map((link, index) => (
+          <div className="site-contact-links flex flex-wrap justify-center gap-3">
+            {contactLinks.map((link, index) => (
               <a 
                 key={link.id} 
                 href={link.url}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => handleLinkClick(e, link)}
-                className={`font-bold py-3 px-8 rounded-full transition-all hover:-translate-y-1 shadow-sm flex items-center gap-2 border-2 cursor-pointer ${
+                className={`font-bold py-3 px-7 rounded-full transition-all hover:-translate-y-1 flex items-center gap-2 border-2 cursor-pointer ${
                   index === 0 
-                    ? 'bg-peach-400 border-peach-400 text-white hover:bg-peach-500 hover:border-peach-500' 
-                    : 'bg-white border-tan-200 text-ink-900 hover:border-peach-400 hover:text-peach-600'
+                    ? 'bg-peach-400 border-peach-400 text-white hover:bg-peach-500 hover:border-peach-500 shadow-cozy-sm' 
+                    : 'bg-cream-50 border-tan-200 text-ink-900 hover:border-peach-400 hover:text-peach-600'
                 }`}
               >
                 {link.label.toLowerCase().includes('email') && <Mail size={18} />}
@@ -68,6 +73,25 @@ export function CtaFooter() {
               </a>
             ))}
           </div>
+
+          {supportLink && (
+            <div className="site-support-note">
+              <div>
+                <span className="site-support-label"><Coffee size={15} /> Keep the guides cozy</span>
+                <p>Support the late-night sorting, shelving, and cleanup sessions.</p>
+              </div>
+              <a
+                href={supportLink.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => handleLinkClick(e, supportLink)}
+                className="site-support-button"
+              >
+                <Coffee size={17} />
+                {supportLink.label}
+              </a>
+            </div>
+          )}
         </div>
       </div>
 
@@ -139,7 +163,7 @@ export function CtaFooter() {
       )}
 
       {/* Bottom Footer Section */}
-      <footer className="border-t-2 border-tan-200 bg-cream-50/50">
+      <footer className="site-footer-bottom">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6 border-b border-tan-200 pb-8 mb-8">
             
