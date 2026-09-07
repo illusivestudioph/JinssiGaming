@@ -9,7 +9,13 @@
     scroll-behavior: smooth;
   }
   body {
-    @apply bg-cream-100 text-ink-900 font-sans antialiased;
+    @apply text-ink-900 font-sans antialiased;
+    background-color: #fdf8f1;
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(168, 142, 99, 0.12) 1px, transparent 1.2px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.32) 1px, transparent 1px),
+      linear-gradient(rgba(255, 255, 255, 0.24) 1px, transparent 1px);
+    background-size: 22px 22px, 88px 88px, 88px 88px;
   }
 }
 
@@ -168,18 +174,18 @@
     margin-bottom: 0.5rem;
     color: var(--game-ink);
     font-family: 'Fredoka', 'Nunito', sans-serif;
-    font-size: 1.25rem;
+    font-size: clamp(1.35rem, 2vw, 1.65rem);
     font-weight: 700;
     line-height: 1.2;
     text-align: center;
-    text-shadow: 0.08rem 0.08rem 0 #c0bbfe;
+    text-shadow: 0.07rem 0.07rem 0 #e6c09a;
   }
 
   .game-doodle-badge {
     display: table;
     margin: 0 auto 0.65rem;
     padding: 0.35rem 0.75rem;
-    color: var(--game-ink);
+    color: #3a2e22;
     border: 0.12rem solid #5e5148;
     border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
     box-shadow: 0.16rem 0.18rem 0 #c8b39c;

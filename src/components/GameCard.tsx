@@ -1,6 +1,16 @@
 import type { Game } from '@/data/games';
 import { ArrowRight } from 'lucide-react';
 
+function getBadgeTextColor(hexColor: string) {
+  const hex = hexColor.replace('#', '');
+  const red = Number.parseInt(hex.slice(0, 2), 16);
+  const green = Number.parseInt(hex.slice(2, 4), 16);
+  const blue = Number.parseInt(hex.slice(4, 6), 16);
+  const luminance = (0.299 * red + 0.587 * green + 0.114 * blue) / 255;
+
+  return luminance > 0.62 ? '#3a2e22' : '#fffaf3';
+}
+
 interface GameCardProps {
   game: Game;
   onClick: () => void;
@@ -41,7 +51,10 @@ export function GameCard({ game, onClick, completedCount = 0 }: GameCardProps) {
       <div className="game-doodle-content">
         <span
           className="game-doodle-badge"
-          style={{ backgroundColor: game.accentColor }}
+          style={{
+            backgroundColor: game.accentColor,
+            color: getBadgeTextColor(game.accentColor),
+          }}
         >
           {game.category}
         </span>
