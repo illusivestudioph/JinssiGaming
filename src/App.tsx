@@ -30,14 +30,14 @@ function App() {
 function AppContent() {
   const { games } = useSiteContent();
   const [view, setView] = useState<View>(() => {
-    const hashView = getHashView();
-    if (hashView) return hashView;
+    const routeView = getRouteView();
+    if (routeView) return routeView;
     const savedView = sessionStorage.getItem('jinssi-view');
     return savedView === 'walkthroughs' || savedView === 'about' || savedView === 'privacy' || savedView === 'terms' || savedView === 'contact' || savedView === 'admin'
       ? savedView
       : 'home';
   });
-  const [selectedGameId, setSelectedGameId] = useState<string | null>(() => sessionStorage.getItem('jinssi-selected-game'));
+  const [selectedGameId, setSelectedGameId] = useState<string | null>(() => getGameIdFromPath() || sessionStorage.getItem('jinssi-selected-game'));
   const [progressMap, setProgressMap] = useState<Record<string, number>>({});
   const selectedGame = games.find((game) => game.id === selectedGameId) || null;
 
@@ -48,15 +48,24 @@ function AppContent() {
   }, [view, selectedGameId]);
 
   useEffect(() => {
-    const handleHashChange = () => {
-      const hashView = getHashView();
-      if (hashView) {
+    const handleLocationChange = () => {
+      const gameId = getGameIdFromPath();
+      if (gameId) {
+        setSelectedGameId(gameId);
+        return;
+      }
+      const routeView = getRouteView();
+      if (routeView) {
         setSelectedGameId(null);
-        setView(hashView);
+        setView(routeView);
       }
     };
-    window.addEventListener('hashchange', handleHashChange);
-    return () => window.removeEventListener('hashchange', handleHashChange);
+    window.addEventListener('popstate', handleLocationChange);
+    window.addEventListener('hashchange', handleLocationChange);
+    return () => {
+      window.removeEventListener('popstate', handleLocationChange);
+      window.removeEventListener('hashchange', handleLocationChange);
+    };
   }, []);
 
   useEffect(() => {
@@ -79,17 +88,19 @@ function AppContent() {
   const handleNavigate = (newView: View) => {
     setView(newView);
     setSelectedGameId(null);
-    window.history.replaceState(null, '', newView === 'home' ? window.location.pathname : `#${newView}`);
+    window.history.pushState(null, '', getPathForView(newView));
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleSelectGame = (game: Game) => {
     setSelectedGameId(game.id);
+    window.history.pushState(null, '', `/games/${game.id}`);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleBack = () => {
     setSelectedGameId(null);
+    window.history.pushState(null, '', getPathForView(view));
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -147,12 +158,29 @@ function AppContent() {
   );
 }
 
-function getHashView(): View | null {
+function getPathForView(view: View) {
+  if (view === 'home') return '/';
+  if (view === 'privacy') return '/privacy-policy';
+  if (view === 'terms') return '/terms-of-use';
+  return `/${view}`;
+}
+
+function getRouteView(): View | null {
   if (typeof window === 'undefined') return null;
-  const hash = window.location.hash.slice(1);
-  return hash === 'privacy' || hash === 'terms' || hash === 'contact' || hash === 'about' || hash === 'walkthroughs'
-    ? hash
-    : null;
+  const path = window.location.pathname.replace(/\/$/, '') || '/';
+  if (path === '/') return 'home';
+  if (path === '/privacy-policy') return 'privacy';
+  if (path === '/terms-of-use') return 'terms';
+  if (path === '/contact') return 'contact';
+  if (path === '/about') return 'about';
+  if (path === '/walkthroughs') return 'walkthroughs';
+  return null;
+}
+
+function getGameIdFromPath() {
+  if (typeof window === 'undefined') return null;
+  const match = window.location.pathname.match(/^\/games\/([^/]+)\/?$/);
+  return match ? decodeURIComponent(match[1]) : null;
 }
 
 function WalkthroughsPage({
