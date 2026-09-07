@@ -17,13 +17,6 @@ export function GameDirectory({ onSelectGame, progressMap }: GameDirectoryProps)
   const { games } = useSiteContent(); 
   const [search, setSearch] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
-  const [gridColumns, setGridColumns] = useState(getGridColumns);
-
-  useEffect(() => {
-    const handleResize = () => setGridColumns(getGridColumns());
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
 
   const filteredGames = useMemo(() => {
     return games.filter((game) => {
@@ -79,6 +72,7 @@ export function GameDirectory({ onSelectGame, progressMap }: GameDirectoryProps)
       {/* Game grid */}
       {filteredGames.length > 0 ? (
         <div className="game-catalog-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 animate-fade-in">
+          <QuoteCard games={filteredGames} />
           {filteredGames.map((game) => (
             <GameCard
               key={game.id}
@@ -87,9 +81,6 @@ export function GameDirectory({ onSelectGame, progressMap }: GameDirectoryProps)
               completedCount={progressMap[game.id] || 0}
             />
           ))}
-          {filteredGames.length % gridColumns !== 0 && (
-            <QuoteCard games={filteredGames} />
-          )}
         </div>
       ) : (
         <div className="text-center py-20 animate-fade-in">
@@ -101,13 +92,6 @@ export function GameDirectory({ onSelectGame, progressMap }: GameDirectoryProps)
       )}
     </div>
   );
-}
-
-function getGridColumns() {
-  if (typeof window === 'undefined') return 1;
-  if (window.innerWidth >= 1024) return 3;
-  if (window.innerWidth >= 640) return 2;
-  return 1;
 }
 
 function QuoteCard({ games }: { games: Game[] }) {
