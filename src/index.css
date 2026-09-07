@@ -10,6 +10,8 @@
   }
   body {
     @apply text-ink-900 font-sans antialiased;
+    font-size: 16px;
+    line-height: 1.5;
     position: relative;
     isolation: isolate;
     background-color: #fdf8f1;
@@ -31,10 +33,47 @@
 
 @layer components {
   .cozy-card {
-    @apply bg-cream-50 rounded-3xl shadow-cozy transition-all duration-300;
+    @apply rounded-3xl shadow-cozy transition-all duration-300;
+    position: relative;
+    overflow: visible;
+    color: #4a3f38;
+    background:
+      linear-gradient(#fdfbf7 1.5rem, transparent 1.5rem) 0 0 / 100% 1.6rem,
+      linear-gradient(#e6e0d4 0.08rem, transparent 0.08rem) 0 1.5rem / 100% 1.6rem #fdfbf7;
+    border: 0.16rem solid #5e5148;
+    box-shadow: 0.35rem 0.4rem 0 #d6c6b3, inset 0 0 1.2rem rgba(92, 75, 59, 0.05);
+  }
+
+  .cozy-card::before {
+    content: '';
+    position: absolute;
+    top: -0.7rem;
+    left: 50%;
+    width: 5rem;
+    height: 1.4rem;
+    z-index: 10;
+    background: rgba(255, 221, 161, 0.85);
+    border: 0.1rem solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0.1rem 0.1rem 0.2rem rgba(0, 0, 0, 0.1);
+    border-radius: 2px 4px 2px 5px;
+    transform: translateX(-50%) rotate(-4deg);
+  }
+
+  .cozy-card > * {
+    position: relative;
+    z-index: 1;
   }
   .cozy-card-hover {
     @apply hover:shadow-cozy-lg hover:-translate-y-1;
+  }
+
+  .notepad-card.cozy-card-hover,
+  .game-doodle-card {
+    cursor: pointer;
+  }
+
+  .notepad-card.cozy-card-hover:hover {
+    border-radius: 1rem 0.85rem 1.15rem 0.7rem;
   }
   .pill {
     @apply rounded-full px-3 py-1 text-xs font-semibold;

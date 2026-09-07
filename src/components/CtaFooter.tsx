@@ -206,7 +206,7 @@ export function CtaFooter({ onNavigate }: { onNavigate: (view: 'about' | 'privac
             </div>
 
             {/* Selected Wallet Details Card */}
-            <div className="notepad-step p-5 flex flex-col items-center text-center">
+            <div className="notepad-card p-5 flex flex-col items-center text-center">
               <span className="text-xs font-bold text-tan-400 uppercase tracking-wider mb-1">Sending via {selectedWallet.name}</span>
               <h4 className="font-bold text-lg text-ink-900 mb-3">{selectedWallet.accountName || 'Jinssi Gaming'}</h4>
 

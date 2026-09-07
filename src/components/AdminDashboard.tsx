@@ -123,7 +123,7 @@ export function AdminDashboard() {
           <ChevronLeft size={20} /> Back to Dashboard
         </button>
 
-        <form onSubmit={handleSaveGame} className="bg-white rounded-2xl p-8 border-2 border-tan-200 shadow-sm">
+        <form onSubmit={handleSaveGame} className="notepad-card p-8">
           <div className="flex justify-between items-center border-b-2 border-tan-100 pb-4 mb-6">
             <h2 className="text-3xl font-display font-bold text-ink-900">Edit Game</h2>
             <button type="submit" className="site-button bg-earth-500 text-white hover:bg-earth-600">
@@ -186,7 +186,7 @@ export function AdminDashboard() {
           
           <div className="flex flex-col gap-8">
             {editingGame.walkthrough.map((section, sIndex) => (
-              <div key={sIndex} className="bg-cream-50 rounded-xl p-6 border-2 border-tan-200 relative">
+              <div key={sIndex} className="notepad-card p-6 relative">
                 <button 
                   type="button" 
                   onClick={() => removeSection(sIndex)}
@@ -207,7 +207,7 @@ export function AdminDashboard() {
 
                 <div className="flex flex-col gap-4 pl-4 border-l-4 border-tan-200">
                   {section.steps.map((step, stepIndex) => (
-                    <div key={stepIndex} className="bg-white p-4 rounded-xl border border-tan-200 flex flex-col gap-3 relative group">
+                    <div key={stepIndex} className="notepad-step p-4 flex flex-col gap-3 relative group">
                       <button 
                         type="button"
                         onClick={() => removeStep(sIndex, stepIndex)}
@@ -297,7 +297,7 @@ export function AdminDashboard() {
       </div>
 
       {activeTab === 'assets' && (
-        <div className="bg-white rounded-2xl p-6 border-2 border-tan-200 shadow-sm flex flex-col gap-6">
+        <div className="notepad-card p-6 flex flex-col gap-6">
           <div>
             <label className="block font-bold text-ink-900 mb-2 flex items-center gap-2"><ImageIcon size={18}/> Hero Banner</label>
             <div className="flex gap-2">
@@ -335,7 +335,7 @@ export function AdminDashboard() {
             <label className="block font-bold text-ink-900 mb-4 text-xl">Footer Call-to-Action Buttons & Payment Modals</label>
             <div className="flex flex-col gap-6">
               {ctaLinks?.map((link, index) => (
-                <div key={link.id} className="flex flex-col gap-4 bg-cream-50 p-5 rounded-2xl border-2 border-tan-200">
+                <div key={link.id} className="notepad-card p-5 flex flex-col gap-4">
                   <div className="flex gap-3 items-center">
                     <input 
                       value={link.label}
@@ -367,7 +367,7 @@ export function AdminDashboard() {
                   </div>
 
                   {/* Toggle Button to Turn ANY Button into a Payment Popup */}
-                  <div className="flex items-center justify-between pt-3 border-t border-tan-200 bg-white px-4 py-3 rounded-xl">
+                  <div className="notepad-step flex items-center justify-between px-4 py-3">
                     <div className="flex items-center gap-2">
                       <input 
                         type="checkbox"
@@ -432,7 +432,7 @@ export function AdminDashboard() {
 
                       <div className="flex flex-col gap-3">
                         {link.wallets.map((wallet, wIndex) => (
-                          <div key={wIndex} className="bg-white p-4 rounded-xl border border-tan-200 flex flex-col gap-3">
+                            <div key={wIndex} className="notepad-step p-4 flex flex-col gap-3">
                             <div className="flex gap-2 items-center">
                               <input 
                                 value={wallet.name}
@@ -528,7 +528,7 @@ export function AdminDashboard() {
       {activeTab === 'games' && (
         <div className="flex flex-col gap-4">
           {games.map(game => (
-            <div key={game.id} className="bg-white rounded-2xl p-5 border-2 border-tan-200 flex justify-between items-center shadow-sm hover:shadow-md transition-shadow">
+            <div key={game.id} className="notepad-card p-5 flex justify-between items-center">
               <div className="flex items-center gap-4">
                 <div 
                   className="w-16 h-16 rounded-xl object-cover shadow-sm bg-cover bg-center border border-tan-200"
