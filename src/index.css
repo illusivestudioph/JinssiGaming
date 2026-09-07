@@ -610,9 +610,9 @@
   }
 
   .game-directory-tools {
-    display: flex;
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
     align-items: center;
-    flex-wrap: wrap;
     gap: 0.75rem;
     margin: 0 auto 1.5rem;
     padding: 0.45rem;
@@ -627,6 +627,12 @@
     align-items: center;
     gap: 0.45rem;
     flex-wrap: wrap;
+  }
+
+  @media (max-width: 767px) {
+    .game-directory-tools {
+      grid-template-columns: 1fr;
+    }
   }
 
   .game-catalog-grid {
