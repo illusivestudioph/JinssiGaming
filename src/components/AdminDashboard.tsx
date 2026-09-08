@@ -34,6 +34,7 @@ export function AdminDashboard() {
       id: `game-${Date.now()}`,
       title: 'New Game',
       developer: 'Your Studio',
+      gameLink: '',
       category: 'Cozy Games',
       description: 'Add a description for this game.',
       editorNote: '',
@@ -135,6 +136,25 @@ export function AdminDashboard() {
                 onChange={(e) => setEditingGame({...editingGame, title: e.target.value})}
                 className="w-full px-4 py-3 rounded-xl border-2 border-tan-200 focus:border-peach-400 focus:outline-none bg-cream-50 font-bold"
                 required
+              />
+            </div>
+            <div>
+              <label className="block font-bold text-ink-900 mb-2">Developer</label>
+              <input
+                value={editingGame.developer}
+                onChange={(e) => setEditingGame({...editingGame, developer: e.target.value})}
+                className="w-full px-4 py-3 rounded-xl border-2 border-tan-200 focus:border-peach-400 focus:outline-none bg-cream-50 font-bold"
+                required
+              />
+            </div>
+            <div>
+              <label className="block font-bold text-ink-900 mb-2">Game Link</label>
+              <input
+                type="url"
+                value={editingGame.gameLink || ''}
+                onChange={(e) => setEditingGame({...editingGame, gameLink: e.target.value})}
+                className="w-full px-4 py-3 rounded-xl border-2 border-tan-200 focus:border-peach-400 focus:outline-none bg-cream-50"
+                placeholder="https://..."
               />
             </div>
             <div className="md:col-span-2">

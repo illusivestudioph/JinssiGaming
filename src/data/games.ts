@@ -18,6 +18,7 @@ export interface Game {
   id: string;
   title: string;
   developer: string;
+  gameLink?: string;
   category: string;
   description: string;
   editorNote?: string;

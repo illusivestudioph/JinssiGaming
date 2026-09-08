@@ -9,6 +9,7 @@ import {
   EyeOff,
   RotateCcw,
   BookOpen,
+  ExternalLink,
   ChevronDown,
   X,
 } from 'lucide-react';
@@ -95,6 +96,22 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
           <p className="text-base text-ink-700 leading-relaxed">
             {game.description}
           </p>
+          <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-3 border-t border-tan-200 pt-4 text-sm">
+            <div>
+              <span className="font-bold text-tan-500">Developer</span>
+              <p className="font-semibold text-ink-900">{game.developer}</p>
+            </div>
+            {game.gameLink?.trim() && (
+              <a
+                href={game.gameLink}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 font-bold text-peach-600 hover:text-peach-500 transition-colors"
+              >
+                Visit game <ExternalLink className="h-4 w-4" />
+              </a>
+            )}
+          </div>
           {game.editorNote?.trim() && (
             <div className="mt-5 rounded-2xl border-2 border-peach-200 bg-peach-50/70 p-4">
               <p className="mb-1 text-xs font-bold uppercase tracking-wider text-peach-500">
