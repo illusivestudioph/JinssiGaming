@@ -12,6 +12,9 @@ import {
   ExternalLink,
   ChevronDown,
   X,
+  Share2,
+  Copy,
+  Mail,
 } from 'lucide-react';
 
 const confettiColors = ['#ff8c75', '#82ad76', '#e0bf91', '#c0bbfe', '#f0a8a8'];
@@ -40,7 +43,80 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
   const progressPercent = totalSteps > 0 ? Math.round((completedCount / totalSteps) * 100) : 0;
   const isComplete = progressPercent === 100 && totalSteps > 0;
   const [showCongratulations, setShowCongratulations] = useState(false);
+  const [linkCopied, setLinkCopied] = useState(false);
   const completionSoundRef = useRef<HTMLAudioElement | null>(null);
+
+  const shareUrl = typeof window === 'undefined'
+    ? ''
+    : `${window.location.origin}/games/${encodeURIComponent(game.id)}`;
+  const shareTitle = `${game.title} walkthrough | Jinssi Gaming`;
+  const shareText = `Follow the ${game.title} walkthrough on Jinssi Gaming.`;
+
+  useEffect(() => {
+    document.title = shareTitle;
+
+    const updateMeta = (selector: string, content: string) => {
+      const element = document.querySelector<HTMLMetaElement>(selector);
+      if (element) element.setAttribute('content', content);
+    };
+
+    updateMeta('meta[name="description"]', game.description);
+    updateMeta('meta[property="og:title"]', shareTitle);
+    updateMeta('meta[property="og:description"]', game.description);
+    updateMeta('meta[property="og:image"]', game.coverImage);
+    updateMeta('meta[property="og:url"]', shareUrl);
+    updateMeta('meta[name="twitter:title"]', shareTitle);
+    updateMeta('meta[name="twitter:description"]', game.description);
+    updateMeta('meta[name="twitter:image"]', game.coverImage);
+
+    const canonical = document.querySelector<HTMLLinkElement>('link[rel="canonical"]');
+    if (canonical) canonical.href = shareUrl;
+
+    return () => {
+      document.title = 'Jinssi Gaming | Cozy Game Walkthroughs';
+      updateMeta('meta[name="description"]', 'Jinssi Gaming offers clear, visual walkthroughs and cozy guides for relaxing games.');
+      updateMeta('meta[property="og:title"]', 'Jinssi Gaming | Cozy Game Walkthroughs');
+      updateMeta('meta[property="og:description"]', 'Clear, visual walkthroughs and cozy guides for relaxing games.');
+      updateMeta('meta[property="og:image"]', '/banner.jpeg');
+      updateMeta('meta[property="og:url"]', 'https://jinssigaming.pages.dev/');
+      updateMeta('meta[name="twitter:title"]', 'Jinssi Gaming | Cozy Game Walkthroughs');
+      updateMeta('meta[name="twitter:description"]', 'Clear, visual walkthroughs and cozy guides for relaxing games.');
+      updateMeta('meta[name="twitter:image"]', '/banner.jpeg');
+      if (canonical) canonical.href = 'https://jinssigaming.pages.dev/';
+    };
+  }, [game.coverImage, game.description, game.id, shareTitle, shareUrl]);
+
+  const copyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+    } catch {
+      const textArea = document.createElement('textarea');
+      textArea.value = shareUrl;
+      textArea.style.position = 'fixed';
+      textArea.style.opacity = '0';
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      textArea.remove();
+    }
+    setLinkCopied(true);
+    window.setTimeout(() => setLinkCopied(false), 2200);
+  };
+
+  const shareWithDevice = async () => {
+    if (!navigator.share) return;
+    await navigator.share({ title: shareTitle, text: shareText, url: shareUrl });
+  };
+
+  const socialLinks = [
+    { label: 'Facebook', href: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}` },
+    { label: 'X', href: `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}` },
+    { label: 'WhatsApp', href: `https://wa.me/?text=${encodeURIComponent(`${shareText} ${shareUrl}`)}` },
+    { label: 'LinkedIn', href: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}` },
+    { label: 'Reddit', href: `https://www.reddit.com/submit?url=${encodeURIComponent(shareUrl)}&title=${encodeURIComponent(shareTitle)}` },
+    { label: 'Pinterest', href: `https://pinterest.com/pin/create/button/?url=${encodeURIComponent(shareUrl)}&media=${encodeURIComponent(game.coverImage)}&description=${encodeURIComponent(shareText)}` },
+    { label: 'Telegram', href: `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}` },
+  ];
 
   useEffect(() => {
     if (isComplete) setShowCongratulations(true);
@@ -96,6 +172,52 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
           <p className="text-base text-ink-700 leading-relaxed">
             {game.description}
           </p>
+          <div className="mt-5 border-t border-tan-200 pt-4">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="mr-1 inline-flex items-center gap-2 text-sm font-bold text-ink-900">
+                <Share2 className="h-4 w-4 text-peach-500" aria-hidden="true" />
+                Share this walkthrough
+              </span>
+              <button
+                type="button"
+                onClick={copyLink}
+                className="site-button bg-cream-100 px-3 py-2 text-xs text-ink-900 hover:bg-cream-200"
+              >
+                {linkCopied ? <Check className="h-4 w-4 text-sage-600" /> : <Copy className="h-4 w-4" />}
+                {linkCopied ? 'Copied' : 'Copy link'}
+              </button>
+              {typeof navigator !== 'undefined' && 'share' in navigator && (
+                <button
+                  type="button"
+                  onClick={shareWithDevice}
+                  className="site-button bg-peach-400 px-3 py-2 text-xs text-white hover:bg-peach-500"
+                >
+                  <Share2 className="h-4 w-4" />
+                  More...
+                </button>
+              )}
+              <a
+                href={`mailto:?subject=${encodeURIComponent(shareTitle)}&body=${encodeURIComponent(`${shareText}\n\n${shareUrl}`)}`}
+                className="site-button bg-cream-100 px-3 py-2 text-xs text-ink-900 hover:bg-cream-200"
+              >
+                <Mail className="h-4 w-4" />
+                Email
+              </a>
+            </div>
+            <div className="mt-3 flex flex-wrap gap-2" aria-label="Social sharing options">
+              {socialLinks.map((social) => (
+                <a
+                  key={social.label}
+                  href={social.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="rounded-lg border border-tan-200 bg-cream-50 px-2.5 py-1.5 text-xs font-bold text-tan-600 transition-colors hover:border-peach-300 hover:text-peach-600"
+                >
+                  {social.label}
+                </a>
+              ))}
+            </div>
+          </div>
           <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-3 border-t border-tan-200 pt-4 text-sm">
             <div>
               <span className="font-bold text-tan-500">Developer</span>
