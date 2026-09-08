@@ -448,7 +448,7 @@ function WikiHowStep({
       {/* Step description */}
       <div className="px-4 pb-4">
         <p
-          className={`text-sm sm:text-base text-ink-700 leading-relaxed transition-all duration-300 ${
+          className={`text-sm sm:text-base text-ink-700 leading-relaxed whitespace-pre-line transition-all duration-300 ${
             isDone ? 'opacity-60' : 'opacity-100'
           }`}
         >
