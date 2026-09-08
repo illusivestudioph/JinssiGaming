@@ -8,25 +8,44 @@ export function AdminDashboard() {
   const { games, heroImage, logoImage, ctaLinks, setHeroImage, setLogoImage, setCtaLinks, addGame, updateGame, removeGame } = useSiteContent();
   const [activeTab, setActiveTab] = useState<'assets' | 'games'>('assets');
   const [editingGame, setEditingGame] = useState<Game | null>(null);
+  const [uploadProgress, setUploadProgress] = useState<number | null>(null);
+  const [assetSaveMessage, setAssetSaveMessage] = useState('');
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, onComplete: (url: string) => void) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    setUploadProgress(10);
+    const progressTimer = window.setInterval(() => {
+      setUploadProgress((current) => current === null ? null : Math.min(current + 10, 90));
+    }, 250);
+    let uploadSucceeded = false;
+
     const filePath = `${crypto.randomUUID()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '-')}`;
-    const { error } = await supabase.storage.from('site-images').upload(filePath, file, {
-      cacheControl: '3600',
-      contentType: file.type,
-      upsert: false,
-    });
+    try {
+      const { error } = await supabase.storage.from('site-images').upload(filePath, file, {
+        cacheControl: '3600',
+        contentType: file.type,
+        upsert: false,
+      });
 
-    if (error) {
-      alert(`Image upload failed: ${error.message}`);
-      return;
+      if (error) {
+        alert(`Image upload failed: ${error.message}`);
+        return;
+      }
+
+      const { data } = supabase.storage.from('site-images').getPublicUrl(filePath);
+      onComplete(data.publicUrl);
+      uploadSucceeded = true;
+    } finally {
+      window.clearInterval(progressTimer);
+      if (uploadSucceeded) {
+        setUploadProgress(100);
+        window.setTimeout(() => setUploadProgress(null), 500);
+      } else {
+        setUploadProgress(null);
+      }
     }
-
-    const { data } = supabase.storage.from('site-images').getPublicUrl(filePath);
-    onComplete(data.publicUrl);
   };
 
   const handleAddGame = () => {
@@ -54,6 +73,26 @@ export function AdminDashboard() {
       setEditingGame(null);
     }
   };
+
+  const handleSaveAssets = () => {
+    setAssetSaveMessage('Site assets saved.');
+    window.setTimeout(() => setAssetSaveMessage(''), 2500);
+  };
+
+  const uploadStatus = uploadProgress !== null && (
+    <div className="mb-6 rounded-xl border-2 border-earth-200 bg-earth-50 p-4" role="status" aria-live="polite">
+      <div className="mb-2 flex items-center justify-between text-sm font-bold text-earth-700">
+        <span>{uploadProgress === 100 ? 'Upload complete' : 'Uploading image...'}</span>
+        <span>{uploadProgress}%</span>
+      </div>
+      <div className="h-2 overflow-hidden rounded-full bg-earth-100">
+        <div
+          className="h-full rounded-full bg-earth-500 transition-all duration-200"
+          style={{ width: `${uploadProgress}%` }}
+        />
+      </div>
+    </div>
+  );
 
   // --- Walkthrough Editor Helpers ---
   const addWalkthroughSection = () => {
@@ -127,6 +166,8 @@ export function AdminDashboard() {
               <Save size={18} /> Save Changes
             </button>
           </div>
+
+          {uploadStatus}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
             <div>
@@ -319,6 +360,8 @@ export function AdminDashboard() {
         <p className="text-tan-600 font-semibold">Manage your site's content. Changes auto-save to your local storage.</p>
       </div>
 
+      {uploadStatus}
+
       <div className="flex gap-4 mb-6 border-b-2 border-tan-200 pb-2">
         <button onClick={() => setActiveTab('assets')} className={`font-bold pb-2 ${activeTab === 'assets' ? 'text-peach-500 border-b-2 border-peach-500' : 'text-tan-500 hover:text-ink-900'}`}>Site Assets</button>
         <button onClick={() => setActiveTab('games')} className={`font-bold pb-2 ${activeTab === 'games' ? 'text-peach-500 border-b-2 border-peach-500' : 'text-tan-500 hover:text-ink-900'}`}>Manage Games</button>
@@ -356,6 +399,13 @@ export function AdminDashboard() {
               </label>
             </div>
             {logoImage && <img src={logoImage} className="mt-3 h-16 w-16 object-cover rounded-full border border-tan-200" alt="Logo preview" />}
+          </div>
+
+          <div className="flex flex-wrap items-center justify-end gap-3 border-t-2 border-tan-100 pt-5">
+            {assetSaveMessage && <span className="text-sm font-bold text-sage-600" role="status">{assetSaveMessage}</span>}
+            <button type="button" onClick={handleSaveAssets} className="site-button bg-earth-500 text-white hover:bg-earth-600">
+              <Save size={18} /> Save Changes
+            </button>
           </div>
 
           {/* CTA LINKS & PERMANENT MULTI-WALLET CONFIGURATOR */}
