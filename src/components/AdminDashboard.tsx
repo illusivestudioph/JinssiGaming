@@ -8,18 +8,16 @@ export function AdminDashboard() {
   const { games, heroImage, logoImage, ctaLinks, setHeroImage, setLogoImage, setCtaLinks, addGame, updateGame, removeGame } = useSiteContent();
   const [activeTab, setActiveTab] = useState<'assets' | 'games'>('assets');
   const [editingGame, setEditingGame] = useState<Game | null>(null);
-  const [uploadProgress, setUploadProgress] = useState<number | null>(null);
+  const [uploadingKey, setUploadingKey] = useState<string | null>(null);
+  const [uploadedKey, setUploadedKey] = useState<string | null>(null);
   const [assetSaveMessage, setAssetSaveMessage] = useState('');
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, onComplete: (url: string) => void) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, uploadKey: string, onComplete: (url: string) => void) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    setUploadProgress(10);
-    const progressTimer = window.setInterval(() => {
-      setUploadProgress((current) => current === null ? null : Math.min(current + 10, 90));
-    }, 250);
-    let uploadSucceeded = false;
+    setUploadedKey(null);
+    setUploadingKey(uploadKey);
 
     const filePath = `${crypto.randomUUID()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '-')}`;
     try {
@@ -36,15 +34,9 @@ export function AdminDashboard() {
 
       const { data } = supabase.storage.from('site-images').getPublicUrl(filePath);
       onComplete(data.publicUrl);
-      uploadSucceeded = true;
+      setUploadedKey(uploadKey);
     } finally {
-      window.clearInterval(progressTimer);
-      if (uploadSucceeded) {
-        setUploadProgress(100);
-        window.setTimeout(() => setUploadProgress(null), 500);
-      } else {
-        setUploadProgress(null);
-      }
+      setUploadingKey(null);
     }
   };
 
@@ -78,21 +70,6 @@ export function AdminDashboard() {
     setAssetSaveMessage('Site assets saved.');
     window.setTimeout(() => setAssetSaveMessage(''), 2500);
   };
-
-  const uploadStatus = uploadProgress !== null && (
-    <div className="mb-6 rounded-xl border-2 border-earth-200 bg-earth-50 p-4" role="status" aria-live="polite">
-      <div className="mb-2 flex items-center justify-between text-sm font-bold text-earth-700">
-        <span>{uploadProgress === 100 ? 'Upload complete' : 'Uploading image...'}</span>
-        <span>{uploadProgress}%</span>
-      </div>
-      <div className="h-2 overflow-hidden rounded-full bg-earth-100">
-        <div
-          className="h-full rounded-full bg-earth-500 transition-all duration-200"
-          style={{ width: `${uploadProgress}%` }}
-        />
-      </div>
-    </div>
-  );
 
   // --- Walkthrough Editor Helpers ---
   const addWalkthroughSection = () => {
@@ -162,12 +139,7 @@ export function AdminDashboard() {
         <form onSubmit={handleSaveGame} className="notepad-card p-8">
           <div className="flex justify-between items-center border-b-2 border-tan-100 pb-4 mb-6">
             <h2 className="text-3xl font-display font-bold text-ink-900">Edit Game</h2>
-            <button type="submit" className="site-button bg-earth-500 text-white hover:bg-earth-600">
-              <Save size={18} /> Save Changes
-            </button>
           </div>
-
-          {uploadStatus}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
             <div>
@@ -244,9 +216,10 @@ export function AdminDashboard() {
                   className="flex-1 px-4 py-3 rounded-xl border-2 border-tan-200 focus:border-peach-400 focus:outline-none bg-cream-50"
                 />
                 <label className="flex items-center justify-center px-4 py-3 bg-earth-100 text-earth-700 font-bold rounded-xl cursor-pointer hover:bg-earth-200 transition-colors whitespace-nowrap">
-                  <Upload size={18} className="mr-2" /> Upload
-                  <input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(e, (base64) => setEditingGame({...editingGame, coverImage: base64}))} />
+                  {uploadingKey === 'game-cover' ? 'Uploading...' : uploadedKey === 'game-cover' ? 'Uploaded' : <><Upload size={18} className="mr-2" /> Upload</>}
+                  <input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(e, 'game-cover', (base64) => setEditingGame({...editingGame, coverImage: base64}))} />
                 </label>
+                {uploadedKey === 'game-cover' && <span className="self-center text-sm font-bold text-sage-600" role="status">✓ Complete</span>}
               </div>
             </div>
           </div>
@@ -312,14 +285,15 @@ export function AdminDashboard() {
                             placeholder="https:// or upload..."
                           />
                           <label className="px-3 py-2 bg-earth-100 text-earth-700 font-bold rounded-lg cursor-pointer hover:bg-earth-200 transition-colors text-xs flex items-center gap-1 whitespace-nowrap">
-                            <Upload size={14} /> Upload
+                            {uploadingKey === `step-${sIndex}-${stepIndex}` ? 'Uploading...' : uploadedKey === `step-${sIndex}-${stepIndex}` ? 'Uploaded' : <><Upload size={14} /> Upload</>}
                             <input 
                               type="file" 
                               accept="image/*" 
                               className="hidden" 
-                              onChange={(e) => handleImageUpload(e, (base64) => updateStep(sIndex, stepIndex, 'image', base64))} 
+                              onChange={(e) => handleImageUpload(e, `step-${sIndex}-${stepIndex}`, (base64) => updateStep(sIndex, stepIndex, 'image', base64))}
                             />
                           </label>
+                          {uploadedKey === `step-${sIndex}-${stepIndex}` && <span className="self-center text-xs font-bold text-sage-600" role="status">✓ Complete</span>}
                         </div>
                         {step.image && (
                           <img src={step.image} alt="Step preview" className="mt-2 h-20 w-full object-cover rounded-lg border border-tan-200" />
@@ -347,6 +321,12 @@ export function AdminDashboard() {
           >
             <Plus size={20} /> Add New Walkthrough Section
           </button>
+
+          <div className="mt-8 flex justify-end border-t-2 border-tan-100 pt-6">
+            <button type="submit" className="site-button bg-earth-500 text-white hover:bg-earth-600">
+              <Save size={18} /> Save Changes
+            </button>
+          </div>
         </form>
       </div>
     );
@@ -359,8 +339,6 @@ export function AdminDashboard() {
         <h2 className="text-4xl font-display font-bold text-ink-900 mb-2">Admin Dashboard</h2>
         <p className="text-tan-600 font-semibold">Manage your site's content. Changes auto-save to your local storage.</p>
       </div>
-
-      {uploadStatus}
 
       <div className="flex gap-4 mb-6 border-b-2 border-tan-200 pb-2">
         <button onClick={() => setActiveTab('assets')} className={`font-bold pb-2 ${activeTab === 'assets' ? 'text-peach-500 border-b-2 border-peach-500' : 'text-tan-500 hover:text-ink-900'}`}>Site Assets</button>
@@ -378,9 +356,10 @@ export function AdminDashboard() {
                 className="flex-1 px-4 py-3 rounded-xl border-2 border-tan-200 focus:border-peach-400 bg-cream-50 focus:outline-none"
               />
               <label className="flex items-center justify-center px-4 py-3 bg-earth-100 text-earth-700 font-bold rounded-xl cursor-pointer hover:bg-earth-200 transition-colors whitespace-nowrap">
-                <Upload size={18} className="mr-2" /> Upload
-                <input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(e, setHeroImage)} />
+                {uploadingKey === 'hero' ? 'Uploading...' : uploadedKey === 'hero' ? 'Uploaded' : <><Upload size={18} className="mr-2" /> Upload</>}
+                <input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(e, 'hero', setHeroImage)} />
               </label>
+              {uploadedKey === 'hero' && <span className="self-center text-sm font-bold text-sage-600" role="status">✓ Complete</span>}
             </div>
             {heroImage && <img src={heroImage} className="mt-3 h-32 w-full max-w-xl object-cover rounded-lg border border-tan-200" alt="Hero preview" />}
           </div>
@@ -394,9 +373,10 @@ export function AdminDashboard() {
                 className="flex-1 px-4 py-3 rounded-xl border-2 border-tan-200 focus:border-peach-400 bg-cream-50 focus:outline-none"
               />
               <label className="flex items-center justify-center px-4 py-3 bg-earth-100 text-earth-700 font-bold rounded-xl cursor-pointer hover:bg-earth-200 transition-colors whitespace-nowrap">
-                <Upload size={18} className="mr-2" /> Upload
-                <input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(e, setLogoImage)} />
+                {uploadingKey === 'logo' ? 'Uploading...' : uploadedKey === 'logo' ? 'Uploaded' : <><Upload size={18} className="mr-2" /> Upload</>}
+                <input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(e, 'logo', setLogoImage)} />
               </label>
+              {uploadedKey === 'logo' && <span className="self-center text-sm font-bold text-sage-600" role="status">✓ Complete</span>}
             </div>
             {logoImage && <img src={logoImage} className="mt-3 h-16 w-16 object-cover rounded-full border border-tan-200" alt="Logo preview" />}
           </div>
@@ -574,7 +554,7 @@ export function AdminDashboard() {
                                   type="file" 
                                   accept="image/*" 
                                   className="hidden" 
-                                  onChange={(e) => handleImageUpload(e, (base64) => {
+                                  onChange={(e) => handleImageUpload(e, `wallet-${index}-${wIndex}`, (base64) => {
                                     const newLinks = [...ctaLinks];
                                     newLinks[index].wallets![wIndex].qrCode = base64;
                                     setCtaLinks(newLinks);
