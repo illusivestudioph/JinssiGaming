@@ -13,11 +13,6 @@ export function AdminDashboard() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 500 * 1024) {
-      alert("File is too large! Please keep images under 500KB.");
-      return;
-    }
-
     const filePath = `${crypto.randomUUID()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '-')}`;
     const { error } = await supabase.storage.from('site-images').upload(filePath, file, {
       cacheControl: '3600',
