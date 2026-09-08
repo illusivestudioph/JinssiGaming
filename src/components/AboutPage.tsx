@@ -1,5 +1,4 @@
 import { Heart, Gamepad2, BookOpen } from 'lucide-react';
-
 export function AboutPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
