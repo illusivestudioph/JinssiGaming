@@ -5,25 +5,263 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    /* Page background */
+    --bg-page: #fdf8f1;
+    --bg-page-tint-start: rgba(253, 248, 241, 0.8);
+    --bg-page-tint-end: rgba(253, 248, 241, 0.8);
+    --bg-page-dot: rgba(168, 142, 99, 0.12);
+    --bg-page-grid-h: rgba(255, 255, 255, 0.32);
+    --bg-page-grid-v: rgba(255, 255, 255, 0.24);
+
+    /* Hero feathered overlay */
+    --hero-fade-mid: rgba(253, 248, 241, 0.65);
+    --hero-fade-solid: #fdf8f1;
+    --hero-title-color: #3a2e22;
+    --hero-title-shadow: 0.12rem 0.14rem 0 #f9ede0, 0 0 1.2rem rgba(255, 255, 255, 0.9);
+    --hero-desc-color: #4a3a2c;
+    --hero-desc-shadow: 0 1px 0 rgba(255, 255, 255, 0.95);
+
+    /* Header */
+    --header-bg: #fdf8f1;
+    --header-border: #e2d4bf;
+    --header-music-pill-bg: rgba(254, 252, 249, 0.9);
+    --header-music-pill-border: rgba(208, 189, 158, 0.8);
+
+    /* Uniform Cards (cozy-card, notepad-card, game-doodle-card, site-cta-panel) */
+    --card-bg: #fdfbf7;
+    --card-line: #e6e0d4;
+    --card-border: #5e5148;
+    --card-shadow: #d6c6b3;
+    --card-tape: rgba(255, 221, 161, 0.85);
+    --card-tape-border: rgba(0, 0, 0, 0.1);
+    --card-text: #4a3f38;
+    --card-hover-shadow: #c8b39c;
+    --card-done-bg: #f9f5ed;
+    --card-done-line: #e1d9cc;
+
+    /* Typography */
+    --text-main: #3a2e22;
+    --text-body: #4a3a2c;
+    --text-muted: #8f764f;
+    --text-subtle: #9b7a4d;
+    --page-title-hover: #b07240;
+    --page-title-shadow: 3px 3px 0 #f4e6d1;
+    --section-kicker-color: #8f5a33;
+    --section-kicker-bg: #f9ede0;
+    --section-kicker-border: #d9a472;
+
+    /* Search & directory tools */
+    --tools-bg: rgba(254, 252, 249, 0.72);
+    --tools-border: #e2d4bf;
+    --tools-shadow: rgba(208, 189, 158, 0.45);
+    --input-bg: #fefcf9;
+    --input-border: #f4e6d1;
+    --input-text: #3a2e22;
+    --input-placeholder: #9b7a4d;
+    --filter-btn-bg: #f9f0e3;
+    --filter-btn-text: #8f764f;
+    --filter-btn-border: transparent;
+
+    /* Footer */
+    --footer-bg: #fdfbf7;
+    --footer-line: #e6e0d4;
+    --footer-border: #e2d4bf;
+  }
+
+  [data-ambient-theme="rain"] {
+    --bg-page: #131b2e;
+    --bg-page-tint-start: rgba(19, 27, 46, 0.88);
+    --bg-page-tint-end: rgba(19, 27, 46, 0.95);
+    --bg-page-dot: rgba(147, 197, 253, 0.15);
+    --bg-page-grid-h: rgba(59, 130, 246, 0.15);
+    --bg-page-grid-v: rgba(59, 130, 246, 0.12);
+
+    --hero-fade-mid: rgba(19, 27, 46, 0.65);
+    --hero-fade-solid: #131b2e;
+    --hero-title-color: #f8fafc;
+    --hero-title-shadow: 0 3px 16px rgba(0, 0, 0, 0.8), 0 0 24px rgba(59, 130, 246, 0.3);
+    --hero-desc-color: #cbd5e1;
+    --hero-desc-shadow: 0 2px 6px rgba(0, 0, 0, 0.9);
+
+    --header-bg: #0f1626;
+    --header-border: #233252;
+    --header-music-pill-bg: rgba(22, 33, 56, 0.9);
+    --header-music-pill-border: #334873;
+
+    --card-bg: #1a253d;
+    --card-line: #263657;
+    --card-border: #3b4f77;
+    --card-shadow: #0a101d;
+    --card-tape: rgba(147, 197, 253, 0.55);
+    --card-tape-border: rgba(147, 197, 253, 0.25);
+    --card-text: #f1f5f9;
+    --card-hover-shadow: #070c17;
+    --card-done-bg: #141e33;
+    --card-done-line: #1e2c4a;
+
+    --text-main: #f8fafc;
+    --text-body: #e2e8f0;
+    --text-muted: #94a3b8;
+    --text-subtle: #64748b;
+    --page-title-hover: #93c5fd;
+    --page-title-shadow: 3px 3px 0 #0f172a;
+    --section-kicker-color: #93c5fd;
+    --section-kicker-bg: #1c2b48;
+    --section-kicker-border: #3b5998;
+
+    --tools-bg: rgba(26, 37, 61, 0.85);
+    --tools-border: #334873;
+    --tools-shadow: rgba(10, 16, 29, 0.6);
+    --input-bg: #131d32;
+    --input-border: #2d4168;
+    --input-text: #f8fafc;
+    --input-placeholder: #7c92b8;
+    --filter-btn-bg: #223150;
+    --filter-btn-text: #cbd5e1;
+    --filter-btn-border: #2e4169;
+
+    --footer-bg: #0f1626;
+    --footer-line: #1e2c48;
+    --footer-border: #233252;
+  }
+
+  [data-ambient-theme="fire"] {
+    --bg-page: #211712;
+    --bg-page-tint-start: rgba(33, 23, 18, 0.88);
+    --bg-page-tint-end: rgba(33, 23, 18, 0.95);
+    --bg-page-dot: rgba(255, 176, 160, 0.15);
+    --bg-page-grid-h: rgba(249, 115, 22, 0.12);
+    --bg-page-grid-v: rgba(249, 115, 22, 0.10);
+
+    --hero-fade-mid: rgba(33, 23, 18, 0.65);
+    --hero-fade-solid: #211712;
+    --hero-title-color: #fff5f0;
+    --hero-title-shadow: 0 3px 16px rgba(0, 0, 0, 0.8), 0 0 24px rgba(251, 146, 60, 0.3);
+    --hero-desc-color: #fed7aa;
+    --hero-desc-shadow: 0 2px 6px rgba(0, 0, 0, 0.9);
+
+    --header-bg: #1a120e;
+    --header-border: #3d2a20;
+    --header-music-pill-bg: rgba(44, 30, 23, 0.9);
+    --header-music-pill-border: #5c4033;
+
+    --card-bg: #2c1e17;
+    --card-line: #3d2a20;
+    --card-border: #5c4033;
+    --card-shadow: #120b08;
+    --card-tape: rgba(255, 176, 160, 0.55);
+    --card-tape-border: rgba(255, 176, 160, 0.25);
+    --card-text: #fdf8f4;
+    --card-hover-shadow: #0a0604;
+    --card-done-bg: #221610;
+    --card-done-line: #332118;
+
+    --text-main: #fdf8f4;
+    --text-body: #fed7aa;
+    --text-muted: #e6c09a;
+    --text-subtle: #d9a472;
+    --page-title-hover: #ffb0a0;
+    --page-title-shadow: 3px 3px 0 #18110c;
+    --section-kicker-color: #ffb0a0;
+    --section-kicker-bg: #382419;
+    --section-kicker-border: #633c29;
+
+    --tools-bg: rgba(44, 30, 23, 0.85);
+    --tools-border: #54392b;
+    --tools-shadow: rgba(18, 11, 8, 0.6);
+    --input-bg: #221610;
+    --input-border: #4a3225;
+    --input-text: #fdf8f4;
+    --input-placeholder: #b89380;
+    --filter-btn-bg: #38271e;
+    --filter-btn-text: #fed7aa;
+    --filter-btn-border: #4e3527;
+
+    --footer-bg: #1a120e;
+    --footer-line: #2e1d15;
+    --footer-border: #3d2a20;
+  }
+
+  [data-ambient-theme="wind"] {
+    --bg-page: #132019;
+    --bg-page-tint-start: rgba(19, 32, 25, 0.88);
+    --bg-page-tint-end: rgba(19, 32, 25, 0.95);
+    --bg-page-dot: rgba(168, 200, 158, 0.15);
+    --bg-page-grid-h: rgba(52, 211, 153, 0.12);
+    --bg-page-grid-v: rgba(52, 211, 153, 0.10);
+
+    --hero-fade-mid: rgba(19, 32, 25, 0.65);
+    --hero-fade-solid: #132019;
+    --hero-title-color: #f0fdf4;
+    --hero-title-shadow: 0 3px 16px rgba(0, 0, 0, 0.8), 0 0 24px rgba(52, 211, 153, 0.3);
+    --hero-desc-color: #cfe0c8;
+    --hero-desc-shadow: 0 2px 6px rgba(0, 0, 0, 0.9);
+
+    --header-bg: #0e1a14;
+    --header-border: #233b2e;
+    --header-music-pill-bg: rgba(27, 43, 35, 0.9);
+    --header-music-pill-border: #3a5c48;
+
+    --card-bg: #1b2b23;
+    --card-line: #273d32;
+    --card-border: #3c5c4c;
+    --card-shadow: #0a140f;
+    --card-tape: rgba(168, 200, 158, 0.55);
+    --card-tape-border: rgba(168, 200, 158, 0.25);
+    --card-text: #f0fdf4;
+    --card-hover-shadow: #050a08;
+    --card-done-bg: #14221a;
+    --card-done-line: #1e3327;
+
+    --text-main: #f0fdf4;
+    --text-body: #cfe0c8;
+    --text-muted: #a8c89e;
+    --text-subtle: #82ad76;
+    --page-title-hover: #a8c89e;
+    --page-title-shadow: 3px 3px 0 #091510;
+    --section-kicker-color: #a8c89e;
+    --section-kicker-bg: #1f362a;
+    --section-kicker-border: #355e49;
+
+    --tools-bg: rgba(27, 43, 35, 0.85);
+    --tools-border: #345442;
+    --tools-shadow: rgba(10, 20, 15, 0.6);
+    --input-bg: #14221a;
+    --input-border: #2c4738;
+    --input-text: #f0fdf4;
+    --input-placeholder: #7ea78e;
+    --filter-btn-bg: #23382d;
+    --filter-btn-text: #cfe0c8;
+    --filter-btn-border: #345241;
+
+    --footer-bg: #0e1a14;
+    --footer-line: #1c3226;
+    --footer-border: #233b2e;
+  }
+
   html {
     scroll-behavior: smooth;
   }
+
   body {
-    @apply text-ink-900 font-sans antialiased;
+    @apply font-sans antialiased;
     font-size: 16px;
     line-height: 1.5;
     position: relative;
     isolation: isolate;
-    background-color: #fdf8f1;
+    color: var(--text-main);
+    background-color: var(--bg-page);
     background-image:
-      linear-gradient(rgba(253, 248, 241, 0.8), rgba(253, 248, 241, 0.8)),
+      linear-gradient(var(--bg-page-tint-start), var(--bg-page-tint-end)),
       url('/Background.jpeg'),
-      radial-gradient(circle at 1px 1px, rgba(168, 142, 99, 0.12) 1px, transparent 1.2px),
-      linear-gradient(90deg, rgba(255, 255, 255, 0.32) 1px, transparent 1px),
-      linear-gradient(rgba(255, 255, 255, 0.24) 1px, transparent 1px);
+      radial-gradient(circle at 1px 1px, var(--bg-page-dot) 1px, transparent 1.2px),
+      linear-gradient(90deg, var(--bg-page-grid-h) 1px, transparent 1px),
+      linear-gradient(var(--bg-page-grid-v) 1px, transparent 1px);
     background-position: center, center, 0 0, 0 0, 0 0;
     background-size: cover, cover, 22px 22px, 88px 88px, 88px 88px;
     background-attachment: fixed, fixed, scroll, scroll, scroll;
+    transition: background-color 0.5s ease, color 0.4s ease;
   }
 
   main {
@@ -36,12 +274,13 @@
     @apply rounded-3xl shadow-cozy transition-all duration-300;
     position: relative;
     overflow: visible;
-    color: #4a3f38;
+    color: var(--card-text);
     background:
-      linear-gradient(#fdfbf7 1.5rem, transparent 1.5rem) 0 0 / 100% 1.6rem,
-      linear-gradient(#e6e0d4 0.08rem, transparent 0.08rem) 0 1.5rem / 100% 1.6rem #fdfbf7;
-    border: 0.16rem solid #5e5148;
-    box-shadow: 0.35rem 0.4rem 0 #d6c6b3, inset 0 0 1.2rem rgba(92, 75, 59, 0.05);
+      linear-gradient(var(--card-bg) 1.5rem, transparent 1.5rem) 0 0 / 100% 1.6rem,
+      linear-gradient(var(--card-line) 0.08rem, transparent 0.08rem) 0 1.5rem / 100% 1.6rem var(--card-bg);
+    border: 0.16rem solid var(--card-border);
+    box-shadow: 0.35rem 0.4rem 0 var(--card-shadow), inset 0 0 1.2rem rgba(0, 0, 0, 0.06);
+    transition: background-color 0.4s ease, border-color 0.4s ease, color 0.4s ease, box-shadow 0.4s ease;
   }
 
   .cozy-card::before {
@@ -52,11 +291,12 @@
     width: 5rem;
     height: 1.4rem;
     z-index: 10;
-    background: rgba(255, 221, 161, 0.85);
-    border: 0.1rem solid rgba(0, 0, 0, 0.1);
+    background: var(--card-tape);
+    border: 0.1rem solid var(--card-tape-border);
     box-shadow: 0.1rem 0.1rem 0.2rem rgba(0, 0, 0, 0.1);
     border-radius: 2px 4px 2px 5px;
     transform: translateX(-50%) rotate(-4deg);
+    transition: background 0.4s ease, border-color 0.4s ease;
   }
 
   .cozy-card > * {
@@ -104,19 +344,37 @@
     outline-offset: 3px;
   }
 
+  header {
+    background-color: var(--header-bg) !important;
+    border-color: var(--header-border) !important;
+    transition: background-color 0.4s ease, border-color 0.4s ease;
+  }
+
+  .hero-fade-overlay {
+    background: linear-gradient(
+      to bottom,
+      transparent 0%,
+      transparent 40%,
+      var(--hero-fade-mid) 70%,
+      var(--hero-fade-solid) 100%
+    );
+    transition: background 0.5s ease;
+  }
+
   .hero-copy {
     width: 100%;
   }
 
   .hero-title {
     margin: 0;
-    color: #3a2e22;
+    color: var(--hero-title-color);
     font-family: 'Fredoka', 'Nunito', sans-serif;
     font-size: clamp(3.25rem, 8vw, 6.8rem);
     font-weight: 700;
     letter-spacing: 0;
     line-height: 0.94;
-    text-shadow: 0.12rem 0.14rem 0 #f9ede0, 0 0 1.2rem rgba(255, 255, 255, 0.9);
+    text-shadow: var(--hero-title-shadow);
+    transition: color 0.4s ease, text-shadow 0.4s ease;
   }
 
   .hero-title span {
@@ -125,11 +383,12 @@
 
   .hero-description {
     width: 100%;
-    color: #4a3a2c;
+    color: var(--hero-desc-color);
     font-size: clamp(1rem, 2vw, 1.25rem);
     font-weight: 800;
     line-height: 1.45;
-    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.95);
+    text-shadow: var(--hero-desc-shadow);
+    transition: color 0.4s ease, text-shadow 0.4s ease;
   }
 
   .site-nav-link {
@@ -202,7 +461,11 @@
     gap: 0.65rem;
     padding: 0.55rem 0.7rem;
     border-radius: 0.85rem 1rem 0.8rem 0.7rem;
-    box-shadow: 3px 4px 0 #d6c6b3;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    box-shadow: 3px 4px 0 var(--card-shadow);
+    color: var(--card-text);
+    transition: background-color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease, color 0.4s ease;
   }
 
   .music-control-compact {
@@ -487,13 +750,14 @@
   .notepad-card {
     position: relative;
     overflow: visible;
-    color: #4a3f38;
+    color: var(--card-text);
     background:
-      linear-gradient(#fdfbf7 1.5rem, transparent 1.5rem) 0 0 / 100% 1.6rem,
-      linear-gradient(#e6e0d4 0.08rem, transparent 0.08rem) 0 1.5rem / 100% 1.6rem #fdfbf7;
-    border: 0.16rem solid #5e5148;
+      linear-gradient(var(--card-bg) 1.5rem, transparent 1.5rem) 0 0 / 100% 1.6rem,
+      linear-gradient(var(--card-line) 0.08rem, transparent 0.08rem) 0 1.5rem / 100% 1.6rem var(--card-bg);
+    border: 0.16rem solid var(--card-border);
     border-radius: 1.2rem 0.7rem 1rem 0.85rem;
-    box-shadow: 0.35rem 0.4rem 0 #d6c6b3, inset 0 0 1.2rem rgba(92, 75, 59, 0.05);
+    box-shadow: 0.35rem 0.4rem 0 var(--card-shadow), inset 0 0 1.2rem rgba(0, 0, 0, 0.06);
+    transition: background-color 0.4s ease, border-color 0.4s ease, color 0.4s ease, box-shadow 0.4s ease;
   }
 
   .notepad-card::before {
@@ -504,11 +768,12 @@
     width: 5rem;
     height: 1.4rem;
     z-index: 10;
-    background: rgba(255, 221, 161, 0.85);
-    border: 0.1rem solid rgba(0, 0, 0, 0.1);
+    background: var(--card-tape);
+    border: 0.1rem solid var(--card-tape-border);
     box-shadow: 0.1rem 0.1rem 0.2rem rgba(0, 0, 0, 0.1);
     border-radius: 2px 4px 2px 5px;
     transform: translateX(-50%) rotate(-4deg);
+    transition: background 0.4s ease, border-color 0.4s ease;
   }
 
   .notepad-card > * {
@@ -519,8 +784,10 @@
   .notepad-step {
     overflow: visible;
     border-width: 0.12rem;
+    border-color: var(--card-border);
     border-radius: 1rem 0.65rem 0.85rem 0.7rem;
-    box-shadow: 0.2rem 0.25rem 0 #d6c6b3;
+    box-shadow: 0.2rem 0.25rem 0 var(--card-shadow);
+    transition: border-color 0.4s ease, box-shadow 0.4s ease;
   }
 
   .notepad-step::before {
@@ -531,15 +798,15 @@
 
   .notepad-step-done {
     background:
-      linear-gradient(#f9f5ed 1.5rem, transparent 1.5rem) 0 0 / 100% 1.6rem,
-      linear-gradient(#e1d9cc 0.08rem, transparent 0.08rem) 0 1.5rem / 100% 1.6rem #f9f5ed;
+      linear-gradient(var(--card-done-bg) 1.5rem, transparent 1.5rem) 0 0 / 100% 1.6rem,
+      linear-gradient(var(--card-done-line) 0.08rem, transparent 0.08rem) 0 1.5rem / 100% 1.6rem var(--card-done-bg) !important;
   }
 
   .game-doodle-card {
-    --game-bg: #fdfbf7;
-    --game-ink: #2c2c2c;
-    --game-line: #e6e0d4;
-    --game-tape: rgba(255, 221, 161, 0.85);
+    --game-bg: var(--card-bg);
+    --game-ink: var(--card-text);
+    --game-line: var(--card-line);
+    --game-tape: var(--card-tape);
     position: relative;
     display: flex;
     flex-direction: column;
@@ -547,14 +814,14 @@
     min-height: 100%;
     padding: 2.5rem 1.5rem 1.5rem;
     overflow: visible;
-    color: #4a3f38;
+    color: var(--card-text);
     background:
       linear-gradient(var(--game-bg) 1.5rem, transparent 1.5rem) 0 0 / 100% 1.6rem,
       linear-gradient(var(--game-line) 0.08rem, transparent 0.08rem) 0 1.5rem / 100% 1.6rem var(--game-bg);
-    border: 0.16rem solid #5e5148;
+    border: 0.16rem solid var(--card-border);
     border-radius: 1.2rem 0.7rem 1rem 0.85rem;
-    box-shadow: 0.35rem 0.4rem 0 #d6c6b3, inset 0 0 1.2rem rgba(92, 75, 59, 0.05);
-    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease, border-radius 0.4s ease;
+    box-shadow: 0.35rem 0.4rem 0 var(--card-shadow), inset 0 0 1.2rem rgba(0, 0, 0, 0.06);
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease, border-radius 0.4s ease, background 0.4s ease, border-color 0.4s ease, color 0.4s ease;
     animation: game-card-float 6s ease-in-out infinite;
   }
 
@@ -594,19 +861,21 @@
 
   .game-directory-title {
     margin: 0;
-    color: #3a2e22;
+    color: var(--text-main);
     font-family: 'Fredoka', 'Nunito', sans-serif;
     font-size: clamp(2rem, 5vw, 3.2rem);
     font-weight: 700;
     line-height: 1.05;
+    transition: color 0.4s ease;
   }
 
   .game-directory-copy {
     margin: 0.8rem auto 0;
-    color: #8f764f;
+    color: var(--text-muted);
     font-size: 1rem;
     font-weight: 600;
     line-height: 1.6;
+    transition: color 0.4s ease;
   }
 
   .game-directory-tools {
@@ -616,10 +885,22 @@
     gap: 0.75rem;
     margin: 0 auto 1.5rem;
     padding: 0.45rem;
-    background: rgba(254, 252, 249, 0.72);
-    border: 2px solid #e2d4bf;
+    background: var(--tools-bg);
+    border: 2px solid var(--tools-border);
     border-radius: 1.25rem 2.25rem 1.5rem 2rem;
-    box-shadow: 4px 4px 0 rgba(208, 189, 158, 0.45);
+    box-shadow: 4px 4px 0 var(--tools-shadow);
+    transition: background-color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+  }
+
+  .game-directory-tools input {
+    background-color: var(--input-bg) !important;
+    border-color: var(--input-border) !important;
+    color: var(--input-text) !important;
+    transition: background-color 0.4s ease, border-color 0.4s ease, color 0.4s ease;
+  }
+
+  .game-directory-tools input::placeholder {
+    color: var(--input-placeholder) !important;
   }
 
   .game-directory-filters {
@@ -645,11 +926,12 @@
     position: absolute;
     top: 0.35rem;
     left: 0.25rem;
-    color: #a88e63;
+    color: var(--text-muted);
     font-size: 0.7rem;
     font-weight: 800;
     letter-spacing: 0.12em;
     text-transform: uppercase;
+    transition: color 0.4s ease;
   }
 
   .game-doodle-card::before {
@@ -661,16 +943,17 @@
     height: 1.4rem;
     z-index: 10;
     background: var(--game-tape);
-    border: 0.1rem solid rgba(0, 0, 0, 0.1);
+    border: 0.1rem solid var(--card-tape-border);
     box-shadow: 0.1rem 0.1rem 0.2rem rgba(0, 0, 0, 0.1);
     border-radius: 2px 4px 2px 5px;
     transform: translateX(-50%) rotate(-4deg);
     animation: game-tape-flutter 4s infinite alternate ease-in-out;
+    transition: background 0.4s ease, border-color 0.4s ease;
   }
 
   .game-doodle-card:hover {
     transform: translateY(-0.8rem) rotate(1deg);
-    box-shadow: 0.45rem 0.55rem 0 #c8b39c, inset 0 0 1.2rem rgba(92, 75, 59, 0.05);
+    box-shadow: 0.45rem 0.55rem 0 var(--card-hover-shadow), inset 0 0 1.2rem rgba(0, 0, 0, 0.06);
     border-radius: 1rem 0.85rem 1.15rem 0.7rem;
   }
 
@@ -825,20 +1108,23 @@
   .site-cta-panel {
     position: relative;
     overflow: hidden;
+    color: var(--card-text);
     background:
-      linear-gradient(135deg, rgba(255, 232, 223, 0.35), transparent 48%),
-      linear-gradient(#fdfbf7 1.5rem, transparent 1.5rem) 0 0 / 100% 1.6rem,
-      linear-gradient(#e6e0d4 0.08rem, transparent 0.08rem) 0 1.5rem / 100% 1.6rem #fdfbf7;
-    border: 0.16rem solid #d8c8b6;
+      linear-gradient(135deg, rgba(255, 255, 255, 0.04), transparent 48%),
+      linear-gradient(var(--card-bg) 1.5rem, transparent 1.5rem) 0 0 / 100% 1.6rem,
+      linear-gradient(var(--card-line) 0.08rem, transparent 0.08rem) 0 1.5rem / 100% 1.6rem var(--card-bg);
+    border: 0.16rem solid var(--card-border);
     border-radius: 1.4rem 1rem 1.25rem 0.9rem;
-    box-shadow: 0.35rem 0.4rem 0 #e5d6c4;
+    box-shadow: 0.35rem 0.4rem 0 var(--card-shadow);
+    transition: background 0.4s ease, border-color 0.4s ease, color 0.4s ease, box-shadow 0.4s ease;
   }
 
   .site-section-kicker {
-    color: #8f764f;
-    background: #f4e6d1;
-    border: 1px solid #e2d4bf;
+    color: var(--section-kicker-color);
+    background: var(--section-kicker-bg);
+    border: 1px solid var(--section-kicker-border);
     font-weight: 800;
+    transition: background-color 0.4s ease, border-color 0.4s ease, color 0.4s ease;
   }
 
   .site-contact-links {
@@ -932,10 +1218,11 @@
   }
 
   .site-footer-bottom {
-    border-top: 2px solid #e2d4bf;
+    border-top: 2px solid var(--footer-border);
     background:
-      linear-gradient(#fdfbf7 1.5rem, transparent 1.5rem) 0 0 / 100% 1.6rem,
-      linear-gradient(#e6e0d4 0.08rem, transparent 0.08rem) 0 1.5rem / 100% 1.6rem #fdfbf7;
+      linear-gradient(var(--footer-bg) 1.5rem, transparent 1.5rem) 0 0 / 100% 1.6rem,
+      linear-gradient(var(--footer-line) 0.08rem, transparent 0.08rem) 0 1.5rem / 100% 1.6rem var(--footer-bg);
+    transition: background-color 0.4s ease, border-color 0.4s ease;
   }
 }
 
@@ -1043,6 +1330,132 @@
 
 .animate-pulse-gentle {
   animation: pulse-gentle 2s ease-in-out infinite;
+}
+
+/* ============================================================
+   AMBIENT THEME ADAPTATIONS & HIGH-CONTRAST ACCENTS
+   ============================================================ */
+[data-ambient-theme] .text-ink-900 {
+  color: var(--text-main);
+}
+[data-ambient-theme] .text-ink-800 {
+  color: var(--text-body);
+}
+[data-ambient-theme] .text-ink-700 {
+  color: var(--text-body);
+}
+[data-ambient-theme] .text-tan-600 {
+  color: var(--text-muted);
+}
+[data-ambient-theme] .text-tan-500 {
+  color: var(--text-muted);
+}
+[data-ambient-theme] .text-tan-400 {
+  color: var(--text-subtle);
+}
+[data-ambient-theme] .site-nav-link {
+  color: var(--text-muted);
+}
+[data-ambient-theme] .site-nav-link:hover {
+  color: var(--page-title-hover);
+}
+[data-ambient-theme] .page-title:hover {
+  color: var(--page-title-hover);
+  text-shadow: var(--page-title-shadow);
+}
+[data-ambient-theme] .game-quote-text {
+  color: var(--card-text);
+}
+[data-ambient-theme] .game-quote-icon {
+  color: var(--section-kicker-color);
+}
+[data-ambient-theme] .game-directory-filters button:not(.bg-peach-400) {
+  background-color: var(--filter-btn-bg);
+  color: var(--filter-btn-text);
+  border: 1px solid var(--filter-btn-border);
+}
+
+/* Form and input elements under active ambient theme */
+[data-ambient-theme] .site-cta-panel input {
+  background-color: var(--input-bg) !important;
+  border-color: var(--input-border) !important;
+  color: var(--input-text) !important;
+}
+[data-ambient-theme] .site-cta-panel input::placeholder {
+  color: var(--input-placeholder) !important;
+}
+[data-ambient-theme] .site-cta-panel a.bg-cream-50 {
+  background-color: var(--input-bg) !important;
+  border-color: var(--card-border) !important;
+  color: var(--text-main) !important;
+}
+[data-ambient-theme] .cozy-card.bg-gradient-to-br,
+[data-ambient-theme] .notepad-card.bg-gradient-to-br {
+  background:
+    linear-gradient(var(--card-bg) 1.5rem, transparent 1.5rem) 0 0 / 100% 1.6rem,
+    linear-gradient(var(--card-line) 0.08rem, transparent 0.08rem) 0 1.5rem / 100% 1.6rem var(--card-bg) !important;
+}
+[data-ambient-theme] textarea {
+  background-color: var(--input-bg) !important;
+  border-color: var(--input-border) !important;
+  color: var(--input-text) !important;
+}
+
+/* Header music pill under ambient themes */
+[data-ambient-theme] header .bg-cream-50\/90 {
+  background-color: var(--header-music-pill-bg) !important;
+  border-color: var(--header-music-pill-border) !important;
+}
+
+/* ============================================================
+   SOUND LOUNGE MODAL PROTECTION
+   Always maintains its cozy cream physical clipboard stationery look
+   ============================================================ */
+.ambient-sound-lounge,
+.ambient-sound-lounge.notepad-card {
+  --card-bg: #fdfbf7 !important;
+  --card-line: #e6e0d4 !important;
+  --card-border: #5e5148 !important;
+  --card-shadow: #d6c6b3 !important;
+  --card-tape: rgba(255, 221, 161, 0.85) !important;
+  --card-tape-border: rgba(0, 0, 0, 0.1) !important;
+  --card-text: #4a3f38 !important;
+  background-color: #fdf8f1 !important;
+  color: #4a3f38 !important;
+  border-color: #d0bd9e !important;
+}
+
+.ambient-sound-lounge .text-ink-900,
+[data-ambient-theme] .ambient-sound-lounge .text-ink-900 {
+  color: #3a2e22 !important;
+}
+
+.ambient-sound-lounge .text-ink-800,
+[data-ambient-theme] .ambient-sound-lounge .text-ink-800 {
+  color: #4a3a2c !important;
+}
+
+.ambient-sound-lounge .text-tan-500,
+[data-ambient-theme] .ambient-sound-lounge .text-tan-500 {
+  color: #8f764f !important;
+}
+
+.ambient-sound-lounge .text-tan-400,
+[data-ambient-theme] .ambient-sound-lounge .text-tan-400 {
+  color: #9b7a4d !important;
+}
+
+.ambient-sound-lounge button.bg-white,
+[data-ambient-theme] .ambient-sound-lounge button.bg-white {
+  background-color: #ffffff !important;
+  color: #3a2e22 !important;
+  border-color: #e2d4bf !important;
+}
+
+.ambient-sound-lounge button.bg-white:hover,
+[data-ambient-theme] .ambient-sound-lounge button.bg-white:hover {
+  background-color: #fff5f0 !important;
+  border-color: #ffb0a0 !important;
 }
 
 

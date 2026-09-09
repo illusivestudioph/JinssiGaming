@@ -16,13 +16,8 @@ export function Hero() {
         }}
       />
       
-      {/* Seamless feathered gradient blend into page background */}
-      <div 
-        className="absolute inset-0 z-10 pointer-events-none" 
-        style={{
-          background: 'linear-gradient(to bottom, transparent 0%, transparent 40%, rgba(253, 248, 241, 0.45) 70%, rgba(253, 248, 241, 0.9) 92%, #fdf8f1 100%)',
-        }}
-      />
+      {/* Seamless feathered gradient blend into page background using theme variables */}
+      <div className="absolute inset-0 z-10 pointer-events-none hero-fade-overlay" />
 
       {/* Hero Text Content */}
       <div className="hero-copy relative z-20 flex flex-col items-center justify-center px-4 text-center animate-fade-in">

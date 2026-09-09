@@ -61,6 +61,7 @@ export interface MusicContextValue {
 
   // Active Ambience Summary
   hasActiveAmbience: boolean;
+  ambientTheme: 'default' | 'rain' | 'fire' | 'wind';
 }
 
 const MusicContext = createContext<MusicContextValue | null>(null);
@@ -80,15 +81,47 @@ export function MusicProvider({ children }: { children: ReactNode }) {
   // Sound Effects
   const [sfxEnabled, setSfxEnabled] = useState<boolean>(() => readSavedBool(sfxStorageKey, true));
 
-  // Ensure document is clean of any dark theme attributes
-  useEffect(() => {
-    if (typeof document !== 'undefined') {
-      document.documentElement.removeAttribute('data-ambient-theme');
-      document.documentElement.classList.remove('dark');
-      const metaTag = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
-      if (metaTag) metaTag.content = '#fdf8f1';
+  // Ambient Theme Calculation
+  const ambientTheme = (() => {
+    if (muted) return 'default';
+    if (ambientRain > 0 && ambientRain >= ambientFire && ambientRain >= ambientWind) {
+      return 'rain';
     }
-  }, []);
+    if (ambientFire > 0 && ambientFire >= ambientWind) {
+      return 'fire';
+    }
+    if (ambientWind > 0) {
+      return 'wind';
+    }
+    return 'default';
+  })();
+
+  // Synchronize HTML data-ambient-theme and <meta name="theme-color">
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+
+    if (ambientTheme === 'default') {
+      document.documentElement.removeAttribute('data-ambient-theme');
+    } else {
+      document.documentElement.setAttribute('data-ambient-theme', ambientTheme);
+    }
+
+    let metaTag = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
+    if (!metaTag) {
+      metaTag = document.createElement('meta');
+      metaTag.name = 'theme-color';
+      document.head.appendChild(metaTag);
+    }
+
+    const themeColors: Record<string, string> = {
+      rain: '#131b2e',
+      fire: '#211712',
+      wind: '#132019',
+      default: '#fdf8f1',
+    };
+
+    metaTag.content = themeColors[ambientTheme] || '#fdf8f1';
+  }, [ambientTheme]);
 
   const settingsRef = useRef({ muted, userVolume, ambientRain, ambientFire, ambientWind });
   settingsRef.current = { muted, userVolume, ambientRain, ambientFire, ambientWind };
@@ -333,6 +366,7 @@ export function MusicProvider({ children }: { children: ReactNode }) {
         playDropdownSfx,
 
         hasActiveAmbience,
+        ambientTheme,
       }}
     >
       {children}

@@ -76,7 +76,7 @@ export function AmbientMixerModal({ isOpen, onClose }: AmbientMixerModalProps) {
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink-900/40 backdrop-blur-sm animate-fade-in">
       <div
         ref={modalRef}
-        className="notepad-card w-full max-w-md bg-cream-50 border-2 border-tan-300 shadow-cozy-lg p-5 sm:p-6 relative animate-pop overflow-hidden"
+        className="ambient-sound-lounge notepad-card w-full max-w-md bg-cream-50 border-2 border-tan-300 shadow-cozy-lg p-5 sm:p-6 relative animate-pop overflow-hidden"
         role="dialog"
         aria-modal="true"
         aria-labelledby="ambient-mixer-title"
