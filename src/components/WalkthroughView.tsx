@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import type { Game, WalkthroughSection } from '@/data/games';
 import { useProgress } from '@/hooks/useProgress';
+import { useMusic } from '@/context/MusicContext';
 import { CommentSection } from './CommentSection';
 import { TableOfContents } from './TableOfContents';
 import {
@@ -35,6 +36,16 @@ interface WalkthroughViewProps {
 export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
   const { completedSteps, toggleStep, showSpoilers, toggleSpoilers, resetProgress } =
     useProgress(game.id);
+  const { playCheckSfx, playUncheckSfx } = useMusic();
+
+  const handleStepToggleWithSfx = (stepKey: string) => {
+    if (!completedSteps.has(stepKey)) {
+      playCheckSfx();
+    } else {
+      playUncheckSfx();
+    }
+    toggleStep(stepKey);
+  };
 
   const totalSteps = game.walkthrough.reduce(
     (sum, ch) => sum + ch.steps.length,
@@ -371,7 +382,7 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
             sectionIndex={idx}
             accentColor={game.accentColor}
             completedSteps={completedSteps}
-            toggleStep={toggleStep}
+            toggleStep={handleStepToggleWithSfx}
             showSpoilers={showSpoilers}
             isExpanded={expandedSections[section.id] ?? true}
             onToggleExpand={() => toggleSectionExpand(section.id)}

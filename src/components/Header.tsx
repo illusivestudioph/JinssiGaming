@@ -1,13 +1,15 @@
 import { useState, useRef, useEffect } from 'react';
 import { useSiteContent } from "@/context/SiteContentContext";
 import { useMusic } from "@/context/MusicContext";
-import { Lock, Menu, X, Music, Pause, Volume2, VolumeX } from 'lucide-react';
+import { AmbientMixerModal } from "@/components/AmbientMixerModal";
+import { Lock, Menu, X, Music, Pause, Volume2, VolumeX, Sliders } from 'lucide-react';
 
 export type View = 'home' | 'walkthroughs' | 'about' | 'privacy' | 'terms' | 'contact' | 'admin';
 
 export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View) => void }) {
   const { logoImage } = useSiteContent();
-  const { playing, muted, togglePlayback, toggleMute, userVolume, setVolume } = useMusic();
+  const { playing, muted, togglePlayback, toggleMute, userVolume, setVolume, hasActiveAmbience } = useMusic();
+  const [showMixer, setShowMixer] = useState(false);
   
   // Secret Trigger State
   const [clickCount, setClickCount] = useState(0);
@@ -69,7 +71,7 @@ export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View)
               {view === 'admin' && <span className="font-bold text-earth-500 ml-4">Admin Mode</span>}
             </nav>
 
-            {/* Persistent Header Music Control */}
+            {/* Persistent Header Music & Ambience Control */}
             <div className="flex items-center gap-1.5 bg-cream-50/90 border border-tan-300/80 rounded-full px-2.5 py-1 shadow-cozy-sm">
               <button
                 type="button"
@@ -90,6 +92,24 @@ export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View)
                 <span className="hidden sm:inline font-sans text-xs">
                   {playing ? (muted ? 'Muted' : 'Music On') : 'BGM'}
                 </span>
+              </button>
+
+              {/* Open Ambient Mixer Lounge */}
+              <button
+                type="button"
+                onClick={() => setShowMixer(true)}
+                className={`p-1 rounded-full transition-colors relative ${
+                  hasActiveAmbience
+                    ? 'text-peach-600 bg-peach-100 hover:bg-peach-200'
+                    : 'text-tan-500 hover:text-ink-900 hover:bg-cream-200'
+                }`}
+                title="Open Ambient Sound Lounge (Rain, Fireplace, Wind)"
+                aria-label="Open ambient sound mixer"
+              >
+                <Sliders className="w-3.5 h-3.5" />
+                {hasActiveAmbience && (
+                  <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-peach-500 ring-1 ring-white" />
+                )}
               </button>
 
               {playing && (
@@ -113,6 +133,7 @@ export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View)
               type="button"
               className="rounded-xl border-2 border-tan-200 bg-cream-50 p-2 text-tan-600 shadow-cozy-sm transition-colors hover:border-peach-300 hover:text-peach-500 md:hidden"
               onClick={() => setMobileMenuOpen((open) => !open)}
+
               aria-expanded={mobileMenuOpen}
               aria-controls="mobile-navigation"
               aria-label={mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
@@ -143,11 +164,26 @@ export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View)
                   aria-label="Mobile music volume"
                 />
               </div>
+
+              {/* Mobile open ambient lounge */}
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  setShowMixer(true);
+                }}
+                className="mt-2.5 flex items-center justify-center gap-2 w-full py-2 px-3 rounded-xl bg-peach-100 text-peach-700 text-xs font-bold hover:bg-peach-200 transition-colors"
+              >
+                <Sliders className="w-3.5 h-3.5" />
+                Open Sound Lounge (Rain, Fireplace...)
+              </button>
             </div>
           </nav>
         )}
       </header>
 
+      {/* AMBIENT SOUND LOUNGE MODAL */}
+      <AmbientMixerModal isOpen={showMixer} onClose={() => setShowMixer(false)} />
 
       {/* SECRET AUTH MODAL */}
       {showAuthModal && (
