@@ -10,7 +10,7 @@ import {
   ArrowDown, 
   Image as ImageIcon, 
   Upload, 
-  Sparkles,
+  Bookmark,
   BookOpen
 } from 'lucide-react';
 
@@ -606,7 +606,7 @@ export function ArticleEditor({
                 <div className="p-3 rounded-xl bg-peach-50/60 border border-peach-200">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-xs font-bold text-peach-700 flex items-center gap-1.5">
-                      <Sparkles size={13} /> Cozy Callout Box (Optional)
+                      <Bookmark size={13} /> Cozy Callout Box (Optional)
                     </span>
                     {section.callout ? (
                       <button

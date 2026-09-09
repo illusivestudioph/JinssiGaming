@@ -11,7 +11,8 @@ import {
   Share2,
   Copy,
   Check,
-  Sparkles,
+  Coffee,
+  Bookmark,
   BookOpen,
   ArrowRight,
   ExternalLink,
@@ -123,7 +124,7 @@ export function ArticleView({
 
             <div className="flex items-center gap-4 text-xs font-bold">
               <div className="bg-cream-200/80 px-3 py-1.5 rounded-xl text-earth-700 flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-peach-500" />
+                <Coffee className="w-3.5 h-3.5 text-peach-600" />
                 <span>Cozy Score: {article.cozyScore}/5 🍵</span>
               </div>
               <div className="bg-cream-200/80 px-3 py-1.5 rounded-xl text-sage-600">
@@ -231,7 +232,7 @@ export function ArticleView({
                 {section.callout && (
                   <div className="my-6 p-5 rounded-2xl bg-peach-50/80 border-2 border-dashed border-peach-300 relative">
                     <div className="flex items-center gap-2 text-peach-800 font-bold text-sm mb-1.5">
-                      <Sparkles className="w-4 h-4 text-peach-500" />
+                      <Bookmark className="w-4 h-4 text-peach-600" />
                       <span>{section.callout.title}</span>
                     </div>
                     <p className="text-sm text-ink-700 font-medium leading-relaxed">

@@ -5,7 +5,7 @@ import {
   Edit2, 
   Trash2, 
   Clock, 
-  Sparkles, 
+  Coffee, 
   BookOpen, 
   Search, 
   ExternalLink 
@@ -116,7 +116,7 @@ export function ArticleManager({
                       {article.readTimeMinutes} min
                     </span>
                     <span className="text-[11px] font-semibold text-earth-600 flex items-center gap-1">
-                      <Sparkles size={11} className="text-peach-500" />
+                      <Coffee size={11} className="text-peach-600" />
                       {article.cozyScore}/5 🍵
                     </span>
                   </div>

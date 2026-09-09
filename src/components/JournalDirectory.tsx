@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useSiteContent } from '@/context/SiteContentContext';
 import { articleCategories, type Article } from '@/data/articles';
-import { BookOpen, Clock, Search, Tag, Sparkles, ArrowRight } from 'lucide-react';
+import { BookOpen, Clock, Search, Tag, Coffee, ArrowRight } from 'lucide-react';
 
 interface JournalDirectoryProps {
   onSelectArticle: (article: Article) => void;
@@ -171,8 +171,8 @@ export function JournalDirectory({ onSelectArticle }: JournalDirectoryProps) {
 
               {/* Card Footer: Cozy Score & Read Link */}
               <div className="px-6 sm:px-7 pb-6 pt-3 border-t border-tan-200/60 flex items-center justify-between">
-                <div className="flex items-center gap-1 text-xs text-earth-600 font-bold">
-                  <Sparkles className="w-3.5 h-3.5 text-peach-500" />
+                <div className="flex items-center gap-1.5 text-xs text-earth-700 font-bold">
+                  <Coffee className="w-3.5 h-3.5 text-peach-600" />
                   <span>Cozy Rating: {article.cozyScore}/5 🍵</span>
                 </div>
 

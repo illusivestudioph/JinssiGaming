@@ -9,7 +9,6 @@ import {
   Volume2,
   VolumeX,
   X,
-  Sparkles,
   CheckCircle2,
   Sliders,
 } from 'lucide-react';
@@ -119,7 +118,7 @@ export function AmbientMixerModal({ isOpen, onClose }: AmbientMixerModalProps) {
         <div className="mb-5">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-bold uppercase tracking-wider text-tan-500 flex items-center gap-1">
-              <Sparkles className="w-3.5 h-3.5 text-peach-500" />
+              <Sliders className="w-3.5 h-3.5 text-peach-500" />
               Quick Atmosphere Presets
             </span>
             {(ambientRain > 0 || ambientFire > 0 || ambientWind > 0) && (
