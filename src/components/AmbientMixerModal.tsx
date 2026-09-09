@@ -147,7 +147,7 @@ export function AmbientMixerModal({ isOpen, onClose }: AmbientMixerModalProps) {
                 type="button"
                 onClick={() => void togglePlayback()}
                 className={`p-1.5 rounded-lg transition-colors ${
-                  playing ? 'bg-peach-400 text-white' : 'bg-cream-200 text-tan-600'
+                  playing ? 'bg-[#FD9A4D] text-white' : 'bg-cream-200 text-tan-600'
                 }`}
                 title={playing ? 'Pause music' : 'Play music'}
               >
@@ -162,7 +162,7 @@ export function AmbientMixerModal({ isOpen, onClose }: AmbientMixerModalProps) {
               step="0.05"
               value={userVolume}
               onChange={(e) => setVolume(Number(e.target.value))}
-              className="flex-1 accent-peach-400 cursor-pointer"
+              className="flex-1 accent-[#FD9A4D] cursor-pointer"
               aria-label="Lo-Fi Music volume"
             />
             <span className="text-[11px] font-bold text-tan-500 w-8 text-right">
@@ -170,14 +170,14 @@ export function AmbientMixerModal({ isOpen, onClose }: AmbientMixerModalProps) {
             </span>
           </div>
 
-          {/* Gentle Rain (Pastel Sky Blue) */}
+          {/* Gentle Rain (Pastel Summer Beach Blue #83BAFF) */}
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2 w-28 flex-shrink-0">
               <button
                 type="button"
                 onClick={() => setAmbientRain(ambientRain > 0 ? 0 : 0.6)}
                 className={`p-1.5 rounded-lg transition-colors ${
-                  ambientRain > 0 ? 'bg-sky-400 text-white' : 'bg-cream-200 text-tan-600'
+                  ambientRain > 0 ? 'bg-[#83BAFF] text-white' : 'bg-cream-200 text-tan-600'
                 }`}
                 title="Toggle rain sound"
               >
@@ -192,7 +192,7 @@ export function AmbientMixerModal({ isOpen, onClose }: AmbientMixerModalProps) {
               step="0.05"
               value={ambientRain}
               onChange={(e) => setAmbientRain(Number(e.target.value))}
-              className="flex-1 accent-sky-400 cursor-pointer"
+              className="flex-1 accent-[#83BAFF] cursor-pointer"
               aria-label="Rain volume"
             />
             <span className="text-[11px] font-bold text-tan-500 w-8 text-right">
@@ -200,14 +200,14 @@ export function AmbientMixerModal({ isOpen, onClose }: AmbientMixerModalProps) {
             </span>
           </div>
 
-          {/* Fireplace Hearth (Pastel Earth Amber) */}
+          {/* Fireplace Hearth (Pastel Sandy Brown #FD9A4D) */}
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2 w-28 flex-shrink-0">
               <button
                 type="button"
                 onClick={() => setAmbientFire(ambientFire > 0 ? 0 : 0.65)}
                 className={`p-1.5 rounded-lg transition-colors ${
-                  ambientFire > 0 ? 'bg-earth-400 text-white' : 'bg-cream-200 text-tan-600'
+                  ambientFire > 0 ? 'bg-[#FD9A4D] text-white' : 'bg-cream-200 text-tan-600'
                 }`}
                 title="Toggle fireplace crackle"
               >
@@ -222,7 +222,7 @@ export function AmbientMixerModal({ isOpen, onClose }: AmbientMixerModalProps) {
               step="0.05"
               value={ambientFire}
               onChange={(e) => setAmbientFire(Number(e.target.value))}
-              className="flex-1 accent-earth-400 cursor-pointer"
+              className="flex-1 accent-[#FD9A4D] cursor-pointer"
               aria-label="Fireplace volume"
             />
             <span className="text-[11px] font-bold text-tan-500 w-8 text-right">
@@ -230,14 +230,14 @@ export function AmbientMixerModal({ isOpen, onClose }: AmbientMixerModalProps) {
             </span>
           </div>
 
-          {/* Forest Wind (Pastel Sage Green) */}
+          {/* Forest Wind (Pastel Sage Green #649058) */}
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2 w-28 flex-shrink-0">
               <button
                 type="button"
                 onClick={() => setAmbientWind(ambientWind > 0 ? 0 : 0.5)}
                 className={`p-1.5 rounded-lg transition-colors ${
-                  ambientWind > 0 ? 'bg-sage-400 text-white' : 'bg-cream-200 text-tan-600'
+                  ambientWind > 0 ? 'bg-[#649058] text-white' : 'bg-cream-200 text-tan-600'
                 }`}
                 title="Toggle forest wind"
               >
@@ -252,7 +252,7 @@ export function AmbientMixerModal({ isOpen, onClose }: AmbientMixerModalProps) {
               step="0.05"
               value={ambientWind}
               onChange={(e) => setAmbientWind(Number(e.target.value))}
-              className="flex-1 accent-sage-400 cursor-pointer"
+              className="flex-1 accent-[#649058] cursor-pointer"
               aria-label="Forest wind volume"
             />
             <span className="text-[11px] font-bold text-tan-500 w-8 text-right">

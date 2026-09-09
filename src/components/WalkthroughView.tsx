@@ -223,12 +223,12 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
           <div
             className="absolute inset-0"
             style={{
-              background: `linear-gradient(180deg, transparent 30%, ${game.accentColor}33 100%)`,
+              background: `linear-gradient(180deg, transparent 30%, var(--theme-accent)33 100%)`,
             }}
           />
           <span
-            className="absolute bottom-4 left-4 pill text-cream-50 shadow-cozy-sm backdrop-blur-sm"
-            style={{ backgroundColor: game.accentColor + 'cc' }}
+            className="absolute bottom-4 left-4 pill text-cream-50 shadow-cozy-sm backdrop-blur-sm category-accent-pill"
+            style={{ backgroundColor: 'var(--theme-accent)' }}
           >
             {game.category}
           </span>
@@ -299,7 +299,7 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
                 href={game.gameLink}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 font-bold text-peach-600 hover:text-peach-500 transition-colors"
+                className="inline-flex items-center gap-2 font-bold theme-accent-color hover:opacity-80 transition-opacity"
               >
                 Visit game <ExternalLink className="h-4 w-4" />
               </a>
@@ -312,7 +312,7 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
       <div className="cozy-card notepad-card p-5 mb-6">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <BookOpen className="w-5 h-5" style={{ color: game.accentColor }} />
+            <BookOpen className="w-5 h-5 theme-accent-color progress-accent-icon" style={{ color: 'var(--theme-accent)' }} />
             <h3 className="font-display text-lg font-600 text-ink-900">
               Your Progress
             </h3>
@@ -321,12 +321,12 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
             {completedCount} / {totalSteps} steps
           </span>
         </div>
-        <div className="h-3 rounded-full bg-cream-300 overflow-hidden">
+        <div className="h-3 rounded-full bg-cream-300 overflow-hidden progress-bar-track">
           <div
-            className="h-full rounded-full transition-all duration-700 ease-out flex items-center justify-end pr-2"
+            className="h-full rounded-full transition-all duration-700 ease-out flex items-center justify-end pr-2 progress-bar-fill"
             style={{
               width: `${progressPercent}%`,
-              backgroundColor: game.accentColor,
+              backgroundColor: 'var(--theme-accent)',
             }}
           >
             {progressPercent > 15 && (
@@ -528,8 +528,8 @@ function WalkthroughSectionCard({
       >
         <div className="flex items-center gap-3">
           <div
-            className="w-9 h-9 rounded-xl flex items-center justify-center font-display font-700 text-sm text-cream-50 flex-shrink-0"
-            style={{ backgroundColor: accentColor }}
+            className="w-9 h-9 rounded-xl flex items-center justify-center font-display font-700 text-sm text-cream-50 flex-shrink-0 chapter-accent-badge"
+            style={{ backgroundColor: 'var(--theme-accent)' }}
           >
             {sectionCompleted ? (
               <Check className="w-5 h-5" strokeWidth={3} />
@@ -630,8 +630,8 @@ function WikiHowStep({
       <div className="flex items-center justify-between px-4 pt-4 pb-2">
         <div className="flex items-center gap-2.5">
           <div
-            className="w-7 h-7 rounded-full flex items-center justify-center font-display font-700 text-xs text-cream-50 flex-shrink-0"
-            style={{ backgroundColor: accentColor }}
+            className="w-7 h-7 rounded-full flex items-center justify-center font-display font-700 text-xs text-cream-50 flex-shrink-0 step-accent-badge"
+            style={{ backgroundColor: 'var(--theme-accent)' }}
           >
             {stepNumber}
           </div>
@@ -649,10 +649,10 @@ function WikiHowStep({
           onClick={() => toggleStep(stepKey)}
           className={`check-circle flex-shrink-0 ${
             isDone
-              ? 'border-transparent text-cream-50 animate-pop'
+              ? 'is-done border-transparent text-cream-50 animate-pop'
               : 'border-cream-400 hover:border-peach-300'
           }`}
-          style={isDone ? { backgroundColor: accentColor } : undefined}
+          style={isDone ? { backgroundColor: 'var(--theme-accent)' } : undefined}
           aria-label={isDone ? 'Mark as incomplete' : 'Mark as complete'}
         >
           {isDone && <Check className="w-4 h-4" strokeWidth={3} />}

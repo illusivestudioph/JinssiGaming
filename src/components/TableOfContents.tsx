@@ -129,8 +129,8 @@ export function TableOfContents({
       >
         <div className="flex items-center gap-2.5">
           <div
-            className="w-6 h-6 rounded-lg flex items-center justify-center text-white shadow-cozy-sm flex-shrink-0"
-            style={{ backgroundColor: accentColor }}
+            className="w-6 h-6 rounded-lg flex items-center justify-center text-white shadow-cozy-sm flex-shrink-0 toc-accent-badge"
+            style={{ backgroundColor: 'var(--theme-accent)' }}
           >
             {floating ? <Compass className="w-3.5 h-3.5" /> : <BookOpen className="w-3.5 h-3.5" />}
           </div>
@@ -162,7 +162,7 @@ export function TableOfContents({
           <div className="table-of-contents-header p-3.5 border-b-2 border-tan-200 bg-cream-100/90 flex flex-col gap-2.5">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Compass className="w-4 h-4 text-peach-500" />
+                <Compass className="w-4 h-4 theme-accent-color" style={{ color: 'var(--theme-accent)' }} />
                 <span className="font-display font-bold text-ink-900 text-sm">
                   Quick Navigation
                 </span>
@@ -170,14 +170,14 @@ export function TableOfContents({
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}
-                className="p-1 text-tan-400 hover:text-ink-900 rounded-lg hover:bg-cream-200 transition-colors"
-                aria-label="Close Table of Contents"
+                className="p-1 rounded-md text-tan-400 hover:text-ink-900 hover:bg-cream-200 transition-colors"
+                aria-label="Close navigation"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            {/* Search Input */}
+            {/* Step Search input */}
             <div className="relative">
               <Search className="w-3.5 h-3.5 text-tan-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
               <input
@@ -193,24 +193,25 @@ export function TableOfContents({
                   type="button"
                   onClick={() => setSearchQuery('')}
                   className="absolute right-2 top-1/2 -translate-y-1/2 text-tan-400 hover:text-ink-900"
+                  aria-label="Clear search"
                 >
-                  <X className="w-3.5 h-3.5" />
+                  <X className="w-3 h-3" />
                 </button>
               )}
             </div>
           </div>
 
-          {/* List of Sections & Steps */}
-          <div className="overflow-y-auto max-h-[50vh] p-2 divide-y divide-cream-200/80">
+          {/* Section & Step List */}
+          <div className="p-2 space-y-1 overflow-y-auto" style={{ maxHeight: 'calc(70vh - 110px)' }}>
             {filteredSections.length === 0 ? (
-              <div className="p-6 text-center text-xs font-semibold text-tan-500">
-                No matching steps found for &ldquo;{searchQuery}&rdquo;.
+              <div className="p-4 text-center text-xs text-tan-400 font-semibold">
+                No matching steps or chapters found.
               </div>
             ) : (
-              filteredSections.map((section, secIdx) => {
+              filteredSections.map((section) => {
+                const secIdx = sections.findIndex((s) => s.id === section.id);
+                const secCompleted = section.steps?.every((s) => completedSteps.has(`${section.id}-${s.id}`));
                 const sectionSteps = section.matchingSteps || [];
-                const secCompleted = section.steps && section.steps.length > 0 &&
-                  section.steps.every((s) => completedSteps.has(`${section.id}-${s.id}`));
 
                 return (
                   <div key={section.id} className="py-2 first:pt-0 last:pb-0">
@@ -222,8 +223,8 @@ export function TableOfContents({
                     >
                       <div className="flex items-center gap-2 min-w-0">
                         <span
-                          className="w-5 h-5 rounded-md flex items-center justify-center text-[10px] font-display font-bold text-cream-50 flex-shrink-0"
-                          style={{ backgroundColor: accentColor }}
+                          className="w-5 h-5 rounded-md flex items-center justify-center text-[10px] font-display font-bold text-cream-50 flex-shrink-0 chapter-accent-badge"
+                          style={{ backgroundColor: 'var(--theme-accent)' }}
                         >
                           {secCompleted ? (
                             <Check className="w-3 h-3" strokeWidth={3} />

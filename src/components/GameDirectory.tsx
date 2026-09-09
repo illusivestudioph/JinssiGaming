@@ -59,7 +59,7 @@ export function GameDirectory({ onSelectGame, progressMap }: GameDirectoryProps)
               onClick={() => setActiveCategory(cat)}
               className={`pill transition-all duration-300 ${
                 activeCategory === cat
-                  ? 'bg-peach-400 text-cream-50 shadow-cozy-sm scale-105'
+                  ? 'bg-peach-400 text-cream-50 shadow-cozy-sm scale-105 is-active'
                   : 'bg-cream-200 text-tan-500 hover:bg-cream-300 hover:text-ink-900'
               }`}
             >

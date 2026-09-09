@@ -49,10 +49,10 @@ export function GameCard({ game, onClick, completedCount = 0 }: GameCardProps) {
       {/* Card body */}
       <div className="game-doodle-content">
         <span
-          className="game-doodle-badge"
+          className="game-doodle-badge category-accent-pill"
           style={{
-            backgroundColor: game.accentColor,
-            color: getBadgeTextColor(game.accentColor),
+            backgroundColor: 'var(--theme-accent)',
+            color: 'var(--theme-accent-text)',
           }}
         >
           {game.category}
@@ -69,12 +69,12 @@ export function GameCard({ game, onClick, completedCount = 0 }: GameCardProps) {
 
         {/* Progress bar */}
         <div className="game-card-progress flex items-center gap-3">
-          <div className="flex-1 h-2.5 rounded-full bg-cream-300 overflow-hidden">
+          <div className="flex-1 h-2.5 rounded-full bg-cream-300 overflow-hidden progress-bar-track">
             <div
-              className="h-full rounded-full transition-all duration-500"
+              className="h-full rounded-full transition-all duration-500 progress-bar-fill"
               style={{
                 width: `${progressPercent}%`,
-                backgroundColor: game.accentColor,
+                backgroundColor: 'var(--theme-accent)',
               }}
             />
           </div>

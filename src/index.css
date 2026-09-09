@@ -6,6 +6,13 @@
 
 @layer base {
   :root {
+    /* Primary Theme Accent */
+    --theme-accent: #fd9a4d;
+    --theme-accent-hover: #fcb274;
+    --theme-accent-text: #ffffff;
+    --theme-accent-soft: #fcdfaa;
+    --theme-accent-border: #fd9a4d;
+
     /* Page background (Pastel Vanilla / Warm Cream) */
     --bg-page: #fefcf7;
     --bg-page-tint-start: rgba(254, 252, 247, 0.85);
@@ -78,6 +85,13 @@
 
   /* Rain Ambient: Pastel Summer Beach Blue (#83BAFF, #9BC1FF, #B9D3FF, #E3ECFF) */
   [data-ambient-theme="rain"] {
+    /* Primary Theme Accent */
+    --theme-accent: #83baff;
+    --theme-accent-hover: #72a8ef;
+    --theme-accent-text: #ffffff;
+    --theme-accent-soft: #e3ecff;
+    --theme-accent-border: #83baff;
+
     --bg-page: #ebf2fd;
     --bg-page-tint-start: rgba(235, 242, 253, 0.86);
     --bg-page-tint-end: rgba(235, 242, 253, 0.92);
@@ -142,6 +156,13 @@
 
   /* Fireplace Ambient: Warm Sunset Pastel (#FD9A4D, #FCB274, #FBCA9A, #FCDFAA, #FCF3B9) */
   [data-ambient-theme="fire"] {
+    /* Primary Theme Accent */
+    --theme-accent: #fd9a4d;
+    --theme-accent-hover: #fcb274;
+    --theme-accent-text: #ffffff;
+    --theme-accent-soft: #fcdfaa;
+    --theme-accent-border: #fd9a4d;
+
     --bg-page: #fef4eb;
     --bg-page-tint-start: rgba(254, 244, 235, 0.86);
     --bg-page-tint-end: rgba(249, 237, 224, 0.92);
@@ -206,6 +227,13 @@
 
   /* Forest Wind Ambient: Meadow Mint / Sage Pastel */
   [data-ambient-theme="wind"] {
+    /* Primary Theme Accent */
+    --theme-accent: #649058;
+    --theme-accent-hover: #77a86b;
+    --theme-accent-text: #ffffff;
+    --theme-accent-soft: #cfe0c8;
+    --theme-accent-border: #649058;
+
     --bg-page: #f1f7f0;
     --bg-page-tint-start: rgba(241, 247, 240, 0.86);
     --bg-page-tint-end: rgba(234, 243, 233, 0.92);
@@ -1550,60 +1578,138 @@
   color: var(--input-text) !important;
 }
 
-/* Progress bar tracks */
+/* Progress bars across all pages (walkthrough, game cards, summary cards) */
+.progress-bar-fill,
+.game-card-progress .h-full,
+.game-summary-progress .h-full,
+[data-ambient-theme] .progress-bar-fill,
+[data-ambient-theme] .game-card-progress .h-full,
+[data-ambient-theme] .game-summary-progress .h-full {
+  background-color: var(--theme-accent) !important;
+  transition: background-color 0.4s ease, width 0.7s ease-out;
+}
+
+.progress-bar-track,
+.game-card-progress .bg-cream-300,
+.game-summary-progress .bg-cream-300,
+.bg-cream-300.progress-bar-track,
+[data-ambient-theme] .progress-bar-track,
+[data-ambient-theme] .game-card-progress .bg-cream-300,
+[data-ambient-theme] .game-summary-progress .bg-cream-300,
 [data-ambient-theme] .bg-cream-300 {
   background-color: var(--card-done-line) !important;
+  transition: background-color 0.4s ease;
 }
 
-/* Walkthrough steps and card interactions in pastel themes */
-[data-ambient-theme] .hover\:bg-cream-100:hover {
-  background-color: rgba(0, 0, 0, 0.03) !important;
-}
-[data-ambient-theme] .hover\:bg-cream-200:hover,
-[data-ambient-theme] .hover\:bg-cream-200\/70:hover {
-  background-color: rgba(0, 0, 0, 0.05) !important;
-}
-[data-ambient-theme] .bg-cream-200\/50 {
-  background-color: rgba(0, 0, 0, 0.03) !important;
-}
-[data-ambient-theme] .border-tan-200 {
-  border-color: var(--card-line) !important;
-}
-[data-ambient-theme] .border-tan-300 {
-  border-color: var(--card-border) !important;
+/* Accent icons, text highlights, and links */
+.theme-accent-color,
+.progress-accent-icon,
+[data-ambient-theme] .theme-accent-color,
+[data-ambient-theme] .progress-accent-icon {
+  color: var(--theme-accent) !important;
+  transition: color 0.4s ease;
 }
 
-/* Rain theme primary action button accents (#83BAFF) */
-[data-ambient-theme="rain"] .bg-peach-400 {
-  background-color: #83baff !important;
-  border-color: #83baff !important;
-  color: #ffffff !important;
+/* Accent badges, chapter counters, step numbers, TOC pills, and check circles */
+.theme-accent-bg,
+.step-accent-badge,
+.chapter-accent-badge,
+.check-circle.is-done,
+.toc-accent-badge,
+.category-accent-pill,
+[data-ambient-theme] .theme-accent-bg,
+[data-ambient-theme] .step-accent-badge,
+[data-ambient-theme] .chapter-accent-badge,
+[data-ambient-theme] .check-circle.is-done,
+[data-ambient-theme] .toc-accent-badge,
+[data-ambient-theme] .category-accent-pill {
+  background-color: var(--theme-accent) !important;
+  color: var(--theme-accent-text) !important;
+  transition: background-color 0.4s ease, color 0.4s ease;
 }
-[data-ambient-theme="rain"] .bg-peach-400:hover {
-  background-color: #72a8ef !important;
-  border-color: #72a8ef !important;
+
+/* Primary buttons across entire site (Subscribe, More..., first CTA pill, Buy Me a Coffee) */
+.site-button-primary,
+.bg-peach-400.site-button,
+.bg-peach-500.site-button,
+button[type="submit"].site-button,
+.site-support-button,
+[data-ambient-theme] .site-button-primary,
+[data-ambient-theme] .bg-peach-400.site-button,
+[data-ambient-theme] .bg-peach-500.site-button,
+[data-ambient-theme] button[type="submit"].site-button,
+[data-ambient-theme] .site-support-button,
+[data-ambient-theme] .bg-peach-400,
+[data-ambient-theme] .bg-peach-500 {
+  background-color: var(--theme-accent) !important;
+  border-color: var(--theme-accent) !important;
+  color: var(--theme-accent-text) !important;
+  transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
-[data-ambient-theme="rain"] .bg-peach-500 {
-  background-color: #72a8ef !important;
-  border-color: #72a8ef !important;
+
+.site-button-primary:hover,
+.bg-peach-400.site-button:hover,
+.bg-peach-500.site-button:hover,
+button[type="submit"].site-button:hover,
+.site-support-button:hover,
+[data-ambient-theme] .site-button-primary:hover,
+[data-ambient-theme] .bg-peach-400.site-button:hover,
+[data-ambient-theme] .bg-peach-500.site-button:hover,
+[data-ambient-theme] button[type="submit"].site-button:hover,
+[data-ambient-theme] .site-support-button:hover,
+[data-ambient-theme] .bg-peach-400:hover,
+[data-ambient-theme] .bg-peach-500:hover {
+  background-color: var(--theme-accent-hover) !important;
+  border-color: var(--theme-accent-hover) !important;
+  color: var(--theme-accent-text) !important;
 }
-[data-ambient-theme="rain"] .text-peach-500,
-[data-ambient-theme="rain"] .text-peach-600 {
-  color: #2563eb !important;
+
+/* Category filter buttons in Game Directory */
+.game-directory-filters button.bg-peach-400,
+.game-directory-filters button.is-active,
+[data-ambient-theme] .game-directory-filters button.bg-peach-400,
+[data-ambient-theme] .game-directory-filters button.is-active {
+  background-color: var(--theme-accent) !important;
+  border-color: var(--theme-accent) !important;
+  color: var(--theme-accent-text) !important;
 }
-[data-ambient-theme="rain"] .border-peach-300,
-[data-ambient-theme="rain"] .border-peach-400 {
-  border-color: #9bc1ff !important;
+.game-directory-filters button:not(.bg-peach-400):not(.is-active),
+[data-ambient-theme] .game-directory-filters button:not(.bg-peach-400):not(.is-active) {
+  background-color: var(--btn-secondary-bg) !important;
+  border: 1.5px solid var(--btn-secondary-border) !important;
+  color: var(--btn-secondary-text) !important;
 }
-[data-ambient-theme="rain"] .hover\:border-peach-300:hover,
-[data-ambient-theme="rain"] .hover\:border-peach-400:hover {
-  border-color: #83baff !important;
+.game-directory-filters button:not(.bg-peach-400):not(.is-active):hover,
+[data-ambient-theme] .game-directory-filters button:not(.bg-peach-400):not(.is-active):hover {
+  background-color: var(--btn-secondary-hover-bg) !important;
+  border-color: var(--theme-accent) !important;
+  color: var(--text-main) !important;
 }
-[data-ambient-theme="rain"] .hover\:text-peach-600:hover {
-  color: #2563eb !important;
+
+/* Spoilers toggle track */
+.spoilers-toggle-track.bg-peach-400,
+[data-ambient-theme] .spoilers-toggle-track.bg-peach-400 {
+  background-color: var(--theme-accent) !important;
 }
-[data-ambient-theme="rain"] .accent-peach-400 {
-  accent-color: #83baff !important;
+
+/* Text and border peach helpers dynamically bound to theme accent */
+[data-ambient-theme] .text-peach-500,
+[data-ambient-theme] .text-peach-600 {
+  color: var(--theme-accent) !important;
+}
+[data-ambient-theme] .border-peach-300,
+[data-ambient-theme] .border-peach-400 {
+  border-color: var(--theme-accent-soft) !important;
+}
+[data-ambient-theme] .hover\:border-peach-300:hover,
+[data-ambient-theme] .hover\:border-peach-400:hover {
+  border-color: var(--theme-accent) !important;
+}
+[data-ambient-theme] .hover\:text-peach-600:hover {
+  color: var(--theme-accent) !important;
+}
+[data-ambient-theme] .accent-peach-400 {
+  accent-color: var(--theme-accent) !important;
 }
 
 /* Header music pill under ambient themes */

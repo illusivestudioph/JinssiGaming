@@ -109,7 +109,7 @@ export function CtaFooter({ onNavigate }: { onNavigate: (view: 'about' | 'privac
             <button
               type="submit"
               disabled={newsletterSubmitting}
-              className="site-button bg-peach-400 text-white hover:bg-peach-500"
+              className="site-button site-button-primary bg-peach-400 text-white hover:bg-peach-500"
             >
               {newsletterSubmitting ? 'Saving...' : newsletterSubmitted ? 'Subscribed!' : 'Subscribe'}
             </button>
@@ -135,7 +135,7 @@ export function CtaFooter({ onNavigate }: { onNavigate: (view: 'about' | 'privac
                 onClick={(e) => handleLinkClick(e, link)}
                 className={`site-button py-3 px-7 cursor-pointer ${
                   index === 0 
-                    ? 'bg-peach-400 border-peach-400 text-white hover:bg-peach-500 hover:border-peach-500 shadow-cozy-sm' 
+                    ? 'site-button-primary bg-peach-400 border-peach-400 text-white hover:bg-peach-500 hover:border-peach-500 shadow-cozy-sm' 
                     : 'bg-cream-50 border-tan-200 text-ink-900 hover:border-peach-400 hover:text-peach-600'
                 }`}
               >

@@ -243,12 +243,12 @@ function WalkthroughsPage({
                   {game.title}
                 </h3>
                 <div className="game-summary-progress flex items-center gap-3 mb-3">
-                  <div className="flex-1 h-2 rounded-full bg-cream-300 overflow-hidden">
+                  <div className="flex-1 h-2 rounded-full bg-cream-300 overflow-hidden progress-bar-track">
                     <div
-                      className="h-full rounded-full transition-all duration-500"
+                      className="h-full rounded-full transition-all duration-500 progress-bar-fill"
                       style={{
                         width: `${percent}%`,
-                        backgroundColor: game.accentColor,
+                        backgroundColor: 'var(--theme-accent)',
                       }}
                     />
                   </div>
