@@ -38,6 +38,7 @@ export function AmbientMixerModal({ isOpen, onClose }: AmbientMixerModalProps) {
     sfxEnabled,
     toggleSfx,
     playCheckSfx,
+    playDropdownSfx,
   } = useMusic();
 
   // Close when clicking outside or pressing Escape
@@ -265,17 +266,26 @@ export function AmbientMixerModal({ isOpen, onClose }: AmbientMixerModalProps) {
           <div className="flex items-center gap-2">
             <CheckCircle2 className={`w-4 h-4 ${sfxEnabled ? 'text-sage-500' : 'text-tan-400'}`} />
             <div>
-              <p className="text-xs font-bold text-ink-900">Checklist Click Sound</p>
-              <p className="text-[11px] text-tan-500 font-medium">Satisfying wood/pencil click on steps</p>
+              <p className="text-xs font-bold text-ink-900">Tactile Sound Effects</p>
+              <p className="text-[11px] text-tan-500 font-medium">Checklist clicks & dropdown navigation</p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2">
             <button
               type="button"
-              onClick={playCheckSfx}
+              onClick={() => playCheckSfx(true)}
               className="px-2 py-1 text-[11px] font-bold rounded-md bg-cream-100 hover:bg-cream-200 text-ink-800 transition-colors"
+              title="Preview checklist check sound"
             >
-              Test Click
+              Test Check
+            </button>
+            <button
+              type="button"
+              onClick={() => playDropdownSfx(true)}
+              className="px-2 py-1 text-[11px] font-bold rounded-md bg-cream-100 hover:bg-cream-200 text-ink-800 transition-colors"
+              title="Preview dropdown menu sound"
+            >
+              Test Dropdown
             </button>
             <button
               type="button"

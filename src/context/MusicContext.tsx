@@ -55,8 +55,9 @@ export interface MusicContextValue {
   // SFX
   sfxEnabled: boolean;
   toggleSfx: () => void;
-  playCheckSfx: () => void;
-  playUncheckSfx: () => void;
+  playCheckSfx: (force?: boolean) => void;
+  playUncheckSfx: (force?: boolean) => void;
+  playDropdownSfx: (force?: boolean) => void;
 
   // Active Ambience Summary
   hasActiveAmbience: boolean;
@@ -166,15 +167,21 @@ export function MusicProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  const playCheckSfx = () => {
-    if (sfxEnabled && !muted) {
+  const playCheckSfx = (force = false) => {
+    if ((sfxEnabled || force) && !muted) {
       ambientEngine.playCheckSound();
     }
   };
 
-  const playUncheckSfx = () => {
-    if (sfxEnabled && !muted) {
+  const playUncheckSfx = (force = false) => {
+    if ((sfxEnabled || force) && !muted) {
       ambientEngine.playUncheckSound();
+    }
+  };
+
+  const playDropdownSfx = (force = false) => {
+    if ((sfxEnabled || force) && !muted) {
+      ambientEngine.playDropdownSound();
     }
   };
 
@@ -313,6 +320,7 @@ export function MusicProvider({ children }: { children: ReactNode }) {
         toggleSfx,
         playCheckSfx,
         playUncheckSfx,
+        playDropdownSfx,
 
         hasActiveAmbience,
       }}

@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import type { WalkthroughSection } from '@/data/games';
+import { useMusic } from '@/context/MusicContext';
 import {
   BookOpen,
   ChevronDown,
@@ -27,6 +28,7 @@ export function TableOfContents({
   onSelectSection,
   floating = false,
 }: TableOfContentsProps) {
+  const { playDropdownSfx } = useMusic();
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -112,7 +114,10 @@ export function TableOfContents({
       {/* Dropdown Toggle Button */}
       <button
         type="button"
-        onClick={() => setIsOpen((prev) => !prev)}
+        onClick={() => {
+          playDropdownSfx();
+          setIsOpen((prev) => !prev);
+        }}
         className={`site-button flex items-center justify-between gap-3 text-sm font-semibold transition-all ${
           floating
             ? 'bg-cream-100/95 backdrop-blur-md text-ink-900 border-2 border-tan-300 shadow-cozy-lg px-4 py-2.5 rounded-full hover:border-peach-300 hover:bg-cream-50'

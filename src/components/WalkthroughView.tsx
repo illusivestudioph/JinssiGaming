@@ -36,7 +36,7 @@ interface WalkthroughViewProps {
 export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
   const { completedSteps, toggleStep, showSpoilers, toggleSpoilers, resetProgress } =
     useProgress(game.id);
-  const { playCheckSfx, playUncheckSfx } = useMusic();
+  const { playCheckSfx, playUncheckSfx, playDropdownSfx } = useMusic();
 
   const handleStepToggleWithSfx = (stepKey: string) => {
     if (!completedSteps.has(stepKey)) {
@@ -100,11 +100,12 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
   }, []);
 
   const toggleSectionExpand = useCallback((sectionId: string) => {
+    playDropdownSfx();
     setExpandedSections((prev) => ({
       ...prev,
       [sectionId]: !prev[sectionId],
     }));
-  }, []);
+  }, [playDropdownSfx]);
 
   const shareUrl = typeof window === 'undefined'
     ? ''

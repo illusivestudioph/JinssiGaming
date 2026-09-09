@@ -8,7 +8,7 @@ export type View = 'home' | 'walkthroughs' | 'about' | 'privacy' | 'terms' | 'co
 
 export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View) => void }) {
   const { logoImage } = useSiteContent();
-  const { playing, muted, togglePlayback, toggleMute, userVolume, setVolume, hasActiveAmbience } = useMusic();
+  const { playing, muted, togglePlayback, toggleMute, userVolume, setVolume, hasActiveAmbience, playDropdownSfx } = useMusic();
   const [showMixer, setShowMixer] = useState(false);
   
   // Secret Trigger State
@@ -132,7 +132,10 @@ export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View)
             <button
               type="button"
               className="rounded-xl border-2 border-tan-200 bg-cream-50 p-2 text-tan-600 shadow-cozy-sm transition-colors hover:border-peach-300 hover:text-peach-500 md:hidden"
-              onClick={() => setMobileMenuOpen((open) => !open)}
+              onClick={() => {
+                playDropdownSfx();
+                setMobileMenuOpen((open) => !open);
+              }}
 
               aria-expanded={mobileMenuOpen}
               aria-controls="mobile-navigation"

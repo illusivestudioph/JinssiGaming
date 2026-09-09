@@ -24,7 +24,62 @@ class AmbientSoundEngine {
   private windNoiseNode: AudioNode | null = null;
   private windLfo: OscillatorNode | null = null;
 
-  private isInitialized = false;
+  // Audio file buffers for tactile SFX (/check.mp3 and /dropdown.mp3)
+  private checkBuffer: AudioBuffer | null = null;
+  private dropdownBuffer: AudioBuffer | null = null;
+  private isPreloading = false;
+  private isMasterMuted = false;
+
+  constructor() {
+    if (typeof window !== 'undefined') {
+      setTimeout(() => {
+        this.preloadAudioFiles();
+      }, 0);
+    }
+  }
+
+  public preloadAudioFiles() {
+    if (typeof window === 'undefined' || this.isPreloading) return;
+    this.isPreloading = true;
+
+    const ctx = this.initContext();
+    if (!ctx) return;
+
+    const decode = (buffer: ArrayBuffer): Promise<AudioBuffer> => {
+      return new Promise((resolve, reject) => {
+        try {
+          const res = ctx.decodeAudioData(buffer, resolve, reject);
+          if (res && typeof res.then === 'function') {
+            res.then(resolve).catch(reject);
+          }
+        } catch (err) {
+          reject(err);
+        }
+      });
+    };
+
+    fetch('/check.mp3')
+      .then((res) => {
+        if (!res.ok) throw new Error('Failed to fetch check.mp3');
+        return res.arrayBuffer();
+      })
+      .then(decode)
+      .then((buffer) => {
+        this.checkBuffer = buffer;
+      })
+      .catch(() => {});
+
+    fetch('/dropdown.mp3')
+      .then((res) => {
+        if (!res.ok) throw new Error('Failed to fetch dropdown.mp3');
+        return res.arrayBuffer();
+      })
+      .then(decode)
+      .then((buffer) => {
+        this.dropdownBuffer = buffer;
+      })
+      .catch(() => {});
+  }
 
   private initContext(): AudioContext | null {
     if (typeof window === 'undefined') return null;
@@ -259,79 +314,76 @@ class AmbientSoundEngine {
   }
 
   // --- SATISFYING COZY SOUND EFFECTS ---
-  /**
-   * Plays a warm, satisfying wooden block / pencil scribble click when checking a step
-   */
-  public playCheckSound() {
+  private playSfx(
+    url: string,
+    buffer: AudioBuffer | null,
+    playbackRate = 1.0,
+    volume = 0.75
+  ) {
+    if (this.isMasterMuted) return;
+
+    if (!buffer && !this.isPreloading) {
+      this.preloadAudioFiles();
+    }
+
     const ctx = this.initContext();
-    if (!ctx) return;
+    if (ctx && buffer) {
+      try {
+        if (ctx.state === 'suspended') {
+          void ctx.resume();
+        }
+        const source = ctx.createBufferSource();
+        source.buffer = buffer;
+        source.playbackRate.value = playbackRate;
 
+        const gainNode = ctx.createGain();
+        gainNode.gain.setValueAtTime(volume, ctx.currentTime);
+
+        source.connect(gainNode);
+        gainNode.connect(this.masterGain || ctx.destination);
+        source.start(0);
+        return;
+      } catch {
+        // Fall back to HTMLAudioElement below
+      }
+    }
+
+    // HTML5 Audio fallback
     try {
-      const now = ctx.currentTime;
-      // High, warm tactile "tock"
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(680, now);
-      osc.frequency.exponentialRampToValueAtTime(420, now + 0.045);
-
-      gain.gain.setValueAtTime(0.25, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
-
-      osc.connect(gain);
-      gain.connect(this.masterGain!);
-
-      osc.start(now);
-      osc.stop(now + 0.05);
-
-      // Add tiny paper texture click
-      const clickOsc = ctx.createOscillator();
-      const clickGain = ctx.createGain();
-      clickOsc.type = 'triangle';
-      clickOsc.frequency.setValueAtTime(1200, now);
-      clickGain.gain.setValueAtTime(0.08, now);
-      clickGain.gain.exponentialRampToValueAtTime(0.001, now + 0.02);
-
-      clickOsc.connect(clickGain);
-      clickGain.connect(this.masterGain!);
-      clickOsc.start(now);
-      clickOsc.stop(now + 0.02);
+      const audio = new Audio(url);
+      audio.volume = Math.max(0, Math.min(1, volume));
+      if (playbackRate !== 1.0) {
+        audio.playbackRate = playbackRate;
+      }
+      void audio.play().catch(() => {});
     } catch {
       // Ignore
     }
   }
 
   /**
-   * Plays a gentle, lower-pitched pop when unchecking a step
+   * Plays the satisfying checklist click sound from /check.mp3
+   */
+  public playCheckSound() {
+    this.playSfx('/check.mp3', this.checkBuffer, 1.0, 0.75);
+  }
+
+  /**
+   * Plays a slightly lower-pitched tactile sound when unchecking a step
    */
   public playUncheckSound() {
-    const ctx = this.initContext();
-    if (!ctx) return;
+    this.playSfx('/check.mp3', this.checkBuffer, 0.85, 0.6);
+  }
 
-    try {
-      const now = ctx.currentTime;
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(360, now);
-      osc.frequency.exponentialRampToValueAtTime(240, now + 0.04);
-
-      gain.gain.setValueAtTime(0.18, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.045);
-
-      osc.connect(gain);
-      gain.connect(this.masterGain!);
-
-      osc.start(now);
-      osc.stop(now + 0.045);
-    } catch {
-      // Ignore
-    }
+  /**
+   * Plays the snappy dropdown sound from /dropdown.mp3
+   */
+  public playDropdownSound() {
+    this.playSfx('/dropdown.mp3', this.dropdownBuffer, 1.0, 0.7);
   }
 
   public setMasterMuted(muted: boolean) {
+    this.isMasterMuted = muted;
     if (this.masterGain && this.ctx) {
       this.masterGain.gain.setTargetAtTime(muted ? 0 : 1, this.ctx.currentTime, 0.08);
     }
