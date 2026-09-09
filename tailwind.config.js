@@ -7,19 +7,32 @@ export default {
         cream: {
           50: '#fefcf9',
           100: '#fdf8f1',
-          200: '#f9f0e3',
-          300: '#f4e6d1',
-          400: '#ecd5b3',
+          200: '#fcf3b9', // Vanilla
+          300: '#fcdfaa', // Peach Yellow
+          400: '#fbca9a', // Peach
           500: '#e0bf91',
         },
         peach: {
           50: '#fff5f0',
           100: '#ffe8df',
-          200: '#ffd0c2',
-          300: '#ffb0a0',
-          400: '#ff8c75',
-          500: '#f5724e',
+          200: '#fcdfaa', // Peach Yellow
+          300: '#fbca9a', // Peach
+          400: '#fcb274', // Sandy brown (light)
+          500: '#fd9a4d', // Sandy brown
           600: '#e05a3a',
+        },
+        pastel: {
+          blue: {
+            100: '#E3ECFF',
+            200: '#B9D3FF',
+            300: '#9BC1FF',
+            400: '#83BAFF',
+          },
+          sandy: '#FD9A4D',
+          sandyLight: '#FCB274',
+          peach: '#FBCA9A',
+          peachYellow: '#FCDFAA',
+          vanilla: '#FCF3B9',
         },
         tan: {
           50: '#faf6f0',

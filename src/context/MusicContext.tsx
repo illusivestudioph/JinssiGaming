@@ -114,10 +114,10 @@ export function MusicProvider({ children }: { children: ReactNode }) {
     }
 
     const themeColors: Record<string, string> = {
-      rain: '#131b2e',
-      fire: '#211712',
-      wind: '#132019',
-      default: '#fdf8f1',
+      rain: '#ebf2fd',
+      fire: '#fef4eb',
+      wind: '#f1f7f0',
+      default: '#fefcf7',
     };
 
     metaTag.content = themeColors[ambientTheme] || '#fdf8f1';
