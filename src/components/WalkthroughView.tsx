@@ -457,8 +457,8 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
           </div>
 
           <div className="relative z-10 w-full max-w-md my-auto pt-[180px] sm:pt-[220px]">
-            {/* Tuturo Character standing behind the card greeting - rock-solid centered on mobile and desktop */}
-            <div className="absolute left-1/2 -translate-x-1/2 top-0 z-0 pointer-events-none w-56 sm:w-72 select-none">
+            {/* Tuturo Character standing behind the card greeting - rock-solid centered and moved up so pacifier and upper body are fully visible */}
+            <div className="absolute left-1/2 -translate-x-1/2 -top-12 sm:-top-16 z-0 pointer-events-none w-56 sm:w-72 select-none">
               <div className="animate-float w-full">
                 <img
                   src="/tuturo.png"
