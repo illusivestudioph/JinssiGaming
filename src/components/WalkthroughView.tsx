@@ -4,6 +4,7 @@ import { useProgress } from '@/hooks/useProgress';
 import { useMusic } from '@/context/MusicContext';
 import { CommentSection } from './CommentSection';
 import { TableOfContents } from './TableOfContents';
+import { ConfettiCanvas } from './ConfettiCanvas';
 import {
   ArrowLeft,
   Check,
@@ -18,178 +19,6 @@ import {
   Copy,
   Mail,
 } from 'lucide-react';
-
-const confettiColors = [
-  '#ff6b6b', // Coral flame
-  '#ff9248', // Warm tangerine
-  '#ffb38a', // Peach blush
-  '#ffc837', // Sunflower gold
-  '#ffe699', // Pale champagne gold
-  '#82ad76', // Cozy sage green
-  '#48cae4', // Fresh mint
-  '#9d8df1', // Pastel periwinkle
-  '#c0bbfe', // Lavender mist
-  '#ff70a6', // Strawberry pink
-  '#ffd700', // Sparkling gold
-  '#70d6ff', // Sky cyan
-];
-
-interface ConfettiBurstPiece {
-  id: number;
-  shape: 'ribbon' | 'square' | 'circle' | 'star' | 'streamer';
-  color: string;
-  width: string;
-  height: string;
-  tx: string;
-  ty: string;
-  rx: string;
-  ry: string;
-  rz: string;
-  gravity: string;
-  duration: string;
-  delay: string;
-}
-
-interface AmbientSparkle {
-  id: number;
-  color: string;
-  size: string;
-  x: string;
-  y: string;
-  duration: string;
-  delay: string;
-}
-
-// Generate high-velocity confetti burst pieces that explode radially from behind Tuturo
-// and travel across and completely OUT of the screen (50vw-95vw and 40vh-82vh reach)
-function createConfettiBurstPieces(count = 88): ConfettiBurstPiece[] {
-  const pieces: ConfettiBurstPiece[] = [];
-  const shapes: ConfettiBurstPiece['shape'][] = ['ribbon', 'square', 'circle', 'star', 'streamer'];
-
-  for (let i = 0; i < count; i++) {
-    let angleRad: number;
-    const bandPicker = i % 10;
-    if (bandPicker < 5) {
-      // 50% particles shoot upwards and diagonally up into the sky (-175deg to -5deg)
-      const deg = -175 + ((i * 37) % 170);
-      angleRad = (deg * Math.PI) / 180;
-    } else if (bandPicker < 8) {
-      // 30% particles shoot extreme horizontal left & right directly off screen edges
-      const isLeft = i % 2 === 0;
-      const deg = isLeft ? -195 + ((i * 19) % 30) : -15 + ((i * 19) % 30);
-      angleRad = (deg * Math.PI) / 180;
-    } else {
-      // 20% particles burst downwards & wide diagonal behind the card (25deg to 155deg)
-      const deg = 25 + ((i * 31) % 130);
-      angleRad = (deg * Math.PI) / 180;
-    }
-
-    const tier = i % 3;
-    let distVw: number;
-    let distVh: number;
-
-    if (tier === 0) {
-      // Hyper-velocity outer blast: spreads completely OUT OF THE SCREEN (58vw to 94vw)
-      distVw = 58 + ((i * 13) % 37);
-      distVh = 46 + ((i * 17) % 38);
-    } else if (tier === 1) {
-      // Mid-velocity flurry: reaches viewport perimeter (38vw to 60vw)
-      distVw = 38 + ((i * 11) % 23);
-      distVh = 32 + ((i * 13) % 22);
-    } else {
-      // Core festive floaters
-      distVw = 22 + ((i * 7) % 16);
-      distVh = 18 + ((i * 9) % 16);
-    }
-
-    const tx = `${Math.round(Math.cos(angleRad) * distVw)}vw`;
-    const ty = `${Math.round(Math.sin(angleRad) * distVh)}vh`;
-
-    const rxSign = i % 2 === 0 ? 1 : -1;
-    const rySign = (i + 1) % 2 === 0 ? 1 : -1;
-    const rzSign = (i + 2) % 2 === 0 ? 1 : -1;
-    const rx = `${rxSign * (720 + ((i * 47) % 720))}deg`;
-    const ry = `${rySign * (720 + ((i * 53) % 720))}deg`;
-    const rz = `${rzSign * (270 + ((i * 37) % 450))}deg`;
-
-    const shape = shapes[i % shapes.length];
-    let width = '10px';
-    let height = '20px';
-
-    if (shape === 'ribbon') {
-      width = `${9 + (i % 4)}px`;
-      height = `${18 + (i % 6) * 2}px`;
-    } else if (shape === 'square') {
-      const s = `${10 + (i % 5)}px`;
-      width = s;
-      height = s;
-    } else if (shape === 'circle') {
-      const s = `${8 + (i % 4)}px`;
-      width = s;
-      height = s;
-    } else if (shape === 'star') {
-      const s = `${13 + (i % 5)}px`;
-      width = s;
-      height = s;
-    } else if (shape === 'streamer') {
-      width = '5px';
-      height = `${30 + (i % 5) * 3}px`;
-    }
-
-    const wave = i % 4;
-    const delay = wave === 0 ? '0s' : wave === 1 ? '0.04s' : wave === 2 ? '0.09s' : '0.15s';
-    const duration = `${(2.2 + (i % 6) * 0.18).toFixed(2)}s`;
-    const gravity = `${14 + (i % 7) * 2}vh`;
-
-    pieces.push({
-      id: i,
-      shape,
-      color: confettiColors[i % confettiColors.length],
-      width,
-      height,
-      tx,
-      ty,
-      rx,
-      ry,
-      rz,
-      gravity,
-      duration,
-      delay,
-    });
-  }
-
-  return pieces;
-}
-
-function createAmbientSparkles(count = 18): AmbientSparkle[] {
-  const sparkles: AmbientSparkle[] = [];
-  const sparkleColors = ['#ffd700', '#ffe699', '#ff9248', '#82ad76', '#c0bbfe', '#ff70a6'];
-
-  for (let i = 0; i < count; i++) {
-    const isLeft = i % 2 === 0;
-    const xDist = 12 + ((i * 17) % 32);
-    const x = `${isLeft ? -xDist : xDist}vw`;
-    const y = `${-28 + ((i * 13) % 48)}vh`;
-    const size = `${5 + (i % 4) * 2}px`;
-    const delay = `${(i * 0.22).toFixed(2)}s`;
-    const duration = `${(3.2 + (i % 4) * 0.6).toFixed(2)}s`;
-
-    sparkles.push({
-      id: i,
-      color: sparkleColors[i % sparkleColors.length],
-      size,
-      x,
-      y,
-      duration,
-      delay,
-    });
-  }
-
-  return sparkles;
-}
-
-const burstPieces = createConfettiBurstPieces();
-const ambientSparkles = createAmbientSparkles();
 
 interface WalkthroughViewProps {
   game: Game;
@@ -220,6 +49,7 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
   const [showCongratulations, setShowCongratulations] = useState(false);
   const [linkCopied, setLinkCopied] = useState(false);
   const completionSoundRef = useRef<HTMLAudioElement | null>(null);
+  const tuturoRef = useRef<HTMLDivElement | null>(null);
 
   // Table of Contents navigation state
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>(() =>
@@ -616,8 +446,11 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
             onClick={() => setShowCongratulations(false)}
           />
 
+          {/* Hardware-accelerated 60-120fps Canvas Confetti Layer behind Tuturo and the card */}
+          <ConfettiCanvas burstTrigger={burstKey} originRef={tuturoRef} />
+
           <div className="relative z-10 w-full max-w-md my-auto pt-[160px] sm:pt-[200px]">
-            {/* Confetti Popper Burst Behind Chibi Character */}
+            {/* Confetti Popper Shockwave Behind Chibi Character */}
             <div
               key={burstKey}
               className="confetti-burst-container"
@@ -625,52 +458,11 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
             >
               {/* Radial shockwave flash expanding from behind Tuturo */}
               <div className="confetti-burst-shockwave" />
-
-              {/* Confetti pieces shooting outward in all directions */}
-              {burstPieces.map((piece) => (
-                <span
-                  key={piece.id}
-                  className={`confetti-burst-piece confetti-burst-${piece.shape}`}
-                  style={
-                    {
-                      '--tx': piece.tx,
-                      '--ty': piece.ty,
-                      '--rx': piece.rx,
-                      '--ry': piece.ry,
-                      '--rz': piece.rz,
-                      '--gravity': piece.gravity,
-                      '--duration': piece.duration,
-                      '--delay': piece.delay,
-                      backgroundColor: piece.color,
-                      width: piece.width,
-                      height: piece.height,
-                    } as React.CSSProperties
-                  }
-                />
-              ))}
-
-              {/* Ambient lingering festive sparkles */}
-              {ambientSparkles.map((sparkle) => (
-                <span
-                  key={sparkle.id}
-                  className="confetti-ambient-sparkle"
-                  style={
-                    {
-                      '--float-x': sparkle.x,
-                      '--float-y': sparkle.y,
-                      '--delay': sparkle.delay,
-                      '--duration': sparkle.duration,
-                      backgroundColor: sparkle.color,
-                      width: sparkle.size,
-                      height: sparkle.size,
-                    } as React.CSSProperties
-                  }
-                />
-              ))}
             </div>
 
             {/* Tuturo Chibi Character standing in front of the confetti burst, behind the card */}
             <div
+              ref={tuturoRef}
               className="absolute left-1/2 -translate-x-1/2 -top-12 sm:-top-16 z-10 w-56 sm:w-72 select-none cursor-pointer group"
               onClick={triggerConfettiBurst}
               title="Click Tuturo to pop confetti again!"
@@ -859,7 +651,6 @@ function WikiHowStep({
   isDone,
   toggleStep,
   showSpoilers,
-  accentColor,
   isHighlighted = false,
 }: WikiHowStepProps) {
   const [spoilerRevealed, setSpoilerRevealed] = useState(false);

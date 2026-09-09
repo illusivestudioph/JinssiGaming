@@ -832,45 +832,6 @@
     pointer-events: none;
   }
 
-  .confetti-burst-piece {
-    position: absolute;
-    left: 0;
-    top: 0;
-    will-change: transform, opacity;
-    animation: confetti-pop-burst var(--duration, 2.4s) cubic-bezier(0.1, 0.85, 0.25, 1) var(--delay, 0s) forwards;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
-  }
-
-  .confetti-burst-ribbon {
-    border-radius: 2px;
-  }
-
-  .confetti-burst-square {
-    border-radius: 2px;
-  }
-
-  .confetti-burst-circle {
-    border-radius: 50%;
-  }
-
-  .confetti-burst-star {
-    clip-path: polygon(50% 0%, 64% 36%, 100% 50%, 64% 64%, 50% 100%, 36% 64%, 0% 50%, 36% 36%);
-  }
-
-  .confetti-burst-streamer {
-    border-radius: 9999px;
-  }
-
-  .confetti-ambient-sparkle {
-    position: absolute;
-    left: 0;
-    top: 0;
-    border-radius: 50%;
-    will-change: transform, opacity;
-    animation: confetti-ambient-float var(--duration, 3.5s) ease-in-out var(--delay, 0s) infinite alternate;
-    box-shadow: 0 0 6px currentColor;
-    pointer-events: none;
-  }
 
   .animate-tuturo-celebrate {
     animation: tuturo-pop-bounce 0.85s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, float 3s ease-in-out 0.85s infinite;
@@ -1391,63 +1352,6 @@
   }
 }
 
-@keyframes confetti-pop-burst {
-  0% {
-    opacity: 0;
-    transform: translate3d(0, 0, 0) scale(0) rotate(0deg);
-  }
-  8% {
-    opacity: 1;
-    /* Rapid explosive outward blast */
-    transform: translate3d(calc(var(--tx) * 0.38), calc(var(--ty) * 0.38), 0)
-               scale(1.25)
-               rotateX(calc(var(--rx) * 0.2))
-               rotateY(calc(var(--ry) * 0.2))
-               rotateZ(calc(var(--rz) * 0.2));
-  }
-  32% {
-    opacity: 1;
-    /* Spreading out towards and off the edges of the screen */
-    transform: translate3d(var(--tx), var(--ty), 0)
-               scale(1)
-               rotateX(calc(var(--rx) * 0.55))
-               rotateY(calc(var(--ry) * 0.55))
-               rotateZ(calc(var(--rz) * 0.55));
-  }
-  68% {
-    opacity: 0.95;
-    /* Drifting downward with gravity while tumbling */
-    transform: translate3d(calc(var(--tx) * 1.08), calc(var(--ty) + var(--gravity) * 0.65), 0)
-               scale(0.9)
-               rotateX(calc(var(--rx) * 0.82))
-               rotateY(calc(var(--ry) * 0.82))
-               rotateZ(calc(var(--rz) * 0.82));
-  }
-  100% {
-    opacity: 0;
-    /* Fade out and exit completely */
-    transform: translate3d(calc(var(--tx) * 1.15), calc(var(--ty) + var(--gravity)), 0)
-               scale(0.55)
-               rotateX(var(--rx))
-               rotateY(var(--ry))
-               rotateZ(var(--rz));
-  }
-}
-
-@keyframes confetti-ambient-float {
-  0% {
-    opacity: 0.25;
-    transform: translate3d(var(--float-x), var(--float-y), 0) scale(0.7);
-  }
-  50% {
-    opacity: 0.9;
-    transform: translate3d(calc(var(--float-x) + 12px), calc(var(--float-y) - 16px), 0) scale(1.1);
-  }
-  100% {
-    opacity: 0.3;
-    transform: translate3d(calc(var(--float-x) - 10px), calc(var(--float-y) - 26px), 0) scale(0.8);
-  }
-}
 
 @keyframes tuturo-pop-bounce {
   0% {
