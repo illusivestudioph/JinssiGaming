@@ -4,6 +4,7 @@ import { storyGenres, type Story } from '@/data/stories';
 import {
   searchGutenbergBooks,
   convertGutenbergToStory,
+  fetchAndParseGutenbergBook,
   COZY_GUTENBERG_PRESETS,
   type GutenbergBook,
 } from '@/services/gutenberg';
@@ -86,6 +87,25 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
   const [gutenbergBooks, setGutenbergBooks] = useState<GutenbergBook[]>([]);
   const [isSearchingGutenberg, setIsSearchingGutenberg] = useState(false);
   const [activePreset, setActivePreset] = useState<string>('All Classics');
+  const [loadingGutenbergId, setLoadingGutenbergId] = useState<number | null>(null);
+  const [loadingStatusText, setLoadingStatusText] = useState<string>('');
+
+  const handleReadGutenbergBook = async (book: GutenbergBook) => {
+    setLoadingGutenbergId(book.id);
+    setLoadingStatusText(`Connecting to Project Gutenberg archive (eBook #${book.id})...`);
+    try {
+      const realStory = await fetchAndParseGutenbergBook(book, (msg) => {
+        setLoadingStatusText(msg);
+      });
+      onSelectStory(realStory, 1);
+    } catch {
+      const fallback = convertGutenbergToStory(book);
+      onSelectStory(fallback, 1);
+    } finally {
+      setLoadingGutenbergId(null);
+      setLoadingStatusText('');
+    }
+  };
 
   // Check for the most recently read story from localStorage
   useEffect(() => {
@@ -586,14 +606,25 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
                     <div className="p-4 pt-2 border-t border-tan-200 flex flex-col gap-2">
                       <button
                         type="button"
-                        onClick={() => {
-                          const converted = convertGutenbergToStory(book);
-                          onSelectStory(converted, 1);
-                        }}
-                        className="w-full py-2 px-3 rounded-xl bg-peach-400 hover:bg-peach-500 text-ink-900 font-bold text-xs flex items-center justify-center gap-1.5 shadow-cozy-xs"
+                        disabled={loadingGutenbergId === book.id}
+                        onClick={() => handleReadGutenbergBook(book)}
+                        className={`w-full py-2 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 shadow-cozy-xs transition-all ${
+                          loadingGutenbergId === book.id
+                            ? 'bg-peach-200 text-ink-700 cursor-wait'
+                            : 'bg-peach-400 hover:bg-peach-500 text-ink-900'
+                        }`}
                       >
-                        <BookOpen className="w-3.5 h-3.5" />
-                        <span>Read in E-Reader</span>
+                        {loadingGutenbergId === book.id ? (
+                          <>
+                            <RefreshCw className="w-3.5 h-3.5 animate-spin text-peach-600" />
+                            <span className="truncate max-w-[170px]">{loadingStatusText || 'Downloading...'}</span>
+                          </>
+                        ) : (
+                          <>
+                            <BookOpen className="w-3.5 h-3.5" />
+                            <span>Read in E-Reader</span>
+                          </>
+                        )}
                       </button>
 
                       <button
@@ -623,6 +654,17 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
               })}
             </div>
           )}
+        </div>
+      )}
+
+      {/* Real-time Project Gutenberg Download Toast */}
+      {loadingGutenbergId && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-ink-900 text-white px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-3 border border-peach-400/50 backdrop-blur-md animate-fade-in">
+          <RefreshCw className="w-4 h-4 animate-spin text-peach-400 shrink-0" />
+          <div className="text-left">
+            <p className="text-xs font-bold text-peach-300">Project Gutenberg Archive Download</p>
+            <p className="text-[11px] text-cream-200">{loadingStatusText || 'Downloading authentic text...'}</p>
+          </div>
         </div>
       )}
     </div>

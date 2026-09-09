@@ -37,6 +37,8 @@ export interface Story {
   rating: number; // 1 to 5 teacups
   readsCount?: number;
   isPublicDomain?: boolean;
+  gutenbergId?: number;
+  isLiveGutenberg?: boolean;
 }
 
 export const storyGenres = [

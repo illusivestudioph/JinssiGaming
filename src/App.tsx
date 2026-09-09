@@ -230,6 +230,15 @@ function AppContent() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const handleUpdateStory = (updatedStory: Story) => {
+    setActiveStory(updatedStory);
+    try {
+      sessionStorage.setItem('jinssi-active-story', JSON.stringify(updatedStory));
+    } catch {
+      // ignore
+    }
+  };
+
   const renderMainContent = () => {
     if (selectedStory) {
       return (
@@ -238,6 +247,7 @@ function AppContent() {
           chapterNumber={selectedStoryChapterNumber}
           onSelectChapter={handleSelectStoryChapter}
           onBackToLibrary={handleBackFromStory}
+          onUpdateStory={handleUpdateStory}
         />
       );
     }

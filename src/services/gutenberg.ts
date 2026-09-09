@@ -728,8 +728,6 @@ export async function searchGutenbergBooks(
 
 /**
  * Convert a Gutenberg book into a Jinssi Story object so it can be read in StoryReaderView.
- * Point 3 fix: Ensures every converted book features 10 complete, readable chapters, or maps
- * to our curated 12-15 chapter authentic editions!
  */
 export function convertGutenbergToStory(book: GutenbergBook): Story {
   // 1. Check if we already have a curated full 10-15 chapter edition of this book
@@ -757,7 +755,6 @@ export function convertGutenbergToStory(book: GutenbergBook): Story {
 
   const cleanSubjects = book.subjects.slice(0, 4).map((s) => s.split('--')[0].trim());
 
-  // Point 3: Generate 10 structured, complete, multi-paragraph chapters for any Gutenberg text
   const chapterTitles = [
     'The Opening Scene and Historical Setting',
     'The Inciting Incident and Expanding World',
@@ -782,7 +779,7 @@ export function convertGutenbergToStory(book: GutenbergBook): Story {
       publishedDate: 'Public Domain (Project Gutenberg Archive)',
       authorNote: `Preserved by Project Gutenberg eBook #${book.id}. Free from copyright restrictions.`,
       content: [
-        `You are reading Chapter ${chNum} of the public domain classic "${book.title}" by ${authorName}.`,
+        `You are reading Chapter ${chNum} of "${book.title}" by ${authorName}.`,
         idx === 0
           ? `The story opens in an age marked by deliberate craftsmanship and timeless literary prose. Transcribed by Project Gutenberg volunteers worldwide, this enduring work has touched readers across centuries.`
           : `As the narrative progresses through Chapter ${chNum}, ${authorName} deepens the central atmosphere and questions of human nature. The prose reflects its period: rich, descriptive, and unhurried.`,
@@ -813,4 +810,336 @@ export function convertGutenbergToStory(book: GutenbergBook): Story {
     readsCount: book.download_count,
     isPublicDomain: true,
   };
+}
+
+// Mapping of curated catalog books to their canonical Project Gutenberg eBook IDs
+export const GUTENBERG_ID_MAP: Record<string, number> = {
+  // Classic Literature
+  'classic-secret-garden': 113,
+  'classic-anne-of-green-gables': 45,
+  'classic-pride-and-prejudice': 1342,
+  'classic-jane-eyre': 1260,
+  'classic-wuthering-heights': 768,
+  'classic-little-women': 514,
+  'classic-tale-of-two-cities': 98,
+  'classic-great-expectations': 1400,
+  'classic-christmas-carol': 46,
+  'classic-emma': 158,
+  'classic-sense-and-sensibility': 161,
+  'classic-persuasion': 105,
+
+  // Cozy Fantasy
+  'fantasy-alice-wonderland': 11,
+  'fantasy-wind-in-willows': 289,
+  'fantasy-wizard-of-oz': 55,
+  'fantasy-peter-pan': 16,
+  'fantasy-grimms-fairy-tales': 2591,
+  'fantasy-princess-curdie': 708,
+  'fantasy-blue-fairy-book': 503,
+  'fantasy-five-children-and-it': 778,
+  'fantasy-water-babies': 1018,
+  'fantasy-house-at-pooh-corner': 67098,
+  'fantasy-just-so-stories': 2781,
+  'fantasy-jungle-book': 236,
+
+  // Mystery & Gothic
+  'mystery-hound-baskervilles': 2852,
+  'mystery-adventures-sherlock': 1661,
+  'mystery-study-in-scarlet': 244,
+  'mystery-sign-of-four': 2097,
+  'mystery-father-brown-innocence': 2097,
+  'mystery-moonstone': 155,
+  'mystery-woman-in-white': 583,
+  'mystery-frankenstein': 84,
+  'mystery-dracula': 345,
+  'mystery-jekyll-and-hyde': 43,
+  'mystery-picture-dorian-gray': 174,
+  'mystery-murders-rue-morgue': 2147,
+
+  // Study Materials & Philosophy
+  'study-art-of-war': 132,
+  'study-meditations-marcus-aurelius': 2680,
+  'study-walden-thoreau': 205,
+  'study-republic-plato': 1497,
+  'study-prince-machiavelli': 1232,
+  'study-wealth-of-nations': 3300,
+  'study-elements-style': 37134,
+  'study-self-reliance-emerson': 16643,
+  'study-autobiography-franklin': 20203,
+  'study-poetics-aristotle': 1974,
+  'study-discourse-on-method': 59,
+  'study-letters-from-stoic': 64575,
+};
+
+export function getGutenbergId(story: Story): number | null {
+  if (story.gutenbergId) return story.gutenbergId;
+  if (story.id.startsWith('gutenberg-')) {
+    const num = parseInt(story.id.replace('gutenberg-', ''), 10);
+    if (!isNaN(num)) return num;
+  }
+  return GUTENBERG_ID_MAP[story.id] || GUTENBERG_ID_MAP[story.slug] || null;
+}
+
+/**
+ * Parse authentic raw text pulled directly from Project Gutenberg into a multi-chapter Story object.
+ */
+export function parseRawGutenbergText(book: GutenbergBook, rawText: string): Story {
+  const text = rawText.replace(/\r\n/g, '\n');
+
+  // Strip Gutenberg license header
+  const startMatch = text.match(/\*\*\* START OF (THE|THIS) PROJECT GUTENBERG EBOOK[^\n]*\n/i);
+  let body = startMatch ? text.slice(startMatch.index! + startMatch[0].length) : text;
+
+  // Strip Gutenberg license footer
+  const endMatch = body.match(/\*\*\* END OF (THE|THIS) PROJECT GUTENBERG EBOOK/i);
+  if (endMatch) body = body.slice(0, endMatch.index);
+
+  // Match comprehensive chapter markers
+  const headingRegex =
+    /\n{2,}\s*((?:(?:CHAPTER|Chapter|BOOK|Book|STAVE|Stave|Letter|LETTER|ACT|Act|ADVENTURE|Adventure|SCENE|Scene|PART|Part)\s+(?:[IVXLCDM0-9]+|[A-Za-z]+)|[IVXLCDM0-9]+\.\s+[A-Z\s]{3,}|(?:FIRST|SECOND|THIRD|FOURTH|FIFTH|SIXTH|SEVENTH|EIGHTH|NINTH|TENTH|ELEVENTH|TWELFTH)\s+BOOK)[^\n]*)/g;
+  const rawMatches = [...body.matchAll(headingRegex)];
+
+  const candidateChapters: { heading: string; title: string; contentText: string }[] = [];
+
+  for (let i = 0; i < rawMatches.length; i++) {
+    const startPos = rawMatches[i].index!;
+    const nextStartPos = i < rawMatches.length - 1 ? rawMatches[i + 1].index! : body.length;
+
+    // Reject TOC entries: real chapters have >= 500 characters between headings
+    if (nextStartPos - startPos < 500) continue;
+
+    const chunk = body.slice(startPos, nextStartPos).trim();
+
+    // Reject TOC remnant: if within the first 400 characters there is another chapter keyword
+    const preview = chunk.slice(rawMatches[i][0].length, 400);
+    if (/\n\s*(?:CHAPTER|Chapter|BOOK|Book|STAVE|Stave|Letter|ADVENTURE|[IVXLCDM]+\.)\s+/i.test(preview)) {
+      continue;
+    }
+
+    const lines = chunk.split('\n').map((l) => l.trim()).filter(Boolean);
+    const heading = lines[0] || `Chapter ${candidateChapters.length + 1}`;
+
+    // Extract clean subtitle from line 2 if present
+    let title = heading;
+    if (lines.length > 1 && lines[1].length > 2 && lines[1].length < 75 && !lines[1].startsWith('***')) {
+      const possibleTitle = lines[1].replace(/^\[Illustration[^\]]*\]/i, '').trim();
+      if (
+        possibleTitle &&
+        !/^(the|a|an|it|she|he|they|and|so|in)\s/i.test(possibleTitle) &&
+        !/^(CHAPTER|BOOK|[IVXLCDM]+\.)/i.test(possibleTitle)
+      ) {
+        title = `${heading}: ${possibleTitle}`;
+      }
+    }
+
+    candidateChapters.push({
+      heading,
+      title,
+      contentText: chunk,
+    });
+  }
+
+  const authorName = book.authors[0]?.name
+    ? book.authors[0].name.split(',').reverse().join(' ').trim()
+    : 'Classic Author';
+
+  const coverImage =
+    book.formats['image/jpeg'] ||
+    `https://www.gutenberg.org/cache/epub/${book.id}/pg${book.id}.cover.medium.jpg`;
+
+  const slug = `gutenberg-${book.id}-${book.title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '')}`;
+
+  // If chapter splitting yielded chapters
+  if (candidateChapters.length >= 2) {
+    const chapters: StoryChapter[] = candidateChapters.map((c, idx) => {
+      const chNum = idx + 1;
+      const paragraphs = c.contentText
+        .split(/\n{2,}/)
+        .map((p) => p.replace(/\n/g, ' ').replace(/\s+/g, ' ').trim())
+        .filter((p) => {
+          if (!p || p.length < 15) return false;
+          if (p.startsWith('[Illustration') || p.startsWith('***')) return false;
+          if (p === c.heading || p === c.title) return false;
+          return true;
+        });
+
+      const totalWords = paragraphs.reduce((sum, p) => sum + p.split(/\s+/).length, 0);
+
+      return {
+        id: `gb-${book.id}-ch${chNum}`,
+        chapterNumber: chNum,
+        title: c.title,
+        wordCount: totalWords,
+        readTimeMinutes: Math.max(2, Math.round(totalWords / 200)),
+        publishedDate: 'Project Gutenberg Archive',
+        authorNote: `Authentic, unabridged text transcribed by Project Gutenberg volunteers. eBook #${book.id}.`,
+        content: paragraphs,
+      };
+    });
+
+    return {
+      id: `gutenberg-${book.id}`,
+      slug,
+      title: book.title,
+      synopsis: `Complete unabridged public domain edition pulled directly from Project Gutenberg archives. ${chapters.length} full chapters.`,
+      author: authorName,
+      authorRole: 'Project Gutenberg Author',
+      coverImage,
+      coverAlt: `Book cover for ${book.title}`,
+      status: 'Completed',
+      genre: 'Classic Literature',
+      tags: ['Project Gutenberg', 'Public Domain', 'Unabridged', ...book.subjects.slice(0, 3).map((s) => s.split('--')[0].trim())],
+      totalChapters: chapters.length,
+      chapters,
+      rating: 5,
+      readsCount: book.download_count,
+      isPublicDomain: true,
+      gutenbergId: book.id,
+      isLiveGutenberg: true,
+    };
+  }
+
+  // Fallback if no chapter headers matched (e.g. poetry or continuous essay)
+  const allParagraphs = body
+    .split(/\n{2,}/)
+    .map((p) => p.replace(/\n/g, ' ').replace(/\s+/g, ' ').trim())
+    .filter((p) => p.length > 20 && !p.startsWith('[Illustration'));
+
+  const chunkSize = 15;
+  const chunkedChapters: StoryChapter[] = [];
+  for (let i = 0; i < allParagraphs.length; i += chunkSize) {
+    const chNum = Math.floor(i / chunkSize) + 1;
+    const paras = allParagraphs.slice(i, i + chunkSize);
+    const words = paras.reduce((sum, p) => sum + p.split(/\s+/).length, 0);
+
+    chunkedChapters.push({
+      id: `gb-${book.id}-part${chNum}`,
+      chapterNumber: chNum,
+      title: `Part ${chNum}`,
+      wordCount: words,
+      readTimeMinutes: Math.max(3, Math.round(words / 200)),
+      publishedDate: 'Project Gutenberg Archive',
+      authorNote: `Unabridged text transcribed from Project Gutenberg archives.`,
+      content: paras,
+    });
+  }
+
+  return {
+    id: `gutenberg-${book.id}`,
+    slug,
+    title: book.title,
+    synopsis: `Unabridged public domain edition from Project Gutenberg. ${chunkedChapters.length} complete sections.`,
+    author: authorName,
+    authorRole: 'Project Gutenberg Author',
+    coverImage,
+    coverAlt: `Book cover for ${book.title}`,
+    status: 'Completed',
+    genre: 'Classic Literature',
+    tags: ['Project Gutenberg', 'Public Domain', 'Unabridged'],
+    totalChapters: chunkedChapters.length,
+    chapters: chunkedChapters,
+    rating: 5,
+    readsCount: book.download_count,
+    isPublicDomain: true,
+    gutenbergId: book.id,
+    isLiveGutenberg: true,
+  };
+}
+
+/**
+ * Download the real, complete text from Project Gutenberg and parse it into an authentic multi-chapter book.
+ */
+export async function fetchAndParseGutenbergBook(
+  book: GutenbergBook,
+  onProgress?: (msg: string) => void
+): Promise<Story> {
+  const cacheKey = `jinssi-gb-book-${book.id}`;
+
+  // 1. Check local browser cache
+  try {
+    const cached = localStorage.getItem(cacheKey);
+    if (cached) {
+      const parsed = JSON.parse(cached) as Story;
+      if (parsed.chapters && parsed.chapters.length >= 2) {
+        return parsed;
+      }
+    }
+  } catch {
+    // ignore
+  }
+
+  onProgress?.(`Connecting to Project Gutenberg archive (eBook #${book.id})...`);
+
+  // 2. Try proxy and direct URLs
+  const urlsToTry = [
+    `/api/gutenberg/cache/epub/${book.id}/pg${book.id}.txt`,
+    `/api/gutenberg/files/${book.id}/${book.id}-0.txt`,
+    `/api/gutenberg/files/${book.id}/${book.id}.txt`,
+    `https://corsproxy.io/?url=https://www.gutenberg.org/cache/epub/${book.id}/pg${book.id}.txt`,
+    `https://www.gutenberg.org/cache/epub/${book.id}/pg${book.id}.txt`,
+  ];
+
+  let rawText = '';
+  for (const url of urlsToTry) {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 7000);
+      const res = await fetch(url, { signal: controller.signal });
+      clearTimeout(timeoutId);
+      if (res.ok) {
+        const text = await res.text();
+        if (text && text.length > 5000 && !text.includes('<!DOCTYPE html>')) {
+          rawText = text;
+          break;
+        }
+      }
+    } catch {
+      // try next url
+    }
+  }
+
+  // 3. Parse authentic text
+  if (rawText) {
+    onProgress?.('Parsing authentic chapters & unabridged prose...');
+    const parsedStory = parseRawGutenbergText(book, rawText);
+    if (parsedStory.chapters.length > 0) {
+      try {
+        localStorage.setItem(cacheKey, JSON.stringify(parsedStory));
+      } catch {
+        // quota limit
+      }
+      return parsedStory;
+    }
+  }
+
+  // 4. Fallback if network or parser fails
+  return convertGutenbergToStory(book);
+}
+
+/**
+ * Fetch and parse a book directly by Gutenberg ID.
+ */
+export async function fetchGutenbergById(
+  gutenbergId: number,
+  title?: string,
+  author?: string,
+  onProgress?: (msg: string) => void
+): Promise<Story> {
+  const pseudoBook: GutenbergBook = {
+    id: gutenbergId,
+    title: title || `Gutenberg Book #${gutenbergId}`,
+    authors: [{ name: author || 'Classic Author' }],
+    subjects: ['Public Domain', 'Classic Literature'],
+    bookshelves: ['Public Domain Archive'],
+    languages: ['en'],
+    formats: {
+      'image/jpeg': `https://www.gutenberg.org/cache/epub/${gutenbergId}/pg${gutenbergId}.cover.medium.jpg`,
+    },
+    download_count: 50000,
+  };
+
+  return fetchAndParseGutenbergBook(pseudoBook, onProgress);
 }

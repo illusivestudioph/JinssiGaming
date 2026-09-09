@@ -18,13 +18,19 @@ import {
   Sun,
   Moon,
   CheckCircle2,
+  Library,
+  Download,
+  RefreshCw,
+  Sparkles,
 } from 'lucide-react';
+import { getGutenbergId, fetchGutenbergById } from '@/services/gutenberg';
 
 interface StoryReaderViewProps {
   story: Story;
   chapterNumber?: number;
   onSelectChapter: (chapterNumber: number) => void;
   onBackToLibrary: () => void;
+  onUpdateStory?: (story: Story) => void;
 }
 
 type ReadingTheme = 'paper' | 'sepia' | 'dark' | 'cream';
@@ -109,6 +115,7 @@ export function StoryReaderView({
   chapterNumber = 1,
   onSelectChapter,
   onBackToLibrary,
+  onUpdateStory,
 }: StoryReaderViewProps) {
   // Theme & Reading settings with localStorage persistence
   const [theme, setTheme] = useState<ReadingTheme>(() => {
@@ -120,6 +127,36 @@ export function StoryReaderView({
   const [fontFamily, setFontFamily] = useState<FontFamily>(() => {
     return (localStorage.getItem('jinssi-reader-fontfamily') as FontFamily) || 'serif';
   });
+
+  // Gutenberg live download state
+  const gutenbergId = useMemo(() => getGutenbergId(story), [story]);
+  const [isPullingGutenberg, setIsPullingGutenberg] = useState(false);
+  const [pullStatus, setPullStatus] = useState('');
+  const [showUpgradeSuccess, setShowUpgradeSuccess] = useState(false);
+
+  const handlePullUnabridgedGutenberg = async () => {
+    if (!gutenbergId || isPullingGutenberg) return;
+    setIsPullingGutenberg(true);
+    setPullStatus(`Connecting to Project Gutenberg archive (eBook #${gutenbergId})...`);
+    try {
+      const liveStory = await fetchGutenbergById(
+        gutenbergId,
+        story.title,
+        story.author,
+        (msg) => setPullStatus(msg)
+      );
+      if (liveStory && liveStory.chapters.length > 0) {
+        onUpdateStory?.(liveStory);
+        setShowUpgradeSuccess(true);
+        setTimeout(() => setShowUpgradeSuccess(false), 4500);
+      }
+    } catch {
+      // fallback
+    } finally {
+      setIsPullingGutenberg(false);
+      setPullStatus('');
+    }
+  };
 
   // UI state
   const [showToc, setShowToc] = useState(false);
@@ -265,9 +302,16 @@ export function StoryReaderView({
 
           {/* Book / Chapter Info */}
           <div className="flex-1 text-center px-2 min-w-0">
-            <p className="text-xs font-bold truncate opacity-75">
-              {story.title}
-            </p>
+            <div className="flex items-center justify-center gap-1.5 truncate">
+              <p className="text-xs font-bold truncate opacity-75">
+                {story.title}
+              </p>
+              {gutenbergId && (
+                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-amber-500/15 text-amber-700 dark:text-amber-300 shrink-0">
+                  Gutenberg #{gutenbergId}
+                </span>
+              )}
+            </div>
             <h2 className="text-xs sm:text-sm font-semibold truncate">
               Ch. {currentChapter.chapterNumber}: {currentChapter.title}
             </h2>
@@ -344,9 +388,49 @@ export function StoryReaderView({
               </div>
 
               <div className="py-4">
-                <p className="text-xs font-bold uppercase tracking-wider opacity-60 mb-2">
-                  {story.chapters.length} Chapters • {story.genre}
-                </p>
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-xs font-bold uppercase tracking-wider opacity-60">
+                    {story.chapters.length} Chapters • {story.genre}
+                  </p>
+                  {story.isLiveGutenberg && (
+                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-800 dark:text-emerald-300">
+                      Archive Verified
+                    </span>
+                  )}
+                </div>
+
+                {/* Gutenberg Upgrade option inside TOC */}
+                {gutenbergId && !story.isLiveGutenberg && (
+                  <div className="p-3 mb-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-left">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+                      <span className="text-xs font-bold text-amber-900 dark:text-amber-200">
+                        Unabridged Gutenberg Text
+                      </span>
+                    </div>
+                    <p className="text-[11px] opacity-75 mb-2.5">
+                      Pull complete verbatim text with all original chapters from Project Gutenberg.
+                    </p>
+                    <button
+                      type="button"
+                      disabled={isPullingGutenberg}
+                      onClick={handlePullUnabridgedGutenberg}
+                      className="w-full py-1.5 px-3 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm transition-all"
+                    >
+                      {isPullingGutenberg ? (
+                        <>
+                          <RefreshCw className="w-3 h-3 animate-spin" />
+                          <span className="truncate">{pullStatus || 'Pulling...'}</span>
+                        </>
+                      ) : (
+                        <>
+                          <Download className="w-3 h-3" />
+                          <span>Pull All Original Chapters</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                )}
                 <div className="space-y-1.5">
                   {story.chapters.map((ch) => {
                     const isCurrent = ch.chapterNumber === currentChapter.chapterNumber;
@@ -529,6 +613,57 @@ export function StoryReaderView({
 
       {/* Main Chapter Content Container */}
       <main className="max-w-2xl sm:max-w-3xl mx-auto px-5 sm:px-8 py-8 sm:py-16">
+        {/* Gutenberg Status Banner / Upgrade Callout */}
+        {story.isLiveGutenberg && (
+          <div className="mb-8 p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-between gap-3 text-left">
+            <div className="flex items-center gap-2.5">
+              <Sparkles className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+              <div>
+                <p className="text-xs font-bold text-emerald-900 dark:text-emerald-200">
+                  Verified Project Gutenberg Archive Edition
+                </p>
+                <p className="text-[11px] text-emerald-800/80 dark:text-emerald-300/80">
+                  Transcribed directly from Project Gutenberg eBook #{gutenbergId || story.gutenbergId} • {story.chapters.length} complete unabridged chapters
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {gutenbergId && !story.isLiveGutenberg && (
+          <div className="mb-8 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-left">
+            <div className="flex items-center gap-3">
+              <Library className="w-5 h-5 text-amber-600 shrink-0" />
+              <div>
+                <p className="text-xs font-bold text-amber-950 dark:text-amber-100">
+                  Read Full Unabridged Edition from Project Gutenberg
+                </p>
+                <p className="text-[11px] text-amber-900/80 dark:text-amber-200/80">
+                  Currently reading curated edition. Pull the full archival text (eBook #{gutenbergId}) live from Gutenberg servers on demand.
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              disabled={isPullingGutenberg}
+              onClick={handlePullUnabridgedGutenberg}
+              className="w-full sm:w-auto px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shrink-0 flex items-center justify-center gap-1.5 shadow-sm transition-all"
+            >
+              {isPullingGutenberg ? (
+                <>
+                  <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                  <span className="truncate max-w-[140px]">{pullStatus || 'Connecting...'}</span>
+                </>
+              ) : (
+                <>
+                  <Download className="w-3.5 h-3.5" />
+                  <span>Pull Unabridged Gutenberg Text</span>
+                </>
+              )}
+            </button>
+          </div>
+        )}
+
         {/* Chapter Header */}
         <div className="mb-10 sm:mb-14 pb-8 border-b border-black/10 text-center">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold border border-black/10 mb-4 opacity-75">
@@ -648,6 +783,19 @@ export function StoryReaderView({
           )}
         </div>
       </main>
+
+      {/* Unabridged Gutenberg Load Success Toast */}
+      {showUpgradeSuccess && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-ink-900 text-white px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-3 border border-emerald-400/50 backdrop-blur-md animate-fade-in">
+          <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
+          <div className="text-left">
+            <p className="text-xs font-bold text-emerald-300">Unabridged Gutenberg Edition Loaded!</p>
+            <p className="text-[11px] text-cream-200">
+              All {story.chapters.length} authentic chapters are now available in your reader.
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
