@@ -14,6 +14,7 @@ import { ArrowRight } from 'lucide-react';
 
 // 1. Context Provider
 import { SiteContentProvider, useSiteContent } from '@/context/SiteContentContext'; 
+import { MusicProvider } from '@/context/MusicContext';
 // 2. Import the Admin Dashboard
 import { AdminDashboard } from '@/components/AdminDashboard';
 // 3. Import the new Hero Banner
@@ -22,7 +23,9 @@ import { Hero } from '@/components/Hero';
 function App() {
   return (
     <SiteContentProvider>
-      <AppContent />
+      <MusicProvider>
+        <AppContent />
+      </MusicProvider>
     </SiteContentProvider>
   );
 }

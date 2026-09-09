@@ -1011,3 +1011,37 @@
   background: #ffd0c2;
   color: #3a2e22;
 }
+
+/* Step target highlight when jumping from Table of Contents */
+.step-target-highlight {
+  animation: step-highlight-pulse 2.4s ease-out forwards;
+}
+
+@keyframes step-highlight-pulse {
+  0% {
+    box-shadow: 0 0 0 4px rgba(255, 176, 160, 0.9), 0 8px 24px rgba(240, 140, 117, 0.25);
+    border-color: #ff8c75;
+    transform: scale(1.01);
+  }
+  30% {
+    box-shadow: 0 0 0 4px rgba(255, 176, 160, 0.6), 0 8px 20px rgba(240, 140, 117, 0.2);
+    border-color: #ff8c75;
+  }
+  70% {
+    box-shadow: 0 0 0 2px rgba(255, 176, 160, 0.3), 0 4px 12px rgba(240, 140, 117, 0.1);
+  }
+  100% {
+    box-shadow: 4px 4px 0 #8f764f;
+    transform: scale(1);
+  }
+}
+
+@keyframes pulse-gentle {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+
+.animate-pulse-gentle {
+  animation: pulse-gentle 2s ease-in-out infinite;
+}
+

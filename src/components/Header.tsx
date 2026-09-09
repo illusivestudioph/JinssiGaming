@@ -1,11 +1,13 @@
 import { useState, useRef, useEffect } from 'react';
 import { useSiteContent } from "@/context/SiteContentContext";
-import { Lock, Menu, X } from 'lucide-react';
+import { useMusic } from "@/context/MusicContext";
+import { Lock, Menu, X, Music, Pause, Volume2, VolumeX } from 'lucide-react';
 
 export type View = 'home' | 'walkthroughs' | 'about' | 'privacy' | 'terms' | 'contact' | 'admin';
 
 export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View) => void }) {
   const { logoImage } = useSiteContent();
+  const { playing, muted, togglePlayback, toggleMute, userVolume, setVolume } = useMusic();
   
   // Secret Trigger State
   const [clickCount, setClickCount] = useState(0);
@@ -51,7 +53,7 @@ export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View)
   return (
     <>
       <header className="bg-cream-100 border-b-2 border-tan-200 sticky top-0 z-40">
-        <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+        <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
           
           {/* LOGO WITH SECRET TRIGGER */}
           <div className="flex items-center gap-3 cursor-pointer select-none" onClick={handleLogoClick}>
@@ -59,23 +61,65 @@ export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View)
             <h1 className="font-display font-bold text-xl text-ink-900">Jinssi</h1>
           </div>
 
-          <nav className="hidden items-center gap-4 md:flex">
-            <button aria-current={view === 'home' ? 'page' : undefined} onClick={() => handleNavigate('home')} className={`site-nav-link ${view === 'home' ? 'text-peach-500' : 'text-tan-600'}`}>Home</button>
-            <button aria-current={view === 'walkthroughs' ? 'page' : undefined} onClick={() => handleNavigate('walkthroughs')} className={`site-nav-link ${view === 'walkthroughs' ? 'text-peach-500' : 'text-tan-600'}`}>Walkthroughs</button>
-            <button aria-current={view === 'about' ? 'page' : undefined} onClick={() => handleNavigate('about')} className={`site-nav-link ${view === 'about' ? 'text-peach-500' : 'text-tan-600'}`}>About</button>
-            {view === 'admin' && <span className="font-bold text-earth-500 ml-4">Admin Mode</span>}
-          </nav>
+          <div className="flex items-center gap-3 sm:gap-4">
+            <nav className="hidden items-center gap-4 md:flex">
+              <button aria-current={view === 'home' ? 'page' : undefined} onClick={() => handleNavigate('home')} className={`site-nav-link ${view === 'home' ? 'text-peach-500' : 'text-tan-600'}`}>Home</button>
+              <button aria-current={view === 'walkthroughs' ? 'page' : undefined} onClick={() => handleNavigate('walkthroughs')} className={`site-nav-link ${view === 'walkthroughs' ? 'text-peach-500' : 'text-tan-600'}`}>Walkthroughs</button>
+              <button aria-current={view === 'about' ? 'page' : undefined} onClick={() => handleNavigate('about')} className={`site-nav-link ${view === 'about' ? 'text-peach-500' : 'text-tan-600'}`}>About</button>
+              {view === 'admin' && <span className="font-bold text-earth-500 ml-4">Admin Mode</span>}
+            </nav>
 
-          <button
-            type="button"
-            className="rounded-xl border-2 border-tan-200 bg-cream-50 p-2 text-tan-600 shadow-cozy-sm transition-colors hover:border-peach-300 hover:text-peach-500 md:hidden"
-            onClick={() => setMobileMenuOpen((open) => !open)}
-            aria-expanded={mobileMenuOpen}
-            aria-controls="mobile-navigation"
-            aria-label={mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
-          >
-            {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </button>
+            {/* Persistent Header Music Control */}
+            <div className="flex items-center gap-1.5 bg-cream-50/90 border border-tan-300/80 rounded-full px-2.5 py-1 shadow-cozy-sm">
+              <button
+                type="button"
+                onClick={() => void togglePlayback()}
+                className="flex items-center gap-1.5 text-xs font-bold text-ink-800 hover:text-peach-600 transition-colors focus:outline-none"
+                title={playing ? 'Pause cozy background music' : 'Play cozy background music'}
+                aria-label={playing ? 'Pause background music' : 'Play background music'}
+              >
+                <span
+                  className={`w-6 h-6 rounded-full flex items-center justify-center transition-all ${
+                    playing
+                      ? 'bg-peach-400 text-white shadow-cozy-sm animate-pulse-gentle'
+                      : 'bg-cream-200 text-tan-600'
+                  }`}
+                >
+                  {playing ? <Pause className="w-3 h-3" /> : <Music className="w-3 h-3" />}
+                </span>
+                <span className="hidden sm:inline font-sans text-xs">
+                  {playing ? (muted ? 'Muted' : 'Music On') : 'BGM'}
+                </span>
+              </button>
+
+              {playing && (
+                <button
+                  type="button"
+                  onClick={toggleMute}
+                  className="p-1 rounded-full text-tan-500 hover:text-ink-900 transition-colors"
+                  title={muted ? 'Unmute music' : 'Mute music'}
+                  aria-label={muted ? 'Unmute music' : 'Mute music'}
+                >
+                  {muted ? (
+                    <VolumeX className="w-3.5 h-3.5 text-tan-400" />
+                  ) : (
+                    <Volume2 className="w-3.5 h-3.5 text-earth-600" />
+                  )}
+                </button>
+              )}
+            </div>
+
+            <button
+              type="button"
+              className="rounded-xl border-2 border-tan-200 bg-cream-50 p-2 text-tan-600 shadow-cozy-sm transition-colors hover:border-peach-300 hover:text-peach-500 md:hidden"
+              onClick={() => setMobileMenuOpen((open) => !open)}
+              aria-expanded={mobileMenuOpen}
+              aria-controls="mobile-navigation"
+              aria-label={mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+            >
+              {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </button>
+          </div>
         </div>
 
         {mobileMenuOpen && (
@@ -84,10 +128,26 @@ export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View)
               <button aria-current={view === 'home' ? 'page' : undefined} onClick={() => handleNavigate('home')} className={`site-nav-link text-left ${view === 'home' ? 'text-peach-500' : 'text-tan-600'}`}>Home</button>
               <button aria-current={view === 'walkthroughs' ? 'page' : undefined} onClick={() => handleNavigate('walkthroughs')} className={`site-nav-link text-left ${view === 'walkthroughs' ? 'text-peach-500' : 'text-tan-600'}`}>Walkthroughs</button>
               <button aria-current={view === 'about' ? 'page' : undefined} onClick={() => handleNavigate('about')} className={`site-nav-link text-left ${view === 'about' ? 'text-peach-500' : 'text-tan-600'}`}>About</button>
+              
+              {/* Mobile volume slider */}
+              <div className="mt-3 pt-3 border-t border-tan-200 flex items-center justify-between gap-3 text-xs text-tan-600 px-1">
+                <span className="font-bold">Music Volume:</span>
+                <input
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.05"
+                  value={userVolume}
+                  onChange={(e) => setVolume(Number(e.target.value))}
+                  className="w-28 accent-peach-400"
+                  aria-label="Mobile music volume"
+                />
+              </div>
             </div>
           </nav>
         )}
       </header>
+
 
       {/* SECRET AUTH MODAL */}
       {showAuthModal && (

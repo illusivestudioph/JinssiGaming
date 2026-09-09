@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import type { Game, WalkthroughSection } from '@/data/games';
 import { useProgress } from '@/hooks/useProgress';
 import { CommentSection } from './CommentSection';
+import { TableOfContents } from './TableOfContents';
 import {
   ArrowLeft,
   Check,
@@ -45,6 +46,54 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
   const [showCongratulations, setShowCongratulations] = useState(false);
   const [linkCopied, setLinkCopied] = useState(false);
   const completionSoundRef = useRef<HTMLAudioElement | null>(null);
+
+  // Table of Contents navigation state
+  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>(() =>
+    Object.fromEntries(game.walkthrough.map((sec) => [sec.id, true]))
+  );
+  const [highlightedStepKey, setHighlightedStepKey] = useState<string | null>(null);
+  const [showFloatingTOC, setShowFloatingTOC] = useState(false);
+
+  // Detect scroll to show floating quick-jump button
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowFloatingTOC(window.scrollY > 380);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const handleSelectSection = useCallback((sectionId: string) => {
+    setExpandedSections((prev) => ({ ...prev, [sectionId]: true }));
+    setTimeout(() => {
+      const element = document.getElementById(`section-${sectionId}`);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 40);
+  }, []);
+
+  const handleSelectStep = useCallback((sectionId: string, stepId: string) => {
+    const stepKey = `${sectionId}-${stepId}`;
+    setExpandedSections((prev) => ({ ...prev, [sectionId]: true }));
+    setTimeout(() => {
+      const element = document.getElementById(`step-${stepKey}`);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        setHighlightedStepKey(stepKey);
+        setTimeout(() => {
+          setHighlightedStepKey((current) => (current === stepKey ? null : current));
+        }, 2500);
+      }
+    }, 50);
+  }, []);
+
+  const toggleSectionExpand = useCallback((sectionId: string) => {
+    setExpandedSections((prev) => ({
+      ...prev,
+      [sectionId]: !prev[sectionId],
+    }));
+  }, []);
 
   const shareUrl = typeof window === 'undefined'
     ? ''
@@ -267,40 +316,50 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
         </div>
       </div>
 
-      {/* Spoiler toggle + reset */}
+      {/* Controls bar: Table of Contents + Spoiler toggle + Reset */}
       <div className="flex items-center justify-between mb-8 gap-4 flex-wrap">
-        <button
-          onClick={toggleSpoilers}
-          className="site-button bg-cream-50 text-ink-900 border-cream-300 hover:border-peach-300"
-        >
-          {showSpoilers ? (
-            <Eye className="w-4 h-4 text-peach-400" />
-          ) : (
-            <EyeOff className="w-4 h-4 text-tan-400" />
-          )}
-          <span className="text-sm font-semibold text-ink-900">
-            Spoilers: {showSpoilers ? 'On' : 'Off'}
-          </span>
-          <div
-            className={`w-10 h-5 rounded-full transition-all duration-300 relative ${
-              showSpoilers ? 'bg-peach-400' : 'bg-cream-300'
-            }`}
-          >
-            <div
-              className={`absolute top-0.5 w-4 h-4 rounded-full bg-cream-50 shadow-cozy-sm transition-all duration-300 ${
-                showSpoilers ? 'left-5' : 'left-0.5'
-              }`}
-            />
-          </div>
-        </button>
+        <TableOfContents
+          sections={game.walkthrough}
+          accentColor={game.accentColor}
+          completedSteps={completedSteps}
+          onSelectStep={handleSelectStep}
+          onSelectSection={handleSelectSection}
+        />
 
-        <button
-          onClick={resetProgress}
-          className="site-button border-transparent text-tan-500 hover:text-rose-500 hover:bg-rose-100 text-sm"
-        >
-          <RotateCcw className="w-4 h-4" />
-          Reset progress
-        </button>
+        <div className="flex items-center gap-3 flex-wrap">
+          <button
+            onClick={toggleSpoilers}
+            className="site-button bg-cream-50 text-ink-900 border-cream-300 hover:border-peach-300"
+          >
+            {showSpoilers ? (
+              <Eye className="w-4 h-4 text-peach-400" />
+            ) : (
+              <EyeOff className="w-4 h-4 text-tan-400" />
+            )}
+            <span className="text-sm font-semibold text-ink-900">
+              Spoilers: {showSpoilers ? 'On' : 'Off'}
+            </span>
+            <div
+              className={`w-10 h-5 rounded-full transition-all duration-300 relative ${
+                showSpoilers ? 'bg-peach-400' : 'bg-cream-300'
+              }`}
+            >
+              <div
+                className={`absolute top-0.5 w-4 h-4 rounded-full bg-cream-50 shadow-cozy-sm transition-all duration-300 ${
+                  showSpoilers ? 'left-5' : 'left-0.5'
+                }`}
+              />
+            </div>
+          </button>
+
+          <button
+            onClick={resetProgress}
+            className="site-button border-transparent text-tan-500 hover:text-rose-500 hover:bg-rose-100 text-sm"
+          >
+            <RotateCcw className="w-4 h-4" />
+            Reset progress
+          </button>
+        </div>
       </div>
 
       {/* Walkthrough sections */}
@@ -314,6 +373,9 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
             completedSteps={completedSteps}
             toggleStep={toggleStep}
             showSpoilers={showSpoilers}
+            isExpanded={expandedSections[section.id] ?? true}
+            onToggleExpand={() => toggleSectionExpand(section.id)}
+            highlightedStepKey={highlightedStepKey}
           />
         ))}
 
@@ -328,6 +390,20 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
           </div>
         )}
       </div>
+
+      {/* Floating Quick Navigation Trigger */}
+      {showFloatingTOC && (
+        <div className="fixed bottom-6 right-6 z-30 animate-fade-in">
+          <TableOfContents
+            sections={game.walkthrough}
+            accentColor={game.accentColor}
+            completedSteps={completedSteps}
+            onSelectStep={handleSelectStep}
+            onSelectSection={handleSelectSection}
+            floating
+          />
+        </div>
+      )}
 
       {/* Community Comments Section */}
       <div className="mt-16 pt-8 border-t-2 border-tan-200">
@@ -391,6 +467,9 @@ interface WalkthroughSectionCardProps {
   completedSteps: Set<string>;
   toggleStep: (id: string) => void;
   showSpoilers: boolean;
+  isExpanded: boolean;
+  onToggleExpand: () => void;
+  highlightedStepKey: string | null;
 }
 
 function WalkthroughSectionCard({
@@ -400,9 +479,10 @@ function WalkthroughSectionCard({
   completedSteps,
   toggleStep,
   showSpoilers,
+  isExpanded,
+  onToggleExpand,
+  highlightedStepKey,
 }: WalkthroughSectionCardProps) {
-  const [expanded, setExpanded] = useState(true);
-  
   const hasSteps = section.steps && section.steps.length > 0;
   
   const sectionCompleted = hasSteps && section.steps.every((s) =>
@@ -415,12 +495,13 @@ function WalkthroughSectionCard({
 
   return (
     <div
-      className="cozy-card notepad-card animate-slide-in"
+      id={`section-${section.id}`}
+      className="cozy-card notepad-card animate-slide-in scroll-mt-24"
       style={{ animationDelay: `${sectionIndex * 80}ms` }}
     >
       {/* Section header */}
       <button
-        onClick={() => setExpanded(!expanded)}
+        onClick={onToggleExpand}
         className="w-full flex items-center justify-between p-5 text-left hover:bg-cream-100 transition-colors"
       >
         <div className="flex items-center gap-3">
@@ -445,13 +526,13 @@ function WalkthroughSectionCard({
         </div>
         <ChevronDown
           className={`w-5 h-5 text-tan-400 transition-transform duration-300 flex-shrink-0 ${
-            expanded ? 'rotate-180' : ''
+            isExpanded ? 'rotate-180' : ''
           }`}
         />
       </button>
 
       {/* Steps */}
-      {expanded && hasSteps && (
+      {isExpanded && hasSteps && (
         <div className="px-4 sm:px-5 pb-5 space-y-4 animate-fade-in">
           <div className="h-px bg-cream-200 mb-2" />
           {section.steps.map((step, idx) => {
@@ -472,6 +553,7 @@ function WalkthroughSectionCard({
                 toggleStep={toggleStep}
                 showSpoilers={showSpoilers}
                 accentColor={accentColor}
+                isHighlighted={highlightedStepKey === stepKey}
               />
             );
           })}
@@ -494,6 +576,7 @@ interface WikiHowStepProps {
   toggleStep: (id: string) => void;
   showSpoilers: boolean;
   accentColor: string;
+  isHighlighted?: boolean;
 }
 
 function WikiHowStep({
@@ -509,15 +592,18 @@ function WikiHowStep({
   toggleStep,
   showSpoilers,
   accentColor,
+  isHighlighted = false,
 }: WikiHowStepProps) {
   const [spoilerRevealed, setSpoilerRevealed] = useState(false);
 
   return (
     <div
-      className={`notepad-card notepad-step transition-all duration-300 ${
+      id={`step-${stepKey}`}
+      className={`notepad-card notepad-step transition-all duration-300 scroll-mt-24 ${
         isDone ? 'notepad-step-done' : ''
-      }`}
+      } ${isHighlighted ? 'step-target-highlight' : ''}`}
     >
+
       {/* Step number bar */}
       <div className="flex items-center justify-between px-4 pt-4 pb-2">
         <div className="flex items-center gap-2.5">
