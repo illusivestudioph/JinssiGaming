@@ -1,30 +1,65 @@
 /**
- * Cozy Ambient Sound Engine & Procedural Sound Effects
- * Uses the Web Audio API to procedurally synthesize realistic, seamless ambient soundscapes
- * (Rain, Fireplace, Forest Wind) and satisfying tactile sound effects (pencil/wood check clicks)
- * without requiring large audio downloads.
+ * Cozy Ambient Sound Engine & Tactile Sound Effects
+ * Uses real high-fidelity field recordings for ambient soundscapes
+ * (Cozy Midnight Rain, Fireplace Crackles, Forest Wind & Birds)
+ * with seamless Web Audio API looping, smooth volume ramping,
+ * HTML5 Audio streaming fallback, and tactile UI click SFX.
  */
+
+interface AmbientTrackState {
+  name: 'rain' | 'fire' | 'wind';
+  url: string;
+  volumeScale: number;
+  buffer: AudioBuffer | null;
+  gainNode: GainNode | null;
+  sourceNode: AudioBufferSourceNode | null;
+  audioElement: HTMLAudioElement | null;
+  userVolume: number;
+  stopTimer: number | null;
+}
 
 class AmbientSoundEngine {
   private ctx: AudioContext | null = null;
   private masterGain: GainNode | null = null;
 
-  // Rain nodes
-  private rainGain: GainNode | null = null;
-  private rainNoiseNode: AudioNode | null = null;
-  private rainDropletTimer: number | null = null;
+  // Real ambient tracks
+  private tracks: Record<'rain' | 'fire' | 'wind', AmbientTrackState> = {
+    rain: {
+      name: 'rain',
+      url: '/dragon-studio-cozy-midnight-rain-02-448573.mp3',
+      volumeScale: 0.75,
+      buffer: null,
+      gainNode: null,
+      sourceNode: null,
+      audioElement: null,
+      userVolume: 0,
+      stopTimer: null,
+    },
+    fire: {
+      name: 'fire',
+      url: '/dragon-studio-fire-sounds-356121.mp3',
+      volumeScale: 0.7,
+      buffer: null,
+      gainNode: null,
+      sourceNode: null,
+      audioElement: null,
+      userVolume: 0,
+      stopTimer: null,
+    },
+    wind: {
+      name: 'wind',
+      url: '/farshad_hamzavi-ambience-birds-wind-422207.mp3',
+      volumeScale: 0.65,
+      buffer: null,
+      gainNode: null,
+      sourceNode: null,
+      audioElement: null,
+      userVolume: 0,
+      stopTimer: null,
+    },
+  };
 
-  // Fireplace nodes
-  private fireGain: GainNode | null = null;
-  private fireRumbleNode: AudioNode | null = null;
-  private fireCrackleTimer: number | null = null;
-
-  // Forest Wind nodes
-  private windGain: GainNode | null = null;
-  private windNoiseNode: AudioNode | null = null;
-  private windLfo: OscillatorNode | null = null;
-
-  // Audio file buffers for tactile SFX (/check.mp3 and /dropdown.mp3)
+  // Audio file buffers for tactile SFX
   private checkBuffer: AudioBuffer | null = null;
   private dropdownBuffer: AudioBuffer | null = null;
   private isPreloading = false;
@@ -49,8 +84,8 @@ class AmbientSoundEngine {
       return new Promise((resolve, reject) => {
         try {
           const res = ctx.decodeAudioData(buffer, resolve, reject);
-          if (res && typeof res.then === 'function') {
-            res.then(resolve).catch(reject);
+          if (res && typeof (res as Promise<AudioBuffer>).then === 'function') {
+            (res as Promise<AudioBuffer>).then(resolve).catch(reject);
           }
         } catch (err) {
           reject(err);
@@ -58,11 +93,9 @@ class AmbientSoundEngine {
       });
     };
 
+    // 1. Preload tactile SFX
     fetch('/check.mp3')
-      .then((res) => {
-        if (!res.ok) throw new Error('Failed to fetch check.mp3');
-        return res.arrayBuffer();
-      })
+      .then((res) => (res.ok ? res.arrayBuffer() : Promise.reject(new Error('check.mp3 failed'))))
       .then(decode)
       .then((buffer) => {
         this.checkBuffer = buffer;
@@ -70,25 +103,44 @@ class AmbientSoundEngine {
       .catch(() => {});
 
     fetch('/dropdown.mp3')
-      .then((res) => {
-        if (!res.ok) throw new Error('Failed to fetch dropdown.mp3');
-        return res.arrayBuffer();
-      })
+      .then((res) => (res.ok ? res.arrayBuffer() : Promise.reject(new Error('dropdown.mp3 failed'))))
       .then(decode)
       .then((buffer) => {
         this.dropdownBuffer = buffer;
       })
       .catch(() => {});
+
+    // 2. Preload ambient soundscapes
+    (Object.keys(this.tracks) as ('rain' | 'fire' | 'wind')[]).forEach((key) => {
+      const track = this.tracks[key];
+      this.initTrackAudioElement(track);
+
+      fetch(track.url)
+        .then((res) => (res.ok ? res.arrayBuffer() : Promise.reject(new Error(`${track.url} failed`))))
+        .then(decode)
+        .then((buffer) => {
+          track.buffer = buffer;
+          // If user already adjusted volume while loading, start playing smoothly
+          if (track.userVolume > 0 && !this.isMasterMuted) {
+            this.syncTrackPlayback(track);
+          }
+        })
+        .catch(() => {
+          // If Web Audio decoding fails, fallback to HTMLAudioElement
+        });
+    });
   }
 
   private initContext(): AudioContext | null {
     if (typeof window === 'undefined') return null;
     if (!this.ctx) {
-      const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+      const AudioCtx =
+        window.AudioContext ||
+        (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       if (!AudioCtx) return null;
       this.ctx = new AudioCtx();
       this.masterGain = this.ctx.createGain();
-      this.masterGain.gain.setValueAtTime(1, this.ctx.currentTime);
+      this.masterGain.gain.setValueAtTime(this.isMasterMuted ? 0 : 1, this.ctx.currentTime);
       this.masterGain.connect(this.ctx.destination);
     }
     if (this.ctx.state === 'suspended') {
@@ -97,223 +149,116 @@ class AmbientSoundEngine {
     return this.ctx;
   }
 
-  // Create a 5-second buffer of pink noise for natural texture
-  private createPinkNoiseBuffer(ctx: AudioContext): AudioBuffer {
-    const bufferSize = ctx.sampleRate * 5;
-    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-    const data = buffer.getChannelData(0);
-    let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
-
-    for (let i = 0; i < bufferSize; i++) {
-      const white = Math.random() * 2 - 1;
-      b0 = 0.99886 * b0 + white * 0.0555179;
-      b1 = 0.99332 * b1 + white * 0.0750759;
-      b2 = 0.96900 * b2 + white * 0.1538520;
-      b3 = 0.86650 * b3 + white * 0.3104856;
-      b4 = 0.55000 * b4 + white * 0.5329522;
-      b5 = -0.7616 * b5 - white * 0.0168980;
-      data[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362) * 0.11;
-      b6 = white * 0.115926;
-    }
-    return buffer;
-  }
-
-  // --- RAIN SYNTHESIZER ---
-  public setRainVolume(volume: number) {
-    const ctx = this.initContext();
-    if (!ctx) return;
-
-    if (!this.rainGain) {
-      this.rainGain = ctx.createGain();
-      this.rainGain.gain.setValueAtTime(0, ctx.currentTime);
-      this.rainGain.connect(this.masterGain!);
-
-      // Pink noise source through low-pass + band-pass for soothing rain shower
-      const pinkBuffer = this.createPinkNoiseBuffer(ctx);
-      const noiseSource = ctx.createBufferSource();
-      noiseSource.buffer = pinkBuffer;
-      noiseSource.loop = true;
-
-      const lowpass = ctx.createBiquadFilter();
-      lowpass.type = 'lowpass';
-      lowpass.frequency.setValueAtTime(1100, ctx.currentTime);
-
-      const highpass = ctx.createBiquadFilter();
-      highpass.type = 'highpass';
-      highpass.frequency.setValueAtTime(320, ctx.currentTime);
-
-      noiseSource.connect(lowpass);
-      lowpass.connect(highpass);
-      highpass.connect(this.rainGain);
-      noiseSource.start(0);
-      this.rainNoiseNode = noiseSource;
-
-      // Occasional gentle raindrop impacts
-      this.startRainDroplets(ctx);
-    }
-
-    const now = ctx.currentTime;
-    this.rainGain.gain.setTargetAtTime(Math.max(0, Math.min(1, volume * 0.6)), now, 0.15);
-  }
-
-  private startRainDroplets(ctx: AudioContext) {
-    if (this.rainDropletTimer) return;
-    const scheduleNext = () => {
-      const delay = 80 + Math.random() * 220;
-      this.rainDropletTimer = window.setTimeout(() => {
-        if (this.rainGain && this.rainGain.gain.value > 0.01) {
-          this.triggerRaindrop(ctx);
-        }
-        scheduleNext();
-      }, delay);
-    };
-    scheduleNext();
-  }
-
-  private triggerRaindrop(ctx: AudioContext) {
+  private initTrackAudioElement(track: AmbientTrackState) {
+    if (typeof window === 'undefined' || track.audioElement) return;
     try {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      const freq = 1200 + Math.random() * 800;
-      osc.frequency.setValueAtTime(freq, ctx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(freq * 0.4, ctx.currentTime + 0.04);
-
-      const dropVol = (Math.random() * 0.04 + 0.01) * (this.rainGain?.gain.value || 0.5);
-      gain.gain.setValueAtTime(dropVol, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.05);
-
-      osc.connect(gain);
-      gain.connect(this.masterGain!);
-      osc.start();
-      osc.stop(ctx.currentTime + 0.05);
+      const audio = new Audio(track.url);
+      audio.loop = true;
+      audio.setAttribute('playsinline', 'true');
+      audio.volume = 0;
+      track.audioElement = audio;
     } catch {
       // Ignore
     }
   }
 
-  // --- FIREPLACE CRACKLE SYNTHESIZER ---
-  public setFireVolume(volume: number) {
+  private syncTrackPlayback(track: AmbientTrackState) {
     const ctx = this.initContext();
-    if (!ctx) return;
+    const effectiveVolume = this.isMasterMuted ? 0 : track.userVolume * track.volumeScale;
 
-    if (!this.fireGain) {
-      this.fireGain = ctx.createGain();
-      this.fireGain.gain.setValueAtTime(0, ctx.currentTime);
-      this.fireGain.connect(this.masterGain!);
-
-      // Low rumble for warm burning coals
-      const pinkBuffer = this.createPinkNoiseBuffer(ctx);
-      const rumbleSource = ctx.createBufferSource();
-      rumbleSource.buffer = pinkBuffer;
-      rumbleSource.loop = true;
-
-      const lowpass = ctx.createBiquadFilter();
-      lowpass.type = 'lowpass';
-      lowpass.frequency.setValueAtTime(280, ctx.currentTime);
-
-      rumbleSource.connect(lowpass);
-      lowpass.connect(this.fireGain);
-      rumbleSource.start(0);
-      this.fireRumbleNode = rumbleSource;
-
-      // Realistic random wood crackles and pops
-      this.startFireCrackles(ctx);
-    }
-
-    const now = ctx.currentTime;
-    this.fireGain.gain.setTargetAtTime(Math.max(0, Math.min(1, volume * 0.5)), now, 0.15);
-  }
-
-  private startFireCrackles(ctx: AudioContext) {
-    if (this.fireCrackleTimer) return;
-    const scheduleNext = () => {
-      // Irregular Poisson-like distribution for natural wood snaps
-      const delay = 40 + Math.random() * (Math.random() > 0.8 ? 80 : 350);
-      this.fireCrackleTimer = window.setTimeout(() => {
-        if (this.fireGain && this.fireGain.gain.value > 0.01) {
-          this.triggerFireCrackle(ctx);
-        }
-        scheduleNext();
-      }, delay);
-    };
-    scheduleNext();
-  }
-
-  private triggerFireCrackle(ctx: AudioContext) {
-    try {
-      const now = ctx.currentTime;
-      const buffer = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 0.025), ctx.sampleRate);
-      const data = buffer.getChannelData(0);
-      for (let i = 0; i < data.length; i++) {
-        data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (data.length * 0.3));
+    if (effectiveVolume > 0) {
+      if (track.stopTimer !== null) {
+        window.clearTimeout(track.stopTimer);
+        track.stopTimer = null;
       }
 
-      const source = ctx.createBufferSource();
-      source.buffer = buffer;
+      // Priority 1: Web Audio API gapless looping buffer
+      if (ctx && track.buffer) {
+        if (!track.gainNode) {
+          track.gainNode = ctx.createGain();
+          track.gainNode.gain.setValueAtTime(0, ctx.currentTime);
+          track.gainNode.connect(this.masterGain!);
+        }
 
-      const filter = ctx.createBiquadFilter();
-      filter.type = 'bandpass';
-      filter.frequency.setValueAtTime(2000 + Math.random() * 2000, now);
-      filter.Q.setValueAtTime(3 + Math.random() * 3, now);
+        if (!track.sourceNode) {
+          try {
+            const source = ctx.createBufferSource();
+            source.buffer = track.buffer;
+            source.loop = true;
+            source.connect(track.gainNode);
+            source.start(0);
+            track.sourceNode = source;
+          } catch {
+            // In case buffer source fails, use HTMLAudioElement below
+          }
+        }
 
-      const gain = ctx.createGain();
-      const popVol = (0.15 + Math.random() * 0.25) * (this.fireGain?.gain.value || 0.5);
-      gain.gain.setValueAtTime(popVol, now);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.03);
+        if (track.gainNode) {
+          const now = ctx.currentTime;
+          track.gainNode.gain.setTargetAtTime(effectiveVolume, now, 0.08);
+        }
 
-      source.connect(filter);
-      filter.connect(gain);
-      gain.connect(this.masterGain!);
+        // Pause HTMLAudioElement fallback if active
+        if (track.audioElement && !track.audioElement.paused) {
+          track.audioElement.pause();
+        }
+        return;
+      }
 
-      source.start(now);
-      source.stop(now + 0.03);
-    } catch {
-      // Ignore
+      // Priority 2: HTMLAudioElement fallback while buffer decodes
+      if (track.audioElement) {
+        track.audioElement.volume = Math.max(0, Math.min(1, effectiveVolume));
+        if (track.audioElement.paused) {
+          void track.audioElement.play().catch(() => {});
+        }
+      }
+    } else {
+      // Volume is 0 or muted: fade out and stop source to save battery and CPU
+      if (ctx && track.gainNode) {
+        const now = ctx.currentTime;
+        track.gainNode.gain.setTargetAtTime(0, now, 0.08);
+
+        if (track.sourceNode && track.stopTimer === null) {
+          track.stopTimer = window.setTimeout(() => {
+            if (track.sourceNode && (track.userVolume === 0 || this.isMasterMuted)) {
+              try {
+                track.sourceNode.stop();
+                track.sourceNode.disconnect();
+              } catch {
+                // Ignore
+              }
+              track.sourceNode = null;
+            }
+            track.stopTimer = null;
+          }, 250);
+        }
+      }
+
+      if (track.audioElement && !track.audioElement.paused) {
+        track.audioElement.pause();
+      }
     }
   }
 
-  // --- FOREST WIND SYNTHESIZER ---
+  // --- AMBIENT VOLUME CONTROLS ---
+
+  public setRainVolume(volume: number) {
+    this.tracks.rain.userVolume = Math.max(0, Math.min(1, volume));
+    this.syncTrackPlayback(this.tracks.rain);
+  }
+
+  public setFireVolume(volume: number) {
+    this.tracks.fire.userVolume = Math.max(0, Math.min(1, volume));
+    this.syncTrackPlayback(this.tracks.fire);
+  }
+
   public setWindVolume(volume: number) {
-    const ctx = this.initContext();
-    if (!ctx) return;
-
-    if (!this.windGain) {
-      this.windGain = ctx.createGain();
-      this.windGain.gain.setValueAtTime(0, ctx.currentTime);
-      this.windGain.connect(this.masterGain!);
-
-      const pinkBuffer = this.createPinkNoiseBuffer(ctx);
-      const windSource = ctx.createBufferSource();
-      windSource.buffer = pinkBuffer;
-      windSource.loop = true;
-
-      // Resonant bandpass modulated by slow LFO for breezy gusts
-      const bandpass = ctx.createBiquadFilter();
-      bandpass.type = 'bandpass';
-      bandpass.frequency.setValueAtTime(380, ctx.currentTime);
-      bandpass.Q.setValueAtTime(2.2, ctx.currentTime);
-
-      const lfo = ctx.createOscillator();
-      lfo.frequency.setValueAtTime(0.18, ctx.currentTime); // slow breathing gust cycle
-      const lfoGain = ctx.createGain();
-      lfoGain.gain.setValueAtTime(140, ctx.currentTime);
-
-      lfo.connect(lfoGain);
-      lfoGain.connect(bandpass.frequency);
-      lfo.start(0);
-      this.windLfo = lfo;
-
-      windSource.connect(bandpass);
-      bandpass.connect(this.windGain);
-      windSource.start(0);
-      this.windNoiseNode = windSource;
-    }
-
-    const now = ctx.currentTime;
-    this.windGain.gain.setTargetAtTime(Math.max(0, Math.min(1, volume * 0.45)), now, 0.2);
+    this.tracks.wind.userVolume = Math.max(0, Math.min(1, volume));
+    this.syncTrackPlayback(this.tracks.wind);
   }
 
-  // --- SATISFYING COZY SOUND EFFECTS ---
+  // --- TACTILE UI SOUND EFFECTS ---
+
   private playSfx(
     url: string,
     buffer: AudioBuffer | null,
@@ -362,7 +307,7 @@ class AmbientSoundEngine {
   }
 
   /**
-   * Plays the satisfying checklist click sound from /check.mp3
+   * Plays the tactile checklist check click sound from /check.mp3
    */
   public playCheckSound() {
     this.playSfx('/check.mp3', this.checkBuffer, 1.0, 0.75);
@@ -387,7 +332,12 @@ class AmbientSoundEngine {
     if (this.masterGain && this.ctx) {
       this.masterGain.gain.setTargetAtTime(muted ? 0 : 1, this.ctx.currentTime, 0.08);
     }
+    // Re-sync all ambient tracks to reflect mute state
+    (Object.keys(this.tracks) as ('rain' | 'fire' | 'wind')[]).forEach((key) => {
+      this.syncTrackPlayback(this.tracks[key]);
+    });
   }
 }
 
 export const ambientEngine = new AmbientSoundEngine();
+
