@@ -433,9 +433,13 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
       </div>
 
       {showCongratulations && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center overflow-hidden p-4">
-          <div className="absolute inset-0 bg-ink-900/70 backdrop-blur-sm" aria-hidden="true" />
-          <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto p-4 sm:p-6">
+          <div
+            className="fixed inset-0 bg-ink-900/70 backdrop-blur-sm"
+            aria-hidden="true"
+            onClick={() => setShowCongratulations(false)}
+          />
+          <div className="pointer-events-none fixed inset-0 overflow-hidden" aria-hidden="true">
             {confettiPieces.map((piece, index) => (
               <span
                 key={index}
@@ -452,29 +456,44 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
             ))}
           </div>
 
-          <div
-            className="notepad-card completion-notepad-card relative z-10 w-full max-w-md text-center animate-pop"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="congratulations-title"
-          >
-            <button
-              type="button"
-              onClick={() => setShowCongratulations(false)}
-              className="absolute right-4 top-4 rounded-full p-2 text-tan-500 transition-colors hover:bg-cream-200 hover:text-ink-900"
-              aria-label="Close congratulations"
-            >
-              <X className="h-5 w-5" />
-            </button>
-            <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-sage-200 text-sage-500">
-              <Check className="h-9 w-9" strokeWidth={3} aria-hidden="true" />
+          <div className="relative z-10 w-full max-w-md my-auto pt-24 sm:pt-28">
+            {/* Tuturo Character standing behind the card greeting */}
+            <div className="absolute left-1/2 -translate-x-1/2 top-0 z-0 pointer-events-none w-48 sm:w-56 select-none animate-float">
+              <img
+                src="/tuturo.png"
+                alt="Tuturo greeting you"
+                className="w-full h-auto object-contain mx-auto filter drop-shadow-md"
+                draggable={false}
+              />
+              <div className="absolute -top-1 -right-2 sm:-right-4 bg-white/95 border-2 border-tan-300 rounded-full px-2.5 py-0.5 shadow-cozy-sm text-[11px] sm:text-xs font-bold text-peach-600 rotate-6">
+                Tuturu~♪
+              </div>
             </div>
-            <p className="mb-2 font-display text-3xl font-700 text-ink-900" id="congratulations-title">
-              Congratulations!
-            </p>
-            <p className="text-base font-semibold leading-relaxed text-ink-700">
-              You completed every step in the {game.title} walkthrough. Great job!
-            </p>
+
+            <div
+              className="notepad-card completion-notepad-card relative z-10 w-full text-center animate-pop shadow-cozy-lg"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="congratulations-title"
+            >
+              <button
+                type="button"
+                onClick={() => setShowCongratulations(false)}
+                className="absolute right-4 top-4 rounded-full p-2 text-tan-500 transition-colors hover:bg-cream-200 hover:text-ink-900"
+                aria-label="Close congratulations"
+              >
+                <X className="h-5 w-5" />
+              </button>
+              <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-sage-200 text-sage-500">
+                <Check className="h-9 w-9" strokeWidth={3} aria-hidden="true" />
+              </div>
+              <p className="mb-2 font-display text-3xl font-700 text-ink-900" id="congratulations-title">
+                Congratulations!
+              </p>
+              <p className="text-base font-semibold leading-relaxed text-ink-700">
+                You completed every step in the {game.title} walkthrough. Great job!
+              </p>
+            </div>
           </div>
         </div>
       )}
