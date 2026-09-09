@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
-import { articles, articleCategories, type Article } from '@/data/articles';
+import { useSiteContent } from '@/context/SiteContentContext';
+import { articleCategories, type Article } from '@/data/articles';
 import { BookOpen, Clock, Search, Tag, Sparkles, ArrowRight } from 'lucide-react';
 
 interface JournalDirectoryProps {
@@ -7,8 +8,20 @@ interface JournalDirectoryProps {
 }
 
 export function JournalDirectory({ onSelectArticle }: JournalDirectoryProps) {
+  const { articles } = useSiteContent();
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState('');
+
+  const categories = useMemo(() => {
+    const list = ['All'];
+    articleCategories.forEach((c) => {
+      if (!list.includes(c)) list.push(c);
+    });
+    articles.forEach((a) => {
+      if (a.category && !list.includes(a.category)) list.push(a.category);
+    });
+    return list;
+  }, [articles]);
 
   const filteredArticles = useMemo(() => {
     return articles.filter((article) => {
@@ -24,7 +37,7 @@ export function JournalDirectory({ onSelectArticle }: JournalDirectoryProps) {
 
       return matchesCategory && matchesSearch;
     });
-  }, [selectedCategory, searchQuery]);
+  }, [articles, selectedCategory, searchQuery]);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 animate-fade-in">
@@ -66,7 +79,7 @@ export function JournalDirectory({ onSelectArticle }: JournalDirectoryProps) {
 
         {/* Category Pill Filters */}
         <div className="flex flex-wrap gap-2 justify-center items-center">
-          {articleCategories.map((category) => (
+          {categories.map((category) => (
             <button
               key={category}
               onClick={() => setSelectedCategory(category)}

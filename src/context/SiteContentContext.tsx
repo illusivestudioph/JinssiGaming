@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { games as initialGames, type Game, type WalkthroughSection } from '@/data/games';
+import { articles as initialArticles, type Article } from '@/data/articles';
 import { supabase } from '@/lib/supabase';
 
 export interface WalletOption {
@@ -21,6 +22,7 @@ export type CloudSyncStatus = 'synced' | 'saving' | 'error' | 'offline';
 
 export interface SavedContent {
   games: Game[];
+  articles: Article[];
   heroImage: string;
   logoImage: string;
   ctaLinks: CtaLink[];
@@ -29,6 +31,7 @@ export interface SavedContent {
 
 export interface SiteContentContextValue {
   games: Game[];
+  articles: Article[];
   heroImage: string;
   logoImage: string;
   ctaLinks: CtaLink[];
@@ -43,6 +46,9 @@ export interface SiteContentContextValue {
   updateGame: (game: Game) => void;
   removeGame: (gameId: string) => void;
   updateWalkthrough: (gameId: string, walkthrough: WalkthroughSection[]) => void;
+  addArticle: (article: Article) => void;
+  updateArticle: (article: Article) => void;
+  removeArticle: (articleId: string) => void;
 }
 
 const SiteContentContext = createContext<SiteContentContextValue | null>(null);
@@ -51,6 +57,7 @@ const BROADCAST_CHANNEL_NAME = 'jinssi_site_content_channel';
 
 const defaultContent: SavedContent = {
   games: initialGames,
+  articles: initialArticles,
   heroImage: '/banner.jpeg',
   logoImage: '/image.png',
   ctaLinks: [
@@ -95,6 +102,7 @@ function normalizeContent(parsed: Partial<SavedContent> | null | undefined): Sav
 
   return {
     games: Array.isArray(parsed?.games) ? parsed.games : initialGames,
+    articles: Array.isArray(parsed?.articles) && parsed.articles.length > 0 ? parsed.articles : initialArticles,
     heroImage: typeof parsed?.heroImage === 'string' ? parsed.heroImage : defaultContent.heroImage,
     logoImage: parsed?.logoImage === '/logo.png'
       ? defaultContent.logoImage
@@ -328,6 +336,7 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo<SiteContentContextValue>(() => ({
     games: content.games,
+    articles: content.articles,
     heroImage: content.heroImage,
     logoImage: content.logoImage,
     ctaLinks: content.ctaLinks,
@@ -352,6 +361,17 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
     updateWalkthrough: (gameId, walkthrough) => setContent((c) => ({
       ...c,
       games: c.games.map((g) => (g.id === gameId ? { ...g, walkthrough } : g)),
+      updated_at: new Date().toISOString(),
+    })),
+    addArticle: (article) => setContent((c) => ({ ...c, articles: [article, ...c.articles], updated_at: new Date().toISOString() })),
+    updateArticle: (article) => setContent((c) => ({
+      ...c,
+      articles: c.articles.map((item) => (item.id === article.id ? article : item)),
+      updated_at: new Date().toISOString(),
+    })),
+    removeArticle: (articleId) => setContent((c) => ({
+      ...c,
+      articles: c.articles.filter((a) => a.id !== articleId),
       updated_at: new Date().toISOString(),
     })),
   }), [content, syncStatus, lastSyncedAt]);

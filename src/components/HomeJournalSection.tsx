@@ -1,4 +1,5 @@
-import { articles, type Article } from '@/data/articles';
+import { useSiteContent } from '@/context/SiteContentContext';
+import type { Article } from '@/data/articles';
 import { BookOpen, Clock, ArrowRight, Sparkles } from 'lucide-react';
 
 interface HomeJournalSectionProps {
@@ -10,8 +11,11 @@ export function HomeJournalSection({
   onSelectArticle,
   onNavigateToJournal,
 }: HomeJournalSectionProps) {
+  const { articles } = useSiteContent();
   // Show top 3 featured articles on the homepage
   const featuredArticles = articles.slice(0, 3);
+
+  if (featuredArticles.length === 0) return null;
 
   return (
     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 border-t-2 border-tan-200/70">

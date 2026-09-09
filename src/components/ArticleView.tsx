@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import type { Article } from '@/data/articles';
-import { articles } from '@/data/articles';
+import { useSiteContent } from '@/context/SiteContentContext';
 import { CommentSection } from './CommentSection';
 import {
   ArrowLeft,
@@ -29,6 +29,7 @@ export function ArticleView({
   onSelectArticle,
   onSelectGame,
 }: ArticleViewProps) {
+  const { articles } = useSiteContent();
   const [copied, setCopied] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
 

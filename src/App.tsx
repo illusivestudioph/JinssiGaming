@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import type { Game } from '@/data/games';
-import { articles, type Article } from '@/data/articles';
+import type { Article } from '@/data/articles';
 import { Header, type View } from '@/components/Header';
 import { GameDirectory } from '@/components/GameDirectory';
 import { WalkthroughView } from '@/components/WalkthroughView';
@@ -35,7 +35,7 @@ function App() {
 }
 
 function AppContent() {
-  const { games } = useSiteContent();
+  const { games, articles } = useSiteContent();
   const [view, setView] = useState<View>(() => {
     const routeView = getRouteView();
     if (routeView) return routeView;

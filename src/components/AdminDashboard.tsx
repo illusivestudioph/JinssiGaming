@@ -1,6 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { useSiteContent } from '@/context/SiteContentContext';
 import type { Game, WalkthroughSection } from '@/data/games';
+import type { Article } from '@/data/articles';
+import { ArticleManager } from './admin/ArticleManager';
+import { ArticleEditor } from './admin/ArticleEditor';
 import { supabase } from '@/lib/supabase';
 import { 
   Trash2, 
@@ -24,6 +27,7 @@ const DRAFT_STORAGE_KEY = 'jinssi-admin-editing-game-draft';
 export function AdminDashboard() {
   const { 
     games, 
+    articles,
     heroImage, 
     logoImage, 
     ctaLinks, 
@@ -35,11 +39,16 @@ export function AdminDashboard() {
     setCtaLinks, 
     addGame, 
     updateGame, 
-    removeGame 
+    removeGame,
+    addArticle,
+    updateArticle,
+    removeArticle
   } = useSiteContent();
 
-  const [activeTab, setActiveTab] = useState<'assets' | 'games'>('assets');
+  const [activeTab, setActiveTab] = useState<'assets' | 'games' | 'articles'>('assets');
   const [editingGame, setEditingGame] = useState<Game | null>(null);
+  const [editingArticle, setEditingArticle] = useState<Article | null>(null);
+  const [isNewArticle, setIsNewArticle] = useState(false);
   const [uploadingKey, setUploadingKey] = useState<string | null>(null);
   const [uploadedKey, setUploadedKey] = useState<string | null>(null);
   const [assetSaveMessage, setAssetSaveMessage] = useState('');
@@ -260,6 +269,32 @@ export function AdminDashboard() {
     newWalkthrough[sectionIndex].steps = newWalkthrough[sectionIndex].steps.filter((_, idx) => idx !== stepIndex);
     setEditingGame({ ...editingGame, walkthrough: newWalkthrough });
   };
+
+  // --- ARTICLE EDITOR VIEW ---
+  if (editingArticle) {
+    return (
+      <ArticleEditor
+        article={editingArticle}
+        isNew={isNewArticle}
+        games={games}
+        onSave={(saved) => {
+          if (isNewArticle) {
+            addArticle(saved);
+          } else {
+            updateArticle(saved);
+          }
+          setEditingArticle(null);
+          setIsNewArticle(false);
+        }}
+        onCancel={() => {
+          setEditingArticle(null);
+          setIsNewArticle(false);
+        }}
+        onUploadImage={handleImageUpload}
+        uploadingKey={uploadingKey}
+      />
+    );
+  }
 
   // --- GAME EDITOR VIEW ---
   if (editingGame) {
@@ -645,7 +680,8 @@ export function AdminDashboard() {
 
       <div className="flex gap-4 mb-6 border-b-2 border-tan-200 pb-2">
         <button onClick={() => setActiveTab('assets')} className={`font-bold pb-2 ${activeTab === 'assets' ? 'text-peach-500 border-b-2 border-peach-500' : 'text-tan-500 hover:text-ink-900'}`}>Site Assets</button>
-        <button onClick={() => setActiveTab('games')} className={`font-bold pb-2 ${activeTab === 'games' ? 'text-peach-500 border-b-2 border-peach-500' : 'text-tan-500 hover:text-ink-900'}`}>Manage Games</button>
+        <button onClick={() => setActiveTab('games')} className={`font-bold pb-2 ${activeTab === 'games' ? 'text-peach-500 border-b-2 border-peach-500' : 'text-tan-500 hover:text-ink-900'}`}>Manage Games ({games.length})</button>
+        <button onClick={() => setActiveTab('articles')} className={`font-bold pb-2 ${activeTab === 'articles' ? 'text-peach-500 border-b-2 border-peach-500' : 'text-tan-500 hover:text-ink-900'}`}>Cozy Journal ({articles.length})</button>
       </div>
 
       {activeTab === 'assets' && (
@@ -932,6 +968,45 @@ export function AdminDashboard() {
             <Plus size={24} /> Add New Game
           </button>
         </div>
+      )}
+
+      {activeTab === 'articles' && (
+        <ArticleManager
+          articles={articles}
+          onNewArticle={() => {
+            const newArticle: Article = {
+              id: `article-${Date.now()}`,
+              slug: `new-article-${Date.now()}`,
+              title: 'New Cozy Story',
+              subtitle: 'A gentle subtitle for your readers',
+              category: 'Review',
+              author: 'Jinssi',
+              date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+              readTimeMinutes: 4,
+              cozyScore: 5,
+              stressLevel: 'Zero Stress',
+              coverImage: 'https://images.unsplash.com/photo-1518495973542-4542c06a5843?w=1200&q=80',
+              coverAlt: 'Cozy illustration',
+              tags: ['Cozy Games', 'Relaxing'],
+              sections: [
+                {
+                  heading: 'Introduction',
+                  content: ['Write your thoughts and observations here...'],
+                  callout: 'Cozy tip: Take your time and enjoy the quiet moments.',
+                }
+              ],
+            };
+            setEditingArticle(newArticle);
+            setIsNewArticle(true);
+          }}
+          onEditArticle={(article) => {
+            setEditingArticle(article);
+            setIsNewArticle(false);
+          }}
+          onDeleteArticle={(articleId) => {
+            removeArticle(articleId);
+          }}
+        />
       )}
     </div>
   );
