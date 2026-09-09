@@ -26,7 +26,7 @@ class AmbientSoundEngine {
   private tracks: Record<'rain' | 'fire' | 'wind', AmbientTrackState> = {
     rain: {
       name: 'rain',
-      url: '/dragon-studio-cozy-midnight-rain-02-448573.mp3',
+      url: '/rain.mp3',
       volumeScale: 0.75,
       buffer: null,
       gainNode: null,
@@ -37,7 +37,7 @@ class AmbientSoundEngine {
     },
     fire: {
       name: 'fire',
-      url: '/dragon-studio-fire-sounds-356121.mp3',
+      url: '/camp.mp3',
       volumeScale: 0.7,
       buffer: null,
       gainNode: null,
@@ -48,7 +48,7 @@ class AmbientSoundEngine {
     },
     wind: {
       name: 'wind',
-      url: '/farshad_hamzavi-ambience-birds-wind-422207.mp3',
+      url: '/forest.mp3',
       volumeScale: 0.65,
       buffer: null,
       gainNode: null,

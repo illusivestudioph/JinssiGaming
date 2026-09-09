@@ -229,25 +229,29 @@ export function MusicProvider({ children }: { children: ReactNode }) {
   };
 
   const applyPreset = (preset: SoundPreset) => {
+    if (muted && preset !== 'reset') {
+      setMuted(false);
+      ambientEngine.setMasterMuted(false);
+    }
     if (preset === 'rainy') {
       setAmbientRain(0.65);
-      setAmbientFire(0.2);
+      setAmbientFire(0);
       setAmbientWind(0);
       void playMusic();
     } else if (preset === 'campfire') {
       setAmbientRain(0);
       setAmbientFire(0.7);
-      setAmbientWind(0.25);
+      setAmbientWind(0);
       void playMusic();
     } else if (preset === 'reading') {
-      setAmbientRain(0.45);
-      setAmbientFire(0.35);
-      setAmbientWind(0.15);
+      setAmbientRain(0);
+      setAmbientFire(0);
+      setAmbientWind(0);
       void playMusic();
     } else if (preset === 'nature') {
-      setAmbientRain(0.3);
+      setAmbientRain(0);
       setAmbientFire(0);
-      setAmbientWind(0.6);
+      setAmbientWind(0.65);
       void playMusic();
     } else if (preset === 'reset') {
       setAmbientRain(0);

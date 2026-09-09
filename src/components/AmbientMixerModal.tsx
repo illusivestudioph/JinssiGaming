@@ -200,7 +200,7 @@ export function AmbientMixerModal({ isOpen, onClose }: AmbientMixerModalProps) {
             </span>
           </div>
 
-          {/* Fireplace Hearth (Pastel Sandy Brown #FD9A4D) */}
+          {/* Campfire (Pastel Sandy Brown #FD9A4D) */}
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2 w-28 flex-shrink-0">
               <button
@@ -209,11 +209,11 @@ export function AmbientMixerModal({ isOpen, onClose }: AmbientMixerModalProps) {
                 className={`p-1.5 rounded-lg transition-colors ${
                   ambientFire > 0 ? 'bg-[#FD9A4D] text-white' : 'bg-cream-200 text-tan-600'
                 }`}
-                title="Toggle fireplace crackle"
+                title="Toggle campfire crackle"
               >
                 <Flame className="w-3.5 h-3.5" />
               </button>
-              <span className="text-xs font-bold text-ink-800">Fireplace</span>
+              <span className="text-xs font-bold text-ink-800">Campfire</span>
             </div>
             <input
               type="range"
@@ -223,7 +223,7 @@ export function AmbientMixerModal({ isOpen, onClose }: AmbientMixerModalProps) {
               value={ambientFire}
               onChange={(e) => setAmbientFire(Number(e.target.value))}
               className="flex-1 accent-[#FD9A4D] cursor-pointer"
-              aria-label="Fireplace volume"
+              aria-label="Campfire volume"
             />
             <span className="text-[11px] font-bold text-tan-500 w-8 text-right">
               {Math.round(ambientFire * 100)}%
