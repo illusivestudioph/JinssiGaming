@@ -6,14 +6,23 @@ export function Hero() {
   return (
     <div className="relative w-full h-[54vh] min-h-[420px] max-h-[680px] flex items-end justify-center overflow-hidden pb-12">
       
-      {/* Background Image */}
+      {/* Background Image with feathered mask */}
       <div 
-        className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat z-0"
-        style={{ backgroundImage: `url(${heroImage})` }}
+        className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat z-0 pointer-events-none"
+        style={{ 
+          backgroundImage: `url(${heroImage})`,
+          WebkitMaskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 50%, rgba(0,0,0,0.35) 80%, rgba(0,0,0,0) 100%)',
+          maskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 50%, rgba(0,0,0,0.35) 80%, rgba(0,0,0,0) 100%)',
+        }}
       />
       
-      {/* Fade the artwork into the page background near the bottom. */}
-      <div className="absolute inset-0 bg-gradient-to-t from-cream-100/95 from-0% via-cream-100/55 via-45% to-transparent z-10" />
+      {/* Seamless feathered gradient blend into page background */}
+      <div 
+        className="absolute inset-0 z-10 pointer-events-none" 
+        style={{
+          background: 'linear-gradient(to bottom, transparent 0%, transparent 40%, rgba(253, 248, 241, 0.45) 70%, rgba(253, 248, 241, 0.9) 92%, #fdf8f1 100%)',
+        }}
+      />
 
       {/* Hero Text Content */}
       <div className="hero-copy relative z-20 flex flex-col items-center justify-center px-4 text-center animate-fade-in">
