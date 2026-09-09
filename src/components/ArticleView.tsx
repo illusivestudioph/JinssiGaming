@@ -140,6 +140,17 @@ export function ArticleView({
                   <span>Steam Store</span>
                 </a>
               )}
+              {article.playStoreLink && (
+                <a
+                  href={article.playStoreLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-emerald-800 hover:bg-emerald-700 text-cream-50 px-3 py-1.5 rounded-xl flex items-center gap-1.5 transition-colors shadow-cozy-xs"
+                >
+                  <ExternalLink size={13} className="text-emerald-300" />
+                  <span>Google Play</span>
+                </a>
+              )}
             </div>
           </div>
 
@@ -199,6 +210,20 @@ export function ArticleView({
                     >
                       <ExternalLink size={13} className="text-peach-400" />
                       <span>View on Steam Store</span>
+                    </a>
+                  </div>
+                )}
+
+                {section.playStoreLink && (
+                  <div className="pt-1 pb-2 flex justify-start">
+                    <a
+                      href={section.playStoreLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-emerald-800 hover:bg-emerald-700 text-cream-50 text-xs font-bold transition-all hover:scale-[1.02] shadow-cozy-xs"
+                    >
+                      <ExternalLink size={13} className="text-emerald-300" />
+                      <span>Get on Google Play</span>
                     </a>
                   </div>
                 )}

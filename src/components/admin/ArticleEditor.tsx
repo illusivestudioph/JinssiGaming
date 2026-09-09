@@ -321,6 +321,24 @@ export function ArticleEditor({
             />
           </div>
 
+          <div>
+            <label className="block text-xs font-bold text-ink-900 uppercase tracking-wider mb-2">
+              Google Play Store Link (Optional)
+            </label>
+            <input
+              type="url"
+              value={formData.playStoreLink || ''}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  playStoreLink: e.target.value || undefined,
+                })
+              }
+              placeholder="https://play.google.com/store/apps/details?id=..."
+              className="w-full px-4 py-2.5 rounded-xl border-2 border-tan-200 focus:border-peach-400 focus:outline-none bg-cream-50 font-medium text-ink-900 text-sm font-mono text-xs"
+            />
+          </div>
+
           <div className="md:col-span-2">
             <label className="block text-xs font-bold text-ink-900 uppercase tracking-wider mb-2">
               Tags (Comma-separated)
@@ -566,6 +584,20 @@ export function ArticleEditor({
                     value={section.steamLink || ''}
                     onChange={(e) => updateSectionField(idx, 'steamLink', e.target.value || undefined)}
                     placeholder="e.g. https://store.steampowered.com/app/1629520/A_Little_to_the_Left/"
+                    className="w-full px-3.5 py-2 rounded-xl border border-tan-300 focus:border-peach-400 focus:outline-none bg-white text-xs font-mono text-ink-900"
+                  />
+                </div>
+
+                {/* Section Google Play Link */}
+                <div className="mb-4">
+                  <label className="block text-xs font-bold text-ink-900 mb-1">
+                    Google Play Store Link (Optional)
+                  </label>
+                  <input
+                    type="url"
+                    value={section.playStoreLink || ''}
+                    onChange={(e) => updateSectionField(idx, 'playStoreLink', e.target.value || undefined)}
+                    placeholder="e.g. https://play.google.com/store/apps/details?id=cc.forestapp"
                     className="w-full px-3.5 py-2 rounded-xl border border-tan-300 focus:border-peach-400 focus:outline-none bg-white text-xs font-mono text-ink-900"
                   />
                 </div>

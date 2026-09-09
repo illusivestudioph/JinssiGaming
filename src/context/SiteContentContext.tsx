@@ -100,22 +100,29 @@ function normalizeContent(parsed: Partial<SavedContent> | null | undefined): Sav
       }))
     : defaultContent.ctaLinks;
 
-  const normalizedArticles = Array.isArray(parsed?.articles) && parsed.articles.length > 0
-    ? parsed.articles.map((art) => {
-        const fresh = initialArticles.find((init) => init.id === art.id);
-        if (fresh) {
-          const hasOutdatedMedia =
-            art.coverImage?.includes('pexels.com') ||
-            art.coverImage?.includes('unsplash.com') ||
-            art.sections?.some((s) => s.image?.includes('pexels.com') || s.image?.includes('unsplash.com')) ||
-            (art.id === 'organizing-games-steam' && art.sections?.some((s) => s.heading?.includes('Librarian')));
-          if (hasOutdatedMedia) {
-            return fresh;
-          }
+  let normalizedArticles = initialArticles;
+
+  if (Array.isArray(parsed?.articles) && parsed.articles.length > 0) {
+    const existingIds = new Set(parsed.articles.map((a) => a.id));
+    const upgradedExisting = parsed.articles.map((art) => {
+      const fresh = initialArticles.find((init) => init.id === art.id);
+      if (fresh) {
+        const hasOutdatedMedia =
+          art.coverImage?.includes('pexels.com') ||
+          art.coverImage?.includes('unsplash.com') ||
+          art.sections?.some((s) => s.image?.includes('pexels.com') || s.image?.includes('unsplash.com')) ||
+          (art.id === 'organizing-games-steam' && art.sections?.some((s) => s.heading?.includes('Librarian')));
+        if (hasOutdatedMedia) {
+          return fresh;
         }
-        return art;
-      })
-    : initialArticles;
+      }
+      return art;
+    });
+
+    // Merge in any new default initial articles that are not yet in the user's saved list
+    const newDefaults = initialArticles.filter((init) => !existingIds.has(init.id));
+    normalizedArticles = [...upgradedExisting, ...newDefaults];
+  }
 
   return {
     games: Array.isArray(parsed?.games) ? parsed.games : initialGames,
