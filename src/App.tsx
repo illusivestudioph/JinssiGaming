@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import type { Game } from '@/data/games';
 import type { Article } from '@/data/articles';
 import type { Story } from '@/data/stories';
+import { GUTENBERG_ID_MAP } from '@/services/gutenberg';
 import { Header, type View } from '@/components/Header';
 import { GameDirectory } from '@/components/GameDirectory';
 import { WalkthroughView } from '@/components/WalkthroughView';
@@ -72,10 +73,75 @@ function AppContent() {
   
   const selectedGame = games.find((game) => game.id === selectedGameId) || null;
   const selectedArticle = articles.find((article) => article.slug === selectedArticleSlug || article.id === selectedArticleSlug) || null;
-  const selectedStory =
-    activeStory && (activeStory.slug === selectedStorySlug || activeStory.id === selectedStorySlug)
-      ? activeStory
-      : stories.find((story) => story.slug === selectedStorySlug || story.id === selectedStorySlug) || activeStory || null;
+  const selectedStory = useMemo(() => {
+    if (
+      activeStory &&
+      (activeStory.slug === selectedStorySlug || activeStory.id === selectedStorySlug)
+    ) {
+      return activeStory;
+    }
+    const found = stories.find(
+      (story) => story.slug === selectedStorySlug || story.id === selectedStorySlug
+    );
+    if (found) return found;
+    if (activeStory) return activeStory;
+
+    // Direct URL resolution for Gutenberg eBooks
+    if (selectedStorySlug) {
+      let gbId: number | null = null;
+      if (selectedStorySlug.startsWith('gutenberg-')) {
+        const parts = selectedStorySlug.split('-');
+        const parsedNum = parseInt(parts[1], 10);
+        if (!isNaN(parsedNum)) gbId = parsedNum;
+      }
+      if (!gbId && GUTENBERG_ID_MAP[selectedStorySlug]) {
+        gbId = GUTENBERG_ID_MAP[selectedStorySlug];
+      }
+
+      if (gbId) {
+        const cleanTitle =
+          selectedStorySlug
+            .replace(/^gutenberg-\d+-?/, '')
+            .split('-')
+            .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+            .join(' ') || `eBook #${gbId}`;
+
+        return {
+          id: `gutenberg-${gbId}`,
+          slug: selectedStorySlug,
+          title: cleanTitle,
+          synopsis: `Public domain eBook #${gbId} from Project Gutenberg archives.`,
+          author: 'Classic Author',
+          authorRole: 'Project Gutenberg Author',
+          coverImage: `https://www.gutenberg.org/cache/epub/${gbId}/pg${gbId}.cover.medium.jpg`,
+          coverAlt: `Actual Project Gutenberg cover for eBook #${gbId}`,
+          status: 'Completed',
+          genre: 'Classic Literature',
+          tags: ['Project Gutenberg', 'Public Domain'],
+          totalChapters: 1,
+          chapters: [
+            {
+              id: `gb-${gbId}-loading`,
+              chapterNumber: 1,
+              title: 'Loading Unabridged Edition...',
+              wordCount: 0,
+              readTimeMinutes: 5,
+              publishedDate: 'Project Gutenberg Archive',
+              authorNote: `Connecting to Project Gutenberg archive for eBook #${gbId}...`,
+              content: [
+                `Downloading authentic unabridged text directly from Project Gutenberg archives...`
+              ],
+            }
+          ],
+          rating: 5,
+          isPublicDomain: true,
+          gutenbergId: gbId,
+          isLiveGutenberg: false,
+        } as Story;
+      }
+    }
+    return null;
+  }, [activeStory, selectedStorySlug, stories]);
 
   useEffect(() => {
     sessionStorage.setItem('jinssi-view', view);

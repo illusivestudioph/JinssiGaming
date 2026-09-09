@@ -1,8 +1,3 @@
-import { classicLiteratureBooks } from './stories/classicLiterature';
-import { cozyFantasyBooks } from './stories/cozyFantasy';
-import { mysteryBooks } from './stories/mystery';
-import { studyMaterialsBooks } from './stories/studyMaterials';
-
 export interface StoryChapter {
   id: string;
   chapterNumber: number;
@@ -15,10 +10,12 @@ export interface StoryChapter {
 }
 
 export type StoryGenre =
+  | 'All Classics'
   | 'Classic Literature'
   | 'Cozy Fantasy'
-  | 'Mystery'
-  | 'Study Materials';
+  | 'Mystery & Detective'
+  | 'Adventure & Sci-Fi'
+  | 'Study Materials & Philosophy';
 
 export interface Story {
   id: string;
@@ -45,14 +42,10 @@ export const storyGenres = [
   'All',
   'Classic Literature',
   'Cozy Fantasy',
-  'Mystery',
-  'Study Materials',
+  'Mystery & Detective',
+  'Adventure & Sci-Fi',
+  'Study Materials & Philosophy',
 ] as const;
 
-// Combined 48 authentic, public domain books and study materials (12 per category)
-export const stories: Story[] = [
-  ...classicLiteratureBooks,
-  ...cozyFantasyBooks,
-  ...mysteryBooks,
-  ...studyMaterialsBooks,
-];
+// Dynamic Gutenberg Library - no hardcoded books stored in repository
+export const stories: Story[] = [];

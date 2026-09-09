@@ -131,21 +131,35 @@ function normalizeContent(parsed: Partial<SavedContent> | null | undefined): Sav
     normalizedArticles = [...upgradedExisting, ...newDefaults];
   }
 
-  let normalizedStories = initialStories;
-  const aiStoryIds = new Set(['midnight-barista', 'letters-from-pelican-town', 'alchemists-greenhouse']);
+  let normalizedStories: Story[] = [];
+  const legacyMockPrefixes = ['classic-', 'fantasy-', 'mystery-', 'study-', 'hob-', 'ash-'];
+  const legacyMockIds = new Set([
+    'midnight-barista', 'letters-from-pelican-town', 'alchemists-greenhouse',
+    'the-secret-garden', 'anne-of-green-gables', 'pride-and-prejudice', 'jane-eyre',
+    'wuthering-heights', 'little-women', 'a-tale-of-two-cities', 'great-expectations',
+    'a-christmas-carol', 'emma', 'sense-and-sensibility', 'persuasion',
+    'alices-adventures-in-wonderland', 'the-wind-in-the-willows', 'the-wonderful-wizard-of-oz',
+    'peter-and-wendy', 'grimms-fairy-tales', 'the-princess-and-the-goblin', 'the-blue-fairy-book',
+    'five-children-and-it', 'the-water-babies', 'the-house-at-pooh-corner', 'just-so-stories',
+    'the-jungle-book', 'hound-of-baskervilles', 'the-hound-of-the-baskervilles',
+    'adventures-of-sherlock-holmes', 'the-adventures-of-sherlock-holmes',
+    'the-innocence-of-father-brown', 'the-mystery-of-the-yellow-room', 'the-murders-in-the-rue-morgue',
+    'the-moonstone', 'a-study-in-scarlet', 'the-sign-of-the-four', 'the-woman-in-white',
+    'frankenstein', 'dracula', 'the-strange-case-of-dr-jekyll-and-mr-hyde', 'the-picture-of-dorian-gray',
+    'the-art-of-war', 'meditations-marcus-aurelius', 'walden-life-in-the-woods',
+    'the-republic-plato', 'the-prince-machiavelli', 'the-wealth-of-nations',
+    'the-elements-of-style', 'self-reliance-emerson', 'autobiography-benjamin-franklin',
+    'poetics-aristotle', 'discourse-on-method', 'letters-from-a-stoic'
+  ]);
+
   if (Array.isArray(parsed?.stories) && parsed.stories.length > 0) {
-    const cleanedExisting = parsed.stories
-      .filter((s: Story) => !aiStoryIds.has(s.id) && !s.id.startsWith('gb-') && !s.id.startsWith('gutenberg-'))
-      .map((s: Story) => {
-        const fresh = initialStories.find((init) => init.id === s.id);
-        if (fresh && (!s.chapters || fresh.chapters.length > s.chapters.length)) {
-          return fresh;
-        }
-        return s;
-      });
-    const existingStoryIds = new Set(cleanedExisting.map((s: Story) => s.id));
-    const newStoryDefaults = initialStories.filter((init) => !existingStoryIds.has(init.id));
-    normalizedStories = [...cleanedExisting, ...newStoryDefaults];
+    normalizedStories = parsed.stories.filter((s: Story) => {
+      if (!s || !s.id) return false;
+      if (legacyMockIds.has(s.id) || legacyMockIds.has(s.slug)) return false;
+      if (legacyMockPrefixes.some((p) => s.id.startsWith(p))) return false;
+      if (s.id.startsWith('gb-') || s.id.startsWith('gutenberg-')) return false;
+      return true;
+    });
   }
 
   return {
