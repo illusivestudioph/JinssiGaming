@@ -39,8 +39,15 @@ function App() {
 }
 
 function AppContent() {
-  const { games, articles, stories, addStory } = useSiteContent();
-  const [activeStory, setActiveStory] = useState<Story | null>(null);
+  const { games, articles, stories } = useSiteContent();
+  const [activeStory, setActiveStory] = useState<Story | null>(() => {
+    try {
+      const saved = sessionStorage.getItem('jinssi-active-story');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
   const [view, setView] = useState<View>(() => {
     const routeView = getRouteView();
     if (routeView) return routeView;
@@ -148,6 +155,7 @@ function AppContent() {
     setSelectedArticleSlug(null);
     setSelectedStorySlug(null);
     setActiveStory(null);
+    sessionStorage.removeItem('jinssi-active-story');
     window.history.pushState(null, '', getPathForView(newView));
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -197,8 +205,10 @@ function AppContent() {
     setSelectedStoryChapterNumber(chapterNumber);
     setSelectedGameId(null);
     setSelectedArticleSlug(null);
-    if (!stories.some((s) => s.id === story.id || s.slug === story.slug)) {
-      addStory(story);
+    try {
+      sessionStorage.setItem('jinssi-active-story', JSON.stringify(story));
+    } catch {
+      // ignore
     }
     window.history.pushState(null, '', `/stories/${story.slug}/${chapterNumber}`);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -214,6 +224,7 @@ function AppContent() {
   const handleBackFromStory = () => {
     setActiveStory(null);
     setSelectedStorySlug(null);
+    sessionStorage.removeItem('jinssi-active-story');
     window.history.pushState(null, '', '/stories');
     setView('stories');
     window.scrollTo({ top: 0, behavior: 'smooth' });

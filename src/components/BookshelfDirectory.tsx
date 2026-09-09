@@ -18,9 +18,10 @@ import {
   Library,
   BookMarked,
   Download,
-  Plus,
   Check,
   RefreshCw,
+  BookmarkCheck,
+  Trash2
 } from 'lucide-react';
 
 interface BookshelfDirectoryProps {
@@ -36,7 +37,7 @@ interface SavedProgress {
 }
 
 export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
-  const { stories, addStory } = useSiteContent();
+  const { stories } = useSiteContent();
   const [activeLibraryTab, setActiveLibraryTab] = useState<'bookshelf' | 'gutenberg'>('bookshelf');
 
   // Bookshelf state
@@ -44,12 +45,47 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [lastRead, setLastRead] = useState<SavedProgress | null>(null);
 
+  // Private visitor bookmarks in client localStorage (protects Admin Bookshelf from pollution)
+  const [userBookmarks, setUserBookmarks] = useState<Story[]>(() => {
+    try {
+      const saved = localStorage.getItem('jinssi-user-bookmarks');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  const saveBookmarks = (next: Story[]) => {
+    setUserBookmarks(next);
+    try {
+      localStorage.setItem('jinssi-user-bookmarks', JSON.stringify(next));
+    } catch {
+      // ignore
+    }
+  };
+
+  const isBookmarked = (idOrSlug: string | number) => {
+    const sId = String(idOrSlug);
+    return userBookmarks.some((b) => b.id === sId || b.id === `gutenberg-${sId}` || b.slug === sId || b.slug.includes(sId));
+  };
+
+  const handleToggleBookmark = (storyOrBook: Story | GutenbergBook) => {
+    const story: Story = 'genre' in storyOrBook ? storyOrBook : convertGutenbergToStory(storyOrBook);
+    const alreadySaved = isBookmarked(story.id);
+    let next: Story[];
+    if (alreadySaved) {
+      next = userBookmarks.filter((b) => b.id !== story.id && b.slug !== story.slug);
+    } else {
+      next = [story, ...userBookmarks];
+    }
+    saveBookmarks(next);
+  };
+
   // Gutenberg public library state
   const [gutenbergQuery, setGutenbergQuery] = useState('');
   const [gutenbergBooks, setGutenbergBooks] = useState<GutenbergBook[]>([]);
   const [isSearchingGutenberg, setIsSearchingGutenberg] = useState(false);
   const [activePreset, setActivePreset] = useState<string>('All Classics');
-  const [addedBookIds, setAddedBookIds] = useState<Set<number>>(new Set());
 
   // Check for the most recently read story from localStorage
   useEffect(() => {
@@ -73,11 +109,11 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
     }
   }, []);
 
-  // Pre-load initial public domain books
+  // Pre-load initial public domain books with instant 60+ book catalog
   useEffect(() => {
     let active = true;
     setIsSearchingGutenberg(true);
-    searchGutenbergBooks('fairy tales').then((books) => {
+    searchGutenbergBooks('').then((books) => {
       if (active) {
         setGutenbergBooks(books);
         setIsSearchingGutenberg(false);
@@ -95,15 +131,15 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
     setIsSearchingGutenberg(false);
   };
 
-  const handleAddGutenbergToShelf = (book: GutenbergBook) => {
-    const converted = convertGutenbergToStory(book);
-    addStory(converted);
-    setAddedBookIds((prev) => new Set([...prev, book.id]));
-  };
-
   const filteredStories = useMemo(() => {
-    return stories.filter((story) => {
-      const matchesGenre = selectedGenre === 'All' || story.genre === selectedGenre;
+    const sourceList = selectedGenre === '⭐ My Saved Books' ? userBookmarks : stories;
+
+    return sourceList.filter((story) => {
+      const matchesGenre =
+        selectedGenre === 'All' ||
+        selectedGenre === '⭐ My Saved Books' ||
+        story.genre === selectedGenre;
+
       const q = searchQuery.toLowerCase().trim();
       const matchesSearch =
         !q ||
@@ -114,9 +150,12 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
 
       return matchesGenre && matchesSearch;
     });
-  }, [stories, selectedGenre, searchQuery]);
+  }, [stories, userBookmarks, selectedGenre, searchQuery]);
 
-  const resumeStory = lastRead ? stories.find((s) => s.id === lastRead.storyId) : null;
+  const resumeStory = lastRead
+    ? stories.find((s) => s.id === lastRead.storyId) ||
+      userBookmarks.find((s) => s.id === lastRead.storyId)
+    : null;
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 animate-fade-in">
@@ -138,63 +177,72 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
       <div className="flex justify-center mb-10">
         <div className="inline-flex p-1.5 rounded-2xl bg-cream-100 border border-tan-200 shadow-cozy-xs">
           <button
+            type="button"
             onClick={() => setActiveLibraryTab('bookshelf')}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all ${
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-display text-xs sm:text-sm font-bold transition-all ${
               activeLibraryTab === 'bookshelf'
-                ? 'bg-peach-400 text-ink-900 shadow-cozy-sm'
-                : 'text-tan-600 hover:text-ink-900'
+                ? 'bg-peach-500 text-white shadow-cozy-sm'
+                : 'text-tan-600 hover:text-ink-900 hover:bg-cream-200/60'
             }`}
           >
-            <BookOpen className="w-4 h-4" />
-            <span>Cozy Bookshelf ({stories.length})</span>
+            <BookMarked className="w-4 h-4" />
+            <span>Curated Bookshelf ({stories.length})</span>
           </button>
+
           <button
+            type="button"
             onClick={() => setActiveLibraryTab('gutenberg')}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all ${
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-display text-xs sm:text-sm font-bold transition-all ${
               activeLibraryTab === 'gutenberg'
-                ? 'bg-peach-400 text-ink-900 shadow-cozy-sm'
-                : 'text-tan-600 hover:text-ink-900'
+                ? 'bg-amber-600 text-white shadow-cozy-sm'
+                : 'text-tan-600 hover:text-ink-900 hover:bg-cream-200/60'
             }`}
           >
             <Library className="w-4 h-4" />
-            <span>Public Domain Explorer (70,000+ Free)</span>
+            <span>Project Gutenberg Archive (70,000+)</span>
           </button>
         </div>
       </div>
 
       {/* ========================================================= */}
-      {/* TAB 1: COZY BOOKSHELF (CURATED ORIGINAL & CLASSIC BOOKS) */}
+      {/* TAB 1: CURATED COZY BOOKSHELF                             */}
       {/* ========================================================= */}
       {activeLibraryTab === 'bookshelf' && (
         <div>
-          {/* Resume Reading Bookmark Hero */}
-          {resumeStory && lastRead && (
-            <div className="max-w-4xl mx-auto mb-10 p-5 sm:p-6 rounded-2xl bg-cream-100 border-2 border-dashed border-peach-300 shadow-cozy-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div className="flex items-center gap-3.5">
-                <div className="w-12 h-12 rounded-xl bg-peach-500 text-white flex items-center justify-center shrink-0 shadow-cozy-sm">
-                  <BookMarked className="w-6 h-6" />
+          {/* Resume Reading Widget if available */}
+          {lastRead && (
+            <div className="mb-10 max-w-4xl mx-auto">
+              <div className="p-5 sm:p-6 rounded-2xl bg-peach-50/80 border-2 border-peach-200 shadow-cozy-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-peach-400 text-ink-900 flex items-center justify-center shrink-0 shadow-cozy-xs">
+                    <Bookmark className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <span className="text-[11px] font-bold text-peach-700 uppercase tracking-wider block">
+                      Jump Back In
+                    </span>
+                    <h3 className="font-display font-bold text-base sm:text-lg text-ink-900">
+                      {lastRead.storyTitle}
+                    </h3>
+                    <p className="text-xs text-ink-600 font-sans mt-0.5">
+                      Chapter {lastRead.chapterNumber}: {lastRead.chapterTitle}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <span className="text-[11px] font-bold text-peach-700 uppercase tracking-wider block">
-                    Resume Reading
-                  </span>
-                  <h3 className="font-display font-bold text-base sm:text-lg text-ink-900">
-                    {resumeStory.title}
-                  </h3>
-                  <p className="text-xs text-tan-600 font-medium mt-0.5">
-                    Last read: Chapter {lastRead.chapterNumber} — {lastRead.chapterTitle}
-                  </p>
-                </div>
-              </div>
 
-              <button
-                type="button"
-                onClick={() => onSelectStory(resumeStory, lastRead.chapterNumber)}
-                className="site-button bg-peach-500 text-white hover:bg-peach-600 text-xs font-bold px-4 py-2.5 rounded-xl shadow-cozy-sm flex items-center gap-2 self-end sm:self-auto"
-              >
-                <span>Continue Chapter {lastRead.chapterNumber}</span>
-                <ArrowRight size={14} />
-              </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (resumeStory) {
+                      onSelectStory(resumeStory, lastRead.chapterNumber);
+                    }
+                  }}
+                  className="site-button bg-peach-500 hover:bg-peach-600 text-white font-bold text-xs px-5 py-2.5 rounded-xl flex items-center gap-2 shadow-cozy-sm self-stretch sm:self-auto justify-center"
+                >
+                  <span>Continue Reading</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
             </div>
           )}
 
@@ -205,7 +253,7 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
               <Search className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-tan-400 pointer-events-none" />
               <input
                 type="text"
-                placeholder="Search stories by title, author, or tag (e.g. Secret Garden, Stardew Valley, Rain)..."
+                placeholder="Search stories by title, author, or tag (e.g. Secret Garden, Sherlock, Stoicism, War)..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-12 pr-4 py-3 rounded-2xl bg-cream-50 border-2 border-tan-200 text-ink-900 placeholder:text-tan-400 focus:outline-none focus:border-peach-400 transition-colors shadow-cozy-sm text-sm"
@@ -220,7 +268,7 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
               )}
             </div>
 
-            {/* Genre Filter Pills */}
+            {/* Genre Filter Pills + Visitor's Personal Bookmarks Pill */}
             <div className="flex flex-wrap gap-2 justify-center items-center">
               {storyGenres.map((genre) => (
                 <button
@@ -235,6 +283,25 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
                   {genre}
                 </button>
               ))}
+
+              <button
+                type="button"
+                onClick={() => setSelectedGenre('⭐ My Saved Books')}
+                className={`px-4 py-1.5 rounded-xl text-xs font-bold transition-all shadow-cozy-sm flex items-center gap-1.5 ${
+                  selectedGenre === '⭐ My Saved Books'
+                    ? 'bg-amber-600 text-white shadow-cozy-md scale-105'
+                    : 'bg-cream-100 text-tan-600 hover:bg-cream-200 hover:text-ink-900 border border-tan-200'
+                }`}
+              >
+                <span>⭐ My Saved Books</span>
+                {userBookmarks.length > 0 && (
+                  <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-extrabold ${
+                    selectedGenre === '⭐ My Saved Books' ? 'bg-white text-amber-700' : 'bg-amber-100 text-amber-800'
+                  }`}>
+                    {userBookmarks.length}
+                  </span>
+                )}
+              </button>
             </div>
           </div>
 
@@ -242,9 +309,13 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
           {filteredStories.length === 0 ? (
             <div className="notepad-card p-12 text-center max-w-md mx-auto">
               <BookOpen className="w-10 h-10 text-tan-400 mx-auto mb-3" />
-              <p className="text-lg font-bold text-ink-800 mb-1">No stories found</p>
+              <p className="text-lg font-bold text-ink-800 mb-1">
+                {selectedGenre === '⭐ My Saved Books' ? 'No saved books yet' : 'No stories found'}
+              </p>
               <p className="text-xs text-tan-500 mb-4">
-                Try adjusting your search terms or clearing genre filters.
+                {selectedGenre === '⭐ My Saved Books'
+                  ? 'Bookmark any classic or search result to keep it here in your private reading shelf!'
+                  : 'Try adjusting your search terms or clearing genre filters.'}
               </p>
               <button
                 onClick={() => {
@@ -259,64 +330,53 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredStories.map((story) => {
-                const totalWords = story.chapters.reduce((sum, ch) => sum + ch.wordCount, 0);
-                const totalReadTime = story.chapters.reduce((sum, ch) => sum + ch.readTimeMinutes, 0);
+                const bookmarked = isBookmarked(story.id);
 
                 return (
                   <article
                     key={story.id}
-                    className="notepad-card group overflow-hidden flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-cozy-lg relative"
+                    className="notepad-card overflow-hidden flex flex-col justify-between hover:-translate-y-1 transition-all duration-300 shadow-cozy-sm hover:shadow-cozy-md"
                   >
                     <div>
-                      {/* Book Cover */}
-                      <div 
-                        onClick={() => onSelectStory(story, 1)}
-                        className="h-56 relative overflow-hidden bg-cream-200 cursor-pointer"
-                      >
+                      {/* Cover Photo */}
+                      <div className="relative h-56 overflow-hidden bg-cream-200">
                         <img
                           src={story.coverImage}
-                          alt={story.coverAlt}
-                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 filter saturate-95 group-hover:saturate-100"
+                          alt={story.coverAlt || story.title}
+                          className="w-full h-full object-cover filter saturate-95 hover:saturate-105 transition-all duration-500"
                           loading="lazy"
                         />
-                        <div className="absolute top-3 left-3 bg-cream-100/95 backdrop-blur-xs border border-tan-300/80 px-2.5 py-1 rounded-full text-[11px] font-bold text-ink-800 shadow-cozy-sm">
-                          {story.genre}
+                        <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
+                          <span className="px-2.5 py-1 rounded-full bg-cream-50/90 text-tan-800 text-xs font-bold shadow-cozy-xs backdrop-blur-sm">
+                            {story.genre}
+                          </span>
+                          <span className="px-2.5 py-1 rounded-full bg-peach-500 text-white text-xs font-bold shadow-cozy-xs">
+                            {story.totalChapters || story.chapters.length} Chapters
+                          </span>
                         </div>
-                        {story.isPublicDomain ? (
-                          <div className="absolute top-3 right-3 bg-amber-600 text-white px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-cozy-sm">
-                            Public Domain
-                          </div>
-                        ) : (
-                          <div className="absolute top-3 right-3 bg-earth-500 text-white px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-cozy-sm">
-                            {story.status}
-                          </div>
-                        )}
+
+                        {/* Bookmark Button */}
+                        <button
+                          type="button"
+                          onClick={() => handleToggleBookmark(story)}
+                          title={bookmarked ? 'Remove bookmark' : 'Bookmark this book'}
+                          className={`absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center transition-all shadow-cozy-xs ${
+                            bookmarked
+                              ? 'bg-amber-500 text-white'
+                              : 'bg-white/80 hover:bg-white text-tan-600 hover:text-ink-900'
+                          }`}
+                        >
+                          <Bookmark className="w-4 h-4 fill-current" />
+                        </button>
                       </div>
 
-                      {/* Content Details */}
+                      {/* Content Info */}
                       <div className="p-6">
-                        <div className="flex items-center gap-3 text-xs text-tan-500 font-sans mb-2.5">
-                          <span className="flex items-center gap-1">
-                            <BookOpen className="w-3.5 h-3.5" />
-                            {story.chapters.length} {story.chapters.length === 1 ? 'Chapter' : 'Chapters'}
-                          </span>
-                          <span>•</span>
-                          <span className="flex items-center gap-1">
-                            <Clock className="w-3.5 h-3.5" />
-                            ~{totalReadTime} min read
-                          </span>
-                          <span>•</span>
-                          <span>{totalWords.toLocaleString()} words</span>
-                        </div>
-
-                        <h3 
-                          onClick={() => onSelectStory(story, 1)}
-                          className="font-display font-bold text-lg sm:text-xl text-ink-900 group-hover:text-peach-600 transition-colors cursor-pointer mb-2 line-clamp-1"
-                        >
+                        <h3 className="font-display text-xl font-bold text-ink-900 mb-1 leading-snug">
                           {story.title}
                         </h3>
 
-                        <p className="text-xs text-tan-500 font-bold mb-3">
+                        <p className="text-xs font-bold text-tan-600 mb-3 font-sans">
                           By {story.author} • <span className="opacity-75">{story.authorRole}</span>
                         </p>
 
@@ -342,7 +402,7 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
                     <div className="px-6 pb-6 pt-2 border-t border-tan-200 flex items-center justify-between">
                       <div className="flex items-center gap-1 text-xs font-bold text-tan-500">
                         <Coffee className="w-3.5 h-3.5 text-peach-500" />
-                        <span>5/5 Cozy Score</span>
+                        <span>{story.totalChapters || story.chapters.length} Chs Available</span>
                       </div>
 
                       <button
@@ -381,7 +441,7 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
                   Project Gutenberg 70,000+ Free E-Book Library
                 </h3>
                 <p className="text-xs text-tan-700 font-medium mt-0.5">
-                  100% free, legal public domain literature. You can read any book directly in our E-Reader or save it permanently to your personal bookshelf.
+                  100% free, legal public domain literature with 10+ readable chapters. Read directly in our E-Reader or save to your personal device.
                 </p>
               </div>
             </div>
@@ -393,7 +453,7 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
               <Search className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-tan-400 pointer-events-none" />
               <input
                 type="text"
-                placeholder="Search 70,000 free books by title, author, or keyword (e.g. Peter Pan, Sherlock Holmes, Jane Austen)..."
+                placeholder="Search 70,000 free books by title, author, or keyword (e.g. Austen, Dickens, Dracula, Sherlock, War, Oz)..."
                 value={gutenbergQuery}
                 onChange={(e) => {
                   setGutenbergQuery(e.target.value);
@@ -442,15 +502,30 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
             <div className="py-16 text-center">
               <RefreshCw className="w-8 h-8 animate-spin text-peach-500 mx-auto mb-3" />
               <p className="font-display font-bold text-ink-900">Scanning Project Gutenberg archives...</p>
-              <p className="text-xs text-tan-500 mt-1">Fetching public domain books with high download counts.</p>
+              <p className="text-xs text-tan-500 mt-1">Fetching verified public domain classics.</p>
             </div>
           ) : gutenbergBooks.length === 0 ? (
             <div className="notepad-card p-12 text-center max-w-md mx-auto">
               <Library className="w-10 h-10 text-tan-400 mx-auto mb-3" />
-              <p className="text-lg font-bold text-ink-800 mb-1">No matches found</p>
+              <p className="text-lg font-bold text-ink-800 mb-1">No matches found for "{gutenbergQuery}"</p>
               <p className="text-xs text-tan-500 mb-4">
-                Try searching for classic authors like "Dickens", "Carroll", "Doyle", or "Poe".
+                Try searching for classic authors or titles:
               </p>
+              <div className="flex flex-wrap gap-2 justify-center">
+                {['Jane Austen', 'Sherlock Holmes', 'Charles Dickens', 'Frankenstein', 'Dracula', 'Sun Tzu', 'Meditations', 'Fairy Tales'].map((tag) => (
+                  <button
+                    key={tag}
+                    type="button"
+                    onClick={() => {
+                      setGutenbergQuery(tag);
+                      handleSearchGutenberg(tag);
+                    }}
+                    className="px-2.5 py-1 rounded-lg bg-cream-200 hover:bg-peach-200 text-tan-800 text-xs font-medium transition-colors"
+                  >
+                    {tag}
+                  </button>
+                ))}
+              </div>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -461,7 +536,7 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
                 const cover =
                   book.formats['image/jpeg'] ||
                   `https://www.gutenberg.org/cache/epub/${book.id}/pg${book.id}.cover.medium.jpg`;
-                const isAdded = addedBookIds.has(book.id);
+                const isSaved = isBookmarked(book.id);
 
                 return (
                   <div
@@ -484,7 +559,7 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
 
                       <div className="p-4">
                         <span className="text-[10px] font-bold uppercase tracking-wider text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full inline-block mb-1.5">
-                          Public Domain
+                          Public Domain (10+ Chs)
                         </span>
 
                         <h4 className="font-display font-bold text-sm text-ink-900 line-clamp-2 mb-1" title={book.title}>
@@ -513,7 +588,6 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
                         type="button"
                         onClick={() => {
                           const converted = convertGutenbergToStory(book);
-                          addStory(converted);
                           onSelectStory(converted, 1);
                         }}
                         className="w-full py-2 px-3 rounded-xl bg-peach-400 hover:bg-peach-500 text-ink-900 font-bold text-xs flex items-center justify-center gap-1.5 shadow-cozy-xs"
@@ -524,23 +598,22 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
 
                       <button
                         type="button"
-                        onClick={() => handleAddGutenbergToShelf(book)}
-                        disabled={isAdded}
+                        onClick={() => handleToggleBookmark(book)}
                         className={`w-full py-1.5 px-3 rounded-xl border text-xs font-semibold flex items-center justify-center gap-1.5 transition-all ${
-                          isAdded
-                            ? 'border-emerald-300 bg-emerald-50 text-emerald-700 font-bold'
+                          isSaved
+                            ? 'border-amber-400 bg-amber-50 text-amber-800 font-bold'
                             : 'border-tan-200 bg-white hover:bg-cream-100 text-tan-700'
                         }`}
                       >
-                        {isAdded ? (
+                        {isSaved ? (
                           <>
-                            <Check className="w-3.5 h-3.5 text-emerald-600" />
-                            <span>Saved to Shelf</span>
+                            <BookmarkCheck className="w-3.5 h-3.5 text-amber-600" />
+                            <span>Saved to My Books</span>
                           </>
                         ) : (
                           <>
-                            <Plus className="w-3.5 h-3.5" />
-                            <span>Add to My Bookshelf</span>
+                            <Bookmark className="w-3.5 h-3.5" />
+                            <span>Bookmark to Device</span>
                           </>
                         )}
                       </button>

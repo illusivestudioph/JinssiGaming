@@ -2,558 +2,327 @@ import type { Story } from '../stories';
 
 export const mysteryBooks: Story[] = [
   {
-    id: 'sherlock-holmes-scandal',
-    slug: 'a-scandal-in-bohemia',
-    title: 'A Scandal in Bohemia',
-    synopsis: 'On a chill March evening beside the crackling fireplace of 221B Baker Street, Sherlock Holmes and Dr. Watson receive a masked royal visitor from Bohemia, leading Holmes into an intellectual duel with Irene Adler.',
-    author: 'Arthur Conan Doyle',
-    authorRole: 'Classic Public Domain Author',
-    coverImage: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=800&q=80',
-    coverAlt: 'A cozy Victorian mahogany library desk with an oil lamp and magnifying glass.',
-    status: 'Completed',
-    genre: 'Mystery',
-    tags: ['Public Domain', 'Baker Street', 'Cozy Mystery', 'Sherlock Holmes', 'Classic'],
-    totalChapters: 2,
-    rating: 5,
-    readsCount: 4320,
-    isPublicDomain: true,
-    chapters: [
-      {
-        id: 'sh-ch1',
-        chapterNumber: 1,
-        title: 'The Letter in Baker Street',
-        wordCount: 840,
-        readTimeMinutes: 4,
-        publishedDate: '1891',
-        authorNote: 'Rainy evening at 221B Baker Street.',
-        content: [
-          'To Sherlock Holmes she is always THE woman. I have seldom heard him mention her under any other name. In his eyes she eclipses and predominates the whole of her sex.',
-          'One night—it was on the twentieth of March, 1888—I was returning from a journey to a patient, when my way led me through Baker Street. As I passed the well-remembered door, I looked up at the windows. A tall, thin figure passed twice across the blind.',
-          'I rang the bell, and was shown up to the chamber which had formerly been in part my own. A fire was crackling pleasantly in the hearth, and on the table lay a sheet of thick, pink-tinted Bohemian notepaper beside his favorite briar pipe.'
-        ]
-      },
-      {
-        id: 'sh-ch2',
-        chapterNumber: 2,
-        title: 'The Masked Visitor',
-        wordCount: 860,
-        readTimeMinutes: 4,
-        publishedDate: '1891',
-        authorNote: 'The King of Bohemia enters in disguise.',
-        content: [
-          'A heavy step was heard upon the stair, and a man not less than six feet six inches in height, with the chest and limbs of a Hercules, stepped into the room. He wore a dark vizard mask covering the upper half of his face, and his chest was adorned with a heavy cloak lined with flame-colored silk.',
-          '"You had my note?" he asked with a deep, harsh voice and a strongly marked German accent.',
-          '"Pray take a seat," said Holmes. "This is my friend and colleague, Dr. Watson, who is occasionally good enough to help me in my cases. Whom ought I to address?"',
-          '"You may address me as Count von Kramm, a Bohemian nobleman. But you must understand that the matter is of extreme delicacy, involving the honour of the royal house of Bohemia."'
-        ]
-      }
-    ]
-  },
-
-  {
     id: 'hound-of-baskervilles',
     slug: 'the-hound-of-the-baskervilles',
     title: 'The Hound of the Baskervilles',
-    synopsis: 'Sherlock Holmes and Dr. Watson investigate the curse of a spectral hound haunting the fog-drenched Dartmoor mires after the mysterious death of Sir Charles Baskerville.',
+    synopsis: 'Sherlock Holmes and Dr. Watson investigate the ancient family curse of a colossal spectral hound that haunts the treacherous, fog-drenched Dartmoor mires after the sudden death of Sir Charles Baskerville.',
     author: 'Arthur Conan Doyle',
     authorRole: 'Classic Public Domain Author',
     coverImage: 'https://images.unsplash.com/photo-1509114397022-ed747cca3f65?w=800&q=80',
-    coverAlt: 'A lantern shining into the dense moorland mist of Dartmoor at night.',
+    coverAlt: 'A solitary lantern casting light on a foggy cobblestone lane at midnight.',
     status: 'Completed',
     genre: 'Mystery',
-    tags: ['Public Domain', 'Dartmoor', 'Gothic Mystery', 'Sherlock Holmes', 'Atmospheric'],
-    totalChapters: 3,
+    tags: ['Public Domain', 'Gothic Mystery', 'Sherlock Holmes', 'Dartmoor', 'Classic'],
+    totalChapters: 12,
     rating: 5,
-    readsCount: 5740,
+    readsCount: 5980,
     isPublicDomain: true,
     chapters: [
       {
         id: 'hob-ch1',
         chapterNumber: 1,
         title: 'Mr. Sherlock Holmes',
-        wordCount: 820,
+        wordCount: 840,
         readTimeMinutes: 4,
         publishedDate: '1902',
-        authorNote: 'Examining the walking stick of Dr. Mortimer.',
+        authorNote: 'Holmes examines the walking stick left behind by Dr. James Mortimer.',
         content: [
           'Mr. Sherlock Holmes, who was usually very late in the mornings, save upon those not infrequent occasions when he was up all night, was seated at the breakfast table. I stood upon the hearth-rug and picked up the stick which our visitor had left behind him the night before.',
-          'It was a fine, thick piece of wood, bulbous-headed, of the sort which is known as a "Penang lawyer." Just under the head was a broad silver band, nearly an inch across. "To James Mortimer, M.R.C.S., from his friends of the C.C.H.," was engraved upon it.',
-          '"Well, Watson, what do you make of it?" Holmes asked, his back turned to me.',
-          '"How did you know what I was doing?" I cried. "I believe you have eyes in the back of your head!"',
-          '"I have, at least, a well-polished, silver-plated coffee-pot in front of me," said he, laughing.'
+          'It was a fine, thick piece of wood, bulbous-headed, of the sort which is known as a "Penang lawyer." Just under the head was a broad silver band nearly an inch across. "To James Mortimer, M.R.C.S., from his friends of the C.C.H.," was engraved upon it, with the date "1884."',
+          '"Well, Watson, what do you make of it?" Holmes asked, leaning back with a cloud of pipe smoke.'
         ]
       },
       {
         id: 'hob-ch2',
         chapterNumber: 2,
         title: 'The Curse of the Baskervilles',
-        wordCount: 860,
+        wordCount: 870,
         readTimeMinutes: 4,
         publishedDate: '1902',
-        authorNote: 'Dr. Mortimer reads the 1742 manuscript of the hound.',
+        authorNote: 'Dr. Mortimer reads the 1742 manuscript of Hugo Baskerville and the hound.',
         content: [
-          'Dr. Mortimer took an ancient manuscript from his breast-pocket. "It was entrusted to me by Sir Charles Baskerville before his sudden death on the yew alley three months ago."',
-          'He unfolded the yellowed parchment and read in the quiet Baker Street room: "Know then that in the time of the Great Rebellion, Hugo of that name came upon a maiden across the moor. And when the hounds ran down into the grim hollow, there stood a foul thing, great and black, in shape like a hound, yet larger than any hound that ever mortal eye had rested upon."',
-          'Watson shuddered. Holmes leaned forward, his fingers steepled in concentration.'
+          'Dr. Mortimer drew an ancient yellowed manuscript from his breast-pocket, written in the crabbed script of the mid-eighteenth century.',
+          'It recorded how the wicked Sir Hugo Baskerville, pursuing a terrified maiden across the moor on Michaelmas night, was found dead beside a deep dip or coombe.',
+          'Standing over Hugo and plucking at his throat stood a foul thing, a great, black beast, shaped like a hound, yet larger than any hound that ever mortal eye had rested upon.',
+          'Mortimer looked up at Holmes with eyes full of terror: "Sir Charles Baskerville was found dead in the yew alley three weeks ago. Not far from the body on the moist gravel were footprints."',
+          '"A man’s or a woman’s?" asked Holmes.',
+          'Dr. Mortimer lowered his voice: "Mr. Holmes, they were the footprints of a gigantic hound!"'
         ]
       },
       {
         id: 'hob-ch3',
         chapterNumber: 3,
-        title: 'The Footprints of a Gigantic Hound',
-        wordCount: 890,
+        title: 'The Problem',
+        wordCount: 850,
         readTimeMinutes: 4,
         publishedDate: '1902',
-        authorNote: 'The sinister footprints on the yew walk.',
+        authorNote: 'Holmes and Watson consider whether Sir Henry Baskerville should go to Devonshire.',
         content: [
-          '"Sir Charles lay at the far gate opening upon the moor," Mortimer continued in a hushed whisper. "There were no marks of violence upon him, but his face was contorted with an agony of dread."',
-          '"Were there no other marks on the ground?" asked Holmes.',
-          '"None."',
-          '"Footprints?"',
-          '"No footprints at all, Mr. Holmes, save one set twenty yards away on the soft gravel."',
-          '"A man\'s or a woman\'s?"',
-          'Dr. Mortimer looked at us for a moment with widened eyes, and his voice sank almost to a whisper:',
-          '"Mr. Holmes, they were the footprints of a gigantic hound!"'
-        ]
-      }
-    ]
-  },
-
-  {
-    id: 'study-in-scarlet',
-    slug: 'a-study-in-scarlet',
-    title: 'A Study in Scarlet',
-    synopsis: 'The landmark story where Dr. John Watson first meets the eccentric consulting detective Sherlock Holmes and shares lodgings at 221B Baker Street.',
-    author: 'Arthur Conan Doyle',
-    authorRole: 'Classic Public Domain Author',
-    coverImage: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=800&q=80',
-    coverAlt: 'A vintage chemical beaker and gas lamp in an old London laboratory.',
-    status: 'Completed',
-    genre: 'Mystery',
-    tags: ['Public Domain', 'Origin Story', 'Sherlock Holmes', 'Watson', 'Classic'],
-    totalChapters: 2,
-    rating: 5,
-    readsCount: 4610,
-    isPublicDomain: true,
-    chapters: [
-      {
-        id: 'sis-ch1',
-        chapterNumber: 1,
-        title: 'Mr. Sherlock Holmes',
-        wordCount: 830,
-        readTimeMinutes: 4,
-        publishedDate: '1887',
-        authorNote: 'Watson meets Holmes in the chemical laboratory of St. Bartholomew’s.',
-        content: [
-          'In the year 1878 I took my degree of Doctor of Medicine of the University of London, and proceeded to Netley to go through the course prescribed for surgeons in the army.',
-          'Having returned to England with ruined health from the Afghan war, I was looking for cheap lodgings in London when an old acquaintance, young Stamford, met me at the Criterion Bar.',
-          '"I know a fellow who is in the chemical laboratory at the hospital," Stamford said. "He is looking for someone to go halves with him in some rather nice rooms in Baker Street which he has found, but which are too expensive for his purse."',
-          'We walked together to the hospital. Holmes was bent over a glass vial, crying: "I have found it! I have found a reagent which is precipitated by hemoglobin and by nothing else!"'
+          'Holmes sat for an hour in his dressing-gown, smoking his strongest shag tobacco in concentrated silence.',
+          'Sir Henry Baskerville, the nephew and sole heir, had just arrived from Canada.',
+          'That very morning at his London hotel, Sir Henry had received an anonymous warning composed of words cut from The Times: "As you value your life or your reason keep away from the moor."',
+          'Worse still, one of Sir Henry’s new tan boots had been mysteriously stolen from outside his hotel bedroom door.'
         ]
       },
       {
-        id: 'sis-ch2',
-        chapterNumber: 2,
-        title: 'The Science of Deduction',
+        id: 'hob-ch4',
+        chapterNumber: 4,
+        title: 'Sir Henry Baskerville',
         wordCount: 860,
         readTimeMinutes: 4,
-        publishedDate: '1887',
-        authorNote: 'Holmes demonstrates his powers at the breakfast table.',
+        publishedDate: '1902',
+        authorNote: 'Meeting the resolute Canadian heir and discovering the spy in Regent Street.',
         content: [
-          'We met next day and inspected the rooms at No. 221B Baker Street. They consisted of a couple of comfortable bed-rooms and a single large airy sitting-room, cheerfully furnished, and illuminated by two broad windows.',
-          'As the weeks went by, my curiosity regarding his profession grew. One morning, he tossed an article across the table: "From a drop of water, a logician could infer the possibility of an Atlantic or a Niagara without having seen or heard of one or the other."',
-          '"What ineffable twaddle!" I cried. "It is practically impossible!"',
-          '"It is not impossible at all," smiled Holmes quietly. "For example, the moment I saw you at the hospital, I knew you had come from Afghanistan. The train of reasoning was instantaneous: here is a medical man, with an air of a military man, whose left arm is stiff and whose complexion is dark from the tropic sun. Where could an English surgeon have seen such hardship? Clearly in Afghanistan."'
-        ]
-      }
-    ]
-  },
-
-  {
-    id: 'sign-of-the-four',
-    slug: 'the-sign-of-the-four',
-    title: 'The Sign of the Four',
-    synopsis: 'Mary Morstan consults Holmes regarding a mysterious pearl sent to her every year on the same date, leading into an expedition across foggy London rivers.',
-    author: 'Arthur Conan Doyle',
-    authorRole: 'Classic Public Domain Author',
-    coverImage: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=800&q=80',
-    coverAlt: 'A pearl necklace resting on black velvet in a candle-lit London study.',
-    status: 'Completed',
-    genre: 'Mystery',
-    tags: ['Public Domain', 'Pearls', 'London Mist', 'Sherlock Holmes', 'Classic'],
-    totalChapters: 2,
-    rating: 5,
-    readsCount: 4190,
-    isPublicDomain: true,
-    chapters: [
-      {
-        id: 'sof-ch1',
-        chapterNumber: 1,
-        title: 'Miss Morstan Enters',
-        wordCount: 820,
-        readTimeMinutes: 4,
-        publishedDate: '1890',
-        authorNote: 'The arrival of Mary Morstan at Baker Street.',
-        content: [
-          'Sherlock Holmes took his bottle from the corner of the mantel-piece and his hypodermic syringe from its neat morocco case. Three times a day for many months I had witnessed this performance, and my conscience began to rebel against my silence.',
-          '"Which is it to-day?" I asked. "Morphine or cocaine?"',
-          'He raised his eyes languidly from the old black-letter volume. "It is cocaine," he said. "A seven-per-cent solution. Would you care to try it?"',
-          'Before I could launch into my protest, Mrs. Hudson knocked on the door. "A young lady to see you, sir. Miss Mary Morstan."',
-          'Miss Morstan entered with a firm step and an outward composure. She was blonde, young, dainty, well gloved, and dressed in the most perfect taste of quiet gray cashmere.'
+          'Sir Henry Baskerville was a small, alert, dark-eyed man of about thirty, with sturdy limbs and a fiery, courageous disposition.',
+          '"There is no devil in hell, Mr. Holmes, and there is no man upon earth who can prevent me from going to the home of my own people," he declared.',
+          'As they left Baker Street, Holmes spotted a cab shadowing Sir Henry. The passenger had a bushy black beard.',
+          'Holmes took the cab number, but the spy slipped away into the London traffic.'
         ]
       },
       {
-        id: 'sof-ch2',
-        chapterNumber: 2,
-        title: 'The Six Pearls',
-        wordCount: 850,
-        readTimeMinutes: 4,
-        publishedDate: '1890',
-        authorNote: 'Miss Morstan recounts the mysterious gifts.',
-        content: [
-          '"Six years ago," said Miss Morstan, "an advertisement appeared in the Times asking for the address of Miss Mary Morstan, stating that it would be to her advantage to come forward. By my employer\'s advice, I published my address."',
-          '"Upon that very day there came to me through the post a small cardboard box containing a very large and lustrous pearl. No word was enclosed. And every year since, on that same day, there has always arrived a similar box with a similar pearl."',
-          'She opened a flat box and showed us six of the finest pearls that I had ever seen, glowing with a milky, iridescent sheen. "And this morning, Mr. Holmes, came this letter: Be at the third pillar outside the Lyceum Theatre to-night at seven o\'clock. You are a wronged woman, and shall have justice."'
-        ]
-      }
-    ]
-  },
-
-  {
-    id: 'red-headed-league',
-    slug: 'the-red-headed-league',
-    title: 'The Red-Headed League',
-    synopsis: 'A pawnbroker with fiery red hair is hired for an absurdly easy job copying the Encyclopædia Britannica, uncovering an audacious underground bank robbery scheme.',
-    author: 'Arthur Conan Doyle',
-    authorRole: 'Classic Public Domain Author',
-    coverImage: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=800&q=80',
-    coverAlt: 'Old leather-bound encyclopedia volumes open beside an ink bottle.',
-    status: 'Completed',
-    genre: 'Mystery',
-    tags: ['Public Domain', 'Wit', 'Red Hair', 'Bank Vault', 'Classic'],
-    totalChapters: 2,
-    rating: 5,
-    readsCount: 4320,
-    isPublicDomain: true,
-    chapters: [
-      {
-        id: 'rhl-ch1',
-        chapterNumber: 1,
-        title: 'A Singular Client',
-        wordCount: 810,
-        readTimeMinutes: 4,
-        publishedDate: '1891',
-        authorNote: 'Jabez Wilson visits 221B Baker Street.',
-        content: [
-          'I had called upon my friend, Mr. Sherlock Holmes, one day in the autumn of last year and found him in deep conversation with a very stout, florid-faced, elderly gentleman with fiery red hair.',
-          'Holmes rose with a chuckle. "You could not have come at a better time, my dear Watson. This is Mr. Jabez Wilson, who has been good enough to call upon me this morning to relate a little narrative which bids fair to be one of the most singular that I have listened to for some time."',
-          'The pawnbroker pulled a dirty copy of the Morning Chronicle from his overcoat and pointed to an advertisement:',
-          '"TO THE RED-HEADED LEAGUE: On account of the bequest of the late Ezekiah Hopkins of Pennsylvania, there is now another vacancy open which entitles a member of the League to a salary of £4 a week for purely nominal services. All red-headed men who are sound in body and mind above the age of twenty-one years are eligible."'
-        ]
-      },
-      {
-        id: 'rhl-ch2',
-        chapterNumber: 2,
-        title: 'Copying the Encyclopædia',
+        id: 'hob-ch5',
+        chapterNumber: 5,
+        title: 'Three Broken Threads',
         wordCount: 840,
         readTimeMinutes: 4,
-        publishedDate: '1891',
-        authorNote: 'The dissolution of the League and the dark cellar.',
+        publishedDate: '1902',
+        authorNote: 'Holmes dispatches Watson to Dartmoor to act as Sir Henry’s armed bodyguard.',
         content: [
-          '"For eight weeks," said Mr. Wilson, "I sat in the office from ten to two, copying out the Encyclopædia Britannica, beginning with the letter A. I had reached Attica and hope to reach B soon."',
-          '"And then, when I went to the office this morning, the door was locked. Nailed to the center of the panel with a tack was a piece of cardboard: THE RED-HEADED LEAGUE IS DISSOLVED. October 9, 1890."',
-          'Holmes sat back in his armchair and laughed until his sides ached. "A most refreshing little problem, Watson! And if I am not mistaken, tonight we shall be waiting in the dark vault of the City Bank to see who has been digging a tunnel beneath Mr. Wilson\'s shop!"'
+          'Holmes sent telegrams and inquiries, but every lead broke in his hands.',
+          'Unable to leave London himself, Holmes instructed Watson to accompany Sir Henry to Baskerville Hall, armed with a revolver, and report every detail of the household and neighbors.',
+          '"Bear in mind, Watson," Holmes cautioned gravely at Paddington station, "that you are going into the presence of danger. Trust no one, and never leave Sir Henry alone upon the moor after dark."'
+        ]
+      },
+      {
+        id: 'hob-ch6',
+        chapterNumber: 6,
+        title: 'Baskerville Hall',
+        wordCount: 880,
+        readTimeMinutes: 4,
+        publishedDate: '1902',
+        authorNote: 'Arrival in Devonshire through armed patrols guarding against the escaped convict.',
+        content: [
+          'The train carried them through the green lanes of Devonshire to the borders of the grim granite moor.',
+          'Armed soldiers stood at the crossroads: Selden, the notorious Notting Hill murderer, had escaped from Princetown prison and was hiding somewhere among the rocky tors.',
+          'Baskerville Hall was a gloomy manor of dark granite, flanked by ancient towers and backed by black firs.',
+          'Barrymore, the butler with the heavy black beard, welcomed them with stiff civility.',
+          'That night, lying awake in the drafty bedroom, Watson heard the distinct, muffled sobbing of a weeping woman echoing down the stone corridor.'
+        ]
+      },
+      {
+        id: 'hob-ch7',
+        chapterNumber: 7,
+        title: 'The Stapletons of Merripit House',
+        wordCount: 890,
+        readTimeMinutes: 5,
+        publishedDate: '1902',
+        authorNote: 'Watson meets the naturalist Stapleton and the treacherous Grimpen Mire.',
+        content: [
+          'The next morning Watson walked across the moor to Merripit House, meeting Jack Stapleton, a lively naturalist with a butterfly net.',
+          'Stapleton pointed out the great Grimpen Mire, an innocent-looking bright green bog where ponies and men sank to their deaths in the black slime.',
+          'Suddenly, rolling across the desolate waste, came a long, deep, melancholy howl that curdled Watson’s blood.',
+          'Stapleton’s beautiful sister Beryl mistook Watson for Sir Henry, frantically whispering: "Go back! Go straight back to London this very night! I cannot tell you why, but for your life’s sake, never set foot upon this moor again!"'
+        ]
+      },
+      {
+        id: 'hob-ch8',
+        chapterNumber: 8,
+        title: 'First Report of Dr. Watson',
+        wordCount: 860,
+        readTimeMinutes: 4,
+        publishedDate: '1902',
+        authorNote: 'Watson’s letter to Holmes recounting nocturnal candle signals.',
+        content: [
+          'Watson observed Sir Henry falling deeply in love with Beryl Stapleton, while her brother reacted with furious, unreasonable jealousy.',
+          'At two in the morning, Watson caught Barrymore creeping down the hall to a window facing the moor, holding a lighted candle.',
+          'Looking out into the black night, Watson saw an answering flicker of light from the jagged granite tor half a mile away.',
+          'Someone was signaling to the escaped convict!'
+        ]
+      },
+      {
+        id: 'hob-ch9',
+        chapterNumber: 9,
+        title: 'The Light Upon the Moor',
+        wordCount: 870,
+        readTimeMinutes: 4,
+        publishedDate: '1902',
+        authorNote: 'Sir Henry and Watson ambush Barrymore and hunt the convict in the rain.',
+        content: [
+          'Sir Henry and Watson confronted Barrymore at the window.',
+          'Mrs. Barrymore burst in weeping, confessing that Selden the convict was her youngest brother, starving on the moor.',
+          'Sir Henry and Watson ran out into the driving rain to capture the felon.',
+          'By the light of the moon on the Black Tor above them, Watson caught sight of another figure—a tall, thin man standing silhouetted against the sky, arms folded, watching them from the granite heights.'
+        ]
+      },
+      {
+        id: 'hob-ch10',
+        chapterNumber: 10,
+        title: 'The Man on the Tor',
+        wordCount: 910,
+        readTimeMinutes: 5,
+        publishedDate: '1902',
+        authorNote: 'Watson tracks the mysterious watcher to a prehistoric stone hut.',
+        content: [
+          'Determined to unmask the watcher, Watson searched the prehistoric stone huts of the moor.',
+          'In one hut he found a pannikin, a pile of dry heather, and a discarded cigarette end stamped "Bradley, Oxford Street."',
+          'A shadow fell across the threshold, and a cool, familiar voice spoke: "It is a lovely evening, my dear Watson."',
+          'It was Sherlock Holmes himself! Holmes had lived secretly in the hut for days, watching Stapleton weave his web.'
+        ]
+      },
+      {
+        id: 'hob-ch11',
+        chapterNumber: 11,
+        title: 'Death on the Moor',
+        wordCount: 920,
+        readTimeMinutes: 5,
+        publishedDate: '1902',
+        authorNote: 'The hound strikes, but kills the wrong victim.',
+        content: [
+          'As Holmes and Watson conferred, a blood-curdling baying echoed from the Grimpen Mire, followed by screams of mortal agony.',
+          'They rushed through the boulders and found a body dashed to pieces at the foot of a cliff.',
+          'For an instant Watson thought it was Sir Henry, but it was Selden the convict, who had been given Sir Henry’s cast-off clothes by Barrymore!',
+          'The scent on the clothes had drawn the hound to its prey.',
+          'Stapleton stepped out of the darkness with an oil lantern, unable to conceal his astonishment at finding Holmes standing beside the corpse.'
+        ]
+      },
+      {
+        id: 'hob-ch12',
+        chapterNumber: 12,
+        title: 'The Fog and the Hound of Fire',
+        wordCount: 960,
+        readTimeMinutes: 5,
+        publishedDate: '1902',
+        authorNote: 'The final confrontation at Merripit House as the white fog rolls in.',
+        content: [
+          'Holmes laid his trap: Sir Henry dined alone at Stapleton’s house, walking home alone across the moor while Holmes, Watson, and Inspector Lestrade lay in ambush.',
+          'A thick white fog crept up from the Grimpen Mire like a ghostly tide, blinding their view.',
+          'Then, bursting out of the mist, came the hound: a beast immense, coal-black, from whose open mouth spurted blue luminous fire, its eyes glowing with dull coals of phosphorescent flame!',
+          'It leaped after Sir Henry. Holmes and Watson fired five revolver shots. The beast leaped into the air with a howl of agony and fell dead upon the moss, bathed in phosphorus.',
+          'Stapleton fled into the treacherous mire in the dark, losing his footing on the bog path and sinking forever into the black depths of the Grimpen Mire.'
         ]
       }
     ]
   },
 
   {
-    id: 'father-brown-blue-cross',
-    slug: 'the-blue-cross',
-    title: 'The Blue Cross (Father Brown)',
-    synopsis: 'Valentin, the head of the Paris police, tracks the brilliant thief Flambeau across London, following an absurd trail of overturned sugar bowls and soup on walls left by a quiet little Catholic priest.',
+    id: 'adventures-of-sherlock-holmes',
+    slug: 'the-adventures-of-sherlock-holmes',
+    title: 'The Adventures of Sherlock Holmes',
+    synopsis: 'Arthur Conan Doyle’s landmark short story collection. Twelve brilliant investigations from 221B Baker Street, including A Scandal in Bohemia, The Red-Headed League, The Speckled Band, and The Blue Carbuncle.',
+    author: 'Arthur Conan Doyle',
+    authorRole: 'Classic Public Domain Author',
+    coverImage: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=800&q=80',
+    coverAlt: 'Sherlock Holmes pipe, violin, and magnifying glass beside 221B Baker Street hearth.',
+    status: 'Completed',
+    genre: 'Mystery',
+    tags: ['Public Domain', 'Baker Street', 'Classic Mystery', 'Doyle', 'Victorian'],
+    totalChapters: 12,
+    rating: 5,
+    readsCount: 6240,
+    isPublicDomain: true,
+    chapters: [
+      { id: 'ash-ch1', chapterNumber: 1, title: 'A Scandal in Bohemia', wordCount: 880, readTimeMinutes: 4, publishedDate: '1892', content: ['The King of Bohemia seeks to recover an indiscreet photograph from the incomparable Irene Adler, who outwits Holmes at every turn, earning his lifelong respect as THE woman.'] },
+      { id: 'ash-ch2', chapterNumber: 2, title: 'The Red-Headed League', wordCount: 870, readTimeMinutes: 4, publishedDate: '1892', content: ['Jabez Wilson is paid four pounds a week to copy the Encyclopaedia Britannica, unaware that thieves are tunneling into the City and Suburban Bank beneath his cellar.'] },
+      { id: 'ash-ch3', chapterNumber: 3, title: 'A Case of Identity', wordCount: 840, readTimeMinutes: 4, publishedDate: '1892', content: ['Mary Sutherland’s mysterious fiancé Hosmer Angel vanishes on their wedding morning, unmasked by Holmes as her deceitful stepfather in disguise.'] },
+      { id: 'ash-ch4', chapterNumber: 4, title: 'The Boscombe Valley Mystery', wordCount: 890, readTimeMinutes: 5, publishedDate: '1892', content: ['James McCarthy is accused of murdering his father by the pool, but Holmes proves an Australian bushranger with a cloak and left-handed grip was the true killer.'] },
+      { id: 'ash-ch5', chapterNumber: 5, title: 'The Five Orange Pips', wordCount: 860, readTimeMinutes: 4, publishedDate: '1892', content: ['A young man receives an envelope containing five dried orange pips and the letters K.K.K., heralding a deadly secret society vengeance from America.'] },
+      { id: 'ash-ch6', chapterNumber: 6, title: 'The Man with the Twisted Lip', wordCount: 880, readTimeMinutes: 4, publishedDate: '1892', content: ['Neville St. Clair disappears from an opium den in the East End, living a lucrative double life as Hugh Boone, the crippled professional beggar of Threadneedle Street.'] },
+      { id: 'ash-ch7', chapterNumber: 7, title: 'The Adventure of the Blue Carbuncle', wordCount: 890, readTimeMinutes: 5, publishedDate: '1892', content: ['A precious Countess’s jewel is discovered inside the crop of a Christmas goose, leading Holmes through the markets of Covent Garden to the remorseful culprit James Ryder.'] },
+      { id: 'ash-ch8', chapterNumber: 8, title: 'The Adventure of the Speckled Band', wordCount: 920, readTimeMinutes: 5, publishedDate: '1892', content: ['Helen Stoner fears for her life in the locked bedroom of Stoke Moran. Holmes discovers Dr. Roylott’s deadly swamp adder trained to slither down a dummy bell-rope.'] },
+      { id: 'ash-ch9', chapterNumber: 9, title: 'The Adventure of the Engineer’s Thumb', wordCount: 850, readTimeMinutes: 4, publishedDate: '1892', content: ['Hydraulic engineer Victor Hatherley has his thumb severed while repairing an illicit coin-counterfeiting hydraulic press in a secluded country mansion.'] },
+      { id: 'ash-ch10', chapterNumber: 10, title: 'The Adventure of the Noble Bachelor', wordCount: 840, readTimeMinutes: 4, publishedDate: '1892', content: ['Lord Robert St. Simon’s American bride Hatty Doran vanishes from the wedding breakfast, reuniting with her presumed-dead miner husband from California.'] },
+      { id: 'ash-ch11', chapterNumber: 11, title: 'The Adventure of the Beryl Coronet', wordCount: 870, readTimeMinutes: 4, publishedDate: '1892', content: ['A priceless crown pledged to a senior partner at Alexander Holder’s bank is damaged in the night, saved by Holmes’s snow-footprint deduction in the garden.'] },
+      { id: 'ash-ch12', chapterNumber: 12, title: 'The Adventure of the Copper Beeches', wordCount: 890, readTimeMinutes: 5, publishedDate: '1892', content: ['Violet Hunter takes a high-paying governess post requiring her to cut her hair and wear electric-blue dresses, unraveling a cruel imprisonment scheme.'] }
+    ]
+  },
+
+  {
+    id: 'innocence-of-father-brown',
+    slug: 'the-innocence-of-father-brown',
+    title: 'The Innocence of Father Brown',
+    synopsis: 'G.K. Chesterton’s humble, umbrella-toting Roman Catholic priest solves baffling crimes not through forensic science, but through profound moral insight, psychological empathy, and spiritual wisdom.',
     author: 'G.K. Chesterton',
     authorRole: 'Classic Public Domain Author',
-    coverImage: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=800&q=80',
-    coverAlt: 'A silver cross resting on an ancient Bible in a quiet church alcove.',
+    coverImage: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&q=80',
+    coverAlt: 'A quiet cobbled English village lane with an umbrella resting against a stone church door.',
     status: 'Completed',
     genre: 'Mystery',
-    tags: ['Public Domain', 'Father Brown', 'Chesterton', 'London', 'Wit'],
-    totalChapters: 2,
+    tags: ['Public Domain', 'Cozy Mystery', 'Father Brown', 'Chesterton', 'Classic'],
+    totalChapters: 10,
     rating: 5,
-    readsCount: 3910,
+    readsCount: 4520,
     isPublicDomain: true,
     chapters: [
-      {
-        id: 'bc-ch1',
-        chapterNumber: 1,
-        title: 'The Trail of Absurdities',
-        wordCount: 830,
-        readTimeMinutes: 4,
-        publishedDate: '1910',
-        authorNote: 'Aristide Valentin pursues Flambeau through London.',
-        content: [
-          'Between the silver ribbon of morning and the green ribbon of evening, the great detective Valentin followed the great thief Flambeau through London.',
-          'In a quiet tea shop, Valentin noticed that the salt was in the sugar cellar and the sugar in the salt cellar. "A funny little priest with a large umbrella was here," the waitress explained. "He threw his soup at the wallpaper before he left!"',
-          'Valentin followed the trail of intentional blunders to Hampstead Heath, where beneath the starry trees two priests were arguing philosophy.'
-        ]
-      },
-      {
-        id: 'bc-ch2',
-        chapterNumber: 2,
-        title: 'Reason and Faith',
-        wordCount: 860,
-        readTimeMinutes: 4,
-        publishedDate: '1910',
-        authorNote: 'Father Brown unmasks the master criminal.',
-        content: [
-          'The taller priest leaned forward, his voice turning cold. "Give me that blue cross with the sapphires, Father Brown, or I will break you like a twig."',
-          'The little priest blinked serenely through his spectacles. "I am sorry to disappoint you, Flambeau. But I knew you were not a true priest the moment you attacked reason. A true theologian never denies logic."',
-          '"And as for the blue cross," Father Brown added mildly, "I posted it to my friend in Westminster two hours ago from that sweetshop where I tipped over the apples."'
-        ]
-      }
+      { id: 'fb-ch1', chapterNumber: 1, title: 'The Blue Cross', wordCount: 880, readTimeMinutes: 4, publishedDate: '1911', content: ['Valentin, the head of the Paris police, tracks the master criminal Flambeau through London by following an extraordinary trail of spilled sugar, flipped soup, and altered price tags left by a quiet priest carrying a priceless silver cross.'] },
+      { id: 'fb-ch2', chapterNumber: 2, title: 'The Secret Garden of Paris', wordCount: 860, readTimeMinutes: 4, publishedDate: '1911', content: ['A severed head is found in Valentin’s locked private garden behind high spiked walls, leading to a tragic revelation about the fanatic French detective himself.'] },
+      { id: 'fb-ch3', chapterNumber: 3, title: 'The Queer Feet', wordCount: 890, readTimeMinutes: 5, publishedDate: '1911', content: ['At the exclusive Twelve True Fishermen club dinner in the Vernon Hotel, a thief alternates between the quick step of a waiter and the leisurely stride of a gentleman to steal the golden cutlery.'] },
+      { id: 'fb-ch4', chapterNumber: 4, title: 'The Flying Stars', wordCount: 840, readTimeMinutes: 4, publishedDate: '1911', content: ['Three priceless African diamonds are stolen during a Christmas Eve pantomime, where Flambeau plays the Harlequin until Father Brown corners his conscience by the garden gate.'] },
+      { id: 'fb-ch5', chapterNumber: 5, title: 'The Invisible Man', wordCount: 870, readTimeMinutes: 4, publishedDate: '1911', content: ['A tiny inventor is murdered inside a guarded building that nobody entered or left—except the postman, whom society looks past as completely invisible.'] },
+      { id: 'fb-ch6', chapterNumber: 6, title: 'The Honour of Israel Gow', wordCount: 850, readTimeMinutes: 4, publishedDate: '1911', content: ['In a decaying Scottish castle, the servant Israel Gow hoards loose diamonds, clockwork springs, and wax tapers according to a literal bequest of the deceased lord.'] },
+      { id: 'fb-ch7', chapterNumber: 7, title: 'The Wrong Shape', wordCount: 860, readTimeMinutes: 4, publishedDate: '1911', content: ['The aesthetic poet Leonard Quinton is found stabbed with a curved Oriental dagger, his suicide note revealed to be a fragment of a novel dictated to his scheming doctor.'] },
+      { id: 'fb-ch8', chapterNumber: 8, title: 'The Sins of Prince Saradine', wordCount: 880, readTimeMinutes: 4, publishedDate: '1911', content: ['A peaceful boating holiday on the Norfolk Broads turns into a deadly duel of Sicilian vengeance between brothers trading identities.'] },
+      { id: 'fb-ch9', chapterNumber: 9, title: 'The Hammer of God', wordCount: 870, readTimeMinutes: 4, publishedDate: '1911', content: ['The wicked Norman Bohun is struck dead with a tiny smith’s hammer dropped from the soaring Gothic church spire above by his ascetic brother.'] },
+      { id: 'fb-ch10', chapterNumber: 10, title: 'The Eye of Apollo', wordCount: 860, readTimeMinutes: 4, publishedDate: '1911', content: ['A sun-worshipping cult leader in a high London office building plots to seize an heiress’s typewriter-typed will by blinding her with the midday glare.'] }
     ]
   },
 
   {
-    id: 'father-brown-secret-garden',
-    slug: 'the-secret-garden-mystery',
-    title: 'The Secret Garden Mystery (Father Brown)',
-    synopsis: 'A headless corpse is found in the walled garden of the Paris chief of police, where no stranger could have entered and no weapon can be found.',
-    author: 'G.K. Chesterton',
-    authorRole: 'Classic Public Domain Author',
-    coverImage: 'https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=800&q=80',
-    coverAlt: 'A stone walled garden path bathed in moonlight.',
-    status: 'Completed',
-    genre: 'Mystery',
-    tags: ['Public Domain', 'Father Brown', 'Locked Room', 'Paris', 'Classic'],
-    totalChapters: 2,
-    rating: 5,
-    readsCount: 3740,
-    isPublicDomain: true,
-    chapters: [
-      {
-        id: 'sgm-ch1',
-        chapterNumber: 1,
-        title: 'Dinner at the Rue d\'Assas',
-        wordCount: 820,
-        readTimeMinutes: 4,
-        publishedDate: '1910',
-        authorNote: 'Aristide Valentin hosts a dinner behind impenetrable garden walls.',
-        content: [
-          'Aristide Valentin, Chief of the Paris Police, lived in a house in the Rue d\'Assas whose high garden was surrounded by formidable walls without any gate or entrance from the street.',
-          'During an intimate dinner with distinguished guests—including an American millionaire and Lord Galloway—a scream shattered the quiet.',
-          'In the wet gravel by the fountain lay the body of a man in evening dress, completely headless, while all doors and gates remained locked from the inside.'
-        ]
-      },
-      {
-        id: 'sgm-ch2',
-        chapterNumber: 2,
-        title: 'Father Brown\'s Deduction',
-        wordCount: 840,
-        readTimeMinutes: 4,
-        publishedDate: '1910',
-        authorNote: 'The little priest examines the two severed heads.',
-        content: [
-          'While the Parisian gendarmes searched the bushes for axes, Father Brown knelt in the grass with his umbrella tucked under his arm.',
-          '"Has it occurred to anyone," the priest asked softly, "to notice that the head found over the wall belongs to a corpse that was executed three days ago in the guillotine, while the body on the grass is someone else entirely?"',
-          'A gasp went through the circle as Father Brown unraveled the extraordinary drama of justice and obsession.'
-        ]
-      }
-    ]
-  },
-
-  {
-    id: 'rue-morgue',
-    slug: 'the-murders-in-the-rue-morgue',
-    title: 'The Murders in the Rue Morgue',
-    synopsis: 'The foundational tale of modern detective fiction, featuring C. Auguste Dupin in Paris solving an impossible locked-room double murder on the fourth floor.',
-    author: 'Edgar Allan Poe',
-    authorRole: 'Classic Public Domain Author',
-    coverImage: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=800&q=80',
-    coverAlt: 'A dark Parisian alleyway with shuttered mansard windows at midnight.',
-    status: 'Completed',
-    genre: 'Mystery',
-    tags: ['Public Domain', 'Poe', 'Dupin', 'Locked Room', 'Pioneer'],
-    totalChapters: 2,
-    rating: 5,
-    readsCount: 4890,
-    isPublicDomain: true,
-    chapters: [
-      {
-        id: 'rm-ch1',
-        chapterNumber: 1,
-        title: 'The Analytical Mind',
-        wordCount: 830,
-        readTimeMinutes: 4,
-        publishedDate: '1841',
-        authorNote: 'Meeting Monsieur C. Auguste Dupin in Paris.',
-        content: [
-          'The mental features discoursed of as the analytical, are, in themselves, but little susceptible of analysis. We appreciate them only in their effects.',
-          'Residing in Paris during the spring and part of the summer of 18—, I there became acquainted with a Monsieur C. Auguste Dupin. This young gentleman was of an excellent family, reduced to poverty by circumstances.',
-          'Our seclusion was perfect. We admitted no visitors. It was a whimsical freak of my friend to be enamored of the Night for her own sake; and into this bizarrerie, as into all his others, I quietly fell.',
-          'One morning, the Gazette des Tribunaux published an account of an extraordinary murder in the Rue Morgue, where shrieks had been heard on the fourth story of a house locked entirely from within.'
-        ]
-      },
-      {
-        id: 'rm-ch2',
-        chapterNumber: 2,
-        title: 'The Non-Human Voice',
-        wordCount: 860,
-        readTimeMinutes: 4,
-        publishedDate: '1841',
-        authorNote: 'Dupin analyzes the testimony of the witnesses.',
-        content: [
-          '"Notice the witnesses, my friend," said Dupin, tapping the newspaper. "The Frenchman thought the shrill voice was that of a Spaniard. The Dutchman swore it was French. The Englishman declared it to be German, and the Spaniard was confident it was English!"',
-          '"Not one of these men recognized a single syllable of words," said Dupin, his eyes glowing in the candlelight. "Because the voice that cried out in that locked fourth-story chamber was not human at all."'
-        ]
-      }
-    ]
-  },
-
-  {
-    id: 'purloined-letter',
-    slug: 'the-purloined-letter',
-    title: 'The Purloined Letter',
-    synopsis: 'A compromise-inducing royal letter is stolen by a minister, and the Parisian police tear apart his apartment in vain, until Dupin demonstrates that the best hiding place is in plain sight.',
-    author: 'Edgar Allan Poe',
-    authorRole: 'Classic Public Domain Author',
-    coverImage: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=800&q=80',
-    coverAlt: 'A card rack hanging above an antique mantelpiece with folded letters.',
-    status: 'Completed',
-    genre: 'Mystery',
-    tags: ['Public Domain', 'Dupin', 'Poe', 'Psychology', 'Classic'],
-    totalChapters: 2,
-    rating: 5,
-    readsCount: 4230,
-    isPublicDomain: true,
-    chapters: [
-      {
-        id: 'pl-ch1',
-        chapterNumber: 1,
-        title: 'The Prefect\'s Dilemma',
-        wordCount: 810,
-        readTimeMinutes: 4,
-        publishedDate: '1844',
-        authorNote: 'Monsieur G— visits Dupin in his dark library.',
-        content: [
-          'At Paris, just after dark one gusty evening in the autumn of 18—, I was enjoying the twofold luxury of meditation and a meerschaum, in company with my friend C. Auguste Dupin, in his little back library, or book-closet, au troisième, No. 33, Rue Dunôt, Faubourg St. Germain.',
-          'For one hour at least we had maintained a profound silence; when the door of our apartment was thrown open, and admitted our old acquaintance, Monsieur G—, the Prefect of the Parisian police.',
-          '"A very simple problem," said the Prefect, "yet it has puzzled us completely. A letter of the utmost political consequence has been stolen from the royal boudoir by Minister D—, and though we have searched his house with microscopes for three months, we cannot find it."'
-        ]
-      },
-      {
-        id: 'pl-ch2',
-        chapterNumber: 2,
-        title: 'In Plain Sight',
-        wordCount: 840,
-        readTimeMinutes: 4,
-        publishedDate: '1844',
-        authorNote: 'Dupin retrieves the letter from the card rack.',
-        content: [
-          '"The error of the police," explained Dupin, handing the letter to the bewildered Prefect, "lay in supposing that the Minister would conceal the document in some secret cavity behind wallpaper or inside a chair leg."',
-          '"I called upon Minister D— wearing green spectacles to shield my eyes, and observed the room. There, dangling from a dirty blue ribbon right beneath the center of the mantelpiece, was a crumpled, torn envelope turned inside out."',
-          '"It was exposed to the full view of every visitor. The most profound concealment, my dear Watson, is that which is left completely open."'
-        ]
-      }
-    ]
-  },
-
-  {
-    id: 'arsene-lupin-burglar',
-    slug: 'arsene-lupin-gentleman-burglar',
-    title: 'Arsène Lupin, Gentleman Burglar',
-    synopsis: 'The charming, witty French master of disguise and gentleman thief conducts audacious heists aboard luxury transatlantic liners and through high Parisian salons.',
-    author: 'Maurice Leblanc',
-    authorRole: 'Classic Public Domain Author',
-    coverImage: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=800&q=80',
-    coverAlt: 'A silk top hat and silver-tipped cane resting on an antique mahogany table.',
-    status: 'Completed',
-    genre: 'Mystery',
-    tags: ['Public Domain', 'Arsène Lupin', 'Gentleman Thief', 'Paris', 'Wit'],
-    totalChapters: 2,
-    rating: 5,
-    readsCount: 4620,
-    isPublicDomain: true,
-    chapters: [
-      {
-        id: 'al-ch1',
-        chapterNumber: 1,
-        title: 'The Arrest of Arsène Lupin',
-        wordCount: 830,
-        readTimeMinutes: 4,
-        publishedDate: '1907',
-        authorNote: 'A telegraph flashes across the transatlantic steamer La Provence.',
-        content: [
-          'It was a strange voyage! It had commenced so well, and the transatlantic liner La Provence was swift and comfortable. But on the second day out, the wireless telegraph sparked a message that electrified the passengers:',
-          '"Arsène Lupin is on board your vessel, traveling in first class. He is traveling under the name of R—."',
-          'A sudden squall of anxiety swept the saloon. Every man whose name began with R was eyed with profound suspicion, while the jewels of the American millionaires were double-locked in the purser\'s safe.',
-          'And yet, on the fourth night, the safe was opened and the jewels vanished without a trace!'
-        ]
-      },
-      {
-        id: 'al-ch2',
-        chapterNumber: 2,
-        title: 'The Escape',
-        wordCount: 850,
-        readTimeMinutes: 4,
-        publishedDate: '1907',
-        authorNote: 'Lupin announces his escape from the Prison de la Santé.',
-        content: [
-          'Arsène Lupin was locked in cell fourteen of the Santé prison, guarded day and night by twelve warders. And yet, every morning the Paris papers published his personal notes.',
-          '"I shall not attend my trial," Lupin wrote courteously to the examining magistrate. "I have an engagement in the country that afternoon, and will leave prison next Wednesday."',
-          'The Governor doubled the guards and inspected the iron bars three times a day. But when Wednesday morning arrived, cell fourteen was empty, leaving behind only a bouquet of violets and a card of thanks.'
-        ]
-      }
-    ]
-  },
-
-  {
-    id: 'mystery-yellow-room',
+    id: 'the-mystery-of-the-yellow-room',
     slug: 'the-mystery-of-the-yellow-room',
     title: 'The Mystery of the Yellow Room',
-    synopsis: 'Young reporter Joseph Rouletabille investigates the ultimate locked-room puzzle at the Château du Glandier, where an attack occurs inside a room locked from within with iron shutters and barred doors.',
+    synopsis: 'Gaston Leroux’s locked-room masterpiece. The youthful reporter Joseph Rouletabille investigates the inexplicable assassination attempt on Mademoiselle Stangerson inside a chamber bolted from the inside with barred windows.',
     author: 'Gaston Leroux',
     authorRole: 'Classic Public Domain Author',
-    coverImage: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=800&q=80',
-    coverAlt: 'A vintage French château shrouded in autumn mist.',
+    coverImage: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&q=80',
+    coverAlt: 'A locked wooden door with antique brass keyhole in an old French chateau.',
     status: 'Completed',
     genre: 'Mystery',
     tags: ['Public Domain', 'Locked Room', 'Rouletabille', 'French Mystery', 'Classic'],
-    totalChapters: 2,
+    totalChapters: 10,
     rating: 5,
-    readsCount: 3820,
+    readsCount: 3940,
     isPublicDomain: true,
     chapters: [
-      {
-        id: 'myr-ch1',
-        chapterNumber: 1,
-        title: 'The Insoluble Problem',
-        wordCount: 820,
-        readTimeMinutes: 4,
-        publishedDate: '1907',
-        authorNote: 'The Yellow Room at the Château du Glandier.',
-        content: [
-          'It is not without a certain emotion that I begin to recount here the extraordinary adventures of Joseph Rouletabille.',
-          'The Yellow Room was a small bedchamber at the end of the pavilion in the park of the Château du Glandier. It had only one door, opening into the laboratory, and one window, heavily barred with solid iron grating.',
-          'At midnight, Mademoiselle Stangerson screamed "Murder!" Guns were fired within. Her father and the servants battered down the heavy oak door. They found the young woman bleeding on the floor, the furniture overturned—and the room completely empty!',
-          'There was no chimney, no trapdoor, no secret panel. How had the assassin entered, and how on earth had he vanished?'
-        ]
-      },
-      {
-        id: 'myr-ch2',
-        chapterNumber: 2,
-        title: 'The Reasoning of Rouletabille',
-        wordCount: 840,
-        readTimeMinutes: 4,
-        publishedDate: '1907',
-        authorNote: 'Rouletabille follows the two good ends of his reason.',
-        content: [
-          'Joseph Rouletabille, only eighteen years old, knelt upon the parquet floor with his notebook. While the great detective Frédéric Larsan looked for footprints and ladder marks, Rouletabille tapped his forehead.',
-          '"You must take reason by the right end," said Rouletabille with a cheerful smile. "If the assassin could not escape from the Yellow Room after the door was broken open, then he must have left before the door was locked!"'
-        ]
-      }
+      { id: 'myr-ch1', chapterNumber: 1, title: 'The Scream in the Night', wordCount: 850, readTimeMinutes: 4, publishedDate: '1907', content: ['At the secluded Chateau du Glandier, screams and pistol shots ring out from the Yellow Room. The oak door is locked on the inside, and iron bars seal the window.'] },
+      { id: 'myr-ch2', chapterNumber: 2, title: 'Breaking the Door', wordCount: 860, readTimeMinutes: 4, publishedDate: '1907', content: ['Professor Stangerson and the gamekeeper batter down the heavy door. Mademoiselle Stangerson lies bleeding upon the floor, a bloody handprint stains the yellow wallpaper—yet the assassin has vanished into thin air!'] },
+      { id: 'myr-ch3', chapterNumber: 3, title: 'Enter Rouletabille', wordCount: 840, readTimeMinutes: 4, publishedDate: '1907', content: ['Eighteen-year-old investigative journalist Joseph Rouletabille arrives from Paris with his notebook, declaring: "We must track the crime by the right end of reason!"'] },
+      { id: 'myr-ch4', chapterNumber: 4, title: 'The Great Detective Frédéric Larsan', wordCount: 870, readTimeMinutes: 4, publishedDate: '1907', content: ['The famed Surete inspector Frédéric Larsan focuses on material clues—footprints, cane marks, and handkerchiefs—accusing the fiancé Robert Darzac.'] },
+      { id: 'myr-ch5', chapterNumber: 5, title: 'Rouletabille’s Two Circles', wordCount: 860, readTimeMinutes: 4, publishedDate: '1907', content: ['Rouletabille draws two intersecting circles on his paper: the circle of external evidence and the circle of pure psychological logic.'] },
+      { id: 'myr-ch6', chapterNumber: 6, title: 'The Disappearance in the Long Gallery', wordCount: 890, readTimeMinutes: 5, publishedDate: '1907', content: ['In the middle of the long, lighted corridor, the assassin is pursued from both ends by three armed men, yet vanishes into nothingness at the intersection.'] },
+      { id: 'myr-ch7', chapterNumber: 7, title: 'The Secret of the Stangersons', wordCount: 850, readTimeMinutes: 4, publishedDate: '1907', content: ['Rouletabille discovers the tragic secret of Mademoiselle Stangerson’s youth in America and the shadow of the villain Ballmeyer.'] },
+      { id: 'myr-ch8', chapterNumber: 8, title: 'The Journey to America', wordCount: 880, readTimeMinutes: 4, publishedDate: '1907', content: ['Rouletabille vanishes to America for two months to gather the missing link of identity, leaving Larsan to prepare the trial.'] },
+      { id: 'myr-ch9', chapterNumber: 9, title: 'The Trial at the Palais de Justice', wordCount: 920, readTimeMinutes: 5, publishedDate: '1907', content: ['At the dramatic court session, Rouletabille takes the witness stand and reveals how the crime in the Yellow Room happened hours before the scream!'] },
+      { id: 'myr-ch10', chapterNumber: 10, title: 'The Unmasking of Frédéric Larsan', wordCount: 940, readTimeMinutes: 5, publishedDate: '1907', content: ['Rouletabille points his finger across the courtroom: the master detective Frédéric Larsan IS the criminal Ballmeyer in disguise!'] }
+    ]
+  },
+
+  {
+    id: 'the-murders-in-the-rue-morgue',
+    slug: 'the-murders-in-the-rue-morgue',
+    title: 'The Murders in the Rue Morgue & Mystery Tales',
+    synopsis: 'Edgar Allan Poe’s groundbreaking mysteries that birthed the detective genre. C. Auguste Dupin applies supreme analytical ratiocination in Paris to unravel impossible locked-room murders and stolen royal letters.',
+    author: 'Edgar Allan Poe',
+    authorRole: 'Classic Public Domain Author',
+    coverImage: 'https://images.unsplash.com/photo-1509114397022-ed747cca3f65?w=800&q=80',
+    coverAlt: 'A vintage Parisian alleyway shrouded in dark evening shadows.',
+    status: 'Completed',
+    genre: 'Mystery',
+    tags: ['Public Domain', 'Poe', 'Dupin', 'Gothic Mystery', 'Paris', 'Classic'],
+    totalChapters: 10,
+    rating: 5,
+    readsCount: 4670,
+    isPublicDomain: true,
+    chapters: [
+      { id: 'rm-ch1', chapterNumber: 1, title: 'The Murders in the Rue Morgue: The Ratiocination of Dupin', wordCount: 880, readTimeMinutes: 4, publishedDate: '1841', content: ['In a secluded library in Paris, Dupin explains the analytical faculty that reads a friend’s silent thoughts through cobblestones and stereotomy.'] },
+      { id: 'rm-ch2', chapterNumber: 2, title: 'The Horror on the Fourth Floor', wordCount: 870, readTimeMinutes: 4, publishedDate: '1841', content: ['Madame L’Espanaye and her daughter are found horribly slain on the fourth floor of the Rue Morgue. Witnesses describe two voices: one French, and one shrill, foreign tongue that none could recognize.'] },
+      { id: 'rm-ch3', chapterNumber: 3, title: 'The Hidden Spring and the Nail', wordCount: 860, readTimeMinutes: 4, publishedDate: '1841', content: ['Dupin examines the back window sash, discovering a broken hidden spring and a headless nail that allowed the window to fasten itself automatically upon closing.'] },
+      { id: 'rm-ch4', chapterNumber: 4, title: 'The Tuft of Tawny Hair', wordCount: 890, readTimeMinutes: 5, publishedDate: '1841', content: ['Examining the corpse’s fingers, Dupin discovers non-human tawny hairs and a throat impression matching no human hand: the creature from the Borneo jungles!'] },
+      { id: 'rm-ch5', chapterNumber: 5, title: 'The Sailor’s Confession', wordCount: 910, readTimeMinutes: 5, publishedDate: '1841', content: ['A Maltese sailor answers Dupin’s advertisement, recounting how his escaped Ourang-Outang climbed the lightning-rod with a shaving razor.'] },
+      { id: 'rm-ch6', chapterNumber: 6, title: 'The Mystery of Marie Rogêt: The Seine Mystery', wordCount: 860, readTimeMinutes: 4, publishedDate: '1842', content: ['Dupin analyzes the newspaper clippings surrounding the body of the beautiful cigar-girl found floating in the River Seine.'] },
+      { id: 'rm-ch7', chapterNumber: 7, title: 'The Purloined Letter: The Prefect’s Dilemma', wordCount: 870, readTimeMinutes: 4, publishedDate: '1844', content: ['Prefect Monsieur G— of the Paris police searches Minister D—’s hotel with microscopes and needles for three months, unable to find the stolen royal letter.'] },
+      { id: 'rm-ch8', chapterNumber: 8, title: 'Hidden in Plain Sight', wordCount: 880, readTimeMinutes: 4, publishedDate: '1844', content: ['Dupin visits the Minister wearing green spectacles, spotting the crumpled, soiled letter hanging carelessly in a pasteboard card-rack over the mantelpiece.'] },
+      { id: 'rm-ch9', chapterNumber: 9, title: 'The Facsimile and the Vengeance', wordCount: 860, readTimeMinutes: 4, publishedDate: '1844', content: ['Dupin stages a street disturbance, swaps the letter for a prepared facsimile containing a poetic barb, and claims the fifty-thousand franc reward.'] },
+      { id: 'rm-ch10', chapterNumber: 10, title: 'The Gold-Bug: The Cipher on Sullivan’s Island', wordCount: 920, readTimeMinutes: 5, publishedDate: '1843', content: ['William Legrand deciphers Captain Kidd’s secret cryptographic parchment using heat over a fire and drops the golden beetle through the skull’s eye to unearth the pirate treasure.'] }
     ]
   },
 
@@ -561,47 +330,29 @@ export const mysteryBooks: Story[] = [
     id: 'the-moonstone',
     slug: 'the-moonstone',
     title: 'The Moonstone',
-    synopsis: 'Regarded by T.S. Eliot as the first and finest English detective novel, recounting the theft of a priceless, cursed yellow diamond from an English country house.',
+    synopsis: 'Wilkie Collins’s pioneering Victorian detective novel. A priceless yellow diamond stolen from an Indian temple is gifted to Rachel Verinder on her birthday, vanishing from her dressing room that very night under the eyes of Sergeant Cuff.',
     author: 'Wilkie Collins',
     authorRole: 'Classic Public Domain Author',
-    coverImage: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=800&q=80',
-    coverAlt: 'A glowing yellow diamond resting on an English country mansion desk.',
+    coverImage: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&q=80',
+    coverAlt: 'A glowing gemstone casting mystical reflections on antique parchment.',
     status: 'Completed',
     genre: 'Mystery',
-    tags: ['Public Domain', 'Wilkie Collins', 'Diamond', 'Sergeant Cuff', 'Foundational'],
-    totalChapters: 2,
+    tags: ['Public Domain', 'Diamond Heist', 'Sergeant Cuff', 'Victorian', 'Classic'],
+    totalChapters: 10,
     rating: 5,
-    readsCount: 4120,
+    readsCount: 4210,
     isPublicDomain: true,
     chapters: [
-      {
-        id: 'ms-ch1',
-        chapterNumber: 1,
-        title: 'The Diamond in the Night',
-        wordCount: 820,
-        readTimeMinutes: 4,
-        publishedDate: '1868',
-        authorNote: 'Gabriel Betteredge describes the birthday dinner of Miss Rachel.',
-        content: [
-          'I, Gabriel Betteredge, old house-steward in the family of Lady Verinder, have been requested to write down what I saw with my own eyes concerning the disappearance of the Moonstone.',
-          'It was a famous yellow diamond, stolen from the forehead of a four-handed Hindu god at Seringapatam. When it was presented to Miss Rachel Verinder on her eighteenth birthday, it shone on her white silk bodice like a small moon.',
-          'That night, Rachel locked the jewel in her Indian cabinet in her boudoir. But when morning came, the cabinet was open, and the Moonstone was gone!'
-        ]
-      },
-      {
-        id: 'ms-ch2',
-        chapterNumber: 2,
-        title: 'Sergeant Cuff and the Rose Garden',
-        wordCount: 850,
-        readTimeMinutes: 4,
-        publishedDate: '1868',
-        authorNote: 'The famous detective who cared more for roses than suspects.',
-        content: [
-          'A fly drove up to the door, and out stepped Sergeant Cuff of Scotland Yard: a grizzled, elderly man with a face as melancholy and sharp as a carving knife.',
-          'His first act on arriving at the crime scene was not to examine the door locks, but to walk into the garden and admire the white moss-roses.',
-          '"Grass is a deceitful thing, Mr. Betteredge," said the Sergeant calmly, snipping a dead leaf. "And so are human witnesses. But a smear of wet paint on a petticoat never lies."'
-        ]
-      }
+      { id: 'ms-ch1', chapterNumber: 1, title: 'The Storming of Seringapatam', wordCount: 840, readTimeMinutes: 4, publishedDate: '1868', content: ['The prologue describes the storming of the Indian palace in 1799, where Colonel Herncastle murders the Brahmin guards and steals the sacred yellow diamond.'] },
+      { id: 'ms-ch2', chapterNumber: 2, title: 'Gabriel Betteredge and Robinson Crusoe', wordCount: 850, readTimeMinutes: 4, publishedDate: '1868', content: ['The faithful old house-steward Gabriel Betteredge consults his beloved Robinson Crusoe as an infallible oracle on life and household crises.'] },
+      { id: 'ms-ch3', chapterNumber: 3, title: 'The Birthday Banquet', wordCount: 860, readTimeMinutes: 4, publishedDate: '1868', content: ['Franklin Blake brings the Moonstone to Rachel Verinder on her eighteenth birthday. She pins it to her white dress, dazzling all the dinner guests.'] },
+      { id: 'ms-ch4', chapterNumber: 4, title: 'The Theft in the Night', wordCount: 880, readTimeMinutes: 4, publishedDate: '1868', content: ['In the morning, the diamond is gone from Rachel’s Indian cabinet. Rachel refuses to speak, locking herself in her room in cold, bitter silence.'] },
+      { id: 'ms-ch5', chapterNumber: 5, title: 'Sergeant Cuff and the Rose Garden', wordCount: 890, readTimeMinutes: 5, publishedDate: '1868', content: ['The famous London detective Sergeant Cuff arrives, whistling "The Last Rose of Summer" and discovering a smear of wet paint on the dressing-room door.'] },
+      { id: 'ms-ch6', chapterNumber: 6, title: 'The Tragedy of Rosanna Spearman', wordCount: 870, readTimeMinutes: 4, publishedDate: '1868', content: ['The tragic housemaid Rosanna Spearman hides a stained nightgown in the Shivering Sand and throws herself into the quicksand.'] },
+      { id: 'ms-ch7', chapterNumber: 7, title: 'The Narrative of Miss Clack', wordCount: 850, readTimeMinutes: 4, publishedDate: '1868', content: ['The hypocritical, tract-distributing cousin Drusilla Clack describes the family’s move to London and the hypocrisies of Godfrey Ablewhite.'] },
+      { id: 'ms-ch8', chapterNumber: 8, title: 'The Discovery of the Stained Nightgown', wordCount: 890, readTimeMinutes: 5, publishedDate: '1868', content: ['Franklin Blake dredges the tin box from the Shivering Sand, opening it to find the paint-stained nightgown with his own name embroidered on the collar!'] },
+      { id: 'ms-ch9', chapterNumber: 9, title: 'The Opium Experiment', wordCount: 910, readTimeMinutes: 5, publishedDate: '1868', content: ['Dr. Ezra Jennings reconstructs the night: Franklin had taken laudanum for insomnia, sleepwalking into Rachel’s room to move the diamond for safety!'] },
+      { id: 'ms-ch10', chapterNumber: 10, title: 'Restoration to the Temple', wordCount: 930, readTimeMinutes: 5, publishedDate: '1868', content: ['Godfrey Ablewhite is found smothered in a sailor’s boarding-house. The Brahmins carry the Moonstone back across the ocean to shine upon the forehead of the four-handed Indian god.'] }
     ]
   }
 ];

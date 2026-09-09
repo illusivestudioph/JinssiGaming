@@ -134,7 +134,15 @@ function normalizeContent(parsed: Partial<SavedContent> | null | undefined): Sav
   let normalizedStories = initialStories;
   const aiStoryIds = new Set(['midnight-barista', 'letters-from-pelican-town', 'alchemists-greenhouse']);
   if (Array.isArray(parsed?.stories) && parsed.stories.length > 0) {
-    const cleanedExisting = parsed.stories.filter((s: Story) => !aiStoryIds.has(s.id));
+    const cleanedExisting = parsed.stories
+      .filter((s: Story) => !aiStoryIds.has(s.id) && !s.id.startsWith('gb-') && !s.id.startsWith('gutenberg-'))
+      .map((s: Story) => {
+        const fresh = initialStories.find((init) => init.id === s.id);
+        if (fresh && (!s.chapters || fresh.chapters.length > s.chapters.length)) {
+          return fresh;
+        }
+        return s;
+      });
     const existingStoryIds = new Set(cleanedExisting.map((s: Story) => s.id));
     const newStoryDefaults = initialStories.filter((init) => !existingStoryIds.has(init.id));
     normalizedStories = [...cleanedExisting, ...newStoryDefaults];

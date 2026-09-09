@@ -5,7 +5,7 @@ export const cozyFantasyBooks: Story[] = [
     id: 'alice-in-wonderland',
     slug: 'alices-adventures-in-wonderland',
     title: "Alice's Adventures in Wonderland",
-    synopsis: 'Tired of sitting on the riverbank, curious young Alice tumbles down a rabbit hole into an absurd, delightful subterranean world of tea parties, grinning cats, and talking playing cards.',
+    synopsis: 'Tired of sitting on the riverbank, curious young Alice tumbles down a rabbit hole into an absurd, delightful subterranean world of tea parties, grinning cats, hookah-smoking caterpillars, and talking playing cards.',
     author: 'Lewis Carroll',
     authorRole: 'Classic Public Domain Author',
     coverImage: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&q=80',
@@ -13,7 +13,7 @@ export const cozyFantasyBooks: Story[] = [
     status: 'Completed',
     genre: 'Cozy Fantasy',
     tags: ['Public Domain', 'Fantasy', 'Whimsy', 'Tea Parties', 'Classic'],
-    totalChapters: 3,
+    totalChapters: 12,
     rating: 5,
     readsCount: 6140,
     isPublicDomain: true,
@@ -51,124 +51,406 @@ export const cozyFantasyBooks: Story[] = [
       {
         id: 'alice-ch3',
         chapterNumber: 3,
-        title: 'A Mad Tea-Party',
-        wordCount: 890,
+        title: 'A Caucus-Race and a Long Tale',
+        wordCount: 810,
         readTimeMinutes: 4,
+        publishedDate: '1865',
+        authorNote: 'The birds and animals dry off by running in circles.',
+        content: [
+          'They were indeed a queer-looking party that assembled on the bank—the birds with draggled feathers, the animals with their fur clinging close to them, and all dripping wet, cross, and uncomfortable.',
+          'The Dodo solemnly proposed a Caucus-race. "What is a Caucus-race?" said Alice.',
+          '"Why," said the Dodo, "the best way to explain it is to do it." First it marked out a race-course, in a sort of circle, and then all the party were placed along the course, here and there.',
+          'There was no "One, two, three, and away," but they began running when they liked, and left off when they liked, so that it was not easy to know when the race was over. At the end, the Dodo called out: "Everybody has won, and all must have prizes!"'
+        ]
+      },
+      {
+        id: 'alice-ch4',
+        chapterNumber: 4,
+        title: 'The Rabbit Sends in a Little Bill',
+        wordCount: 850,
+        readTimeMinutes: 4,
+        publishedDate: '1865',
+        authorNote: 'Alice grows huge inside the White Rabbit’s tidy cottage.',
+        content: [
+          'The White Rabbit mistook Alice for his housemaid Mary Ann, and sent her into his neat little cottage to fetch his gloves and fan.',
+          'On the dressing-table stood a little bottle with no label. Alice drank it, and grew so enormous that she had to put one arm out the window and one foot up the chimney.',
+          'The Rabbit threw pebbles through the window, which magically turned into little cakes. Alice ate one, shrank back down, and escaped into the woods.'
+        ]
+      },
+      {
+        id: 'alice-ch5',
+        chapterNumber: 5,
+        title: 'Advice from a Caterpillar',
+        wordCount: 870,
+        readTimeMinutes: 4,
+        publishedDate: '1865',
+        authorNote: 'The Hookah-smoking blue caterpillar on top of the mushroom.',
+        content: [
+          'She stretched herself up on tiptoe, and peeped over the edge of the mushroom, and her eyes immediately met those of a large blue caterpillar, that was sitting on the top with its arms folded, quietly smoking a long hookah.',
+          'The Caterpillar and Alice looked at each other for some time in silence: at last the Caterpillar took the hookah out of its mouth, and addressed her in a languid, sleepy voice.',
+          '"Who are you?" said the Caterpillar.',
+          'This was not an encouraging opening for a conversation. Alice replied, rather shyly, "I—I hardly know, sir, just at present—at least I know who I was when I got up this morning, but I think I must have been changed several times since that."',
+          '"One side will make you grow taller, and the other side will make you grow shorter," said the Caterpillar, crawling into the grass.'
+        ]
+      },
+      {
+        id: 'alice-ch6',
+        chapterNumber: 6,
+        title: 'Pig and Pepper',
+        wordCount: 880,
+        readTimeMinutes: 4,
+        publishedDate: '1865',
+        authorNote: 'The Duchess’s kitchen and the grinning Cheshire Cat.',
+        content: [
+          'The door led right into a large kitchen, which was full of smoke from one end to the other: the Duchess was sitting on a three-legged stool in the middle, nursing a baby; the cook was leaning over the fire, stirring a large cauldron full of soup.',
+          '"There’s certainly too much pepper in that soup!" Alice said to herself, as well as she could for sneezing.',
+          'In the corner sat a large Cat grinning from ear to ear.',
+          '"Please would you tell me," said Alice, "why your cat grins like that?"',
+          '"It’s a Cheshire cat," said the Duchess, "and that’s why. Pig!" She tossed the screaming baby into Alice’s arms, which presently turned into a small pink pig and trotted into the woods.'
+        ]
+      },
+      {
+        id: 'alice-ch7',
+        chapterNumber: 7,
+        title: 'A Mad Tea-Party',
+        wordCount: 910,
+        readTimeMinutes: 5,
         publishedDate: '1865',
         authorNote: 'The March Hare, the Hatter, and the sleepy Dormouse.',
         content: [
           'There was a table set out under a tree in front of the house, and the March Hare and the Hatter were having tea at it: a Dormouse was sitting between them, fast asleep, and the other two were using it as a cushion.',
           '"No room! No room!" they cried out when they saw Alice coming.',
-          '"There’s PLENTY of room!" said Alice indignantly, and she sat down in a large arm-chair at one end of the table.',
-          '"Have some wine," the March Hare said in an encouraging tone. Alice looked all round the table, but there was nothing on it but tea.',
-          '"I don’t see any wine," she remarked.',
-          '"There isn’t any," said the March Hare cheerfully.',
-          '"Then it wasn’t very civil of you to offer it," said Alice angrily.'
+          '"There’s plenty of room!" said Alice indignantly, and she sat down in a large arm-chair at one end of the table.',
+          '"Have some wine," the March Hare said in an encouraging tone.',
+          'Alice looked all round the table, but there was nothing on it but tea. "I don’t see any wine," she remarked.',
+          '"There isn’t any," said the March Hare.',
+          '"Then it wasn’t very civil of you to offer it," said Alice angrily.',
+          '"Why is a raven like a writing-desk?" asked the Hatter, fixing his large eyes upon her.'
+        ]
+      },
+      {
+        id: 'alice-ch8',
+        chapterNumber: 8,
+        title: 'The Queen’s Croquet-Ground',
+        wordCount: 890,
+        readTimeMinutes: 5,
+        publishedDate: '1865',
+        authorNote: 'Playing croquet with live flamingos, hedgehogs, and the Queen of Hearts.',
+        content: [
+          'A large rose-tree stood near the entrance of the garden: the roses growing on it were white, but there were three gardeners at it, busily painting them red.',
+          'Presently the Queen of Hearts marched into the garden with her court of playing cards, shouting "Off with their heads!" at every minor inconvenience.',
+          'The croquet ground was all ridges and furrows; the balls were live hedgehogs, the mallets live flamingos, and the soldiers had to double themselves up and stand on their hands and feet, to make the arches.',
+          'Whenever Alice got ready to hit her hedgehog, the flamingo would twist its long neck around and gaze up into her face with a look of helpless curiosity.'
+        ]
+      },
+      {
+        id: 'alice-ch9',
+        chapterNumber: 9,
+        title: 'The Mock Turtle’s Story',
+        wordCount: 860,
+        readTimeMinutes: 4,
+        publishedDate: '1865',
+        authorNote: 'Meeting the Gryphon and the weeping Mock Turtle.',
+        content: [
+          'The Gryphon took Alice to see the Mock Turtle, who was sitting sad and lonely on a little ledge of rock, sighing as if his heart would break.',
+          '"Once," said the Mock Turtle at last, with a deep sigh, "I was a real Turtle."',
+          'These words were followed by a very long silence, broken only by an occasional sob from the Mock Turtle.',
+          '"When we were little," the Mock Turtle went on, "we went to school in the sea. The master was an old Turtle—we used to call him Tortoise—"',
+          '"Why did you call him Tortoise, if he wasn’t one?" Alice asked.',
+          '"We called him Tortoise because he taught us," said the Mock Turtle angrily: "really you are very dull!"'
+        ]
+      },
+      {
+        id: 'alice-ch10',
+        chapterNumber: 10,
+        title: 'The Lobster Quadrille',
+        wordCount: 840,
+        readTimeMinutes: 4,
+        publishedDate: '1865',
+        authorNote: 'Dancing with sea animals and singing Beautiful Soup.',
+        content: [
+          'The Mock Turtle and the Gryphon demonstrated the Lobster Quadrille, bounding about on their hind legs and tossing lobsters into the sea.',
+          '"Will you walk a little faster?" said a whiting to a snail. "There’s a porpoise close behind us, and he’s treading on my tail."',
+          'Then the Mock Turtle sang in a voice choked with sobs:',
+          '"Beautiful Soup, so rich and green, waiting in a hot tureen! Who for such dainties would not stoop? Soup of the evening, beautiful Soup!"'
+        ]
+      },
+      {
+        id: 'alice-ch11',
+        chapterNumber: 11,
+        title: 'Who Stole the Tarts?',
+        wordCount: 850,
+        readTimeMinutes: 4,
+        publishedDate: '1865',
+        authorNote: 'The King and Queen of Hearts hold trial for the Knave.',
+        content: [
+          'The King and Queen of Hearts were seated on their throne when they arrived, with a great crowd assembled about them.',
+          'In the middle of the court was a table, with a large dish of tarts upon it: they looked so good, that it made Alice quite hungry to look at them.',
+          'The White Rabbit blew three blasts on the trumpet, unrolled the parchment scroll, and read:',
+          '"The Queen of Hearts, she made some tarts, all on a summer day: The Knave of Hearts, he stole those tarts, and took them quite away!"',
+          '"Consider your verdict," the King said to the jury.',
+          '"Not yet, not yet!" the Rabbit hastily interrupted. "There’s a great deal to come before that!"'
+        ]
+      },
+      {
+        id: 'alice-ch12',
+        chapterNumber: 12,
+        title: 'Alice’s Evidence & Waking Up',
+        wordCount: 890,
+        readTimeMinutes: 5,
+        publishedDate: '1865',
+        authorNote: 'Alice defies the court of cards and awakens on the riverbank.',
+        content: [
+          '"Here!" cried Alice, quite forgetting how large she had grown in the last few minutes, and she jumped up in such a hurry that she tipped over the jury-box with the edge of her skirt.',
+          'The King shouted: "Rule Forty-two. All persons more than a mile high to leave the court."',
+          '"I’m not a mile high," said Alice.',
+          '"You are," said the King.',
+          '"Nearly two miles high," added the Queen. "Off with her head!"',
+          '"Who cares for you?" said Alice, having grown to her full natural size. "You’re nothing but a pack of cards!"',
+          'At this the whole pack rose up into the air, and came flying down upon her: she gave a little scream, and found herself lying on the bank, with her head in the lap of her sister, who was gently brushing away some dead leaves that had fluttered down from the trees upon her face.',
+          '"Wake up, Alice dear!" said her sister; "Why, what a long sleep you’ve had!"'
         ]
       }
     ]
   },
 
   {
-    id: 'peter-pan',
-    slug: 'peter-and-wendy',
-    title: 'Peter and Wendy (Peter Pan)',
-    synopsis: 'Peter Pan, the boy who would not grow up, flies into the London nursery of the Darling children and whisks them away to the magical island of Neverland.',
-    author: 'J.M. Barrie',
+    id: 'the-wind-in-the-willows',
+    slug: 'the-wind-in-the-willows',
+    title: 'The Wind in the Willows',
+    synopsis: 'Kenneth Grahame’s poetic, comforting masterpiece of pastoral friendship. Mole, Ratty, Badger, and the reckless, lovable Mr. Toad mess about in boats, explore the Wild Wood, and reclaim Toad Hall.',
+    author: 'Kenneth Grahame',
     authorRole: 'Classic Public Domain Author',
-    coverImage: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&q=80',
-    coverAlt: 'A starry midnight sky over London rooftops with a golden crescent moon.',
+    coverImage: 'https://images.unsplash.com/photo-1470246973918-29a93221c455?w=800&q=80',
+    coverAlt: 'A peaceful willow-lined river flowing gently under morning sunshine.',
     status: 'Completed',
     genre: 'Cozy Fantasy',
-    tags: ['Public Domain', 'Neverland', 'Fairies', 'Adventure', 'Timeless'],
-    totalChapters: 3,
+    tags: ['Public Domain', 'Cozy Life', 'Pastoral', 'Friendship', 'Riverbank', 'Classic'],
+    totalChapters: 12,
     rating: 5,
-    readsCount: 5410,
+    readsCount: 5480,
     isPublicDomain: true,
     chapters: [
       {
-        id: 'pp-ch1',
+        id: 'ww-ch1',
         chapterNumber: 1,
-        title: 'Peter Breaks Through',
-        wordCount: 810,
+        title: 'The River Bank',
+        wordCount: 860,
         readTimeMinutes: 4,
-        publishedDate: '1911',
-        authorNote: '"All children, except one, grow up."',
+        publishedDate: '1908',
+        authorNote: 'Mole abandons spring-cleaning and meets the Water Rat.',
         content: [
-          'All children, except one, grow up. They soon know that they will grow up, and the way Wendy knew was this. One day when she was two years old she was playing in a garden, and she plucked another flower and ran with it to her mother.',
-          'I suppose she must have looked rather delightful, for Mrs. Darling put her hand to her heart and cried, "Oh, why can\'t you remain like this forever!" This was all that passed between them on the subject, but henceforth Wendy knew that she must grow up.',
-          'Until Wendy was born her mother was the chief one. She was a lovely lady, with a romantic mind and such a sweet mocking mouth. Her romantic mind was like the tiny boxes, one within the other, that come from the puzzling East: however many you discover, there is now always one more.',
-          'And then came the night when the nursery window blew open, and a little boy accompanied by a darting ball of golden fairy light flew straight onto the floor.'
+          'The Mole had been working very hard all the morning, spring-cleaning his little home. First with brooms, then with dusters; then on ladders and steps and chairs, with a brush and a pail of whitewash; till he had dust in his throat and eyes, and splashes of whitewash all over his black fur.',
+          'Spring was moving in the air above and in the earth below and around him, penetrating even his dark and lowly little house with its spirit of divine discontent and longing.',
+          'It was small wonder, then, that he suddenly flung down his brush on the floor, said "Bother!" and "O blow!" and also "Hang spring-cleaning!" and bolted out of the house.',
+          'He scuffled up a steep little tunnel, popped into the sunlight, and found himself standing on the bank of a great, shimmering, living river.',
+          'Across the water, from a hole in the bank, peered a brown face with whiskers and twinkling eyes: the Water Rat!'
         ]
       },
       {
-        id: 'pp-ch2',
+        id: 'ww-ch2',
         chapterNumber: 2,
-        title: 'The Shadow',
-        wordCount: 850,
-        readTimeMinutes: 4,
-        publishedDate: '1911',
-        authorNote: 'Wendy sews Peter Pan\'s shadow back on.',
+        title: 'The Open Road',
+        wordCount: 890,
+        readTimeMinutes: 5,
+        publishedDate: '1908',
+        authorNote: 'Ratty and Mole visit Toad Hall and join Toad’s yellow caravan.',
         content: [
-          'Mrs. Darling had rolled up Peter\'s shadow and put it safely into the bottom drawer of the wardrobe. When Peter crept back into the nursery, he searched until he found it, but when he tried to stick it on with soap from the wash-stand, it wouldn\'t stick!',
-          'He sat on the floor and cried, and his sobs woke Wendy.',
-          'She sat up in bed. "Boy," she said courteously, "why are you crying?"',
-          'Peter could be exceedingly polite, having a schoolboy\'s manners. He rose and bowed to her very beautifully. "What\'s your name?" he asked.',
-          '"Wendy Moira Angela Darling. What is your name?"',
-          '"Peter Pan."',
-          '"Where do you live?"',
-          '"Second to the right," said Peter, "and then straight on \'til morning."'
+          '"Believe me, my young friend," said the Water Rat solemnly, "there is nothing—absolutely nothing—half so much worth doing as simply messing about in boats."',
+          'They rowed up-river to Toad Hall, an ancient, handsome Elizabethan manor with Tudor chimneys and velvety lawns.',
+          'Mr. Toad welcomed them with extravagant gestures. He had abandoned boats forever and bought a brand-new, canary-yellow gypsy caravan with green wheels.',
+          '"The open road!" cried Toad, waving his arms. "Here today, in next week tomorrow! The poetry of motion!"',
+          'They set out on the highway until a roaring motor-car passed them with a blinding cloud of dust: "Poop-poop!" The caravan landed in a ditch, and Toad sat in the road in a state of hypnotic ecstasy, completely bewitched by motor-cars.'
         ]
       },
       {
-        id: 'pp-ch3',
+        id: 'ww-ch3',
         chapterNumber: 3,
-        title: 'The Flight to Neverland',
+        title: 'The Wild Wood',
+        wordCount: 870,
+        readTimeMinutes: 4,
+        publishedDate: '1908',
+        authorNote: 'Mole ventures alone into the menacing winter forest.',
+        content: [
+          'The Mole had long wanted to make the acquaintance of Badger, but Ratty warned him that Badger lived deep in the Wild Wood and hated society.',
+          'One snowy winter afternoon, Mole slipped out alone into the leafless forest.',
+          'The wood was cold and silent. From every hollow tree, evil little faces peered out at him with wicked, glittering eyes. Twigs cracked like pistol shots, and terror seized him.',
+          'He ran blindly, tripping over brambles, until he crawled into the hollow trunk of an ancient beech tree, panting with fright.',
+          'Ratty followed his tracks through the snow, carrying a sturdy cudgel, and found his trembling friend.'
+        ]
+      },
+      {
+        id: 'ww-ch4',
+        chapterNumber: 4,
+        title: 'Mr. Badger',
+        wordCount: 910,
+        readTimeMinutes: 5,
+        publishedDate: '1908',
+        authorNote: 'Finding sanctuary and a roaring hearth in Badger’s underground fortress.',
+        content: [
+          'While wading through the snowdrifts, Mole scraped his shin painfully on a hard piece of iron.',
+          'They dug through the snow and discovered an iron scraper, then a door-mat, and finally a sturdy green wooden door with a brass knocker: "MR. BADGER."',
+          'Badger opened the door in his dressing-gown and slippers. Seeing the shivering animals, he drew them into a huge kitchen with stone-flagged floors and a roaring wood fire.',
+          'Hams and bundles of dried herbs hung from the rafters; plates of hot buttered toast and steaming bowls of savory stew were brought to the table.',
+          'Mole had never felt so safe, so warm, and so entirely at home.'
+        ]
+      },
+      {
+        id: 'ww-ch5',
+        chapterNumber: 5,
+        title: 'Dulce Domum',
+        wordCount: 940,
+        readTimeMinutes: 5,
+        publishedDate: '1908',
+        authorNote: 'Mole smells his old underground home and weeps for it in the dark.',
+        content: [
+          'Returning from Badger’s home in the twilight, Mole was suddenly struck by a subtle, magical electric current in the air.',
+          'It was the scent of his own little home—Mole End—calling to him across the snowy fields!',
+          'Overcome with homesickness, Mole broke down in the dark and sobbed into his paws.',
+          'Ratty, the truest friend who ever lived, stopped immediately, turned back, and searched through the hedge until they found Mole’s modest little doorway.',
+          'Ratty built a fire, lit the tallow candles, and when field-mouse carollers arrived outside singing Christmas carols in thin sweet voices, Ratty bought hot cider and buns to feast the whole company.'
+        ]
+      },
+      {
+        id: 'ww-ch6',
+        chapterNumber: 6,
+        title: 'Mr. Toad’s Folly',
         wordCount: 880,
         readTimeMinutes: 4,
-        publishedDate: '1911',
-        authorNote: '"Think of the happiest things!"',
+        publishedDate: '1908',
+        authorNote: 'Badger, Rat, and Mole try to save Toad from his obsession.',
         content: [
-          '"You see, Wendy, when the first baby laughed for the first time, its laugh broke into a thousand pieces, and they all went skipping about, and that was the beginning of fairies."',
-          'Wendy was enchanted. "Teach us how to fly!" cried John and Michael, leaping out of bed.',
-          '"You just think lovely wonderful thoughts," Peter explained, blowing fairy dust from Tinker Bell onto their shoulders, "and they lift you up into the air."',
-          'Michael tried first. Over the bed rail he soared, up to the ceiling! John floated gracefully past the wardrobe, and Wendy glided like a swan.',
-          'Peter pulled open the window. Outside lay the blue London night, starry and vast. With a shout of pure joy, they flew out into the starlight, heading second to the right, and straight on until morning.'
+          'Badger declared that the hour had arrived to deal firmly with Toad.',
+          'Toad had smashed seven expensive motor-cars, paid countless fines, and brought shame upon his father’s honored name.',
+          'The three friends placed Toad under house arrest in his own bedroom, taking turns guarding the door.',
+          'Toad feigned illness, tricked Ratty into running for the doctor, climbed out the bedroom window down a water-pipe, and made a dash for freedom.'
+        ]
+      },
+      {
+        id: 'ww-ch7',
+        chapterNumber: 7,
+        title: 'The Piper at the Gates of Dawn',
+        wordCount: 960,
+        readTimeMinutes: 5,
+        publishedDate: '1908',
+        authorNote: 'The transcendent mystical vision of Pan on the river at sunrise.',
+        content: [
+          'Otter’s little son Portly was missing, and the River was silent with grief.',
+          'Rat and Mole rowed through the purple summer night, searching the reeds and willows.',
+          'As the dawn wind stirred, a strange, sweet, unearthly piping music drifted across the water—music so holy and rapturous that tears ran down Ratty’s cheeks.',
+          'They steered into a sunlit backwater island. There, in a clearing of wild roses, stood the Great God Pan himself, horns curved and pipes in hand, holding the sleeping baby otter gently between his hooves.',
+          'Pan touched their foreheads with divine forgetfulness, so that only the peace of the vision remained in their grateful hearts.'
+        ]
+      },
+      {
+        id: 'ww-ch8',
+        chapterNumber: 8,
+        title: 'Toad’s Adventures and Prison Break',
+        wordCount: 900,
+        readTimeMinutes: 5,
+        publishedDate: '1865',
+        authorNote: 'Toad steals a motor-car and is thrown into the deepest dungeon.',
+        content: [
+          'At the Red Lion inn, Toad saw a sleek motor-car left unattended in the courtyard.',
+          'The madness seized him: he jumped into the driver’s seat and tore down the road at sixty miles an hour until the police caught him.',
+          'The judge sentenced him to twenty years in the darkest dungeon of the stoutest castle in all England.',
+          'The gaoler’s kind-hearted daughter took pity on Toad and helped him escape disguised as an old washerwoman in a cotton bonnet and apron.'
+        ]
+      },
+      {
+        id: 'ww-ch9',
+        chapterNumber: 9,
+        title: 'Wayfarers All',
+        wordCount: 870,
+        readTimeMinutes: 4,
+        publishedDate: '1908',
+        authorNote: 'Ratty meets the Sea Rat and hears the siren song of southern ports.',
+        content: [
+          'The autumn wind blew gold leaves across the water, and birds gathered in flocks for migration.',
+          'Ratty met a sun-browned Sea Rat on the road, who told tales of Sicilian harbors, olive groves, and blue Mediterranean waters.',
+          'Ratty fell into a waking trance, packed his knapsack, and was walking out the door toward the sea when Mole grabbed him and wrestled him to the floor.',
+          'Mole gave him a pencil and paper, and Ratty poured his restless yearning into poetry until the fever passed.'
+        ]
+      },
+      {
+        id: 'ww-ch10',
+        chapterNumber: 10,
+        title: 'The Further Adventures of Toad',
+        wordCount: 890,
+        readTimeMinutes: 5,
+        publishedDate: '1908',
+        authorNote: 'Toad outwits a barge-woman, steals a horse, and meets Ratty.',
+        content: [
+          'Still disguised as a washerwoman, Toad was tossed off a canal boat when he failed to wash the barge-woman’s shirts.',
+          'He stole her fat horse, sold it to a gypsy for six shillings and a plate of sausages, and was chased across country by the motor-car owners.',
+          'He plunged into the river and was hauled out by the scruff of his neck by his faithful friend the Water Rat.',
+          '"Bad news, Toad," Ratty said gravely. "Toad Hall has been captured by the Weasels and Stoats of the Wild Wood!"'
+        ]
+      },
+      {
+        id: 'ww-ch11',
+        chapterNumber: 11,
+        title: 'Like Summer Tempests Came His Tears',
+        wordCount: 880,
+        readTimeMinutes: 4,
+        publishedDate: '1908',
+        authorNote: 'Badger reveals the secret underground passage beneath Toad Hall.',
+        content: [
+          'Toad Hall was garrisoned by thirty ferrets and forty stoats armed with blunderbusses and cutlasses.',
+          'Toad wept buckets of tears, but Badger pulled out a secret map.',
+          '"Your late father, Toad, was a wise animal," Badger revealed. "He built a secret underground tunnel leading from the riverbank straight into the butler’s pantry of Toad Hall!"',
+          'The four friends armed themselves with pistols, cutlasses, and stout cudgels for the decisive battle.'
+        ]
+      },
+      {
+        id: 'ww-ch12',
+        chapterNumber: 12,
+        title: 'The Return of Ulysses',
+        wordCount: 930,
+        readTimeMinutes: 5,
+        publishedDate: '1908',
+        authorNote: 'The assault on the banqueting hall and the restoration of peace.',
+        content: [
+          'In the dead of night, while the weasels feasted and sang disrespectful songs about Toad, the pantry door burst open!',
+          'Badger swung his cudgel like a threshing-flail; Mole whirled his sword; Ratty bristled with cutlasses; and Toad leapt into the room with a terrifying war-whoop.',
+          'The terrified weasels squeaked and dived out the windows into the river, while the stoats dropped their weapons and fled into the dark.',
+          'Toad Hall was saved! A grand banquet was given, where Toad—reformed and modest at last—politely poured tea and refused to sing conceited songs about himself.',
+          'In the summer twilights that followed, mother weasels would point out the four great animal friends walking arm-in-arm along the riverbank.'
         ]
       }
     ]
   },
 
   {
-    id: 'wizard-of-oz',
+    id: 'the-wonderful-wizard-of-oz',
     slug: 'the-wonderful-wizard-of-oz',
     title: 'The Wonderful Wizard of Oz',
-    synopsis: 'Swept away from Kansas by a cyclone, young Dorothy and her dog Toto follow the Yellow Brick Road toward the Emerald City, joined by the Scarecrow, the Tin Woodman, and the Cowardly Lion.',
+    synopsis: 'L. Frank Baum’s quintessential American fairy tale. A cyclone sweeps Dorothy and her little dog Toto from the gray prairies of Kansas into the colorful, magical Land of Oz, seeking the Emerald City alongside the Scarecrow, Tin Woodman, and Cowardly Lion.',
     author: 'L. Frank Baum',
     authorRole: 'Classic Public Domain Author',
     coverImage: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&q=80',
-    coverAlt: 'A glowing yellow stone path through emerald green poppy meadows.',
+    coverAlt: 'A glowing golden road winding through an enchanted green forest toward an emerald city.',
     status: 'Completed',
     genre: 'Cozy Fantasy',
-    tags: ['Public Domain', 'Yellow Brick Road', 'Emerald City', 'Magic', 'Adventure'],
-    totalChapters: 3,
+    tags: ['Public Domain', 'Fantasy', 'Yellow Brick Road', 'Friendship', 'Classic'],
+    totalChapters: 12,
     rating: 5,
-    readsCount: 4720,
+    readsCount: 5820,
     isPublicDomain: true,
     chapters: [
       {
         id: 'oz-ch1',
         chapterNumber: 1,
         title: 'The Cyclone',
-        wordCount: 820,
+        wordCount: 840,
         readTimeMinutes: 4,
         publishedDate: '1900',
-        authorNote: 'Dorothy in Kansas before the whirlwind strikes.',
+        authorNote: 'Dorothy’s farmhouse is lifted into the sky by a Kansas tornado.',
         content: [
-          'Dorothy lived in the midst of the great Kansas prairies, with Uncle Henry, who was a farmer, and Aunt Em, who was the farmer\'s wife. Their house was small, for the lumber to build it had to be carried by wagon many miles.',
-          'When Dorothy stood in the doorway and looked around, she could see nothing but the great gray prairie on every side. Not a tree nor a house broke the broad sweep of flat country.',
-          'It was Toto that made Dorothy laugh, and saved her from growing as gray as her other surroundings. Toto was a little black dog, with long silky hair and small black eyes that twinkled merrily.',
-          'Suddenly Uncle Henry stood up from the porch. "There\'s a cyclone coming, Em," he called out. "Run for the cellar!" But before Dorothy could reach the trapdoor, the wind caught the house and whirled it up into the sky like a balloon.'
+          'Dorothy lived in the midst of the great Kansas prairies, with Uncle Henry, who was a farmer, and Aunt Em, who was the farmer’s wife.',
+          'Their house was small, for the lumber to build it had to be carried by wagon many miles. The sun had baked the plowed land into a gray mass, with little cracks running through it; even the grass was not green, for the sun had burned the tops of the long blades, until they were the same gray color to be seen everywhere.',
+          'Suddenly Uncle Henry stood up and looked into the sky: a great whirlwind came shrieking from the north and south at once!',
+          'Dorothy caught Toto in her arms and ran for the trap door. Before she could reach it, the house whirled around two or three times and rose slowly through the air like a balloon.'
         ]
       },
       {
@@ -178,30 +460,365 @@ export const cozyFantasyBooks: Story[] = [
         wordCount: 860,
         readTimeMinutes: 4,
         publishedDate: '1900',
-        authorNote: 'Dorothy steps out into the colorful Land of Oz.',
+        authorNote: 'The house lands in Oz and crushes the Wicked Witch of the East.',
         content: [
-          'The cyclone had set the house down, very gently, in the midst of a country of marvelous beauty. There were lovely patches of greensward all about, with stately trees bearing rich and luscious fruits. Banks of gorgeous flowers were on every hand, and birds with rare and brilliant plumage sang in the bushes.',
-          'While she stood looking eagerly at the strange and beautiful sights, she noticed coming toward her a group of the queerest people she had ever seen.',
-          'They were not as big as the grown folk she had always known, but neither were they very small. In fact, they seemed about as tall as Dorothy, who was a well-grown girl for her age.',
-          'The little old woman among them bowed and said in a sweet voice: "You are welcome, most noble Sorceress, to the land of the Munchkins. We are so grateful to you for having killed the Wicked Witch of the East, and for setting our people free from bondage."'
+          'She was awakened by a shock, so sudden and severe that if Dorothy had not been lying on the soft bed she might have been hurt.',
+          'She opened the door and gave a cry of delightful wonder.',
+          'The cyclone had set the house down very gently in the midst of a country of marvelous beauty. There were lovely patches of greensward all about, with stately trees bearing rich and luscious fruits. Banks of gorgeous flowers were on every hand, and birds with rare and brilliant plumage sang and fluttered in the trees and bushes.',
+          'Four queerly dressed little people in round blue hats approached her, accompanied by the sweet Good Witch of the North.',
+          'The house had landed directly on the Wicked Witch of the East, freeing the Munchkins! Dorothy was presented with the magical Silver Shoes.'
         ]
       },
       {
         id: 'oz-ch3',
         chapterNumber: 3,
-        title: 'The Road Through the Forest',
-        wordCount: 890,
+        title: 'How Dorothy Saved the Scarecrow',
+        wordCount: 880,
         readTimeMinutes: 4,
         publishedDate: '1900',
         authorNote: 'Meeting the Scarecrow on the Yellow Brick Road.',
         content: [
-          'Dorothy put on the silver shoes she had taken from the Wicked Witch, packed a small wicker basket with bread, and whistled to Toto.',
-          '"The road to the City of Emeralds is paved with yellow brick," said the Good Witch of the North, "so you cannot miss it."',
-          'When she had walked several miles, she stopped to rest beside a cornfield. On a tall pole in the field stood a Scarecrow dressed in blue, stuffed with straw, with a painted face.',
-          'As Dorothy gazed at it, one of the eyes slowly and deliberately winked at her!',
-          '"Good day," said the Scarecrow in a rather husky voice.',
+          'Dorothy washed herself carefully, dressed in a clean blue and white gingham dress, and set out along the road of yellow brick.',
+          'Walking past a cornfield, she saw a Scarecrow perched high on a pole to keep birds away.',
+          'One of the eyes winked at her! Dorothy stopped in astonishment. The Scarecrow nodded, and said, "Good day."',
           '"Did you speak?" asked the girl in wonder.',
-          '"Certainly," answered the Scarecrow. "How do you do? I\'m rather tired of being perched up here all day to scare crows. If you will help me down, I should be very glad to walk to the Emerald City with you and ask the Wizard for some brains!"'
+          '"Certainly," answered the Scarecrow. "Would you mind helping me down from this pole?"',
+          'Dorothy unpinned him. "My head is stuffed with straw," he confided mournfully, "so I have no brains at all! Do you think the Great Wizard of Oz would give me brains if I went with you?"',
+          '"I’m sure he would," said Dorothy gladly. "Come along!"'
+        ]
+      },
+      {
+        id: 'oz-ch4',
+        chapterNumber: 4,
+        title: 'The Rescue of the Tin Woodman',
+        wordCount: 890,
+        readTimeMinutes: 5,
+        publishedDate: '1900',
+        authorNote: 'Oiling the rusted woodsman in the deep forest.',
+        content: [
+          'As they walked through the thick forest, a deep groan echoed from behind a great oak tree.',
+          'Dorothy ran forward and found a man made entirely of tin, holding an axe poised in the air, completely rusted and unable to move.',
+          '"Oil-can," whispered the tin jaws faintly.',
+          'Dorothy fetched the oil-can from his cottage, oiled his jaw, his neck, and his arms until he could swing his axe with ease.',
+          '"I have no heart," the Tin Woodman told them, touching his hollow chest. "Once I loved a Munchkin girl, but an enchanted axe chopped off my limbs and the tinsmith replaced them with tin. If the Wizard could give me a heart, I would be the happiest man alive."'
+        ]
+      },
+      {
+        id: 'oz-ch5',
+        chapterNumber: 5,
+        title: 'The Cowardly Lion',
+        wordCount: 870,
+        readTimeMinutes: 4,
+        publishedDate: '1900',
+        authorNote: 'Toto defends Dorothy, and the ferocious beast confesses his fear.',
+        content: [
+          'A terrible roar shook the forest, and a gigantic lion sprang into the road, knocking the Scarecrow spinning with a blow of his paw.',
+          'Toto ran at him barking fiercely.',
+          'The Lion opened his huge mouth to bite the little dog, but Dorothy rushed forward and slapped the Lion on his nose with all her might!',
+          '"Don’t you dare bite Toto!" she scolded angrily. "You ought to be ashamed of yourself, a big beast like you, to bite a poor little dog!"',
+          '"I didn’t bite him," said the Lion, rubbing his nose. "I’m just a coward. Whenever there is danger, my heart begins to beat fast and I want to run away. If the Wizard could give me courage, I would roar like a true King."'
+        ]
+      },
+      {
+        id: 'oz-ch6',
+        chapterNumber: 6,
+        title: 'The Kalidahs and the Chasm',
+        wordCount: 850,
+        readTimeMinutes: 4,
+        publishedDate: '1900',
+        authorNote: 'The friends cross a deep gorge and outwit the ferocious bear-tigers.',
+        content: [
+          'A vast chasm cut across the Yellow Brick Road, too wide to jump and too deep to climb.',
+          'The Scarecrow thought of a plan: the Tin Woodman chopped down a great pine tree that spanned the chasm like a bridge.',
+          'As they crossed, monstrous Kalidahs—beasts with bodies like bears and heads like tigers—roared at their heels.',
+          'The Scarecrow ordered the Woodman to chop through the bridge tree. It crashed into the abyss with a roar, carrying the monsters to their doom.'
+        ]
+      },
+      {
+        id: 'oz-ch7',
+        chapterNumber: 7,
+        title: 'The Deadly Poppy Field',
+        wordCount: 910,
+        readTimeMinutes: 5,
+        publishedDate: '1900',
+        authorNote: 'The crimson flowers induce an enchanted sleep upon living creatures.',
+        content: [
+          'They came upon a vast carpet of scarlet poppies, whose heavy fragrance induced instant, fatal slumber.',
+          'Dorothy and Toto grew dizzy and fell fast asleep among the blossoms. The Cowardly Lion ran with all his might, but collapsed near the far edge of the field.',
+          'Because the Scarecrow and Tin Woodman were not made of flesh, the scent had no effect on them.',
+          'They carried Dorothy and Toto to safety, then rescued the Queen of the Field Mice from a wildcat.',
+          'In gratitude, thousands of field mice were harnessed with strings to a wooden truck, pulling the heavy Lion safely out of the enchanted poppies.'
+        ]
+      },
+      {
+        id: 'oz-ch8',
+        chapterNumber: 8,
+        title: 'The Guardian of the Gate',
+        wordCount: 860,
+        readTimeMinutes: 4,
+        publishedDate: '1900',
+        authorNote: 'Putting on green spectacles to enter the Emerald City.',
+        content: [
+          'The green glow in the sky grew brighter, and at last they stood before the glittering emerald walls of the great capital.',
+          'The Guardian of the Gate locked green spectacles onto their faces with a little golden key.',
+          '"If you did not wear spectacles, the brightness and glory of the Emerald City would blind you," he explained.',
+          'Even the sky seemed tinted with green, and the sun’s rays were green as emeralds as they walked into the dazzling streets.'
+        ]
+      },
+      {
+        id: 'oz-ch9',
+        chapterNumber: 9,
+        title: 'The Wonderful City of Oz',
+        wordCount: 890,
+        readTimeMinutes: 5,
+        publishedDate: '1900',
+        authorNote: 'Audience with the Great and Terrible Oz in his throne room.',
+        content: [
+          'The throne room was lined with large emeralds. In the center sat the Wizard, appearing to Dorothy as an enormous Head without a body.',
+          '"I am Oz, the Great and Terrible," boomed the voice. "Who are you, and why do you seek me?"',
+          'Dorothy asked to be sent home to Kansas.',
+          '"I will grant your wish on one condition," said the Head. "You must destroy the Wicked Witch of the West, who tyrannizes the country of the Winkies!"',
+          'The four friends left the palace heavy-hearted, for they knew not how to conquer an evil sorceress.'
+        ]
+      },
+      {
+        id: 'oz-ch10',
+        chapterNumber: 10,
+        title: 'The Winged Monkeys and the Golden Cap',
+        wordCount: 880,
+        readTimeMinutes: 4,
+        publishedDate: '1900',
+        authorNote: 'The Wicked Witch sends her enchanted flying primates.',
+        content: [
+          'The Wicked Witch of the West had one eye, but it was as powerful as a telescope.',
+          'She summoned the Winged Monkeys with the Golden Cap. They flew down like a storm, tearing the Scarecrow’s straw out and dropping the Tin Woodman onto sharp rocks.',
+          'Because Dorothy wore the Silver Shoes and the Good Witch’s mark upon her forehead, the Monkeys could not harm her.',
+          'They carried her and Toto to the Witch’s castle, where she was set to scrub pots and clean the kitchen.'
+        ]
+      },
+      {
+        id: 'oz-ch11',
+        chapterNumber: 11,
+        title: 'The Bucket of Water',
+        wordCount: 870,
+        readTimeMinutes: 4,
+        publishedDate: '1900',
+        authorNote: 'The Wicked Witch melts away forever.',
+        content: [
+          'The Witch tricked Dorothy into tripping so she could steal one of the Silver Shoes.',
+          'Dorothy was so furious at this cruelty that she seized a bucket of water that stood near and threw it over the Witch from head to foot.',
+          'The Witch gave a loud shriek of terror: "See what you’ve done!" she screamed. "In a minute I shall melt away!"',
+          '"Didn’t you know water would be the end of me?"',
+          'The evil old woman melted down before Dorothy’s eyes like brown sugar, leaving only the Silver Shoe and a shapeless wet puddle on the stone floor.',
+          'The friendly Winkie tinsmiths repaired the Tin Woodman and restuffed the Scarecrow with clean straw.'
+        ]
+      },
+      {
+        id: 'oz-ch12',
+        chapterNumber: 12,
+        title: 'There is No Place Like Home',
+        wordCount: 920,
+        readTimeMinutes: 5,
+        publishedDate: '1900',
+        authorNote: 'Clicking the silver heels and returning to Kansas.',
+        content: [
+          'Back in the Emerald City, Toto tipped over a screen, revealing that the great Wizard was merely a little bald-headed humbug from Omaha!',
+          'Yet the humbug gave the Scarecrow brains of bran and needles, the Woodman a heart of silk and sawdust, and the Lion a potion of courage.',
+          'Glinda, the Good Witch of the South, revealed the final secret to Dorothy:',
+          '"Your Silver Shoes have the power to carry you across any desert in three steps. Knock the heels together three times and say where you wish to go."',
+          'Dorothy hugged her three faithful friends with tears of love, clapped her heels together, and cried: "Take me home to Aunt Em!"',
+          'In a flash she was rolling over the green prairie grass, right into Aunt Em’s loving arms in front of the new Kansas farmhouse.'
+        ]
+      }
+    ]
+  },
+
+  {
+    id: 'peter-pan',
+    slug: 'peter-and-wendy',
+    title: 'Peter and Wendy',
+    synopsis: 'J.M. Barrie’s timeless myth of eternal youth, fairies, and pirates. Peter Pan flies through the Darling nursery window and whisks Wendy, John, and Michael away to the magical shores of Neverland.',
+    author: 'J.M. Barrie',
+    authorRole: 'Classic Public Domain Author',
+    coverImage: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=800&q=80',
+    coverAlt: 'A starry night sky with fairy dust twinkling over ocean waves.',
+    status: 'Completed',
+    genre: 'Cozy Fantasy',
+    tags: ['Public Domain', 'Neverland', 'Fairies', 'Adventure', 'Classic'],
+    totalChapters: 11,
+    rating: 5,
+    readsCount: 5290,
+    isPublicDomain: true,
+    chapters: [
+      {
+        id: 'pp-ch1',
+        chapterNumber: 1,
+        title: 'Peter Breaks Through',
+        wordCount: 850,
+        readTimeMinutes: 4,
+        publishedDate: '1911',
+        authorNote: 'All children, except one, grow up.',
+        content: [
+          'All children, except one, grow up. They soon know that they will grow up, and the way Wendy knew was this. One day when she was two years old she was playing in a garden, and she plucked another flower and ran with it to her mother.',
+          'Mrs. Darling put her hand to her heart and cried, "Oh, why can’t you remain like this for ever!" That was all that passed between them on the subject, but henceforth Wendy knew that she must grow up.',
+          'You always know after you are two. Two is the beginning of the end.',
+          'In the night nursery of the Darling house, Nana the Newfoundland dog watched over the children with spotless nursery tidiness.'
+        ]
+      },
+      {
+        id: 'pp-ch2',
+        chapterNumber: 2,
+        title: 'The Shadow',
+        wordCount: 830,
+        readTimeMinutes: 4,
+        publishedDate: '1911',
+        authorNote: 'Mrs. Darling rolls up Peter’s shadow and locks it in the drawer.',
+        content: [
+          'Mrs. Darling found Peter’s shadow lying on the nursery floor when Nana snapped at the flying boy as he leapt out the window.',
+          'She rolled it up like a dark silk stocking and put it away neatly in the drawer.',
+          'On a Friday night, while Mr. and Mrs. Darling were away at a dinner party, the nursery window flew open and a tiny golden light entered: Tinker Bell, the fairy.',
+          'Behind her leapt Peter Pan, weeping bitter tears because his shadow wouldn’t stick to his heels with bathroom soap.'
+        ]
+      },
+      {
+        id: 'pp-ch3',
+        chapterNumber: 3,
+        title: 'Come Away, Come Away!',
+        wordCount: 870,
+        readTimeMinutes: 4,
+        publishedDate: '1911',
+        authorNote: 'Wendy sews on Peter’s shadow, and he teaches them to fly.',
+        content: [
+          'Wendy woke and saw him weeping. She fetched her sewing basket and stitched his shadow neatly to his boots.',
+          'Peter crowed with joy. "Wendy, one girl is more use than twenty boys!" he declared.',
+          'He begged her to come to Neverland to tell stories to the Lost Boys and mend their pockets.',
+          'He blew fairy dust over Wendy, John, and Michael. "Think lovely thoughts!" he commanded.',
+          'Up into the air they floated, skimming around the ceiling like swallows, and out the open window into the starry London night: "Second to the right, and then straight on till morning!"'
+        ]
+      },
+      {
+        id: 'pp-ch4',
+        chapterNumber: 4,
+        title: 'The Flight to Neverland',
+        wordCount: 860,
+        readTimeMinutes: 4,
+        publishedDate: '1911',
+        authorNote: 'Flying across oceans and clouds to the magical island.',
+        content: [
+          'They flew for days over purple seas and coral reefs, sleeping in the air when Peter was there to catch them.',
+          'At last Neverland appeared below them like a map come alive: smoking pirate ships in the lagoon, red men around their campfires, and caves under ancient oak trees.',
+          'Tinker Bell, jealous of Wendy, flew ahead and tricked the Lost Boy Tootles into shooting an arrow at the "great white Wendy-bird."',
+          'Wendy fell to earth, but the arrow struck the acorn button Peter had given her, saving her life.'
+        ]
+      },
+      {
+        id: 'pp-ch5',
+        chapterNumber: 5,
+        title: 'The Island Come True',
+        wordCount: 840,
+        readTimeMinutes: 4,
+        publishedDate: '1911',
+        authorNote: 'The Lost Boys build the Little House for Wendy.',
+        content: [
+          'The Lost Boys—Slightly, Nibs, Tootles, Curly, and the Twins—gathered around Wendy with sorrow and awe.',
+          'Peter ordered them to build a house around her where she lay.',
+          'They made walls of branches, a roof of moss, and red chimney pots from John’s top hat.',
+          'When Wendy opened the little green front door, the Lost Boys fell to their knees: "Oh Wendy lady, be our mother!"'
+        ]
+      },
+      {
+        id: 'pp-ch6',
+        chapterNumber: 6,
+        title: 'The Home Under the Ground',
+        wordCount: 880,
+        readTimeMinutes: 4,
+        publishedDate: '1911',
+        authorNote: 'Daily domestic life inside the hollow-tree haven.',
+        content: [
+          'The home under the ground was entered through hollow tree trunks, hollowed out to fit each boy’s measurements.',
+          'There was a great fireplace where Tink had a little private bedroom the size of a birdcage, hung with peach blossoms.',
+          'Wendy cooked invisible meals, darned endless wool socks, and told bedtime stories every evening by the fire.',
+          'Peter was the father, coming home with tales of battles against pirates and redskins.'
+        ]
+      },
+      {
+        id: 'pp-ch7',
+        chapterNumber: 7,
+        title: 'The Mermaids’ Lagoon',
+        wordCount: 910,
+        readTimeMinutes: 5,
+        publishedDate: '1911',
+        authorNote: 'The battle at Marooners’ Rock and the rescue of Tiger Lily.',
+        content: [
+          'In the lagoon, mermaids combed their golden hair on the rocks in the summer heat.',
+          'Peter imitated Captain Hook’s voice from the mist, tricking the pirate boat into releasing Tiger Lily, the Indian princess.',
+          'Hook swam to the rock, and a fierce duel with iron hook and dagger ensued.',
+          'The tide rose, threatening to drown the marooned Peter. He stood on the rock watching the dark water creep to his feet, smiling his brave, carefree smile:',
+          '"To die will be an awfully big adventure."'
+        ]
+      },
+      {
+        id: 'pp-ch8',
+        chapterNumber: 8,
+        title: 'The Never Bird',
+        wordCount: 830,
+        readTimeMinutes: 4,
+        publishedDate: '1911',
+        authorNote: 'A brave mother bird lends Peter her floating nest.',
+        content: [
+          'Just as the water reached Peter’s neck, a large Never bird floated by, sitting proudly on her eggs in a watertight nest.',
+          'She pushed the nest toward Peter with her wings.',
+          'Peter scrambled into the nest, stuck Wendy’s staved-in hat on as a sail, and sailed safely across the lagoon back to the shore.'
+        ]
+      },
+      {
+        id: 'pp-ch9',
+        chapterNumber: 9,
+        title: 'The Children Are Carried Off',
+        wordCount: 890,
+        readTimeMinutes: 5,
+        publishedDate: '1911',
+        authorNote: 'Hook ambushes the camp and captures Wendy and the boys.',
+        content: [
+          'Wendy decided it was time to take John and Michael home to London.',
+          'As the children stepped out of the hollow trees, Captain Hook and his buccaneers leapt from the shadows, gagging the boys and chaining them.',
+          'Hook crept down Peter’s tree while he slept and poured five drops of deadly poison into Peter’s medicine glass.',
+          'Tinker Bell flew in, drank the poison to save Peter, and her light began to flicker and die.',
+          'Peter turned to all the dreaming children of the world: "If you believe in fairies, clap your hands! Don’t let Tink die!" A wave of clapping roared across the world, and Tink’s light blazed brilliant and bright.'
+        ]
+      },
+      {
+        id: 'pp-ch10',
+        chapterNumber: 10,
+        title: 'The Pirate Ship and the Plank',
+        wordCount: 920,
+        readTimeMinutes: 5,
+        publishedDate: '1911',
+        authorNote: 'Peter boards the Jolly Roger and confronts Captain Hook.',
+        content: [
+          'On the deck of the Jolly Roger, Hook prepared to make the boys walk the plank.',
+          'Suddenly, from the water below, came a sound that made Hook’s blood run cold: "Tick-tick-tick-tick!"',
+          'It was Peter Pan, imitating the crocodile!',
+          'Peter leapt aboard, cut the boys’ ropes, and faced the pirate captain with his glittering rapier.',
+          'Hook fought like a demon, but Peter’s youth and speed drove him to the ship’s rail.',
+          'Below, the crocodile waited with jaws wide open. Hook stepped off the bulwarks into the sea, right into the jaws of his fate.'
+        ]
+      },
+      {
+        id: 'pp-ch11',
+        chapterNumber: 11,
+        title: 'The Open Window and the Nursery',
+        wordCount: 940,
+        readTimeMinutes: 5,
+        publishedDate: '1911',
+        authorNote: 'Wendy, John, and Michael fly home into their mother’s arms.',
+        content: [
+          'Peter sailed the Jolly Roger back to London.',
+          'In the nursery, Mrs. Darling sat by the open window, her eyes wet with tears, playing the piano softly.',
+          'Three little figures flew through the window and crept into their beds under the sheets.',
+          'When Mrs. Darling turned, she thought it was another dream—until three pairs of arms wrapped around her neck, shouting with joy!',
+          'The Lost Boys were all adopted into the Darling family.',
+          'Only Peter flew back to Neverland, crowned with leaves, playing his pan-pipes forever in the golden land of eternal youth.'
         ]
       }
     ]
@@ -211,481 +828,217 @@ export const cozyFantasyBooks: Story[] = [
     id: 'grimms-fairy-tales',
     slug: 'grimms-fairy-tales',
     title: "Grimm's Fairy Tales",
-    synopsis: 'The foundational folklore of enchanted forests, speaking animals, glass slippers, and golden keys collected by the Brothers Grimm across the German woodlands.',
+    synopsis: 'Jacob and Wilhelm Grimm’s foundational treasury of folklore and wonder. Enchanted forests, talking beasts, golden geese, and resilient heroes in twelve of the most beloved traditional European tales.',
     author: 'Jacob & Wilhelm Grimm',
-    authorRole: 'Classic Public Domain Author',
+    authorRole: 'Classic Public Domain Authors',
     coverImage: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&q=80',
-    coverAlt: 'A moss-covered enchanted forest path with sunbeams through pine branches.',
+    coverAlt: 'An enchanted fairy tale cottage surrounded by glowing lantern-lit woodland trees.',
     status: 'Completed',
     genre: 'Cozy Fantasy',
-    tags: ['Public Domain', 'Folklore', 'Enchanted Forest', 'Fairy Tales', 'Classic'],
-    totalChapters: 3,
+    tags: ['Public Domain', 'Fairy Tales', 'Folklore', 'Enchanted Forest', 'Classic'],
+    totalChapters: 12,
     rating: 5,
-    readsCount: 5890,
+    readsCount: 5610,
     isPublicDomain: true,
     chapters: [
-      {
-        id: 'grimm-ch1',
-        chapterNumber: 1,
-        title: 'The Frog Prince',
-        wordCount: 810,
-        readTimeMinutes: 4,
-        publishedDate: '1812',
-        authorNote: 'The golden ball and the well in the cool forest.',
-        content: [
-          'In olden times when wishing still helped one, there lived a king whose daughters were all beautiful; and the youngest was so beautiful that the sun itself, which has seen so much, was astonished whenever it shone in her face.',
-          'Close by the king’s castle lay a great dark forest, and under an old lime-tree in the forest was a well, and when the day was very warm, the king’s child went out into the forest and sat down by the side of the cool fountain.',
-          'And when she was bored she took a golden ball, and threw it up on high and caught it; and this ball was her favorite plaything.',
-          'Now it so happened on one occasion that the princess’s golden ball did not fall into the little hand which she was holding up for it, but on to the ground beyond, and rolled straight into the water. Deep down went the ball, and the princess wept aloud.'
-        ]
-      },
-      {
-        id: 'grimm-ch2',
-        chapterNumber: 2,
-        title: 'Rapunzel',
-        wordCount: 850,
-        readTimeMinutes: 4,
-        publishedDate: '1812',
-        authorNote: 'The tower in the hidden forest.',
-        content: [
-          'There were once a man and a woman who had long in vain wished for a child. At the back of their house was a little window which looked into a splendid garden which was full of the most beautiful flowers and herbs.',
-          'It was, however, surrounded by a high wall, and no one dared to go into it because it belonged to an enchantress, who had great power and was dreaded by all the world.',
-          'When the child was born, the enchantress took her away and named her Rapunzel. When she was twelve years old, she shut her into a tower which lay in a forest, and had neither stairs nor door, but quite at the top was a little window.',
-          'When the enchantress wanted to go in, she placed herself beneath it and cried: "Rapunzel, Rapunzel, let down your hair to me!" Rapunzel had magnificent long hair, fine as spun gold, and when she let it down from the window, the enchantress climbed up.'
-        ]
-      },
-      {
-        id: 'grimm-ch3',
-        chapterNumber: 3,
-        title: 'Hansel and Gretel',
-        wordCount: 880,
-        readTimeMinutes: 4,
-        publishedDate: '1812',
-        authorNote: 'White pebbles under the moonlight.',
-        content: [
-          'Hard by a great forest dwelt a poor wood-cutter with his wife and his two children. The boy was called Hansel and the girl Gretel.',
-          'When famine gripped the land, the stepmother persuaded the wood-cutter to lead the children deep into the woods. But Hansel had slipped outside in the moonlight and filled his pockets with smooth white pebbles.',
-          'As they walked into the forest, Hansel kept looking back and dropping a white pebble on the path. When the moon rose, the little white pebbles shone like newly minted silver coins, guiding the brother and sister safely back home.'
-        ]
-      }
+      { id: 'gft-ch1', chapterNumber: 1, title: 'The Golden Goose', wordCount: 830, readTimeMinutes: 4, publishedDate: '1812', content: ['Simpleton shared his dry ash-cake with an old gray dwarf in the forest, and was rewarded with a goose with feathers of pure gold. Everyone who tried to pluck a feather got stuck fast to the goose and each other, creating a hilarious parade that made the princess laugh for the first time in her life.'] },
+      { id: 'gft-ch2', chapterNumber: 2, title: 'The Elves and the Shoemaker', wordCount: 820, readTimeMinutes: 4, publishedDate: '1812', content: ['An honest shoemaker down to his last scrap of leather awoke to find exquisitely stitched shoes on his workbench. Little naked elves had secretly worked by moonlight, and when the shoemaker and his wife made them little coats and shoes of warm wool, the elves danced away in delight.'] },
+      { id: 'gft-ch3', chapterNumber: 3, title: 'The Bremen Town Musicians', wordCount: 850, readTimeMinutes: 4, publishedDate: '1812', content: ['An aging donkey, hound, cat, and rooster ran away from their masters to become musicians in Bremen. Finding a robber’s cottage in the dark woods, they climbed upon each other’s backs and let out an unearthly musical bray, hiss, and crow that sent the thieves fleeing in terror.'] },
+      { id: 'gft-ch4', chapterNumber: 4, title: 'Hansel and Gretel', wordCount: 870, readTimeMinutes: 4, publishedDate: '1812', content: ['Left in the great forest, the clever siblings followed a trail of white pebbles shining in the moonlight. Later, guided by a snow-white bird, they discovered a cottage made of gingerbread, sugar windows, and cake roof.'] },
+      { id: 'gft-ch5', chapterNumber: 5, title: 'Rapunzel', wordCount: 840, readTimeMinutes: 4, publishedDate: '1812', content: ['In a high stone tower in the forest without stairs or door, Rapunzel let down her golden hair like twenty yards of spun silk when the voice called: "Rapunzel, Rapunzel, let down your hair to me!"'] },
+      { id: 'gft-ch6', chapterNumber: 6, title: 'Snow White and the Seven Dwarfs', wordCount: 890, readTimeMinutes: 5, publishedDate: '1812', content: ['Over the seven hills lived seven dwarfs who mined copper and gold in the mountains. Snow White kept their little cottage spotless, while the Magic Mirror on the wall continually declared her the fairest in all the land.'] },
+      { id: 'gft-ch7', chapterNumber: 7, title: 'The Frog Prince', wordCount: 810, readTimeMinutes: 4, publishedDate: '1812', content: ['When the king’s youngest daughter dropped her golden ball into the deep forest well, a frog offered to retrieve it on condition that she allow him to sit beside her plate and sleep on her silk pillow.'] },
+      { id: 'gft-ch8', chapterNumber: 8, title: 'Rumpelstiltskin', wordCount: 850, readTimeMinutes: 4, publishedDate: '1812', content: ['A little man danced around a midnight fire singing: "Today I bake, tomorrow I brew, the next day I bring the queen’s child away; for no one knows my name is Rumpelstiltskin!"'] },
+      { id: 'gft-ch9', chapterNumber: 9, title: 'The Fisherman and His Wife', wordCount: 860, readTimeMinutes: 4, publishedDate: '1812', content: ['The golden flounder granted every wish of the greedy wife from a pig-sty to a stone castle, to a palace, until she demanded to command the sun and moon, and found herself back in her old dirty hovel.'] },
+      { id: 'gft-ch10', chapterNumber: 10, title: 'Sleeping Beauty (Briar Rose)', wordCount: 840, readTimeMinutes: 4, publishedDate: '1812', content: ['For a hundred years the palace slept under a dense wall of blooming wild roses, until the destined prince arrived and the thorns turned into fragrant petals that parted of their own accord.'] },
+      { id: 'gft-ch11', chapterNumber: 11, title: 'Cinderella (Aschenputtel)', wordCount: 880, readTimeMinutes: 4, publishedDate: '1812', content: ['Cinderella planted a hazel twig on her mother’s grave and watered it with her tears. A white bird nested in the tree and dropped down dresses of silver and gold and silk slippers for the three-day ball.'] },
+      { id: 'gft-ch12', chapterNumber: 12, title: 'The Twelve Dancing Princesses', wordCount: 860, readTimeMinutes: 4, publishedDate: '1812', content: ['Every morning the twelve princesses’ satin slippers were found worn into holes from dancing all night in a subterranean castle of diamond, silver, and gold trees across an enchanted lake.'] }
     ]
   },
 
   {
-    id: 'andersen-fairy-tales',
-    slug: 'hans-christian-andersen-tales',
-    title: "Andersen's Fairy Tales",
-    synopsis: 'The lyrical Danish masterworks of poetic wonder, longing, and warmth, including The Nightingale, The Princess and the Pea, and Thumbelina.',
-    author: 'Hans Christian Andersen',
-    authorRole: 'Classic Public Domain Author',
-    coverImage: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&q=80',
-    coverAlt: 'A tiny delicate flower blossom with dew drops under warm morning sunshine.',
-    status: 'Completed',
-    genre: 'Cozy Fantasy',
-    tags: ['Public Domain', 'Danish Lore', 'Nightingale', 'Wonder', 'Poetic'],
-    totalChapters: 2,
-    rating: 5,
-    readsCount: 4980,
-    isPublicDomain: true,
-    chapters: [
-      {
-        id: 'hca-ch1',
-        chapterNumber: 1,
-        title: 'The Princess and the Pea',
-        wordCount: 740,
-        readTimeMinutes: 4,
-        publishedDate: '1835',
-        authorNote: 'A rainy night and twenty mattresses.',
-        content: [
-          'Once upon a time there was a prince who wanted to marry a princess; but she would have to be a real princess. He travelled all over the world to find one, but nowhere could he get what he wanted.',
-          'One evening a terrible storm came on; there was thunder and lightning, and the rain poured down in torrents. Suddenly a knocking was heard at the city gate, and the old king went to open it.',
-          'It was a princess standing out there in front of the gate. But, good gracious! What a sight the rain and the wind had made her look. The water ran down from her hair and clothes; into the toes of her shoes and out again at the heels. And yet she said that she was a real princess.',
-          '"Well, we\'ll soon find that out," thought the old queen. But she said nothing, went into the bed-room, took all the bedding off the bedstead, and laid a pea on the bottom; then she took twenty mattresses and laid them on the pea, and then twenty eider-down beds on top of the mattresses.'
-        ]
-      },
-      {
-        id: 'hca-ch2',
-        chapterNumber: 2,
-        title: 'The Nightingale',
-        wordCount: 840,
-        readTimeMinutes: 4,
-        publishedDate: '1843',
-        authorNote: 'The wild bird that sang for the Emperor of China.',
-        content: [
-          'In China, you must know, the Emperor is a Chinaman, and all who he has about him are Chinamen too. It happened a good many years ago, but that’s just why it’s worthwhile to hear the story.',
-          'The Emperor’s palace was the most splendid in the world; it was made entirely of porcelain, very costly, but so delicate and brittle that one had to be terribly careful.',
-          'In the garden were to be seen the most wonderful flowers, and to the costliest of them silver bells were tied, which sounded, so that nobody should pass by without noticing the flowers.',
-          'Close by the garden lay a great forest with noble trees and deep lakes. In one of these trees lived a nightingale, which sang so deliciously that even the poor fisherman, who had plenty of other things to do, stopped to listen when he was out at night drawing his nets.'
-        ]
-      }
-    ]
-  },
-
-  {
-    id: 'blue-fairy-book',
+    id: 'the-blue-fairy-book',
     slug: 'the-blue-fairy-book',
     title: 'The Blue Fairy Book',
-    synopsis: 'Andrew Lang’s legendary Victorian treasury of European folk tales, from Beauty and the Beast to Cinderella and Sleeping Beauty in the Wood.',
+    synopsis: 'Andrew Lang’s world-renowned Victorian anthology of classic fairy tales. Featuring timeless renditions of Beauty and the Beast, Aladdin, Cinderella, and magical world lore in twelve wondrous chapters.',
     author: 'Andrew Lang',
     authorRole: 'Classic Public Domain Author',
-    coverImage: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&q=80',
-    coverAlt: 'An antique blue leather book cover with gold embossed filigree.',
+    coverImage: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=800&q=80',
+    coverAlt: 'An ornate blue vintage cloth-bound fairy tale book.',
     status: 'Completed',
     genre: 'Cozy Fantasy',
-    tags: ['Public Domain', 'Andrew Lang', 'Beauty and the Beast', 'Treasury', 'Fairy Tales'],
-    totalChapters: 2,
+    tags: ['Public Domain', 'Fairy Tales', 'Mythology', 'Victorian', 'Classic'],
+    totalChapters: 12,
     rating: 5,
-    readsCount: 4210,
+    readsCount: 4910,
     isPublicDomain: true,
     chapters: [
-      {
-        id: 'bfb-ch1',
-        chapterNumber: 1,
-        title: 'Beauty and the Beast',
-        wordCount: 820,
-        readTimeMinutes: 4,
-        publishedDate: '1889',
-        authorNote: 'The merchant seeks a rose in the enchanted palace.',
-        content: [
-          'Once upon a time, in a very far-off country, there lived a merchant who had been so rich that he could have bought the whole city he lived in. But he met with great reverses, and had to retire to a little country cottage with his three daughters.',
-          'The youngest daughter was so pretty that she was always called Beauty. She was as sweet-tempered as she was lovely, and while her sisters grumbled at their poverty, Beauty rose at four in the morning to tidy the house and cook the meals.',
-          'When the merchant set out on a journey to the port, he asked each daughter what present he should bring her. The elder sisters asked for jewels and satin gowns, but Beauty said: "Dear father, bring me a rose, for none grow here in our garden."',
-          'On his return, caught in a winter blizzard, the merchant stumbled upon a magnificent palace whose doors stood open. In the courtyard, untouched by snow, bloomed a hedge of exquisite red roses.'
-        ]
-      },
-      {
-        id: 'bfb-ch2',
-        chapterNumber: 2,
-        title: 'The Sleeping Beauty in the Wood',
-        wordCount: 850,
-        readTimeMinutes: 4,
-        publishedDate: '1889',
-        authorNote: 'The castle asleep under hundred-year briars.',
-        content: [
-          'There were once a King and Queen who had a little daughter. At her christening, seven fairies were invited to bestow gifts upon her: beauty, wit, grace, a voice like a nightingale, and mastery of all arts.',
-          'When the evil fairy came uninvited and cursed the princess to prick her finger on a spindle and die, the seventh fairy softened the curse: she would not die, but fall into a profound sleep of a hundred years.',
-          'And around the palace grew up a hedge of briars, hawthorn, and intertwining brambles, so dense that neither beast nor man could pass through, guarding the quiet sleepers until the appointed prince arrived.'
-        ]
-      }
+      { id: 'bfb-ch1', chapterNumber: 1, title: 'Beauty and the Beast', wordCount: 880, readTimeMinutes: 4, publishedDate: '1889', content: ['Beauty asked her father only for a single red rose, which led him into the Beast’s palace. Beauty’s gentleness discovered the noble, wounded prince beneath the terrifying exterior.'] },
+      { id: 'bfb-ch2', chapterNumber: 2, title: 'The Bronze Ring', wordCount: 850, readTimeMinutes: 4, publishedDate: '1889', content: ['A magical bronze ring, guarded by a faithful dog and cat, grants every wish to the humble gardener’s son in the royal palace.'] },
+      { id: 'bfb-ch3', chapterNumber: 3, title: 'The Princess on the Glass Hill', wordCount: 840, readTimeMinutes: 4, publishedDate: '1889', content: ['Boots, the youngest son whom everyone despised as an ash-sitter, caught three magical horses of copper, silver, and gold, and rode straight up the glass mountain to catch the golden apples.'] },
+      { id: 'bfb-ch4', chapterNumber: 4, title: 'East of the Sun and West of the Moon', wordCount: 890, readTimeMinutes: 5, publishedDate: '1889', content: ['A peasant girl rode on the back of a great white bear to an enchanted palace, journeying to the ends of the earth with the Four Winds to free the prince from the troll hag.'] },
+      { id: 'bfb-ch5', chapterNumber: 5, title: 'The Master Cat; or, Puss in Boots', wordCount: 830, readTimeMinutes: 4, publishedDate: '1889', content: ['Armed with a pair of boots and a bag, the clever cat made his master the Marquis of Carabas, outwitting the fierce ogre by tricking him into turning into a mouse.'] },
+      { id: 'bfb-ch6', chapterNumber: 6, title: 'Aladdin and the Wonderful Lamp', wordCount: 910, readTimeMinutes: 5, publishedDate: '1889', content: ['In the subterranean garden of jewel-bearing trees, Aladdin retrieved the brass oil lamp containing the colossal Genie of the Earth.'] },
+      { id: 'bfb-ch7', chapterNumber: 7, title: 'The White Cat', wordCount: 860, readTimeMinutes: 4, publishedDate: '1889', content: ['The youngest prince found a palace populated entirely by cats dressed in armor, where the lovely White Queen ruled in enchanted grace.'] },
+      { id: 'bfb-ch8', chapterNumber: 8, title: 'The Goose-Girl', wordCount: 840, readTimeMinutes: 4, publishedDate: '1889', content: ['The true princess was forced by her wicked maid to herd geese, accompanied by the faithful talking horse Falada who spoke the truth from the city gate.'] },
+      { id: 'bfb-ch9', chapterNumber: 9, title: 'Prince Darling', wordCount: 830, readTimeMinutes: 4, publishedDate: '1889', content: ['A fairy presented Prince Darling with a magical ring that pricked his finger whenever he had an unjust or selfish thought.'] },
+      { id: 'bfb-ch10', chapterNumber: 10, title: 'The History of Whittington', wordCount: 850, readTimeMinutes: 4, publishedDate: '1889', content: ['Poor Dick Whittington listened to the bells of Bow Church ring out: "Turn again, Whittington, thrice Lord Mayor of London!" while his faithful mousing cat made his fortune abroad.'] },
+      { id: 'bfb-ch11', chapterNumber: 11, title: 'The Yellow Dwarf', wordCount: 870, readTimeMinutes: 4, publishedDate: '1889', content: ['The courageous quest of the Mermaid and the King of the Gold Mines against the sorcery of the Yellow Dwarf.'] },
+      { id: 'bfb-ch12', chapterNumber: 12, title: 'The Red Etin', wordCount: 820, readTimeMinutes: 4, publishedDate: '1889', content: ['A Scottish tale of three brothers, a singing bird, and solving the riddles of the three-headed giant Red Etin.'] }
     ]
   },
 
   {
-    id: 'princess-and-the-goblin',
+    id: 'the-princess-and-the-goblin',
     slug: 'the-princess-and-the-goblin',
     title: 'The Princess and the Goblin',
-    synopsis: 'Princess Irene lives in a mountain castle, while deep in the subterranean mines beneath, the cunning goblins plot. A tale of golden threads and brave miner boys.',
+    synopsis: 'George MacDonald’s wondrous fairy-tale romance. Eight-year-old Princess Irene discovers a mysterious Great-Great-Grandmother spinning invisible thread in a hidden tower, while the brave miner boy Curdie battles goblin conspiracies beneath the mountain.',
     author: 'George MacDonald',
     authorRole: 'Classic Public Domain Author',
     coverImage: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&q=80',
-    coverAlt: 'A stone tower staircase illuminated by a magical spinning wheel.',
+    coverAlt: 'A spinning wheel glowing with silvery thread in a hidden tower.',
     status: 'Completed',
     genre: 'Cozy Fantasy',
-    tags: ['Public Domain', 'Mountain Castle', 'Goblins', 'Magic Thread', 'Classic'],
-    totalChapters: 2,
-    rating: 5,
-    readsCount: 3840,
-    isPublicDomain: true,
-    chapters: [
-      {
-        id: 'pag-ch1',
-        chapterNumber: 1,
-        title: 'The Princess and the Mountain',
-        wordCount: 810,
-        readTimeMinutes: 4,
-        publishedDate: '1872',
-        authorNote: 'Princess Irene in her high mountain farmhouse castle.',
-        content: [
-          'There was once a little princess whose father was king over a great country full of mountains and valleys. His palace was built upon one of the mountains, and was very grand and beautiful.',
-          'The princess, whose name was Irene, was born there. But because her mother was not very strong, the king had sent Irene down to a large, rambling house, half castle and half farmhouse, on the mountain slopes.',
-          'It was a wonderful place. The windows looked out over orchards of cherry trees and deep gorges where waterfalls tumbled. But there was one danger on the mountain: deep inside the hollow subterranean caverns lived the goblins, who only ventured out when the sun had set.'
-        ]
-      },
-      {
-        id: 'pag-ch2',
-        chapterNumber: 2,
-        title: 'The Great-Grandmother\'s Room',
-        wordCount: 840,
-        readTimeMinutes: 4,
-        publishedDate: '1872',
-        authorNote: 'Irene discovers the old lady spinning golden threads in the attic.',
-        content: [
-          'One rainy afternoon, Irene got tired of her nursery toys. She wandered out into the corridors, found a strange winding stone staircase, and climbed all the way to the top of the tower.',
-          'At the end of the passage was an oak door. She pushed it open, and there sat a beautiful old lady with hair as white as snow, spinning on a little wheel that hummed like a beehive.',
-          '"Come in, little Irene," said the lady with a voice like a silver bell. "I have been waiting for you."',
-          '"Who are you?" asked Irene in awe.',
-          '"I am your great-great-grandmother," smiled the lady. "And I am spinning a thread of invisible spider-silk and gold that will always lead you home whenever you are in trouble."'
-        ]
-      }
-    ]
-  },
-
-  {
-    id: 'a-christmas-carol',
-    slug: 'a-christmas-carol',
-    title: 'A Christmas Carol',
-    synopsis: 'On a freezing Christmas Eve in foggy London, the miserly Ebenezer Scrooge is visited by four specters who teach him the true warmth of human kindness and generosity.',
-    author: 'Charles Dickens',
-    authorRole: 'Classic Public Domain Author',
-    coverImage: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=800&q=80',
-    coverAlt: 'A cozy Victorian hearth with glowing embers, holly leaves, and candle.',
-    status: 'Completed',
-    genre: 'Cozy Fantasy',
-    tags: ['Public Domain', 'Christmas', 'Ghosts', 'Victorian London', 'Redemption'],
-    totalChapters: 3,
-    rating: 5,
-    readsCount: 6520,
-    isPublicDomain: true,
-    chapters: [
-      {
-        id: 'acc-ch1',
-        chapterNumber: 1,
-        title: 'Marley\'s Ghost',
-        wordCount: 820,
-        readTimeMinutes: 4,
-        publishedDate: '1843',
-        authorNote: 'Marley was dead, to begin with.',
-        content: [
-          'Marley was dead: to begin with. There is no doubt whatever about that. The register of his burial was signed by the clergyman, the clerk, the undertaker, and the chief mourner. Scrooge signed it: and Scrooge\'s name was good upon \'Change, for anything he chose to put his hand to.',
-          'Old Marley was as dead as a door-nail.',
-          'Scrooge never painted out Old Marley\'s name. There it stood, years afterwards, above the warehouse door: Scrooge and Marley. The firm was known as Scrooge and Marley. Sometimes people new to the business called Scrooge Scrooge, and sometimes Marley, but he answered to both names. It was all the same to him.',
-          'Oh! But he was a tight-fisted hand at the grindstone, Scrooge! A squeezing, wrenching, grasping, scraping, clutching, covetous, old sinner!'
-        ]
-      },
-      {
-        id: 'acc-ch2',
-        chapterNumber: 2,
-        title: 'The First of the Three Spirits',
-        wordCount: 860,
-        readTimeMinutes: 4,
-        publishedDate: '1843',
-        authorNote: 'The Ghost of Christmas Past brings warmth to cold memories.',
-        content: [
-          'When Scrooge awoke, the heavy bell of a neighbouring church struck twelve. The curtains of his bed were drawn aside, and Scrooge found himself face to face with an unearthly visitor.',
-          'It was a strange figure—like a child: yet not so like a child as like an old man, viewed through some supernatural medium. Its hair was white with age, yet the skin was without a wrinkle; and from the crown of its head sprung a bright clear jet of light.',
-          '"I am the Ghost of Christmas Past," said the Spirit in a soft, low voice.',
-          '"Long past?" inquired Scrooge.',
-          '"No. Your past."',
-          'It put out its strong hand, clasped Scrooge by the arm, and led him straight through the wall out onto an open country road where fields lay on each side in glistening white snow.'
-        ]
-      },
-      {
-        id: 'acc-ch3',
-        chapterNumber: 3,
-        title: 'The End of It',
-        wordCount: 870,
-        readTimeMinutes: 4,
-        publishedDate: '1843',
-        authorNote: 'Scrooge awakens transformed on Christmas morning.',
-        content: [
-          '"I will live in the Past, the Present, and the Future!" Scrooge repeated, as he scrambled out of bed. "The Spirits of all Three shall strive within me. Oh Jacob Marley! Heaven, and the Christmas Time be praised for this!"',
-          'He ran to the window, opened it, and put out his head. No fog, no mist; clear, bright, jovial, stirring, cold; cold, piping for the blood to dance to; golden sunlight; heavenly sky; sweet fresh air; merry bells. Oh, glorious! Glorious!',
-          '"What\'s to-day?" cried Scrooge, calling downward to a boy in Sunday clothes.',
-          '"Eh?" returned the boy, with all his might of wonder.',
-          '"What\'s to-day, my fine fellow?" said Scrooge.',
-          '"To-day!" replied the boy. "Why, CHRISTMAS DAY."',
-          '"It\'s Christmas Day!" said Scrooge to himself. "I haven\'t missed it! The Spirits have done it all in one night!"'
-        ]
-      }
-    ]
-  },
-
-  {
-    id: 'happy-prince-tales',
-    slug: 'the-happy-prince-and-other-tales',
-    title: 'The Happy Prince and Other Tales',
-    synopsis: 'Oscar Wilde’s sublime fairy tales of selfless love, including the ruby-eyed statue and the devoted little swallow, and The Selfish Giant’s winter garden.',
-    author: 'Oscar Wilde',
-    authorRole: 'Classic Public Domain Author',
-    coverImage: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&q=80',
-    coverAlt: 'A golden swallow resting on a gilded statue in a snow-covered town square.',
-    status: 'Completed',
-    genre: 'Cozy Fantasy',
-    tags: ['Public Domain', 'Oscar Wilde', 'Fairy Tales', 'Heartwarming', 'Classic'],
-    totalChapters: 2,
+    tags: ['Public Domain', 'Fantasy', 'Goblins', 'Magic Thread', 'Classic'],
+    totalChapters: 10,
     rating: 5,
     readsCount: 4120,
     isPublicDomain: true,
     chapters: [
-      {
-        id: 'hp-ch1',
-        chapterNumber: 1,
-        title: 'The Happy Prince',
-        wordCount: 820,
-        readTimeMinutes: 4,
-        publishedDate: '1888',
-        authorNote: 'The statue above the city and the little swallow.',
-        content: [
-          'High above the city, on a tall column, stood the statue of the Happy Prince. He was gilded all over with thin leaves of fine gold, for eyes he had two bright sapphires, and a large red ruby glowed on his sword-hilt.',
-          'One night there flew over the city a little swallow. His friends had gone away to Egypt six weeks before, but he had stayed behind, for he was in love with the most beautiful reed on the riverbank.',
-          '"I will put up there," he cried as he saw the column. "It is a fine position with plenty of fresh air." So he alighted just between the feet of the Happy Prince.',
-          'Just as he was putting his head under his wing, a large drop of water fell on him. "What a curious thing!" he cried; "there is not a single cloud in the sky, and yet it is raining." Then a second drop fell.',
-          'He looked up, and saw the eyes of the Happy Prince filled with tears, and tears running down his golden cheeks.'
-        ]
-      },
-      {
-        id: 'hp-ch2',
-        chapterNumber: 2,
-        title: 'The Selfish Giant',
-        wordCount: 840,
-        readTimeMinutes: 4,
-        publishedDate: '1888',
-        authorNote: 'Spring returns to the Giant\'s garden.',
-        content: [
-          'Every afternoon, as they were coming from school, the children used to go and play in the Giant\'s garden. It was a large lovely garden, with soft green grass. Here and there over the grass stood beautiful flowers like stars, and there were twelve peach-trees that in the spring-time broke out into delicate blossoms of pink and pearl.',
-          'One day the Giant came back. He had been to visit his friend the Cornish ogre, and had stayed with him for seven years. When he arrived, he saw the children playing in the garden.',
-          '"What are you doing here?" he cried in a very gruff voice, and the children ran away.',
-          '"My own garden is my own garden," said the Giant; "anyone can understand that, and I will allow nobody to play in it but myself." So he built a high wall all round it, and put up a notice-board: TRESPASSERS WILL BE PROSECUTED.',
-          'Then the Spring came, and all over the country there were little blossoms and little birds. Only in the garden of the Selfish Giant it was still Winter.'
-        ]
-      }
+      { id: 'pg-ch1', chapterNumber: 1, title: 'The Princess and the Mountain Farm', wordCount: 840, readTimeMinutes: 4, publishedDate: '1872', content: ['Princess Irene lived in a large half-castle, half-farmhouse halfway up a great mountain. Deep inside the subterranean caverns lived the goblins, who hated the surface folk and had soft hornless feet that couldn’t stand being stepped upon.'] },
+      { id: 'pg-ch2', chapterNumber: 2, title: 'The Grandmother in the Tower', wordCount: 860, readTimeMinutes: 4, publishedDate: '1872', content: ['Lost in the unused attics of the old castle on a rainy afternoon, Irene found an ancient door leading into a circular tower. There sat an exquisite old queen spinning thread from spiderwebs by the light of a shining rose-tinted lamp.'] },
+      { id: 'pg-ch3', chapterNumber: 3, title: 'Curdie and the Rhymes', wordCount: 850, readTimeMinutes: 4, publishedDate: '1872', content: ['Caught on the mountain after sunset by prowling goblins, Irene and her nurse were rescued by Curdie, the twelve-year-old miner boy, who drove the creatures away by singing loud nonsensical rhymes they could not endure.'] },
+      { id: 'pg-ch4', chapterNumber: 4, title: 'The Silver Thread', wordCount: 880, readTimeMinutes: 4, publishedDate: '1872', content: ['The Grandmother presented Irene with a ring holding a strand of invisible silver thread. "When you are in danger or doubt, place your finger on the thread and follow where it leads, and it will always bring you to me."'] },
+      { id: 'pg-ch5', chapterNumber: 5, title: 'The Goblin Council Below', wordCount: 870, readTimeMinutes: 4, publishedDate: '1872', content: ['Curdie hid in a rocky niche in the deep mine and overheard the goblin king plotting to undermine the king’s castle and force Princess Irene to marry Prince Harelip.'] },
+      { id: 'pg-ch6', chapterNumber: 6, title: 'Curdie Trapped', wordCount: 830, readTimeMinutes: 4, publishedDate: '1872', content: ['The goblins caught Curdie and imprisoned him behind a wall of fallen boulders in the deepest mine gallery.'] },
+      { id: 'pg-ch7', chapterNumber: 7, title: 'Following the Thread', wordCount: 890, readTimeMinutes: 5, publishedDate: '1872', content: ['Guided by the silver thread, little Irene walked out into the dark night, entered the goblin cave alone, and dug Curdie free with her bare hands.'] },
+      { id: 'pg-ch8', chapterNumber: 8, title: 'The Assault on the Castle', wordCount: 860, readTimeMinutes: 4, publishedDate: '1872', content: ['The goblins broke through the cellar floors into the wine vault, but the miners and the king’s guards rallied.'] },
+      { id: 'pg-ch9', chapterNumber: 9, title: 'Stamping on the Feet', wordCount: 850, readTimeMinutes: 4, publishedDate: '1872', content: ['Curdie shouted the secret: "Stamp on their feet!" The guards leaped onto the soft, shoe-less goblin toes, sending the horde squealing back into the caves.'] },
+      { id: 'pg-ch10', chapterNumber: 10, title: 'The Mountain Cleansed', wordCount: 870, readTimeMinutes: 4, publishedDate: '1872', content: ['The subterranean mountain waters flooded the goblin tunnels, sealing them forever. Curdie was made a royal prince of the guard, and Irene looked up at the grandmother’s tower with peaceful joy.'] }
     ]
   },
 
   {
-    id: 'reluctant-dragon',
+    id: 'at-the-back-of-the-north-wind',
+    slug: 'at-the-back-of-the-north-wind',
+    title: 'At the Back of the North Wind',
+    synopsis: 'George MacDonald’s poetic, transcendent fairy fantasy. Little Diamond, a gentle London cabman’s son, is visited by the majestic, compassionate Lady North Wind, who sweeps him away on nighttime flights across cities and starry seas.',
+    author: 'George MacDonald',
+    authorRole: 'Classic Public Domain Author',
+    coverImage: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800&q=80',
+    coverAlt: 'A starry winter night sky with silver wind stirring through pine tops.',
+    status: 'Completed',
+    genre: 'Cozy Fantasy',
+    tags: ['Public Domain', 'Pastoral', 'Bedtime', 'Victorian', 'Classic'],
+    totalChapters: 10,
+    rating: 5,
+    readsCount: 3890,
+    isPublicDomain: true,
+    chapters: [
+      { id: 'bnw-ch1', chapterNumber: 1, title: 'The Hayloft and the Knot-Hole', wordCount: 840, readTimeMinutes: 4, publishedDate: '1871', content: ['Little Diamond slept in a cozy loft above his father’s stable in London. Through a hole in the wooden wall, the North Wind spoke to him with a voice like singing bells and rushing leaves.'] },
+      { id: 'bnw-ch2', chapterNumber: 2, title: 'The Lady of the Wind', wordCount: 860, readTimeMinutes: 4, publishedDate: '1871', content: ['She was a tall, glorious lady with dark sweeping hair that covered the stars, whose touch was sweet and bracing like fresh mountain air.'] },
+      { id: 'bnw-ch3', chapterNumber: 3, title: 'A Midnight Flight Over London', wordCount: 870, readTimeMinutes: 4, publishedDate: '1871', content: ['Nestled in the folds of her cloak, Diamond flew over the rooftops of sleeping London, watching the yellow streetlamps and the dark bends of the Thames below.'] },
+      { id: 'bnw-ch4', chapterNumber: 4, title: 'The Sick Baby in the Garret', wordCount: 830, readTimeMinutes: 4, publishedDate: '1871', content: ['North Wind set Diamond down down a drafty chimney to rock a sick baby and sing nursery rhymes while the weary mother slept.'] },
+      { id: 'bnw-ch5', chapterNumber: 5, title: 'Diamond Drives the Cab', wordCount: 850, readTimeMinutes: 4, publishedDate: '1871', content: ['When his father fell ill with fever, little Diamond took the reins of old Diamond the cab-horse, earning honest pennies and winning the hearts of all London.'] },
+      { id: 'bnw-ch6', chapterNumber: 6, title: 'The Journey to the Back of the Wind', wordCount: 880, readTimeMinutes: 4, publishedDate: '1871', content: ['North Wind took him north across the Arctic seas, stepping through the doorway of her icy heart into the country at the back of the north wind.'] },
+      { id: 'bnw-ch7', chapterNumber: 7, title: 'The Country of Flowers and Peace', wordCount: 890, readTimeMinutes: 5, publishedDate: '1871', content: ['There no cold blew, no flowers ever faded, and a quiet river flowed with water so sweet that whoever drank it felt complete peace.'] },
+      { id: 'bnw-ch8', chapterNumber: 8, title: 'Diamond’s Songs', wordCount: 840, readTimeMinutes: 4, publishedDate: '1871', content: ['Diamond returned to London with songs that cheered the sick, brought kindness to angry men, and softened the hardest hearts in the slums.'] },
+      { id: 'bnw-ch9', chapterNumber: 9, title: 'A New Home in the Country', wordCount: 860, readTimeMinutes: 4, publishedDate: '1871', content: ['The family was rewarded for their honesty with a position managing the stables of a gentleman’s quiet estate in Kent.'] },
+      { id: 'bnw-ch10', chapterNumber: 10, title: 'The Final Peaceful Flight', wordCount: 910, readTimeMinutes: 5, publishedDate: '1871', content: ['One golden autumn twilight, North Wind returned to the bedroom window. Diamond smiled, took her hand, and stepped permanently into the country of endless peace.'] }
+    ]
+  },
+
+  {
+    id: 'just-so-stories',
+    slug: 'just-so-stories',
+    title: 'Just So Stories',
+    synopsis: 'Rudyard Kipling’s witty, affectionate bedtime tales explaining how the camel got his hump, how the leopard got his spots, how the elephant got his trunk, and how the first letter was written.',
+    author: 'Rudyard Kipling',
+    authorRole: 'Classic Public Domain Author',
+    coverImage: 'https://images.unsplash.com/photo-1470246973918-29a93221c455?w=800&q=80',
+    coverAlt: 'A peaceful African savanna riverbank at sunset.',
+    status: 'Completed',
+    genre: 'Cozy Fantasy',
+    tags: ['Public Domain', 'Bedtime', 'Animals', 'Folklore', 'Humor'],
+    totalChapters: 12,
+    rating: 5,
+    readsCount: 4390,
+    isPublicDomain: true,
+    chapters: [
+      { id: 'jss-ch1', chapterNumber: 1, title: 'How the Whale Got His Throat', wordCount: 830, readTimeMinutes: 4, publishedDate: '1902', content: ['In the sea, once upon a time, O my Best Beloved, there was a Whale, and he ate fishes. He ate the starfish and the garfish, and the crab and the dab, until there was only one small fish left: a resourceful Psub-Jockey who tricked him into swallowing a sailor’s raft, which became the whalebone grating in his throat.'] },
+      { id: 'jss-ch2', chapterNumber: 2, title: 'How the Camel Got His Hump', wordCount: 840, readTimeMinutes: 4, publishedDate: '1902', content: ['In the Howling Desert, the Camel refused to work with the Horse, the Dog, and the Ox, saying only "Humph!" So the Djinn of All Deserts gave him a real, bulging Humph on his back so he could work for three days without eating.'] },
+      { id: 'jss-ch3', chapterNumber: 3, title: 'How the Rhinoceros Got His Skin', wordCount: 820, readTimeMinutes: 4, publishedDate: '1902', content: ['The Parsee baker poured dry, stale, itchy cake-crumbs inside the Rhino’s skin while he was swimming, which caused him to rub his skin against a palm tree into permanent folds and bad temper.'] },
+      { id: 'jss-ch4', chapterNumber: 4, title: 'How the Leopard Got His Spots', wordCount: 860, readTimeMinutes: 4, publishedDate: '1902', content: ['When the zebra and giraffe hid in the speckled shadows of the great forest, the Ethiopian pressed his five black fingers into the yellow coat of the Leopard to make perfect black rosettes.'] },
+      { id: 'jss-ch5', chapterNumber: 5, title: 'The Elephant’s Child', wordCount: 890, readTimeMinutes: 5, publishedDate: '1902', content: ['The little Elephant had ‘satiable curtiosity, and journeyed to the banks of the great grey-green, greasy Limpopo River to find out what the Crocodile had for dinner. The Crocodile pulled his bulgy nose into a grand trunk!'] },
+      { id: 'jss-ch6', chapterNumber: 6, title: 'The Sing-Song of Old Man Kangaroo', wordCount: 810, readTimeMinutes: 4, publishedDate: '1902', content: ['In Australia, Old Man Kangaroo begged the gods to make him different from all other animals, and Dingo chased him across the salt-bush plains until his hind legs grew long and bounding.'] },
+      { id: 'jss-ch7', chapterNumber: 7, title: 'The Beginning of the Armadillos', wordCount: 850, readTimeMinutes: 4, publishedDate: '1902', content: ['Slow-Solid Tortoise and Painted Jaguar taught each other tricks by the Amazon river, until Tortoise and Hedgehog joined into the armored, curling Armadillo.'] },
+      { id: 'jss-ch8', chapterNumber: 8, title: 'How the First Letter Was Written', wordCount: 870, readTimeMinutes: 4, publishedDate: '1902', content: ['Little Taffy the cave-girl scratched pictures on birch bark to send for a spear, creating the very first written message—with hilarious confusion for the tribe!'] },
+      { id: 'jss-ch9', chapterNumber: 9, title: 'How the Alphabet Was Made', wordCount: 860, readTimeMinutes: 4, publishedDate: '1902', content: ['Taffy and her father drew pictures for sounds: an "A" from a carp’s mouth, a "B" from a winding river, building the alphabet for all humankind.'] },
+      { id: 'jss-ch10', chapterNumber: 10, title: 'The Crab That Played with the Sea', wordCount: 880, readTimeMinutes: 4, publishedDate: '1902', content: ['Pau Amma the giant crab made the tides rise and fall by crawling in and out of the deep underwater hole in the earth.'] },
+      { id: 'jss-ch11', chapterNumber: 11, title: 'The Cat That Walked by Himself', wordCount: 910, readTimeMinutes: 5, publishedDate: '1902', content: ['All places were alike to him. While Dog, Horse, and Cow became domestic servants for warm milk and bone, Cat struck a bargain with the Woman to sleep by the fire and catch mice, yet walk by his wild lone in the wet woods.'] },
+      { id: 'jss-ch12', chapterNumber: 12, title: 'The Butterfly That Stamped', wordCount: 850, readTimeMinutes: 4, publishedDate: '1902', content: ['King Solomon and the Queen of Sheba used the tiny flutter of a butterfly to humble nine hundred and ninety-nine quarrelsome queens.'] }
+    ]
+  },
+
+  {
+    id: 'the-reluctant-dragon',
     slug: 'the-reluctant-dragon',
-    title: 'The Reluctant Dragon',
-    synopsis: 'A poetry-loving, peaceful dragon would rather compose sonnets in his cave than terrorize the countryside, leading to a hilarious staged tournament with Saint George.',
+    title: 'The Reluctant Dragon & Other Tales',
+    synopsis: 'Kenneth Grahame’s delightful subversion of heroic legend. A gentle, cultured dragon prefers reciting sonnets and drinking tea to terrorizing villages, teaming up with Saint George to stage a theatrical tournament.',
     author: 'Kenneth Grahame',
     authorRole: 'Classic Public Domain Author',
-    coverImage: 'https://images.unsplash.com/photo-1448375240586-882707db888b?w=800&q=80',
-    coverAlt: 'A cozy hillside cave overlooking quiet rolling downs and pastures.',
+    coverImage: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&q=80',
+    coverAlt: 'A cozy medieval green downland where a gentle dragon sleeps in the sun.',
     status: 'Completed',
     genre: 'Cozy Fantasy',
-    tags: ['Public Domain', 'Humor', 'Gentle Dragon', 'Cozy Lore', 'Kenneth Grahame'],
-    totalChapters: 2,
+    tags: ['Public Domain', 'Humor', 'Dragons', 'Pastoral', 'Classic'],
+    totalChapters: 10,
     rating: 5,
-    readsCount: 3950,
+    readsCount: 3740,
     isPublicDomain: true,
     chapters: [
-      {
-        id: 'rd-ch1',
-        chapterNumber: 1,
-        title: 'The Dragon in the Cave',
-        wordCount: 810,
-        readTimeMinutes: 4,
-        publishedDate: '1898',
-        authorNote: 'The Boy discovers a very polite and cultured dragon.',
-        content: [
-          'Long ago, on the high downs above an English village, a shepherd boy was walking home in the twilight when he heard a low, rumbling noise like a purring tea-kettle.',
-          'Poking his head into a limestone cave, he saw a creature with scaly green skin, claws like tree branches, and an enormous tail coiled neatly like a garden hose. The dragon was lying on his back, reciting verses to the evening stars.',
-          '"Excuse me," said the Boy politely.',
-          'The dragon stopped mid-verse and blinked kindly with large yellow eyes. "Oh, hello there, little chap! Come right in. I was just trying to rhyme \'verdure\' with \'fervour\'. Don\'t tell me you\'ve brought an axe or a spear, have you? Such noisy things."'
-        ]
-      },
-      {
-        id: 'rd-ch2',
-        chapterNumber: 2,
-        title: 'A Staged Tournament',
-        wordCount: 850,
-        readTimeMinutes: 4,
-        publishedDate: '1898',
-        authorNote: 'Saint George and the Dragon strike a civilized bargain.',
-        content: [
-          'When Saint George arrived in the village with his gleaming lance, the villagers clamored for a bloody duel. But Saint George, having spoken with the Boy, decided to pay an informal call to the cave.',
-          '"Look here," said Saint George, sitting down on a boulder. "The crowd expects a fight. Can\'t we manage some sort of amicable demonstration?"',
-          '"A sham fight?" purred the Dragon happily. "Capital idea! I can breathe a few harmless puffs of violet smoke, flap my wings with a tremendous clatter, and you can give me a theatrical poke under the shoulder. Then we can all go down to the tavern for tea and buttered toast!"'
-        ]
-      }
+      { id: 'rd-ch1', chapterNumber: 1, title: 'The Shepherd’s Report', wordCount: 840, readTimeMinutes: 4, publishedDate: '1898', content: ['A shepherd returned from the Berkshire Downs with shaking knees, reporting a great scaly monster living in a cave on the chalk hill. His clever son, who read natural history books, went up to investigate.'] },
+      { id: 'rd-ch2', chapterNumber: 2, title: 'A Most Civil Beast', wordCount: 860, readTimeMinutes: 4, publishedDate: '1898', content: ['The Boy found the dragon basking comfortably in the evening sun. The dragon had no desire to fight or burn anyone; he wrote sonnets and loved good conversation.'] },
+      { id: 'rd-ch3', chapterNumber: 3, title: 'Saint George Arrives', wordCount: 850, readTimeMinutes: 4, publishedDate: '1898', content: ['The village called for Saint George the Dragon-Slayer, who rode into town on a white charger with shining armor and a great lance.'] },
+      { id: 'rd-ch4', chapterNumber: 4, title: 'The Conference in the Cave', wordCount: 870, readTimeMinutes: 4, publishedDate: '1898', content: ['The Boy arranged a secret peace conference between the Saint and the Dragon over sandwiches. George agreed that slaughtering a poet was barbarous.'] },
+      { id: 'rd-ch5', chapterNumber: 5, title: 'Rehearsing the Mock Battle', wordCount: 880, readTimeMinutes: 4, publishedDate: '1898', content: ['They rehearsed a dramatic stage battle: the dragon would roar and spirt fire, George would charge with his spear, and pin a loose fold of neck skin without drawing a drop of blood.'] },
+      { id: 'rd-ch6', chapterNumber: 6, title: 'The Grand Spectacle', wordCount: 910, readTimeMinutes: 5, publishedDate: '1898', content: ['The entire county gathered on the chalk down. The battle was a roaring theatrical triumph, with cheers shaking the hills.'] },
+      { id: 'rd-ch7', chapterNumber: 7, title: 'The Victory Banquet', wordCount: 860, readTimeMinutes: 4, publishedDate: '1898', content: ['George led the reformed dragon down to the village tavern, where the beast was treated to bowls of punch and proved the most entertaining guest of the evening.'] },
+      { id: 'rd-ch8', chapterNumber: 8, title: 'The Golden Age: A Roman Road', wordCount: 840, readTimeMinutes: 4, publishedDate: '1898', content: ['A nostalgic story of childhood rambles along the straight ancient Roman road over the downs.'] },
+      { id: 'rd-ch9', chapterNumber: 9, title: 'The Finding of the Princess', wordCount: 850, readTimeMinutes: 4, publishedDate: '1898', content: ['A little boy wanders into the garden of an old manor and meets an artist painting among the lilies.'] },
+      { id: 'rd-ch10', chapterNumber: 10, title: 'Evening over the Downs', wordCount: 830, readTimeMinutes: 4, publishedDate: '1898', content: ['Walking home hand in hand with the Dragon and Saint George under the quiet stars of England.'] }
     ]
   },
 
   {
-    id: 'five-children-and-it',
-    slug: 'five-children-and-it',
-    title: 'Five Children and It',
-    synopsis: 'While playing in a gravel pit during their summer holiday in Kent, five children unearth the Psammead—a grumpy, prehistoric sand-fairy who grants one wish a day.',
-    author: 'E. Nesbit',
+    id: 'a-little-princess',
+    slug: 'a-little-princess',
+    title: 'A Little Princess',
+    synopsis: 'Frances Hodgson Burnett’s beloved classic of imagination, kindness, and dignity. When wealthy Sara Crewe loses everything at Miss Minchin’s boarding school, her generous spirit transforms a bleak attic into an enchanted palace.',
+    author: 'Frances Hodgson Burnett',
     authorRole: 'Classic Public Domain Author',
-    coverImage: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&q=80',
-    coverAlt: 'A sunny gravel quarry with golden sand and wild wildflowers.',
+    coverImage: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=800&q=80',
+    coverAlt: 'A cozy candlelit attic room with books and a warm teapot.',
     status: 'Completed',
     genre: 'Cozy Fantasy',
-    tags: ['Public Domain', 'Wishes', 'Sand Fairy', 'Summer Holiday', 'Childhood'],
-    totalChapters: 2,
+    tags: ['Public Domain', 'Comfort Read', 'Attic Magic', 'Kindness', 'Classic'],
+    totalChapters: 12,
     rating: 5,
-    readsCount: 3710,
+    readsCount: 5120,
     isPublicDomain: true,
     chapters: [
-      {
-        id: 'fc-ch1',
-        chapterNumber: 1,
-        title: 'The Sand-Fairy',
-        wordCount: 820,
-        readTimeMinutes: 4,
-        publishedDate: '1902',
-        authorNote: 'Digging in the sand pit at the White House.',
-        content: [
-          'The house was three miles from the station, but before the children had been in it an hour they felt that they had lived there all their lives. It stood on a hilltop with chalk pits, gravel pits, and sweet-scented elder bushes on every hand.',
-          'Next day they went down into the sand pit to dig a cave. Suddenly Robert\'s spade struck something soft and furry that gave a distinct squeak!',
-          'They threw away their spades and dug with their hands. Out of the sand pushed a round, tubby creature with brown fur, hands and feet like a monkey\'s, and eyes on long horns like a snail\'s!',
-          '"What on earth are you?" whispered Anthea in amazement.',
-          '"I am a Psammead," grumbled the creature, shaking the sand out of its ears. "A Sand-fairy. And if you haven\'t forgotten all your manners, you might at least ask me for a wish."'
-        ]
-      },
-      {
-        id: 'fc-ch2',
-        chapterNumber: 2,
-        title: 'Wings on Their Shoulders',
-        wordCount: 840,
-        readTimeMinutes: 4,
-        publishedDate: '1902',
-        authorNote: 'The children wish for beautiful wings to fly over the Kentish hills.',
-        content: [
-          '"We want to have wings," said Cyril, "beautiful, real wings like birds, so we can fly above the orchard!"',
-          'The Psammead puffed itself out until it looked like a hairy balloon, then went flat again with a gasp. "Your wish is granted. But remember: all wishes end at sunset."',
-          'The children looked at each other. Out from their shoulder blades sprouted magnificent, iridescent feathers of silver and crimson. With a flutter and a leap, they rose into the summer air, soaring over the church spires and sheep pastures of Kent.'
-        ]
-      }
-    ]
-  },
-
-  {
-    id: 'english-fairy-tales',
-    slug: 'english-fairy-tales',
-    title: 'English Fairy Tales',
-    synopsis: 'Joseph Jacobs’s beloved hearth-side anthology of English folklore, including Jack and the Beanstalk, The Three Little Pigs, and Tom Tit Tot.',
-    author: 'Joseph Jacobs',
-    authorRole: 'Classic Public Domain Author',
-    coverImage: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&q=80',
-    coverAlt: 'A winding country footpath through blooming wild honeysuckle.',
-    status: 'Completed',
-    genre: 'Cozy Fantasy',
-    tags: ['Public Domain', 'Folklore', 'Jack and the Beanstalk', 'Hearth Tales', 'Classic'],
-    totalChapters: 2,
-    rating: 5,
-    readsCount: 3820,
-    isPublicDomain: true,
-    chapters: [
-      {
-        id: 'eft-ch1',
-        chapterNumber: 1,
-        title: 'Jack and the Beanstalk',
-        wordCount: 810,
-        readTimeMinutes: 4,
-        publishedDate: '1890',
-        authorNote: 'The magic beans that grew to the clouds.',
-        content: [
-          'There was once upon a time a poor widow who had an only son named Jack, and a cow named Milky-white. And all they had to live on was the milk the cow gave every morning.',
-          'One morning Milky-white gave no milk, and the widow wept. "You must take the cow to market, Jack, and sell her for a fair price."',
-          'On the road, Jack met a funny-looking old man who opened his hand to reveal five speckled beans. "These are not ordinary beans," said the old man. "Plant them to-night, and by morning their tops will reach the sky." Jack traded the cow and ran home.'
-        ]
-      },
-      {
-        id: 'eft-ch2',
-        chapterNumber: 2,
-        title: 'The Three Little Pigs',
-        wordCount: 780,
-        readTimeMinutes: 4,
-        publishedDate: '1890',
-        authorNote: 'Straw, furze, and the house of brick.',
-        content: [
-          'Once upon a time there was an old sow with three little pigs, and as she had not enough to keep them, she sent them out to seek their fortune.',
-          'The first went off and met a man with a bundle of straw, and built a house of straw. But the wolf came and blew it down.',
-          'The third little pig met a man with a load of bricks, and built his house of brick. And when the wolf huffed and puffed, he could not blow that sturdy little brick house down, and the third little pig lived in cozy peace.'
-        ]
-      }
+      { id: 'alp-ch1', chapterNumber: 1, title: 'Sara Arrives in London', wordCount: 850, readTimeMinutes: 4, publishedDate: '1905', content: ['Sara Crewe arrived from India with her adoring father, dressed like a little princess in velvet and fur. Miss Minchin placed her in the grandest rooms of the Seminary for Young Ladies.'] },
+      { id: 'alp-ch2', chapterNumber: 2, title: 'A French Lesson and Ermengarde', wordCount: 840, readTimeMinutes: 4, publishedDate: '1905', content: ['Sara spoke French like a native Parisian, and befriended dull, tearful Ermengarde, becoming her patient teacher and protector.'] },
+      { id: 'alp-ch3', chapterNumber: 3, title: 'Lottie and the Scullery Maid', wordCount: 860, readTimeMinutes: 4, publishedDate: '1905', content: ['Sara adopted four-year-old crying Lottie as her little sister, and secretly slipped cakes to Becky, the overworked, soot-stained scullery maid.'] },
+      { id: 'alp-ch4', chapterNumber: 4, title: 'The Diamond Mines Calamity', wordCount: 890, readTimeMinutes: 5, publishedDate: '1905', content: ['On Sara’s eleventh birthday party, the lawyer arrived with catastrophic news: Captain Crewe had died of fever in India, and the diamond mines were penniless sand.'] },
+      { id: 'alp-ch5', chapterNumber: 5, title: 'Banished to the Attic', wordCount: 870, readTimeMinutes: 4, publishedDate: '1905', content: ['Miss Minchin stripped Sara of her silk dresses and banished her to a cold, drafty attic room with a rusty iron bed, ordering her to run errands in the London rain as a drudge.'] },
+      { id: 'alp-ch6', chapterNumber: 6, title: 'The Rat and the Prisoner of the Bastille', wordCount: 860, readTimeMinutes: 4, publishedDate: '1905', content: ['Sara shared her stale bread crusts with Melchisedec the attic rat, pretending she was a brave prisoner in the Bastille waiting for deliverance.'] },
+      { id: 'alp-ch7', chapterNumber: 7, title: 'Sixpence on the Pavement', wordCount: 880, readTimeMinutes: 4, publishedDate: '1905', content: ['Shivering and starving in the slush, Sara found a fourpenny piece. She bought hot currant buns, giving five of the six to a poor beggar girl on the street.'] },
+      { id: 'alp-ch8', chapterNumber: 8, title: 'The Indian Gentleman Next Door', wordCount: 850, readTimeMinutes: 4, publishedDate: '1905', content: ['An invalid gentleman from India moved into the house next door with his Lascar servant Ram Dass and a little monkey.'] },
+      { id: 'alp-ch9', chapterNumber: 9, title: 'The Magic in the Attic', wordCount: 920, readTimeMinutes: 5, publishedDate: '1905', content: ['Waking in the cold night, Sara saw a blazing fire on the hearth, a soft quilted counterpane, rich books, and a table set with steaming roast chicken and chocolate!'] },
+      { id: 'alp-ch10', chapterNumber: 10, title: 'The Monkey and the Skylight', wordCount: 870, readTimeMinutes: 4, publishedDate: '1905', content: ['The next evening, Ram Dass’s pet monkey climbed across the wet slate roof through Sara’s skylight. Sara wrapped him in her coat to return him.'] },
+      { id: 'alp-ch11', chapterNumber: 11, title: 'The Lost Child Found', wordCount: 930, readTimeMinutes: 5, publishedDate: '1905', content: ['When Sara brought the monkey to the gentleman next door, Mr. Carrisford discovered that the little ragged girl was Captain Crewe’s lost daughter whom he had spent months searching for!'] },
+      { id: 'alp-ch12', chapterNumber: 12, title: 'The Bread of Kindness', wordCount: 910, readTimeMinutes: 5, publishedDate: '1905', content: ['Sara’s diamond fortune was restored tenfold. She took Becky to be her companion, and arranged for the bakerwoman to give hot meat pies to every starving child who passed.'] }
     ]
   }
 ];
