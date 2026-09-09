@@ -30,6 +30,7 @@ function readSavedBool(key: string, defaultVal: boolean): boolean {
 }
 
 export type SoundPreset = 'rainy' | 'campfire' | 'reading' | 'nature' | 'reset';
+export type AmbientTheme = 'rain' | 'fire' | 'wind' | 'default';
 
 export interface MusicContextValue {
   // BGM
@@ -51,6 +52,11 @@ export interface MusicContextValue {
   setAmbientFire: (vol: number) => void;
   setAmbientWind: (vol: number) => void;
   applyPreset: (preset: SoundPreset) => void;
+
+  // Atmospheric Theme Sync
+  ambientTheme: AmbientTheme;
+  themeSyncEnabled: boolean;
+  setThemeSyncEnabled: (enabled: boolean) => void;
 
   // SFX
   sfxEnabled: boolean;
@@ -79,6 +85,57 @@ export function MusicProvider({ children }: { children: ReactNode }) {
 
   // Sound Effects
   const [sfxEnabled, setSfxEnabled] = useState<boolean>(() => readSavedBool(sfxStorageKey, true));
+
+  // Atmosphere Theme Sync
+  const [themeSyncEnabled, setThemeSyncEnabledState] = useState<boolean>(() => readSavedBool('jinssi-ambient-theme-sync', true));
+
+  const setThemeSyncEnabled = (enabled: boolean) => {
+    setThemeSyncEnabledState(enabled);
+    localStorage.setItem('jinssi-ambient-theme-sync', String(enabled));
+  };
+
+  const ambientTheme: AmbientTheme = (() => {
+    if (!themeSyncEnabled || muted) return 'default';
+    if (ambientRain > 0 && ambientRain >= ambientFire && ambientRain >= ambientWind) {
+      return 'rain';
+    }
+    if (ambientFire > 0 && ambientFire >= ambientWind) {
+      return 'fire';
+    }
+    if (ambientWind > 0) {
+      return 'wind';
+    }
+    return 'default';
+  })();
+
+  // Synchronize HTML data-ambient-theme and <meta name="theme-color">
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+
+    if (ambientTheme === 'default') {
+      document.documentElement.removeAttribute('data-ambient-theme');
+      document.documentElement.classList.remove('dark');
+    } else {
+      document.documentElement.setAttribute('data-ambient-theme', ambientTheme);
+      document.documentElement.classList.add('dark');
+    }
+
+    let metaTag = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
+    if (!metaTag) {
+      metaTag = document.createElement('meta');
+      metaTag.name = 'theme-color';
+      document.head.appendChild(metaTag);
+    }
+
+    const themeColors: Record<AmbientTheme, string> = {
+      rain: '#0b132b', // Dark mode shade of dark blue
+      fire: '#1a110b', // Cozy dark charcoal ember
+      wind: '#081711', // Deep dark enchanted forest
+      default: '#fdf8f1', // Warm cream
+    };
+
+    metaTag.content = themeColors[ambientTheme];
+  }, [ambientTheme]);
 
   const settingsRef = useRef({ muted, userVolume, ambientRain, ambientFire, ambientWind });
   settingsRef.current = { muted, userVolume, ambientRain, ambientFire, ambientWind };
@@ -315,6 +372,10 @@ export function MusicProvider({ children }: { children: ReactNode }) {
         setAmbientFire,
         setAmbientWind,
         applyPreset,
+
+        ambientTheme,
+        themeSyncEnabled,
+        setThemeSyncEnabled,
 
         sfxEnabled,
         toggleSfx,
