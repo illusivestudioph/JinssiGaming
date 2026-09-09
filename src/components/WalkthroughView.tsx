@@ -49,6 +49,7 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
   const [showCongratulations, setShowCongratulations] = useState(false);
   const [linkCopied, setLinkCopied] = useState(false);
   const completionSoundRef = useRef<HTMLAudioElement | null>(null);
+  const confettiSoundRef = useRef<HTMLAudioElement | null>(null);
   const tuturoRef = useRef<HTMLDivElement | null>(null);
 
   // Table of Contents navigation state
@@ -176,11 +177,20 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
 
   const triggerConfettiBurst = () => {
     setBurstKey((prev) => prev + 1);
-    const sound = completionSoundRef.current || new Audio('/tuturu_1.mp3');
-    sound.volume = 0.5;
-    completionSoundRef.current = sound;
-    sound.currentTime = 0;
-    void sound.play().catch(() => undefined);
+
+    // Play confetti pop sound effect
+    const popSound = confettiSoundRef.current || new Audio('/confetti-pop.mp3');
+    popSound.volume = 0.55;
+    confettiSoundRef.current = popSound;
+    popSound.currentTime = 0;
+    void popSound.play().catch(() => undefined);
+
+    // Play Tuturo character celebration voice
+    const voiceSound = completionSoundRef.current || new Audio('/tuturu_1.mp3');
+    voiceSound.volume = 0.5;
+    completionSoundRef.current = voiceSound;
+    voiceSound.currentTime = 0;
+    void voiceSound.play().catch(() => undefined);
   };
 
   useEffect(() => {
@@ -189,12 +199,7 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
 
   useEffect(() => {
     if (!showCongratulations) return;
-    setBurstKey((prev) => prev + 1);
-    const sound = completionSoundRef.current || new Audio('/tuturu_1.mp3');
-    sound.volume = 0.5;
-    completionSoundRef.current = sound;
-    sound.currentTime = 0;
-    void sound.play().catch(() => undefined);
+    triggerConfettiBurst();
   }, [showCongratulations]);
 
   return (
