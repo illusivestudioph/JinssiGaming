@@ -14,6 +14,7 @@ import {
   Sparkles,
   BookOpen,
   ArrowRight,
+  ExternalLink,
 } from 'lucide-react';
 
 interface ArticleViewProps {
@@ -128,6 +129,17 @@ export function ArticleView({
               <div className="bg-cream-200/80 px-3 py-1.5 rounded-xl text-sage-600">
                 <span>{article.stressLevel}</span>
               </div>
+              {article.steamLink && (
+                <a
+                  href={article.steamLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-ink-900 hover:bg-ink-800 text-cream-50 px-3 py-1.5 rounded-xl flex items-center gap-1.5 transition-colors shadow-cozy-xs"
+                >
+                  <ExternalLink size={13} className="text-peach-400" />
+                  <span>Steam Store</span>
+                </a>
+              )}
             </div>
           </div>
 
@@ -174,6 +186,20 @@ export function ArticleView({
                         {section.imageAlt}
                       </p>
                     )}
+                  </div>
+                )}
+
+                {section.steamLink && (
+                  <div className="pt-1 pb-2 flex justify-start">
+                    <a
+                      href={section.steamLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-ink-900 hover:bg-ink-800 text-cream-50 text-xs font-bold transition-all hover:scale-[1.02] shadow-cozy-xs"
+                    >
+                      <ExternalLink size={13} className="text-peach-400" />
+                      <span>View on Steam Store</span>
+                    </a>
                   </div>
                 )}
 

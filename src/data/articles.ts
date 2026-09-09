@@ -3,6 +3,7 @@ export interface ArticleSection {
   content: string[]; // array of paragraphs
   image?: string;
   imageAlt?: string;
+  steamLink?: string;
   callout?: {
     title: string;
     text: string;
@@ -27,6 +28,7 @@ export interface Article {
   summary: string;
   sections: ArticleSection[];
   relatedGameId?: string;
+  steamLink?: string;
 }
 
 export const articleCategories = [
@@ -42,7 +44,7 @@ export const articles: Article[] = [
     id: 'organizing-games-steam',
     slug: '7-relaxing-cozy-organizing-games-steam',
     title: 'The 7 Most Relaxing Cozy Organizing Games on Steam (Zero Stress)',
-    subtitle: 'From sorting magical archives to packing bento boxes, here are the most peaceful organizing games to play with a warm cup of tea.',
+    subtitle: 'From sorting household items to packing cute bento boxes, here are 7 authentic Steam games to soothe your mind with a warm cup of tea.',
     author: 'Jinssi Editorial',
     authorRole: 'Cozy Gaming Curator',
     date: 'Sep 9, 2026',
@@ -51,16 +53,15 @@ export const articles: Article[] = [
     tags: ['Organizing', 'Steam', 'Relaxing', 'Indie Games', 'Recommendations'],
     cozyScore: 5,
     stressLevel: 'Zero Stress',
-    coverImage: 'https://images.pexels.com/photos/12593769/pexels-photo-12593769.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
-    coverAlt: 'A cozy wooden bookshelf with arranged books and a warm desk lamp.',
-    summary: 'Discover seven deeply satisfying games where your only job is to bring gentle order out of chaotic clutter at your own pace.',
-    relatedGameId: 'librarian',
+    coverImage: 'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1629520/ss_dfd3c87efd52db3ea48b4de22de569bd9eb42ca2.1920x1080.jpg',
+    coverAlt: 'A Little to the Left — official in-game screenshot on Steam showing items arranged by color and size.',
+    summary: 'Discover seven deeply satisfying, real Steam games where your only task is bringing gentle order out of chaotic clutter at your own pace.',
     sections: [
       {
         heading: 'Why Our Brains Crave Gentle Order',
         content: [
           'There is a quiet, meditative joy in taking something cluttered and gently turning it into neat rows. In a world full of chaotic to-do lists, unpredictable news, and demanding schedules, organizing games offer a rare sanctuary: an enclosed little sandbox where every problem has an elegant solution, and nothing bad will happen if you take your sweet time.',
-          'Unlike fast-paced strategy or competitive games that spike your adrenaline, organizing games stimulate your brain’s dopamine system through soft spatial satisfaction. Here are seven hand-picked titles that deliver that exact soothing sensation.',
+          'Unlike fast-paced strategy or competitive games that spike your adrenaline, organizing games stimulate your brain’s dopamine system through soft spatial satisfaction. Here are seven real, top-rated Steam titles that deliver that exact soothing sensation.',
         ],
         callout: {
           title: 'Cozy Tip for Play Sessions',
@@ -70,59 +71,76 @@ export const articles: Article[] = [
       {
         heading: '1. A Little to the Left',
         content: [
-          'Developed by Max Inferno, A Little to the Left is a masterclass in domestic satisfaction. You are presented with everyday items—receipts, colored pencils, measuring spoons, and soup cans—and tasked with arranging them into harmonious patterns.',
-          'What makes it truly special is that many puzzles have multiple valid solutions: you might sort by color, height, pattern, or thickness. Just beware of the mischievous house cat whose white paw periodically reaches out from the edge of your screen to swat your neatly stacked stamps into disarray.',
+          'Developed by Canadian indie studio Max Inferno and published by Secret Mode, A Little to the Left is a masterclass in domestic satisfaction. You are presented with everyday items—receipts, colored pencils, measuring spoons, and soup cans—and tasked with arranging them into harmonious patterns.',
+          'What makes it truly special is that many puzzles have multiple valid solutions: you might sort by color, height, pattern, or thickness. Just beware of the mischievous house cat whose white paw periodically swats your neatly stacked stamps into disarray.',
         ],
-        image: 'https://images.pexels.com/photos/7703306/pexels-photo-7703306.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
-        imageAlt: 'Neat stationery arranged carefully on a wooden table.',
+        image: 'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1629520/ss_830a67e3cace3216bfb5b591b86a441fce3bc6fb.1920x1080.jpg',
+        imageAlt: 'A Little to the Left — official Steam screenshot sorting pencils and desk stationery by gradient.',
+        steamLink: 'https://store.steampowered.com/app/1629520/A_Little_to_the_Left/',
       },
       {
         heading: '2. Unpacking',
         content: [
-          'Witch Beam’s breakout hit turns the physically exhausting chore of moving house into an emotional, wordless narrative journey. Over the course of eight moves between 1997 and 2018, you unpack cardboard boxes and decide where to place toothbrushes, video game consoles, stuffed animals, and framed photos.',
-          'Through the objects you unpack, you piece together the character’s life: childhood hobbies, difficult relationships, and eventually finding a partner who makes room on their shelves for her beloved stuffed chicken.',
+          'Witch Beam’s breakout BAFTA-winning hit turns the physically exhausting chore of moving house into an emotional, wordless narrative journey. Over the course of eight moves between 1997 and 2018, you unpack cardboard boxes and decide where to place toothbrushes, video game consoles, plushies, and framed photos.',
+          'Through the objects you unpack, you piece together the character’s life: childhood hobbies, difficult relationships, and eventually finding a partner who makes room on their shelves for her beloved plushies.',
         ],
+        image: 'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1135690/ss_b32bfdd3f68e1f9e264bd37e10a464629ca034f8.1920x1080.jpg',
+        imageAlt: 'Unpacking — official Steam screenshot unpacking childhood bedroom shelves.',
+        steamLink: 'https://store.steampowered.com/app/1135690/Unpacking/',
       },
       {
         heading: '3. Sticky Business',
         content: [
-          'If you have ever dreamt of running a tiny stationery shop without any real-world financial stress, Sticky Business is pure comfort. You design custom stickers using cute graphic elements, pack orders in decorated boxes, and read heartfelt thank-you notes from your regular customers.',
-          'The tactile sound of peeling and sticking paper stickers combined with pastel color palettes makes this one of the most gentle indie gems released in recent years.',
+          'If you have ever dreamt of running a tiny stationery shop without any real-world financial stress, Sticky Business by Spellgarden Games is pure comfort. You design custom stickers using cute graphic elements, pack orders in decorated boxes, and read heartfelt thank-you notes from your regular customers.',
+          'The tactile sound of peeling and sticking paper stickers combined with pastel color palettes makes this one of the most gentle indie gems released in recent years on Steam.',
         ],
+        image: 'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2303350/ss_3068ee081c788e448f84bba80a0bb359bcddd44a.1920x1080.jpg',
+        imageAlt: 'Sticky Business — official Steam screenshot packing sticker sheets into shipping boxes.',
+        steamLink: 'https://store.steampowered.com/app/2303350/Sticky_Business/',
         callout: {
           title: 'Vibe Check',
-          text: 'Perfect for playing when you want to feel productive without any chance of losing or running out of time.',
+          text: 'Perfect for playing when you want to feel creatively productive without any chance of losing or running out of time.',
         },
       },
       {
         heading: '4. Assemble with Care',
         content: [
-          'From Ustwo Games (the creators of Monument Valley), this story-driven puzzle game follows Maria, an antique restorer who arrives in the sun-soaked town of Bellariva. Residents bring her their broken heirlooms: vintage cassette players, cameras, neon clocks, and music boxes.',
-          'You unscrew tiny faceplates, replace worn gears, resolder audio wires, and reassemble each item with satisfying clicks and snaps. It is deeply tactile and touching.',
+          'From Ustwo Games (the acclaimed creators of Monument Valley), this story-driven puzzle game follows Maria, an antique restorer who arrives in the sun-soaked town of Bellariva. Residents bring her their broken heirlooms: vintage cassette players, cameras, neon clocks, and music boxes.',
+          'You unscrew tiny faceplates, replace worn gears, resolder audio wires, and reassemble each item with satisfying clicks and snaps. It is deeply tactile, beautifully voiced, and touching.',
         ],
-        image: 'https://images.pexels.com/photos/4107106/pexels-photo-4107106.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
-        imageAlt: 'Vintage electronics and camera components being restored on a clean workspace.',
+        image: 'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1202900/ss_4d86c1e86c7fd4723350b113d0e84258c4ae1b1b.1920x1080.jpg',
+        imageAlt: 'Assemble with Care — official Steam screenshot repairing a retro slide projector.',
+        steamLink: 'https://store.steampowered.com/app/1202900/Assemble_with_Care/',
       },
       {
         heading: '5. Wilmot’s Warehouse',
         content: [
-          'Wilmot’s Warehouse takes the concept of warehouse management and turns it into a playful memory test. You push square crates representing hundreds of abstract goods—like guitars, hats, umbrellas, and diamonds—into whatever organizational system makes sense to your brain.',
-          'Between delivery rounds, you get unlimited B-side time to wander around, reorganize your aisles, and admire your inventory.',
+          'Wilmot’s Warehouse by Hollow Ponds and Richard Hogg turns the concept of warehouse management into a playful, colorful memory test. You push square crates representing hundreds of abstract goods—like guitars, hats, umbrellas, and diamonds—into whatever organizational system makes sense to your brain.',
+          'Between delivery rounds, you get unlimited B-side time to wander around, reorganize your aisles, and admire your immaculate inventory.',
         ],
+        image: 'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/839870/ss_aa84b2cde78958aea65b5f7e15c0ff886aa36c92.1920x1080.jpg',
+        imageAlt: 'Wilmot’s Warehouse — official Steam screenshot organizing colorful supply blocks.',
+        steamLink: 'https://store.steampowered.com/app/839870/Wilmots_Warehouse/',
       },
       {
         heading: '6. Inbento',
         content: [
-          'Inbento is a mouth-watering puzzle game about a mother cat preparing bento lunchboxes for her kitten. You slide, flip, and swap rice balls, salmon slices, and avocado rolls to match a recipe card.',
-          'With hand-drawn illustrations and zero text, it delivers a heartwarming story about growing up and the comfort of homemade food.',
+          'Inbento by Afterburn is a mouth-watering puzzle game about a mother cat preparing bento lunchboxes for her kitten. You slide, flip, and swap rice balls, salmon slices, and avocado rolls to match a recipe card.',
+          'With hand-drawn minimalist illustrations and zero text, it delivers a heartwarming story about growing up and the comfort of homemade food across 120+ hand-crafted culinary puzzles.',
         ],
+        image: 'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1567440/ss_c64aa8fbf1fb4618de8a464dc4e3271eb3112845.1920x1080.jpg',
+        imageAlt: 'Inbento — official Steam screenshot assembling cute Japanese bento recipe boxes.',
+        steamLink: 'https://store.steampowered.com/app/1567440/inbento/',
       },
       {
-        heading: '7. Librarian: Tidy Up the Arcane Library',
+        heading: '7. Cats Organized Neatly',
         content: [
-          'Our very own featured cozy puzzle journey! In Librarian, you step into ancient magical halls where books whisper, enchanted shelves demand dusting, and stray scrolls need sorting by their magical auras.',
-          'Check out our complete step-by-step walkthrough right here on JinssiGaming to discover every secret achievement and color-coded sorting trick.',
+          'Developed by DU&I, Cats Organized Neatly is a 2D grid puzzle where 30 distinct handcrafted cats must be rotated and gently nestled together to fill each shape perfectly.',
+          'Each feline has its own unique silhouette, personality, and adorable meow sound effect. With relaxing lo-fi background tracks, charming art, and zero pressure, it has earned an Overwhelmingly Positive rating on Steam from thousands of happy cozy gamers.',
         ],
+        image: 'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1369340/ss_0a88b8f262c958c7b50adbab4f4e9fdc3d7e708b.1920x1080.jpg',
+        imageAlt: 'Cats Organized Neatly — official Steam screenshot fitting sleeping cats into grid spaces.',
+        steamLink: 'https://store.steampowered.com/app/1369340/Cats_Organized_Neatly/',
       },
     ],
   },
@@ -139,9 +157,10 @@ export const articles: Article[] = [
     tags: ['Tiny Glade', 'Castle Builder', 'Indie Review', 'Peaceful', 'Steam'],
     cozyScore: 5,
     stressLevel: 'Zero Stress',
-    coverImage: 'https://images.pexels.com/photos/16433564/pexels-photo-16433564.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
-    coverAlt: 'A peaceful moss-covered stone cottage with ivy vines and wildflowers.',
+    coverImage: 'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2198150/ss_1a98b0d5e8111f100b3ececda8f682333337e3cb.1920x1080.jpg',
+    coverAlt: 'Tiny Glade — official in-game screenshot on Steam showing peaceful stone castle towers and grazing sheep.',
     summary: 'Pounce Light’s Tiny Glade removes the stress of city builders and replaces it with pure architectural doodling in a sun-drenched meadow.',
+    steamLink: 'https://store.steampowered.com/app/2198150/Tiny_Glade/',
     sections: [
       {
         heading: 'A Builder Free From Deadlines and Taxes',
@@ -167,8 +186,9 @@ export const articles: Article[] = [
           'The audio design deserves special mention. Every brick placed makes a soft, tactile thud. You hear the breeze whistling through autumn birch trees, crickets chirping as the sun dips below the horizon, and gentle acoustic guitar melodies that never overpower your thoughts.',
           'The built-in photo mode lets you adjust time of day, fog depth, and camera angles, making it a dream for creating custom desktop wallpapers or cozy moodboards.',
         ],
-        image: 'https://images.pexels.com/photos/29765221/pexels-photo-29765221.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
-        imageAlt: 'Sunlit rustic countryside meadow with stone walls.',
+        image: 'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2198150/ss_6a8c7a510715796a659bd9fd828cc02cf73e11de.1920x1080.jpg',
+        imageAlt: 'Tiny Glade — official Steam screenshot of wooden pathways, stone arches, and evening lanterns.',
+        steamLink: 'https://store.steampowered.com/app/2198150/Tiny_Glade/',
       },
       {
         heading: 'The Verdict',
@@ -189,17 +209,18 @@ export const articles: Article[] = [
     date: 'Sep 7, 2026',
     readTimeMinutes: 7,
     category: 'Guide',
-    tags: ['Unpacking', 'Game Guide', 'Narrative', 'Secrets', 'Walkthrough'],
+    tags: ['Unpacking', 'Game Guide', 'Narrative', 'Secrets', 'Steam'],
     cozyScore: 5,
     stressLevel: 'Zero Stress',
-    coverImage: 'https://images.pexels.com/photos/4440614/pexels-photo-4440614.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
-    coverAlt: 'A cozy bright bedroom with packed boxes and organized bookshelves.',
+    coverImage: 'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1135690/ss_b32bfdd3f68e1f9e264bd37e10a464629ca034f8.1920x1080.jpg',
+    coverAlt: 'Unpacking — official Steam screenshot of the 1997 childhood bedroom filled with toys and books.',
     summary: 'An exploration of the subtle environmental storytelling in Unpacking, along with a complete checklist for unlocking all secret stickers.',
+    steamLink: 'https://store.steampowered.com/app/1135690/Unpacking/',
     sections: [
       {
         heading: 'Storytelling Without a Single Spoken Word',
         content: [
-          'When you first boot up Unpacking, it appears to be a straightforward spatial puzzle: take items out of moving boxes and put them away in rooms. But as you progress across 21 years of the protagonist’s life, you realize the game is doing something extraordinary.',
+          'When you first boot up Unpacking on Steam, it appears to be a straightforward spatial puzzle: take items out of moving boxes and put them away in rooms. But as you progress across 21 years of the protagonist’s life, you realize the game is doing something extraordinary.',
           'Without dialogue, cutscenes, or visible human characters, Unpacking tells an intimate story purely through objects. What someone packs, what they discard, and where their possessions are allowed to live reveals everything about their mental state, relationships, and identity.',
         ],
       },
@@ -210,6 +231,8 @@ export const articles: Article[] = [
           'As you unpack her belongings, you discover there is almost no room for her. Her art supplies have to be crammed under the bed. Her favorite posters have no wall space. And most tellingly: when you unpack her hard-earned university diploma, the game refuses to let you hang it anywhere on the walls.',
           'The only valid place the game permits you to put her degree is tucked away inside a closet under her socks. In a single gameplay mechanic, Witch Beam communicates the quiet suffocation of being in a relationship where someone won’t make room for who you are.',
         ],
+        image: 'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1135690/ss_9b358510285a4b70e446237de5996bc434415c01.1920x1080.jpg',
+        imageAlt: 'Unpacking — official Steam screenshot organizing kitchen pantry items and mugs.',
         callout: {
           title: 'Environmental Detail to Notice',
           text: 'Notice how the boyfriend’s coffee mug sits on a coaster, while her colorful childhood mug is relegated to the back of the highest kitchen shelf.',
@@ -218,7 +241,7 @@ export const articles: Article[] = [
       {
         heading: 'Secret Stickers & Achievement Checklist',
         content: [
-          'Want to earn 100% completion? Here are the most easily missed secret achievements across the stages:',
+          'Want to earn 100% completion on Steam? Here are the most easily missed secret achievements across the stages:',
           '• Solve a Puzzle (1997): Pick up the Rubik’s cube in the childhood bedroom and click it repeatedly until all colors align.',
           '• Make Some Noise (2004): Click the radio in the dorm room to turn on music.',
           '• Blast Your Tunes (2007): Place the MP3 player next to the computer speakers.',
@@ -239,18 +262,19 @@ export const articles: Article[] = [
     id: 'healing-from-burnout',
     slug: 'how-cozy-games-are-quietly-healing-us-from-burnout',
     title: 'How Cozy Games Are Quietly Healing Us From Modern Burnout',
-    subtitle: 'In a culture demanding endless productivity, cozy gaming offers a radical permission to slow down, arrange teacups, and just breathe.',
+    subtitle: 'In a culture demanding endless productivity, cozy gaming offers a radical permission to slow down, brew virtual tea, and just breathe.',
     author: 'Jinssi Editorial',
     authorRole: 'Culture & Wellness',
     date: 'Sep 6, 2026',
     readTimeMinutes: 5,
     category: 'Cozy Essay',
-    tags: ['Mental Health', 'Cozy Gaming', 'Burnout', 'Wellness', 'Culture'],
+    tags: ['Mental Health', 'Cozy Gaming', 'Burnout', 'Wellness', 'Steam'],
     cozyScore: 5,
     stressLevel: 'Zero Stress',
-    coverImage: 'https://images.pexels.com/photos/12593769/pexels-photo-12593769.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
-    coverAlt: 'A cup of tea next to an open notebook and warm ambient candlelight.',
+    coverImage: 'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/894090/ss_5f9606f8aa9e6cb015d73a2394a37ea90b4f5946.1920x1080.jpg',
+    coverAlt: 'Coffee Talk on Steam — official in-game screenshot of pouring a warm latte with gentle ambient city rain.',
     summary: 'An exploration into the psychological phenomenon of cozy gaming, low-stakes play, and why peaceful digital spaces are essential for modern wellness.',
+    steamLink: 'https://store.steampowered.com/app/894090/Coffee_Talk/',
     sections: [
       {
         heading: 'The Tyranny of the Modern Hustle',
@@ -262,9 +286,12 @@ export const articles: Article[] = [
       {
         heading: 'The Rise of "Low-Stakes" Play',
         content: [
-          'Then came the explosion of cozy gaming. Titles like Stardew Valley, Animal Crossing: New Horizons, Spiritfarer, and Coffee Talk proved that players were starving for gentleness.',
-          'Psychologists refer to this as "low-stakes play"—an activity where failure carries no permanent penalty, time moves at a benevolent pace, and the player is granted full agency over their world. In a cozy game, if your turnip crop takes an extra day to harvest, nobody yells at you. If you spend three hours arranging potted ferns on a balcony in Tiny Glade, the game celebrates your curiosity.',
+          'Then came the explosion of cozy gaming. Titles like Stardew Valley, Coffee Talk, Spiritfarer, and A Short Hike proved that players were starving for gentleness.',
+          'Psychologists refer to this as "low-stakes play"—an activity where failure carries no permanent penalty, time moves at a benevolent pace, and the player is granted full agency over their world. In a cozy game, if your turnip crop takes an extra day to harvest, nobody yells at you. If you spend three hours arranging potted ferns in Tiny Glade, the game celebrates your curiosity.',
         ],
+        image: 'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/413150/ss_0d03bf1bc3e1f0e47854e4277b0687a414966d92.1920x1080.jpg',
+        imageAlt: 'Stardew Valley — official Steam screenshot of tending peaceful crops and farm animals.',
+        steamLink: 'https://store.steampowered.com/app/413150/Stardew_Valley/',
         callout: {
           title: 'The "Tea & Controller" Ritual',
           text: 'Many players report that establishing an evening ritual—brewing herbal tea, dimming the lights, and playing 30 minutes of a low-stakes game—significantly reduces insomnia and evening anxiety.',
@@ -273,7 +300,7 @@ export const articles: Article[] = [
       {
         heading: 'Reclaiming the Right to Rest',
         content: [
-          'Cozy games do not demand that you become the chosen savior of the universe. You do not have to defeat an elder god or shoot down enemy squads. Often, your purpose is simply to bake bread for village neighbors, restore an enchanted library, or help a weary traveler find a seat by the fire.',
+          'Cozy games do not demand that you become the chosen savior of the universe. You do not have to defeat an elder god or shoot down enemy squads. Often, your purpose is simply to brew a warm matcha latte for an elf in Coffee Talk, or arrange a room for a weary friend.',
           'In doing so, these gentle titles quietly heal us. They remind us that our worth is not measured by relentless output, and that there is profound beauty in simply existing, resting, and enjoying the quiet moments.',
         ],
       },

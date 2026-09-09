@@ -100,9 +100,26 @@ function normalizeContent(parsed: Partial<SavedContent> | null | undefined): Sav
       }))
     : defaultContent.ctaLinks;
 
+  const normalizedArticles = Array.isArray(parsed?.articles) && parsed.articles.length > 0
+    ? parsed.articles.map((art) => {
+        const fresh = initialArticles.find((init) => init.id === art.id);
+        if (fresh) {
+          const hasOutdatedMedia =
+            art.coverImage?.includes('pexels.com') ||
+            art.coverImage?.includes('unsplash.com') ||
+            art.sections?.some((s) => s.image?.includes('pexels.com') || s.image?.includes('unsplash.com')) ||
+            (art.id === 'organizing-games-steam' && art.sections?.some((s) => s.heading?.includes('Librarian')));
+          if (hasOutdatedMedia) {
+            return fresh;
+          }
+        }
+        return art;
+      })
+    : initialArticles;
+
   return {
     games: Array.isArray(parsed?.games) ? parsed.games : initialGames,
-    articles: Array.isArray(parsed?.articles) && parsed.articles.length > 0 ? parsed.articles : initialArticles,
+    articles: normalizedArticles,
     heroImage: typeof parsed?.heroImage === 'string' ? parsed.heroImage : defaultContent.heroImage,
     logoImage: parsed?.logoImage === '/logo.png'
       ? defaultContent.logoImage
