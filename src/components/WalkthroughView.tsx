@@ -458,18 +458,13 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
 
           <div className="relative z-10 w-full max-w-md my-auto pt-[210px] sm:pt-[230px]">
             {/* Tuturo Character standing behind the card greeting - centered with the card */}
-            <div className="absolute left-[calc(50%+14px)] -translate-x-1/2 top-0 z-0 pointer-events-none w-64 sm:w-72 select-none animate-float">
-              <div className="relative">
-                <img
-                  src="/tuturo.png"
-                  alt="Tuturo greeting you"
-                  className="w-full h-auto object-contain mx-auto filter drop-shadow-xl"
-                  draggable={false}
-                />
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-white/95 border-2 border-tan-300 rounded-full px-3.5 py-1 shadow-cozy-md text-xs sm:text-sm font-extrabold text-peach-600 whitespace-nowrap">
-                  Tuturu~♪
-                </div>
-              </div>
+            <div className="absolute left-1/2 -translate-x-1/2 top-0 z-0 pointer-events-none w-64 sm:w-72 select-none animate-float">
+              <img
+                src="/tuturo.png"
+                alt="Tuturo greeting you"
+                className="w-full h-auto object-contain mx-auto filter drop-shadow-xl"
+                draggable={false}
+              />
             </div>
 
             <div
