@@ -204,11 +204,21 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
 
       {/* Game header with cover image */}
       <div className="cozy-card notepad-card mb-8 animate-fade-in">
-        <div className="h-48 sm:h-56 relative overflow-hidden">
+        <div 
+          className="h-48 sm:h-56 relative overflow-hidden"
+          style={{
+            borderTopLeftRadius: 'calc(1.2rem - 0.16rem)',
+            borderTopRightRadius: 'calc(0.7rem - 0.16rem)',
+          }}
+        >
           <img
             src={game.coverImage}
             alt={game.coverAlt}
             className="w-full h-full object-cover"
+            style={{
+              borderTopLeftRadius: 'calc(1.2rem - 0.16rem)',
+              borderTopRightRadius: 'calc(0.7rem - 0.16rem)',
+            }}
           />
           <div
             className="absolute inset-0"
@@ -272,7 +282,7 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
                   href={social.href}
                   target="_blank"
                   rel="noreferrer"
-                  className="rounded-lg border border-tan-200 bg-cream-50 px-2.5 py-1.5 text-xs font-bold text-tan-600 transition-colors hover:border-peach-300 hover:text-peach-600"
+                  className="social-share-pill rounded-lg border border-tan-200 bg-cream-50 px-2.5 py-1.5 text-xs font-bold text-tan-600 transition-colors hover:border-peach-300 hover:text-peach-600"
                 >
                   {social.label}
                 </a>
@@ -341,7 +351,7 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
         <div className="flex items-center gap-3 flex-wrap">
           <button
             onClick={toggleSpoilers}
-            className="site-button bg-cream-50 text-ink-900 border-cream-300 hover:border-peach-300"
+            className="site-button spoilers-toggle-button bg-cream-50 text-ink-900 border-cream-300 hover:border-peach-300"
           >
             {showSpoilers ? (
               <Eye className="w-4 h-4 text-peach-400" />
@@ -352,12 +362,12 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
               Spoilers: {showSpoilers ? 'On' : 'Off'}
             </span>
             <div
-              className={`w-10 h-5 rounded-full transition-all duration-300 relative ${
+              className={`w-10 h-5 rounded-full transition-all duration-300 relative spoilers-toggle-track ${
                 showSpoilers ? 'bg-peach-400' : 'bg-cream-300'
               }`}
             >
               <div
-                className={`absolute top-0.5 w-4 h-4 rounded-full bg-cream-50 shadow-cozy-sm transition-all duration-300 ${
+                className={`absolute top-0.5 w-4 h-4 rounded-full bg-cream-50 shadow-cozy-sm transition-all duration-300 spoilers-toggle-dot ${
                   showSpoilers ? 'left-5' : 'left-0.5'
                 }`}
               />
@@ -366,7 +376,7 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
 
           <button
             onClick={resetProgress}
-            className="site-button border-transparent text-tan-500 hover:text-rose-500 hover:bg-rose-100 text-sm"
+            className="site-button reset-progress-button border-transparent text-tan-500 hover:text-rose-500 hover:bg-rose-100 text-sm"
           >
             <RotateCcw className="w-4 h-4" />
             Reset progress

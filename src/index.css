@@ -63,6 +63,13 @@
     --filter-btn-text: #8f764f;
     --filter-btn-border: transparent;
 
+    /* Secondary buttons & pills */
+    --btn-secondary-bg: #f9ede0;
+    --btn-secondary-border: #e2d4bf;
+    --btn-secondary-text: #3a2e22;
+    --btn-secondary-hover-bg: #f4e6d1;
+    --btn-secondary-shadow: rgba(180, 140, 100, 0.2);
+
     /* Footer */
     --footer-bg: #fdfbf7;
     --footer-line: #e6e0d4;
@@ -114,12 +121,18 @@
     --tools-border: #334873;
     --tools-shadow: rgba(10, 16, 29, 0.6);
     --input-bg: #131d32;
-    --input-border: #2d4168;
+    --input-border: #3b4f77;
     --input-text: #f8fafc;
-    --input-placeholder: #7c92b8;
+    --input-placeholder: #94a3b8;
     --filter-btn-bg: #223150;
     --filter-btn-text: #cbd5e1;
     --filter-btn-border: #2e4169;
+
+    --btn-secondary-bg: #1c2b48;
+    --btn-secondary-border: #334873;
+    --btn-secondary-text: #f8fafc;
+    --btn-secondary-hover-bg: #273b61;
+    --btn-secondary-shadow: rgba(10, 16, 29, 0.4);
 
     --footer-bg: #0f1626;
     --footer-line: #1e2c48;
@@ -171,12 +184,18 @@
     --tools-border: #54392b;
     --tools-shadow: rgba(18, 11, 8, 0.6);
     --input-bg: #221610;
-    --input-border: #4a3225;
+    --input-border: #5c4033;
     --input-text: #fdf8f4;
-    --input-placeholder: #b89380;
+    --input-placeholder: #d9a472;
     --filter-btn-bg: #38271e;
     --filter-btn-text: #fed7aa;
     --filter-btn-border: #4e3527;
+
+    --btn-secondary-bg: #38271e;
+    --btn-secondary-border: #54392b;
+    --btn-secondary-text: #fdf8f4;
+    --btn-secondary-hover-bg: #4a3328;
+    --btn-secondary-shadow: rgba(18, 11, 8, 0.4);
 
     --footer-bg: #1a120e;
     --footer-line: #2e1d15;
@@ -228,12 +247,18 @@
     --tools-border: #345442;
     --tools-shadow: rgba(10, 20, 15, 0.6);
     --input-bg: #14221a;
-    --input-border: #2c4738;
+    --input-border: #3c5c4c;
     --input-text: #f0fdf4;
-    --input-placeholder: #7ea78e;
+    --input-placeholder: #a8c89e;
     --filter-btn-bg: #23382d;
     --filter-btn-text: #cfe0c8;
     --filter-btn-border: #345241;
+
+    --btn-secondary-bg: #1f362a;
+    --btn-secondary-border: #345442;
+    --btn-secondary-text: #f0fdf4;
+    --btn-secondary-hover-bg: #2b4939;
+    --btn-secondary-shadow: rgba(10, 20, 15, 0.4);
 
     --footer-bg: #0e1a14;
     --footer-line: #1c3226;
@@ -1359,6 +1384,9 @@
 [data-ambient-theme] .site-nav-link:hover {
   color: var(--page-title-hover);
 }
+[data-ambient-theme] .text-peach-600 {
+  color: #ff8c75;
+}
 [data-ambient-theme] .page-title:hover {
   color: var(--page-title-hover);
   text-shadow: var(--page-title-shadow);
@@ -1375,18 +1403,134 @@
   border: 1px solid var(--filter-btn-border);
 }
 
+/* All secondary buttons, pills, and toggles on dark ambient themes */
+[data-ambient-theme] .site-button.bg-cream-50,
+[data-ambient-theme] .site-button.bg-cream-100,
+[data-ambient-theme] .site-button.bg-white,
+[data-ambient-theme] a.site-button.bg-cream-50,
+[data-ambient-theme] a.site-button.bg-cream-100,
+[data-ambient-theme] a.site-button.bg-white,
+[data-ambient-theme] .table-of-contents-trigger,
+[data-ambient-theme] .spoilers-toggle-button,
+[data-ambient-theme] .social-share-pill {
+  background-color: var(--btn-secondary-bg) !important;
+  border-color: var(--btn-secondary-border) !important;
+  color: var(--btn-secondary-text) !important;
+  box-shadow: 0 2px 0 var(--btn-secondary-shadow) !important;
+}
+
+[data-ambient-theme] .site-button.bg-cream-50:hover,
+[data-ambient-theme] .site-button.bg-cream-100:hover,
+[data-ambient-theme] .site-button.bg-white:hover,
+[data-ambient-theme] a.site-button.bg-cream-50:hover,
+[data-ambient-theme] a.site-button.bg-cream-100:hover,
+[data-ambient-theme] a.site-button.bg-white:hover,
+[data-ambient-theme] .table-of-contents-trigger:hover,
+[data-ambient-theme] .spoilers-toggle-button:hover,
+[data-ambient-theme] .social-share-pill:hover {
+  background-color: var(--btn-secondary-hover-bg) !important;
+  border-color: var(--page-title-hover) !important;
+  color: var(--text-main) !important;
+}
+
+[data-ambient-theme] .table-of-contents-trigger span,
+[data-ambient-theme] .spoilers-toggle-button span,
+[data-ambient-theme] .social-share-pill,
+[data-ambient-theme] .site-button.bg-cream-50 span,
+[data-ambient-theme] .site-button.bg-cream-100 span,
+[data-ambient-theme] a.site-button.bg-cream-50 span,
+[data-ambient-theme] a.site-button.bg-cream-100 span {
+  color: var(--btn-secondary-text) !important;
+}
+
+[data-ambient-theme] .table-of-contents-trigger .pill {
+  background-color: var(--card-bg) !important;
+  color: var(--text-muted) !important;
+  border: 1px solid var(--card-border) !important;
+}
+
+[data-ambient-theme] .table-of-contents-trigger svg {
+  color: var(--text-muted) !important;
+}
+
+[data-ambient-theme] .spoilers-toggle-button .spoilers-toggle-track:not(.bg-peach-400) {
+  background-color: var(--card-border) !important;
+}
+
+[data-ambient-theme] .spoilers-toggle-button .spoilers-toggle-dot {
+  background-color: var(--text-main) !important;
+}
+
+[data-ambient-theme] .reset-progress-button {
+  color: var(--text-muted) !important;
+}
+[data-ambient-theme] .reset-progress-button:hover {
+  color: #f87171 !important;
+  background-color: rgba(248, 113, 113, 0.15) !important;
+}
+
+/* Table of Contents dropdown menu panel */
+[data-ambient-theme] .table-of-contents-panel {
+  background-color: var(--card-bg) !important;
+  border-color: var(--card-border) !important;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6) !important;
+}
+[data-ambient-theme] .table-of-contents-header {
+  background-color: var(--card-done-bg) !important;
+  border-color: var(--card-border) !important;
+}
+[data-ambient-theme] .table-of-contents-search {
+  background-color: var(--input-bg) !important;
+  border-color: var(--input-border) !important;
+  color: var(--input-text) !important;
+}
+[data-ambient-theme] .table-of-contents-search::placeholder {
+  color: var(--input-placeholder) !important;
+}
+[data-ambient-theme] .table-of-contents-row:hover {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Support note in footer */
+[data-ambient-theme] .site-support-note {
+  background: var(--btn-secondary-bg) !important;
+  border: 1.5px solid var(--btn-secondary-border) !important;
+  box-shadow: 3px 3px 0 var(--card-shadow) !important;
+}
+[data-ambient-theme] .site-support-label {
+  color: var(--section-kicker-color) !important;
+}
+[data-ambient-theme] .site-support-note p {
+  color: var(--text-body) !important;
+}
+[data-ambient-theme] .site-support-button {
+  background: #f5724e !important;
+  border-color: #e05a3a !important;
+  color: #ffffff !important;
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.4) !important;
+}
+
 /* Form and input elements under active ambient theme */
 [data-ambient-theme] .site-cta-panel input {
   background-color: var(--input-bg) !important;
   border-color: var(--input-border) !important;
   color: var(--input-text) !important;
 }
+[data-ambient-theme] .site-cta-panel input:focus {
+  border-color: #ff8c75 !important;
+  box-shadow: 0 0 0 3px rgba(255, 140, 117, 0.25) !important;
+}
 [data-ambient-theme] .site-cta-panel input::placeholder {
   color: var(--input-placeholder) !important;
 }
 [data-ambient-theme] .site-cta-panel a.bg-cream-50 {
-  background-color: var(--input-bg) !important;
-  border-color: var(--card-border) !important;
+  background-color: var(--btn-secondary-bg) !important;
+  border-color: var(--btn-secondary-border) !important;
+  color: var(--btn-secondary-text) !important;
+}
+[data-ambient-theme] .site-cta-panel a.bg-cream-50:hover {
+  background-color: var(--btn-secondary-hover-bg) !important;
+  border-color: var(--page-title-hover) !important;
   color: var(--text-main) !important;
 }
 [data-ambient-theme] .cozy-card.bg-gradient-to-br,
@@ -1399,6 +1543,29 @@
   background-color: var(--input-bg) !important;
   border-color: var(--input-border) !important;
   color: var(--input-text) !important;
+}
+
+/* Progress bar tracks */
+[data-ambient-theme] .bg-cream-300 {
+  background-color: var(--card-done-line) !important;
+}
+
+/* Walkthrough steps and card interactions */
+[data-ambient-theme] .hover\:bg-cream-100:hover {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+[data-ambient-theme] .hover\:bg-cream-200:hover,
+[data-ambient-theme] .hover\:bg-cream-200\/70:hover {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}
+[data-ambient-theme] .bg-cream-200\/50 {
+  background-color: rgba(0, 0, 0, 0.3) !important;
+}
+[data-ambient-theme] .border-tan-200 {
+  border-color: var(--card-line) !important;
+}
+[data-ambient-theme] .border-tan-300 {
+  border-color: var(--card-border) !important;
 }
 
 /* Header music pill under ambient themes */

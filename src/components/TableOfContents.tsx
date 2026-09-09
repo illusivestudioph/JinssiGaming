@@ -118,7 +118,7 @@ export function TableOfContents({
           playDropdownSfx();
           setIsOpen((prev) => !prev);
         }}
-        className={`site-button flex items-center justify-between gap-3 text-sm font-semibold transition-all ${
+        className={`site-button table-of-contents-trigger flex items-center justify-between gap-3 text-sm font-semibold transition-all ${
           floating
             ? 'bg-cream-100/95 backdrop-blur-md text-ink-900 border-2 border-tan-300 shadow-cozy-lg px-4 py-2.5 rounded-full hover:border-peach-300 hover:bg-cream-50'
             : 'w-full sm:w-auto bg-cream-50 text-ink-900 border-2 border-tan-200 shadow-cozy-sm hover:border-peach-300 px-4 py-2.5 rounded-xl'
@@ -151,7 +151,7 @@ export function TableOfContents({
       {/* Dropdown Menu Panel */}
       {isOpen && (
         <div
-          className={`notepad-card absolute z-50 w-[92vw] max-w-md sm:w-[420px] bg-cream-50 border-2 border-tan-300 shadow-cozy-lg overflow-hidden animate-pop ${
+          className={`notepad-card table-of-contents-panel absolute z-50 w-[92vw] max-w-md sm:w-[420px] bg-cream-50 border-2 border-tan-300 shadow-cozy-lg overflow-hidden animate-pop ${
             floating
               ? 'bottom-full mb-3 right-0 origin-bottom-right'
               : 'top-full mt-2 left-0 sm:left-auto right-0 sm:right-auto origin-top-left'
@@ -159,7 +159,7 @@ export function TableOfContents({
           style={{ maxHeight: '70vh' }}
         >
           {/* Header & Quick Search */}
-          <div className="p-3.5 border-b-2 border-tan-200 bg-cream-100/90 flex flex-col gap-2.5">
+          <div className="table-of-contents-header p-3.5 border-b-2 border-tan-200 bg-cream-100/90 flex flex-col gap-2.5">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Compass className="w-4 h-4 text-peach-500" />
@@ -186,7 +186,7 @@ export function TableOfContents({
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search steps or chapters..."
-                className="w-full pl-8 pr-7 py-1.5 text-xs rounded-lg border border-tan-200 bg-white text-ink-900 placeholder:text-tan-400 focus:outline-none focus:border-peach-400"
+                className="table-of-contents-search w-full pl-8 pr-7 py-1.5 text-xs rounded-lg border border-tan-200 bg-white text-ink-900 placeholder:text-tan-400 focus:outline-none focus:border-peach-400"
               />
               {searchQuery && (
                 <button
@@ -218,7 +218,7 @@ export function TableOfContents({
                     <button
                       type="button"
                       onClick={() => handleSectionClick(section.id)}
-                      className="w-full flex items-center justify-between gap-2 px-2 py-1.5 rounded-lg text-left hover:bg-cream-200/70 group transition-colors"
+                      className="table-of-contents-row w-full flex items-center justify-between gap-2 px-2 py-1.5 rounded-lg text-left hover:bg-cream-200/70 group transition-colors"
                     >
                       <div className="flex items-center gap-2 min-w-0">
                         <span
@@ -251,7 +251,7 @@ export function TableOfContents({
                             key={step.id}
                             type="button"
                             onClick={() => handleStepClick(section.id, step.id)}
-                            className="w-full flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-md text-left text-xs transition-colors hover:bg-peach-50/80 group"
+                            className="table-of-contents-row w-full flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-md text-left text-xs transition-colors hover:bg-peach-50/80 group"
                           >
                             <div className="flex items-center gap-2 min-w-0">
                               <span
