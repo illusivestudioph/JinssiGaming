@@ -19,7 +19,10 @@ import {
   AlertCircle, 
   WifiOff, 
   AlertTriangle, 
-  RotateCcw 
+  RotateCcw,
+  BookOpen,
+  BookMarked,
+  ExternalLink
 } from 'lucide-react';
 
 const DRAFT_STORAGE_KEY = 'jinssi-admin-editing-game-draft';
@@ -42,10 +45,12 @@ export function AdminDashboard() {
     removeGame,
     addArticle,
     updateArticle,
-    removeArticle
+    removeArticle,
+    stories,
+    removeStory
   } = useSiteContent();
 
-  const [activeTab, setActiveTab] = useState<'assets' | 'games' | 'articles'>('assets');
+  const [activeTab, setActiveTab] = useState<'assets' | 'games' | 'articles' | 'stories'>('assets');
   const [editingGame, setEditingGame] = useState<Game | null>(null);
   const [editingArticle, setEditingArticle] = useState<Article | null>(null);
   const [isNewArticle, setIsNewArticle] = useState(false);
@@ -682,6 +687,7 @@ export function AdminDashboard() {
         <button onClick={() => setActiveTab('assets')} className={`font-bold pb-2 ${activeTab === 'assets' ? 'text-peach-500 border-b-2 border-peach-500' : 'text-tan-500 hover:text-ink-900'}`}>Site Assets</button>
         <button onClick={() => setActiveTab('games')} className={`font-bold pb-2 ${activeTab === 'games' ? 'text-peach-500 border-b-2 border-peach-500' : 'text-tan-500 hover:text-ink-900'}`}>Manage Games ({games.length})</button>
         <button onClick={() => setActiveTab('articles')} className={`font-bold pb-2 ${activeTab === 'articles' ? 'text-peach-500 border-b-2 border-peach-500' : 'text-tan-500 hover:text-ink-900'}`}>Cozy Journal ({articles.length})</button>
+        <button onClick={() => setActiveTab('stories')} className={`font-bold pb-2 ${activeTab === 'stories' ? 'text-peach-500 border-b-2 border-peach-500' : 'text-tan-500 hover:text-ink-900'}`}>Cozy Bookshelf ({stories.length})</button>
       </div>
 
       {activeTab === 'assets' && (
@@ -1007,6 +1013,67 @@ export function AdminDashboard() {
             removeArticle(articleId);
           }}
         />
+      )}
+
+      {activeTab === 'stories' && (
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center justify-between">
+            <h3 className="font-display font-bold text-xl text-ink-900">Serialized Stories & E-Books</h3>
+            <span className="text-xs font-semibold text-tan-500">{stories.length} stories in bookshelf</span>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4">
+            {stories.map((story) => {
+              const totalWords = story.chapters.reduce((sum, ch) => sum + ch.wordCount, 0);
+              return (
+                <div key={story.id} className="notepad-card p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                  <div className="flex items-center gap-4">
+                    <img
+                      src={story.coverImage}
+                      alt={story.coverAlt}
+                      className="w-16 h-20 object-cover rounded-xl border border-tan-200 shadow-cozy-sm"
+                    />
+                    <div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-peach-100 text-peach-700">
+                          {story.genre}
+                        </span>
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-earth-100 text-earth-700">
+                          {story.status}
+                        </span>
+                      </div>
+                      <h4 className="font-display font-bold text-base text-ink-900">{story.title}</h4>
+                      <p className="text-xs text-tan-600 font-sans mt-0.5">
+                        By {story.author} • {story.chapters.length} Chapters • {totalWords.toLocaleString()} words
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 self-end sm:self-center">
+                    <a
+                      href={`/stories/${story.slug}/1`}
+                      className="p-2.5 text-peach-600 bg-peach-50 hover:bg-peach-100 font-bold rounded-xl flex items-center gap-1.5 text-xs transition-colors"
+                      title="Open in E-Reader"
+                    >
+                      <BookOpen size={16} /> Read
+                    </a>
+                    <button
+                      onClick={() => {
+                        if (confirm(`Are you sure you want to delete "${story.title}"?`)) {
+                          removeStory(story.id);
+                        }
+                      }}
+                      className="p-2.5 text-red-500 bg-red-50 hover:bg-red-100 hover:text-red-700 rounded-xl transition-colors"
+                      title="Delete Story"
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
       )}
     </div>
   );

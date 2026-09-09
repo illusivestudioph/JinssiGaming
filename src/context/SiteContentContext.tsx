@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { games as initialGames, type Game, type WalkthroughSection } from '@/data/games';
 import { articles as initialArticles, type Article } from '@/data/articles';
+import { stories as initialStories, type Story } from '@/data/stories';
 import { supabase } from '@/lib/supabase';
 
 export interface WalletOption {
@@ -23,6 +24,7 @@ export type CloudSyncStatus = 'synced' | 'saving' | 'error' | 'offline';
 export interface SavedContent {
   games: Game[];
   articles: Article[];
+  stories: Story[];
   heroImage: string;
   logoImage: string;
   ctaLinks: CtaLink[];
@@ -32,6 +34,7 @@ export interface SavedContent {
 export interface SiteContentContextValue {
   games: Game[];
   articles: Article[];
+  stories: Story[];
   heroImage: string;
   logoImage: string;
   ctaLinks: CtaLink[];
@@ -49,6 +52,9 @@ export interface SiteContentContextValue {
   addArticle: (article: Article) => void;
   updateArticle: (article: Article) => void;
   removeArticle: (articleId: string) => void;
+  addStory: (story: Story) => void;
+  updateStory: (story: Story) => void;
+  removeStory: (storyId: string) => void;
 }
 
 const SiteContentContext = createContext<SiteContentContextValue | null>(null);
@@ -58,6 +64,7 @@ const BROADCAST_CHANNEL_NAME = 'jinssi_site_content_channel';
 const defaultContent: SavedContent = {
   games: initialGames,
   articles: initialArticles,
+  stories: initialStories,
   heroImage: '/banner.jpeg',
   logoImage: '/image.png',
   ctaLinks: [
@@ -124,9 +131,17 @@ function normalizeContent(parsed: Partial<SavedContent> | null | undefined): Sav
     normalizedArticles = [...upgradedExisting, ...newDefaults];
   }
 
+  let normalizedStories = initialStories;
+  if (Array.isArray(parsed?.stories) && parsed.stories.length > 0) {
+    const existingStoryIds = new Set(parsed.stories.map((s) => s.id));
+    const newStoryDefaults = initialStories.filter((init) => !existingStoryIds.has(init.id));
+    normalizedStories = [...parsed.stories, ...newStoryDefaults];
+  }
+
   return {
     games: Array.isArray(parsed?.games) ? parsed.games : initialGames,
     articles: normalizedArticles,
+    stories: normalizedStories,
     heroImage: typeof parsed?.heroImage === 'string' ? parsed.heroImage : defaultContent.heroImage,
     logoImage: parsed?.logoImage === '/logo.png'
       ? defaultContent.logoImage
@@ -361,6 +376,7 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
   const value = useMemo<SiteContentContextValue>(() => ({
     games: content.games,
     articles: content.articles,
+    stories: content.stories,
     heroImage: content.heroImage,
     logoImage: content.logoImage,
     ctaLinks: content.ctaLinks,
@@ -396,6 +412,17 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
     removeArticle: (articleId) => setContent((c) => ({
       ...c,
       articles: c.articles.filter((a) => a.id !== articleId),
+      updated_at: new Date().toISOString(),
+    })),
+    addStory: (story) => setContent((c) => ({ ...c, stories: [story, ...c.stories], updated_at: new Date().toISOString() })),
+    updateStory: (story) => setContent((c) => ({
+      ...c,
+      stories: c.stories.map((item) => (item.id === story.id ? story : item)),
+      updated_at: new Date().toISOString(),
+    })),
+    removeStory: (storyId) => setContent((c) => ({
+      ...c,
+      stories: c.stories.filter((s) => s.id !== storyId),
       updated_at: new Date().toISOString(),
     })),
   }), [content, syncStatus, lastSyncedAt]);
