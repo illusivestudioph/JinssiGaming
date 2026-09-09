@@ -48,8 +48,6 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
   const isComplete = progressPercent === 100 && totalSteps > 0;
   const [showCongratulations, setShowCongratulations] = useState(false);
   const [linkCopied, setLinkCopied] = useState(false);
-  const completionSoundRef = useRef<HTMLAudioElement | null>(null);
-  const confettiSoundRef = useRef<HTMLAudioElement | null>(null);
   const tuturoRef = useRef<HTMLDivElement | null>(null);
 
   // Table of Contents navigation state
@@ -173,25 +171,40 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
     { label: 'Telegram', href: `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}` },
   ];
 
+  // Preload celebration audio tracks for instantaneous, zero-latency playback
+  useEffect(() => {
+    const prePop = new Audio('/confetti-pop.mp3');
+    prePop.preload = 'auto';
+    prePop.load();
+
+    const preVoice = new Audio('/tuturu_1.mp3');
+    preVoice.preload = 'auto';
+    preVoice.load();
+  }, []);
+
   const [burstKey, setBurstKey] = useState(0);
 
-  const triggerConfettiBurst = () => {
+  // Polyphonic audio layering: plays both confetti pop and Tuturo voice simultaneously
+  const playLayeredCelebrationAudio = useCallback(() => {
+    try {
+      // Layer 1: Party popper pop & sparkles sound effect
+      const popAudio = new Audio('/confetti-pop.mp3');
+      popAudio.volume = 0.65;
+      void popAudio.play().catch(() => undefined);
+
+      // Layer 2: Tuturo character cheerful voice line ("Tu-tu-ru~")
+      const voiceAudio = new Audio('/tuturu_1.mp3');
+      voiceAudio.volume = 0.9;
+      void voiceAudio.play().catch(() => undefined);
+    } catch {
+      // Ignore if autoplay policy suppresses background audio
+    }
+  }, []);
+
+  const triggerConfettiBurst = useCallback(() => {
     setBurstKey((prev) => prev + 1);
-
-    // Play confetti pop sound effect
-    const popSound = confettiSoundRef.current || new Audio('/confetti-pop.mp3');
-    popSound.volume = 0.55;
-    confettiSoundRef.current = popSound;
-    popSound.currentTime = 0;
-    void popSound.play().catch(() => undefined);
-
-    // Play Tuturo character celebration voice
-    const voiceSound = completionSoundRef.current || new Audio('/tuturu_1.mp3');
-    voiceSound.volume = 0.5;
-    completionSoundRef.current = voiceSound;
-    voiceSound.currentTime = 0;
-    void voiceSound.play().catch(() => undefined);
-  };
+    playLayeredCelebrationAudio();
+  }, [playLayeredCelebrationAudio]);
 
   useEffect(() => {
     if (isComplete) setShowCongratulations(true);
@@ -200,7 +213,7 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
   useEffect(() => {
     if (!showCongratulations) return;
     triggerConfettiBurst();
-  }, [showCongratulations]);
+  }, [showCongratulations, triggerConfettiBurst]);
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
