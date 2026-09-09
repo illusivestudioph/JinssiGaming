@@ -513,6 +513,7 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
                         type="button"
                         onClick={() => {
                           const converted = convertGutenbergToStory(book);
+                          addStory(converted);
                           onSelectStory(converted, 1);
                         }}
                         className="w-full py-2 px-3 rounded-xl bg-peach-400 hover:bg-peach-500 text-ink-900 font-bold text-xs flex items-center justify-center gap-1.5 shadow-cozy-xs"

@@ -39,7 +39,8 @@ function App() {
 }
 
 function AppContent() {
-  const { games, articles, stories } = useSiteContent();
+  const { games, articles, stories, addStory } = useSiteContent();
+  const [activeStory, setActiveStory] = useState<Story | null>(null);
   const [view, setView] = useState<View>(() => {
     const routeView = getRouteView();
     if (routeView) return routeView;
@@ -64,7 +65,10 @@ function AppContent() {
   
   const selectedGame = games.find((game) => game.id === selectedGameId) || null;
   const selectedArticle = articles.find((article) => article.slug === selectedArticleSlug || article.id === selectedArticleSlug) || null;
-  const selectedStory = stories.find((story) => story.slug === selectedStorySlug || story.id === selectedStorySlug) || null;
+  const selectedStory =
+    activeStory && (activeStory.slug === selectedStorySlug || activeStory.id === selectedStorySlug)
+      ? activeStory
+      : stories.find((story) => story.slug === selectedStorySlug || story.id === selectedStorySlug) || activeStory || null;
 
   useEffect(() => {
     sessionStorage.setItem('jinssi-view', view);
@@ -143,6 +147,7 @@ function AppContent() {
     setSelectedGameId(null);
     setSelectedArticleSlug(null);
     setSelectedStorySlug(null);
+    setActiveStory(null);
     window.history.pushState(null, '', getPathForView(newView));
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -187,10 +192,14 @@ function AppContent() {
   };
 
   const handleSelectStory = (story: Story, chapterNumber: number = 1) => {
+    setActiveStory(story);
     setSelectedStorySlug(story.slug);
     setSelectedStoryChapterNumber(chapterNumber);
     setSelectedGameId(null);
     setSelectedArticleSlug(null);
+    if (!stories.some((s) => s.id === story.id || s.slug === story.slug)) {
+      addStory(story);
+    }
     window.history.pushState(null, '', `/stories/${story.slug}/${chapterNumber}`);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -203,6 +212,7 @@ function AppContent() {
   };
 
   const handleBackFromStory = () => {
+    setActiveStory(null);
     setSelectedStorySlug(null);
     window.history.pushState(null, '', '/stories');
     setView('stories');

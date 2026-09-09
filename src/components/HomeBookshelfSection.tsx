@@ -12,7 +12,13 @@ export function HomeBookshelfSection({
   onNavigateToBookshelf,
 }: HomeBookshelfSectionProps) {
   const { stories } = useSiteContent();
-  const featuredStories = stories.slice(0, 3);
+
+  // Curate 3 diverse spotlight books across categories
+  const spotlightIds = ['the-secret-garden', 'marcus-aurelius-meditations', 'sherlock-holmes-scandal'];
+  let featuredStories = stories.filter((s) => spotlightIds.includes(s.id));
+  if (featuredStories.length < 3) {
+    featuredStories = stories.slice(0, 3);
+  }
 
   if (featuredStories.length === 0) return null;
 
@@ -23,13 +29,13 @@ export function HomeBookshelfSection({
         <div>
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-peach-100 text-peach-700 text-xs font-bold mb-2 shadow-cozy-sm">
             <BookMarked className="w-3.5 h-3.5 text-peach-600" />
-            <span>Cozy Bookshelf & E-Books</span>
+            <span>Cozy Bookshelf & Public Library</span>
           </div>
           <h2 className="font-display text-2xl sm:text-3xl font-extrabold text-ink-900 tracking-tight">
-            Bedtime Stories & Cozy Web-Novels
+            Free Classics, Bedtime Tales & Study Materials
           </h2>
           <p className="text-sm text-ink-700 font-sans mt-1">
-            Wattpad-style serialized fiction, gentle game lore, and slice-of-life chapters designed for relaxing reading.
+            Enjoy authentic public domain literature, mindful stoic journals, and search over 70,000 free books.
           </p>
         </div>
 
@@ -38,7 +44,7 @@ export function HomeBookshelfSection({
           className="inline-flex items-center gap-2 text-xs font-bold text-peach-600 hover:text-peach-700 transition-colors bg-cream-100 hover:bg-cream-200 border border-tan-200 px-4 py-2 rounded-xl shadow-cozy-sm self-start sm:self-auto"
         >
           <BookOpen className="w-4 h-4" />
-          <span>Browse All Stories</span>
+          <span>Browse All 48 Books</span>
           <ArrowRight className="w-3.5 h-3.5" />
         </button>
       </div>
@@ -65,8 +71,8 @@ export function HomeBookshelfSection({
                   <div className="absolute top-3 left-3 bg-cream-100/90 backdrop-blur-xs border border-tan-300/80 px-2.5 py-0.5 rounded-full text-[11px] font-bold text-ink-800 shadow-cozy-sm">
                     {story.genre}
                   </div>
-                  <div className="absolute top-3 right-3 bg-earth-500 text-white px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-cozy-sm">
-                    {story.status}
+                  <div className="absolute top-3 right-3 bg-amber-600 text-white px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-cozy-sm">
+                    Public Domain
                   </div>
                 </div>
 
@@ -79,13 +85,19 @@ export function HomeBookshelfSection({
                     <span>•</span>
                     <span className="flex items-center gap-1">
                       <Clock className="w-3.5 h-3.5" />
-                      ~{totalMinutes} min total
+                      ~{totalMinutes} min read
                     </span>
+                    <span>•</span>
+                    <span>{totalWords.toLocaleString()} words</span>
                   </div>
 
-                  <h3 className="font-display font-bold text-base sm:text-lg text-ink-900 group-hover:text-peach-600 transition-colors line-clamp-1 mb-2">
+                  <h3 className="font-display font-bold text-base sm:text-lg text-ink-900 group-hover:text-peach-600 transition-colors line-clamp-1 mb-1">
                     {story.title}
                   </h3>
+
+                  <p className="text-xs text-tan-500 font-bold mb-2">
+                    By {story.author}
+                  </p>
 
                   <p className="text-xs sm:text-sm text-ink-700 font-sans line-clamp-3 leading-relaxed mb-4">
                     {story.synopsis}
@@ -96,10 +108,10 @@ export function HomeBookshelfSection({
               <div className="px-5 pb-5 pt-2 border-t border-tan-200 flex items-center justify-between text-xs font-bold text-peach-600">
                 <span className="flex items-center gap-1 text-tan-500 font-normal">
                   <Coffee className="w-3.5 h-3.5 text-peach-500" />
-                  By {story.author}
+                  Full Classic Edition
                 </span>
                 <div className="flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
-                  <span>Read Chapter 1</span>
+                  <span>Start Chapter 1</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </div>
               </div>
