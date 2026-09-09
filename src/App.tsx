@@ -1,8 +1,12 @@
 import { useState, useEffect } from 'react';
 import type { Game } from '@/data/games';
+import { articles, type Article } from '@/data/articles';
 import { Header, type View } from '@/components/Header';
 import { GameDirectory } from '@/components/GameDirectory';
 import { WalkthroughView } from '@/components/WalkthroughView';
+import { JournalDirectory } from '@/components/JournalDirectory';
+import { ArticleView } from '@/components/ArticleView';
+import { HomeJournalSection } from '@/components/HomeJournalSection';
 import { CtaFooter } from '@/components/CtaFooter';
 import { AboutPage } from '@/components/AboutPage';
 import { PrivacyPolicyPage } from '@/components/PrivacyPolicyPage';
@@ -36,30 +40,43 @@ function AppContent() {
     const routeView = getRouteView();
     if (routeView) return routeView;
     const savedView = sessionStorage.getItem('jinssi-view');
-    return savedView === 'walkthroughs' || savedView === 'about' || savedView === 'privacy' || savedView === 'terms' || savedView === 'contact' || savedView === 'admin'
+    return savedView === 'walkthroughs' || savedView === 'journal' || savedView === 'about' || savedView === 'privacy' || savedView === 'terms' || savedView === 'contact' || savedView === 'admin'
       ? savedView
       : 'home';
   });
   const [selectedGameId, setSelectedGameId] = useState<string | null>(() => getGameIdFromPath() || sessionStorage.getItem('jinssi-selected-game'));
+  const [selectedArticleSlug, setSelectedArticleSlug] = useState<string | null>(() => getArticleSlugFromPath() || sessionStorage.getItem('jinssi-selected-article'));
   const [progressMap, setProgressMap] = useState<Record<string, number>>({});
+  
   const selectedGame = games.find((game) => game.id === selectedGameId) || null;
+  const selectedArticle = articles.find((article) => article.slug === selectedArticleSlug || article.id === selectedArticleSlug) || null;
 
   useEffect(() => {
     sessionStorage.setItem('jinssi-view', view);
     if (selectedGameId) sessionStorage.setItem('jinssi-selected-game', selectedGameId);
     else sessionStorage.removeItem('jinssi-selected-game');
-  }, [view, selectedGameId]);
+    if (selectedArticleSlug) sessionStorage.setItem('jinssi-selected-article', selectedArticleSlug);
+    else sessionStorage.removeItem('jinssi-selected-article');
+  }, [view, selectedGameId, selectedArticleSlug]);
 
   useEffect(() => {
     const handleLocationChange = () => {
+      const articleSlug = getArticleSlugFromPath();
+      if (articleSlug) {
+        setSelectedArticleSlug(articleSlug);
+        setSelectedGameId(null);
+        return;
+      }
       const gameId = getGameIdFromPath();
       if (gameId) {
         setSelectedGameId(gameId);
+        setSelectedArticleSlug(null);
         return;
       }
       const routeView = getRouteView();
       if (routeView) {
         setSelectedGameId(null);
+        setSelectedArticleSlug(null);
         setView(routeView);
       }
     };
@@ -91,23 +108,58 @@ function AppContent() {
   const handleNavigate = (newView: View) => {
     setView(newView);
     setSelectedGameId(null);
+    setSelectedArticleSlug(null);
     window.history.pushState(null, '', getPathForView(newView));
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleSelectGame = (game: Game) => {
     setSelectedGameId(game.id);
+    setSelectedArticleSlug(null);
     window.history.pushState(null, '', `/games/${game.id}`);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleSelectGameById = (gameId: string) => {
+    setSelectedGameId(gameId);
+    setSelectedArticleSlug(null);
+    window.history.pushState(null, '', `/games/${gameId}`);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleBack = () => {
     setSelectedGameId(null);
+    setSelectedArticleSlug(null);
     window.history.pushState(null, '', getPathForView(view));
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const handleSelectArticle = (article: Article) => {
+    setSelectedArticleSlug(article.slug);
+    setSelectedGameId(null);
+    window.history.pushState(null, '', `/journal/${article.slug}`);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleBackFromArticle = () => {
+    setSelectedArticleSlug(null);
+    window.history.pushState(null, '', '/journal');
+    setView('journal');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const renderMainContent = () => {
+    if (selectedArticle) {
+      return (
+        <ArticleView
+          article={selectedArticle}
+          onBack={handleBackFromArticle}
+          onSelectArticle={handleSelectArticle}
+          onSelectGame={handleSelectGameById}
+        />
+      );
+    }
+
     if (selectedGame) {
       return <WalkthroughView game={selectedGame} onBack={handleBack} />;
     }
@@ -116,17 +168,25 @@ function AppContent() {
       return <AdminDashboard />;
     }
 
-    // 4. Render the Hero Banner on the home page above the Game Directory
+    // Render the Hero Banner on the home page above the Game Directory & Fresh Reads
     if (view === 'home') {
       return (
         <>
           <Hero />
-          <div className="py-8">
+          <div className="py-8 space-y-4">
             <GameDirectory onSelectGame={handleSelectGame} progressMap={progressMap} />
+            <HomeJournalSection
+              onSelectArticle={handleSelectArticle}
+              onNavigateToJournal={() => handleNavigate('journal')}
+            />
             <AdSenseUnit slot={import.meta.env.VITE_ADSENSE_SLOT || ''} />
           </div>
         </>
       );
+    }
+
+    if (view === 'journal') {
+      return <JournalDirectory onSelectArticle={handleSelectArticle} />;
     }
 
     if (view === 'walkthroughs') {
@@ -163,6 +223,7 @@ function AppContent() {
 
 function getPathForView(view: View) {
   if (view === 'home') return '/';
+  if (view === 'journal') return '/journal';
   if (view === 'privacy') return '/privacy-policy';
   if (view === 'terms') return '/terms-of-use';
   return `/${view}`;
@@ -172,6 +233,7 @@ function getRouteView(): View | null {
   if (typeof window === 'undefined') return null;
   const path = window.location.pathname.replace(/\/$/, '') || '/';
   if (path === '/') return 'home';
+  if (path === '/journal' || path.startsWith('/journal/')) return 'journal';
   if (path === '/privacy-policy') return 'privacy';
   if (path === '/terms-of-use') return 'terms';
   if (path === '/contact') return 'contact';
@@ -183,6 +245,12 @@ function getRouteView(): View | null {
 function getGameIdFromPath() {
   if (typeof window === 'undefined') return null;
   const match = window.location.pathname.match(/^\/games\/([^/]+)\/?$/);
+  return match ? decodeURIComponent(match[1]) : null;
+}
+
+function getArticleSlugFromPath() {
+  if (typeof window === 'undefined') return null;
+  const match = window.location.pathname.match(/^\/journal\/([^/]+)\/?$/);
   return match ? decodeURIComponent(match[1]) : null;
 }
 
