@@ -48,6 +48,7 @@ export interface SiteContentContextValue {
   addGame: (game: Game) => void;
   updateGame: (game: Game) => void;
   removeGame: (gameId: string) => void;
+  reorderGame: (gameId: string, direction: 'up' | 'down') => void;
   updateWalkthrough: (gameId: string, walkthrough: WalkthroughSection[]) => void;
   addArticle: (article: Article) => void;
   updateArticle: (article: Article) => void;
@@ -422,6 +423,15 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
       games: c.games.filter((g) => g.id !== gameId),
       updated_at: new Date().toISOString(),
     })),
+    reorderGame: (gameId, direction) => setContent((c) => {
+      const idx = c.games.findIndex((g) => g.id === gameId);
+      if (idx === -1) return c;
+      const newGames = [...c.games];
+      const swapIdx = direction === 'up' ? idx - 1 : idx + 1;
+      if (swapIdx < 0 || swapIdx >= newGames.length) return c;
+      [newGames[idx], newGames[swapIdx]] = [newGames[swapIdx], newGames[idx]];
+      return { ...c, games: newGames, updated_at: new Date().toISOString() };
+    }),
     updateWalkthrough: (gameId, walkthrough) => setContent((c) => ({
       ...c,
       games: c.games.map((g) => (g.id === gameId ? { ...g, walkthrough } : g)),

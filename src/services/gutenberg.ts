@@ -999,7 +999,7 @@ export function parseRawGutenbergText(book: GutenbergBook, rawText: string): Sto
 
     let heading = '';
     // 1. "CHAPTER I", "Chapter 1.", "STAVE ONE", "BOOK FIRST", "ACT I"
-    if (/^\s*(?:CHAPTER|Chapter|STAVE|Stave|BOOK|Book)\s+([IVXLCDM0-9]+|[A-Za-z]+)[.:]?/i.test(line)) {
+    if (/^\s*(?:CHAPTER|Chapter|STAVE|Stave)\s+([IVXLCDM0-9]+|[A-Za-z]+)[.:]?/i.test(line)) {
       heading = line;
     } else if (/^\s*LETTER\s+[0-9IVXLCDM]+[.:]?/i.test(line)) {
       heading = line;
@@ -1029,6 +1029,12 @@ export function parseRawGutenbergText(book: GutenbergBook, rawText: string): Sto
         heading = `${line} ${subtitle}`;
       }
     }
+
+    // Note: "PART I", "BOOK I", "EPILOGUE", "PROLOGUE" etc. are section dividers not chapter
+    // headings on their own — they appear just a few lines before the real CHAPTER I, causing
+    // them to be flagged as too-close neighbours and knocking out the actual chapter.
+    // We intentionally skip these pure section-divider lines so CHAPTER I survives the filter.
+    if (/^\s*(?:PART|BOOK|PROLOGUE|EPILOGUE)\s+/i.test(line)) continue;
 
     if (heading) {
       rawCandidates.push({ lineIndex: i, heading });
@@ -1231,12 +1237,23 @@ export async function fetchAndParseGutenbergBook(
   onProgress?.(`Connecting to Project Gutenberg archive (eBook #${book.id})...`);
 
   // 2. Build list of download URLs to attempt
-  const urlsToTry: string[] = [
-    `/api/gutenberg/cache/epub/${book.id}/pg${book.id}.txt`,
-    `/api/gutenberg/files/${book.id}/${book.id}-0.txt`,
-    `/api/gutenberg/files/${book.id}/${book.id}.txt`,
-  ];
+  // NOTE: /api/gutenberg/* only works in dev (Vite proxy). In production (Cloudflare Pages)
+  // those paths return 404, so we skip them and go straight to CORS proxies.
+  const gutenbergTextUrl = `https://www.gutenberg.org/cache/epub/${book.id}/pg${book.id}.txt`;
+  const gutenbergAltUrl = `https://www.gutenberg.org/files/${book.id}/${book.id}-0.txt`;
 
+  const urlsToTry: string[] = [];
+
+  // Dev-only Vite proxy (ignored in production)
+  if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
+    urlsToTry.push(
+      `/api/gutenberg/cache/epub/${book.id}/pg${book.id}.txt`,
+      `/api/gutenberg/files/${book.id}/${book.id}-0.txt`,
+      `/api/gutenberg/files/${book.id}/${book.id}.txt`,
+    );
+  }
+
+  // Explicit format URLs from the API (sometimes already CORS-safe CDN links)
   if (book.formats?.['text/plain; charset=utf-8']) {
     urlsToTry.push(book.formats['text/plain; charset=utf-8']);
   }
@@ -1244,9 +1261,14 @@ export async function fetchAndParseGutenbergBook(
     urlsToTry.push(book.formats['text/plain']);
   }
 
+  // CORS proxies that work in production
   urlsToTry.push(
-    `https://corsproxy.io/?url=https://www.gutenberg.org/cache/epub/${book.id}/pg${book.id}.txt`,
-    `https://www.gutenberg.org/cache/epub/${book.id}/pg${book.id}.txt`
+    `https://api.allorigins.win/raw?url=${encodeURIComponent(gutenbergTextUrl)}`,
+    `https://api.allorigins.win/raw?url=${encodeURIComponent(gutenbergAltUrl)}`,
+    `https://corsproxy.io/?url=${encodeURIComponent(gutenbergTextUrl)}`,
+    `https://corsproxy.io/?url=${encodeURIComponent(gutenbergAltUrl)}`,
+    gutenbergTextUrl,
+    gutenbergAltUrl,
   );
 
   let rawText = '';

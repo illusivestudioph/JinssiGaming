@@ -13,6 +13,8 @@ import {
   Image as ImageIcon, 
   Edit2, 
   ChevronLeft, 
+  ChevronUp,
+  ChevronDown,
   Save, 
   Upload, 
   Cloud, 
@@ -45,6 +47,7 @@ export function AdminDashboard() {
     addGame, 
     updateGame, 
     removeGame,
+    reorderGame,
     addArticle,
     updateArticle,
     removeArticle,
@@ -959,15 +962,37 @@ export function AdminDashboard() {
 
       {activeTab === 'games' && (
         <div className="flex flex-col gap-4">
-          {games.map(game => (
-            <div key={game.id} className="notepad-card p-5 flex justify-between items-center">
-              <div className="flex items-center gap-4">
+          {games.map((game, idx) => (
+            <div key={game.id} className="notepad-card p-5 flex justify-between items-center gap-3">
+              {/* Reorder arrows */}
+              <div className="flex flex-col gap-1 shrink-0">
+                <button
+                  onClick={() => reorderGame(game.id, 'up')}
+                  disabled={idx === 0}
+                  className="p-1.5 rounded-lg border border-tan-200 bg-cream-50 hover:bg-peach-50 hover:border-peach-300 disabled:opacity-25 disabled:cursor-not-allowed transition-colors"
+                  title="Move up"
+                  aria-label="Move game up"
+                >
+                  <ChevronUp size={16} className="text-ink-700" />
+                </button>
+                <button
+                  onClick={() => reorderGame(game.id, 'down')}
+                  disabled={idx === games.length - 1}
+                  className="p-1.5 rounded-lg border border-tan-200 bg-cream-50 hover:bg-peach-50 hover:border-peach-300 disabled:opacity-25 disabled:cursor-not-allowed transition-colors"
+                  title="Move down"
+                  aria-label="Move game down"
+                >
+                  <ChevronDown size={16} className="text-ink-700" />
+                </button>
+              </div>
+
+              <div className="flex items-center gap-4 flex-1 min-w-0">
                 <div 
-                  className="w-16 h-16 rounded-xl object-cover shadow-sm bg-cover bg-center border border-tan-200"
+                  className="w-16 h-16 rounded-xl object-cover shadow-sm bg-cover bg-center border border-tan-200 shrink-0"
                   style={{ backgroundImage: `url(${game.coverImage})`}} 
                 />
-                <div>
-                  <div className="flex items-center gap-2">
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <h3 className="font-bold text-xl text-ink-900">{game.title}</h3>
                     <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-peach-100 text-peach-700 border border-peach-200">
                       {game.category || 'Cozy Games'}
@@ -978,7 +1003,8 @@ export function AdminDashboard() {
                   </span>
                 </div>
               </div>
-              <div className="flex gap-3">
+
+              <div className="flex gap-3 shrink-0">
                 <button 
                   onClick={() => setEditingGame(game)} 
                   className="p-3 text-earth-600 bg-earth-50 hover:bg-earth-100 font-bold rounded-xl flex items-center gap-2 transition-colors"
