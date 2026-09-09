@@ -896,7 +896,7 @@ export function parseRawGutenbergText(book: GutenbergBook, rawText: string): Sto
 
   // Match comprehensive chapter markers
   const headingRegex =
-    /\n{2,}\s*((?:(?:CHAPTER|Chapter|BOOK|Book|STAVE|Stave|Letter|LETTER|ACT|Act|ADVENTURE|Adventure|SCENE|Scene|PART|Part)\s+(?:[IVXLCDM0-9]+|[A-Za-z]+)|[IVXLCDM0-9]+\.\s+[A-Z\s]{3,}|(?:FIRST|SECOND|THIRD|FOURTH|FIFTH|SIXTH|SEVENTH|EIGHTH|NINTH|TENTH|ELEVENTH|TWELFTH)\s+BOOK)[^\n]*)/g;
+    /\n{2,}\s*((?:(?:CHAPTER|Chapter|BOOK|Book|STAVE|Stave|Letter|LETTER|ACT|Act|ADVENTURE|Adventure|SCENE|Scene|PART|Part)\s+(?:[IVXLCDM0-9]+|[A-Za-z]+)|[IVXLCDM]+\.\s+[A-Z\s]{3,}|(?:FIRST|SECOND|THIRD|FOURTH|FIFTH|SIXTH|SEVENTH|EIGHTH|NINTH|TENTH|ELEVENTH|TWELFTH)\s+BOOK)[^\n]*)/g;
   const rawMatches = [...body.matchAll(headingRegex)];
 
   const candidateChapters: { heading: string; title: string; contentText: string }[] = [];
@@ -962,7 +962,11 @@ export function parseRawGutenbergText(book: GutenbergBook, rawText: string): Sto
         .filter((p) => {
           if (!p || p.length < 15) return false;
           if (p.startsWith('[Illustration') || p.startsWith('***')) return false;
-          if (p === c.heading || p === c.title) return false;
+          const pClean = p.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+          const tClean = c.title.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+          const hClean = c.heading.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+          if (pClean === tClean || pClean === hClean) return false;
+          if (p.length < 90 && (p.startsWith(c.heading) || p.startsWith('CHAPTER '))) return false;
           return true;
         });
 
