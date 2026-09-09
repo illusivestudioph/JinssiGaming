@@ -4,6 +4,8 @@ import type { Game, WalkthroughSection } from '@/data/games';
 import type { Article } from '@/data/articles';
 import { ArticleManager } from './admin/ArticleManager';
 import { ArticleEditor } from './admin/ArticleEditor';
+import { StoryEditor } from './admin/StoryEditor';
+import type { Story } from '@/data/stories';
 import { supabase } from '@/lib/supabase';
 import { 
   Trash2, 
@@ -47,13 +49,17 @@ export function AdminDashboard() {
     updateArticle,
     removeArticle,
     stories,
+    addStory,
+    updateStory,
     removeStory
   } = useSiteContent();
 
   const [activeTab, setActiveTab] = useState<'assets' | 'games' | 'articles' | 'stories'>('assets');
   const [editingGame, setEditingGame] = useState<Game | null>(null);
   const [editingArticle, setEditingArticle] = useState<Article | null>(null);
+  const [editingStory, setEditingStory] = useState<Story | null>(null);
   const [isNewArticle, setIsNewArticle] = useState(false);
+  const [isNewStory, setIsNewStory] = useState(false);
   const [uploadingKey, setUploadingKey] = useState<string | null>(null);
   const [uploadedKey, setUploadedKey] = useState<string | null>(null);
   const [assetSaveMessage, setAssetSaveMessage] = useState('');
@@ -297,6 +303,29 @@ export function AdminDashboard() {
         }}
         onUploadImage={handleImageUpload}
         uploadingKey={uploadingKey}
+      />
+    );
+  }
+
+  // --- STORY EDITOR VIEW ---
+  if (editingStory) {
+    return (
+      <StoryEditor
+        story={editingStory}
+        isNew={isNewStory}
+        onSave={(updatedStory) => {
+          if (isNewStory) {
+            addStory(updatedStory);
+          } else {
+            updateStory(updatedStory);
+          }
+          setEditingStory(null);
+          setIsNewStory(false);
+        }}
+        onCancel={() => {
+          setEditingStory(null);
+          setIsNewStory(false);
+        }}
       />
     );
   }
@@ -1017,9 +1046,54 @@ export function AdminDashboard() {
 
       {activeTab === 'stories' && (
         <div className="flex flex-col gap-4">
-          <div className="flex items-center justify-between">
-            <h3 className="font-display font-bold text-xl text-ink-900">Serialized Stories & E-Books</h3>
-            <span className="text-xs font-semibold text-tan-500">{stories.length} stories in bookshelf</span>
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <h3 className="font-display font-bold text-xl text-ink-900">Cozy Bookshelf & Web-Novels</h3>
+              <p className="text-xs text-tan-600 mt-0.5">
+                {stories.length} stories published. Edit text, add chapters, or create new books.
+              </p>
+            </div>
+
+            <button
+              onClick={() => {
+                const template: Story = {
+                  id: `story-${Date.now()}`,
+                  slug: `new-story-${Date.now()}`,
+                  title: 'New Story',
+                  synopsis: 'A cozy synopsis for your new book or web-novel...',
+                  author: 'Jinssi',
+                  authorRole: 'Fiction Writer',
+                  coverImage: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=800&q=80',
+                  coverAlt: 'Book cover illustration',
+                  status: 'Ongoing',
+                  genre: 'Slice of Life',
+                  tags: ['Cozy', 'Relaxing'],
+                  totalChapters: 1,
+                  chapters: [
+                    {
+                      id: `ch-1-${Date.now()}`,
+                      chapterNumber: 1,
+                      title: 'Chapter 1: The Beginning',
+                      wordCount: 150,
+                      readTimeMinutes: 1,
+                      publishedDate: new Date().toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric',
+                      }),
+                      authorNote: 'Welcome to this new story!',
+                      content: ['Write or paste your first chapter paragraphs here...'],
+                    },
+                  ],
+                  rating: 5,
+                };
+                setEditingStory(template);
+                setIsNewStory(true);
+              }}
+              className="site-button bg-earth-500 hover:bg-earth-600 text-white font-bold text-xs flex items-center gap-1.5 shadow-cozy-sm"
+            >
+              <Plus size={16} /> Add New Story
+            </button>
           </div>
 
           <div className="grid grid-cols-1 gap-4">
@@ -1041,21 +1115,36 @@ export function AdminDashboard() {
                         <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-earth-100 text-earth-700">
                           {story.status}
                         </span>
+                        {story.isPublicDomain && (
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-cream-200 text-tan-700">
+                            Public Domain
+                          </span>
+                        )}
                       </div>
                       <h4 className="font-display font-bold text-base text-ink-900">{story.title}</h4>
                       <p className="text-xs text-tan-600 font-sans mt-0.5">
-                        By {story.author} • {story.chapters.length} Chapters • {totalWords.toLocaleString()} words
+                        By {story.author} • {story.chapters.length} Chapters • ~{totalWords.toLocaleString()} words
                       </p>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-2 self-end sm:self-center">
+                    <button
+                      onClick={() => {
+                        setEditingStory(story);
+                        setIsNewStory(false);
+                      }}
+                      className="p-2.5 text-earth-700 bg-earth-100 hover:bg-earth-200 font-bold rounded-xl flex items-center gap-1.5 text-xs transition-colors"
+                      title="Edit Story & Chapters"
+                    >
+                      <Edit2 size={15} /> Edit
+                    </button>
                     <a
                       href={`/stories/${story.slug}/1`}
-                      className="p-2.5 text-peach-600 bg-peach-50 hover:bg-peach-100 font-bold rounded-xl flex items-center gap-1.5 text-xs transition-colors"
+                      className="p-2.5 text-peach-700 bg-peach-100 hover:bg-peach-200 font-bold rounded-xl flex items-center gap-1.5 text-xs transition-colors"
                       title="Open in E-Reader"
                     >
-                      <BookOpen size={16} /> Read
+                      <BookOpen size={15} /> Read
                     </a>
                     <button
                       onClick={() => {
@@ -1066,7 +1155,7 @@ export function AdminDashboard() {
                       className="p-2.5 text-red-500 bg-red-50 hover:bg-red-100 hover:text-red-700 rounded-xl transition-colors"
                       title="Delete Story"
                     >
-                      <Trash2 size={18} />
+                      <Trash2 size={16} />
                     </button>
                   </div>
                 </div>
