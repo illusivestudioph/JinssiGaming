@@ -18,6 +18,17 @@ export function GameDirectory({ onSelectGame, progressMap }: GameDirectoryProps)
   const [search, setSearch] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
 
+  const availableCategories = useMemo(() => {
+    const set = new Set<string>();
+    categories.filter((c) => c !== 'All').forEach((c) => set.add(c));
+    games.forEach((g) => {
+      if (g.category && g.category.trim()) {
+        set.add(g.category.trim());
+      }
+    });
+    return ['All', ...Array.from(set)];
+  }, [games]);
+
   const filteredGames = useMemo(() => {
     return games.filter((game) => {
       const matchesSearch =
@@ -53,7 +64,7 @@ export function GameDirectory({ onSelectGame, progressMap }: GameDirectoryProps)
         </div>
         <div className="game-directory-filters">
           <SlidersHorizontal className="w-4 h-4 text-tan-400" />
-          {categories.map((cat) => (
+          {availableCategories.map((cat) => (
             <button
               key={cat}
               onClick={() => setActiveCategory(cat)}

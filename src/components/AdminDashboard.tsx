@@ -1,16 +1,106 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSiteContent } from '@/context/SiteContentContext';
 import type { Game, WalkthroughSection } from '@/data/games';
 import { supabase } from '@/lib/supabase';
-import { Trash2, Plus, Image as ImageIcon, Edit2, ChevronLeft, Save, Upload } from 'lucide-react';
+import { 
+  Trash2, 
+  Plus, 
+  Image as ImageIcon, 
+  Edit2, 
+  ChevronLeft, 
+  Save, 
+  Upload, 
+  Cloud, 
+  RefreshCw, 
+  CheckCircle, 
+  AlertCircle, 
+  WifiOff, 
+  AlertTriangle, 
+  RotateCcw 
+} from 'lucide-react';
+
+const DRAFT_STORAGE_KEY = 'jinssi-admin-editing-game-draft';
 
 export function AdminDashboard() {
-  const { games, heroImage, logoImage, ctaLinks, setHeroImage, setLogoImage, setCtaLinks, addGame, updateGame, removeGame } = useSiteContent();
+  const { 
+    games, 
+    heroImage, 
+    logoImage, 
+    ctaLinks, 
+    syncStatus, 
+    lastSyncedAt, 
+    forceCloudSync, 
+    setHeroImage, 
+    setLogoImage, 
+    setCtaLinks, 
+    addGame, 
+    updateGame, 
+    removeGame 
+  } = useSiteContent();
+
   const [activeTab, setActiveTab] = useState<'assets' | 'games'>('assets');
   const [editingGame, setEditingGame] = useState<Game | null>(null);
   const [uploadingKey, setUploadingKey] = useState<string | null>(null);
   const [uploadedKey, setUploadedKey] = useState<string | null>(null);
   const [assetSaveMessage, setAssetSaveMessage] = useState('');
+  
+  // Auto-save & draft recovery states
+  const [autoSaveStatus, setAutoSaveStatus] = useState<'saved' | 'saving'>('saved');
+  const [lastAutoSavedAt, setLastAutoSavedAt] = useState<string | null>(null);
+  const [savedDraft, setSavedDraft] = useState<{ game: Game; timestamp: number } | null>(null);
+
+  // Check for auto-saved draft in localStorage on mount (e.g. after sudden PC shutdown or crash)
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(DRAFT_STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed?.game && parsed?.timestamp) {
+          setSavedDraft(parsed);
+        }
+      }
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  // Continuous auto-saving: 
+  // 1. Immediate synchronous write to localStorage draft key (0ms latency for sudden shutdown protection)
+  // 2. Debounced auto-sync to SiteContentContext.updateGame (propagates to cloud & other tabs)
+  useEffect(() => {
+    if (!editingGame) return;
+
+    setAutoSaveStatus('saving');
+
+    try {
+      localStorage.setItem(
+        DRAFT_STORAGE_KEY,
+        JSON.stringify({ game: editingGame, timestamp: Date.now() })
+      );
+    } catch {
+      // ignore storage quota errors
+    }
+
+    const timer = setTimeout(() => {
+      updateGame(editingGame);
+      setAutoSaveStatus('saved');
+      setLastAutoSavedAt(new Date().toLocaleTimeString());
+    }, 400);
+
+    return () => clearTimeout(timer);
+  }, [editingGame, updateGame]);
+
+  // Unload guard: Warn user if navigating away while an image upload is actively uploading
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (uploadingKey) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [uploadingKey]);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, uploadKey: string, onComplete: (url: string) => void) => {
     const file = e.target.files?.[0];
@@ -62,12 +152,51 @@ export function AdminDashboard() {
     e.preventDefault();
     if (editingGame) {
       updateGame(editingGame);
+      try {
+        localStorage.removeItem(DRAFT_STORAGE_KEY);
+      } catch {
+        // ignore
+      }
       setEditingGame(null);
     }
   };
 
+  const handleBackToDashboard = () => {
+    if (editingGame) {
+      updateGame(editingGame);
+      try {
+        localStorage.removeItem(DRAFT_STORAGE_KEY);
+      } catch {
+        // ignore
+      }
+      setEditingGame(null);
+    }
+  };
+
+  const handleResumeDraft = () => {
+    if (!savedDraft) return;
+    const exists = games.some((g) => g.id === savedDraft.game.id);
+    if (!exists) {
+      addGame(savedDraft.game);
+    } else {
+      updateGame(savedDraft.game);
+    }
+    setEditingGame(savedDraft.game);
+    setSavedDraft(null);
+  };
+
+  const handleDiscardDraft = () => {
+    try {
+      localStorage.removeItem(DRAFT_STORAGE_KEY);
+    } catch {
+      // ignore
+    }
+    setSavedDraft(null);
+  };
+
   const handleSaveAssets = () => {
-    setAssetSaveMessage('Site assets saved.');
+    void forceCloudSync();
+    setAssetSaveMessage('Site assets auto-saved and synced.');
     window.setTimeout(() => setAssetSaveMessage(''), 2500);
   };
 
@@ -104,11 +233,18 @@ export function AdminDashboard() {
       description: 'New step instruction',
       image: '',
       imageAlt: 'Step illustration',
+      hasSpoiler: false,
+      spoilerText: '',
     });
     setEditingGame({ ...editingGame, walkthrough: newWalkthrough });
   };
 
-  const updateStep = (sectionIndex: number, stepIndex: number, field: 'title' | 'description' | 'image', value: string) => {
+  const updateStep = (
+    sectionIndex: number, 
+    stepIndex: number, 
+    field: 'title' | 'description' | 'image' | 'hasSpoiler' | 'spoilerText', 
+    value: string | boolean
+  ) => {
     if (!editingGame) return;
     const newWalkthrough = [...editingGame.walkthrough];
     newWalkthrough[sectionIndex].steps[stepIndex] = { 
@@ -129,16 +265,54 @@ export function AdminDashboard() {
   if (editingGame) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-10 animate-fade-in">
-        <button 
-          onClick={() => setEditingGame(null)} 
-          className="flex items-center gap-2 text-tan-500 hover:text-ink-900 font-bold mb-6 transition-colors"
-        >
-          <ChevronLeft size={20} /> Back to Dashboard
-        </button>
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+          <button 
+            type="button"
+            onClick={handleBackToDashboard} 
+            className="flex items-center gap-2 text-tan-500 hover:text-ink-900 font-bold transition-colors"
+          >
+            <ChevronLeft size={20} /> Back to Dashboard
+          </button>
+
+          {/* Auto-save & Sync status pills */}
+          <div className="flex items-center gap-2">
+            {autoSaveStatus === 'saving' ? (
+              <span className="flex items-center gap-1.5 text-xs font-bold text-earth-700 bg-earth-100 px-3 py-1.5 rounded-full animate-pulse">
+                <RefreshCw size={13} className="animate-spin" /> Auto-saving draft...
+              </span>
+            ) : (
+              <span className="flex items-center gap-1.5 text-xs font-bold text-sage-700 bg-sage-100 px-3 py-1.5 rounded-full">
+                <CheckCircle size={13} /> Auto-saved {lastAutoSavedAt ? `(${lastAutoSavedAt})` : 'to disk'}
+              </span>
+            )}
+
+            {syncStatus === 'saving' && (
+              <span className="flex items-center gap-1 text-xs font-semibold text-tan-600 bg-cream-200 px-2.5 py-1 rounded-full">
+                <Cloud size={12} className="animate-pulse" /> Cloud syncing...
+              </span>
+            )}
+            {syncStatus === 'synced' && (
+              <span className="flex items-center gap-1 text-xs font-semibold text-sage-600 bg-sage-50 px-2.5 py-1 rounded-full">
+                <Cloud size={12} /> Synced
+              </span>
+            )}
+          </div>
+        </div>
 
         <form onSubmit={handleSaveGame} className="notepad-card p-8">
-          <div className="flex justify-between items-center border-b-2 border-tan-100 pb-4 mb-6">
-            <h2 className="text-3xl font-display font-bold text-ink-900">Edit Game</h2>
+          <div className="flex flex-wrap items-center justify-between gap-4 border-b-2 border-tan-100 pb-4 mb-6">
+            <div>
+              <h2 className="text-3xl font-display font-bold text-ink-900">Edit Game</h2>
+              <p className="text-xs font-semibold text-tan-500 mt-1">
+                All changes auto-save continuously to protect against sudden PC shutdown or browser close.
+              </p>
+            </div>
+            <button 
+              type="submit" 
+              className="site-button bg-earth-500 text-white hover:bg-earth-600 flex items-center gap-2 text-sm"
+            >
+              <Save size={16} /> Save & Return
+            </button>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
@@ -159,6 +333,37 @@ export function AdminDashboard() {
                 className="w-full px-4 py-3 rounded-xl border-2 border-tan-200 focus:border-peach-400 focus:outline-none bg-cream-50 font-bold"
                 required
               />
+            </div>
+            <div>
+              <label className="block font-bold text-ink-900 mb-2">Category</label>
+              <div className="flex flex-col gap-2">
+                <select
+                  value={['Cozy Games', 'Puzzle', 'Organization', 'Life Sim'].includes(editingGame.category) ? editingGame.category : 'Custom'}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (val !== 'Custom') {
+                      setEditingGame({ ...editingGame, category: val });
+                    } else if (['Cozy Games', 'Puzzle', 'Organization', 'Life Sim'].includes(editingGame.category)) {
+                      setEditingGame({ ...editingGame, category: 'Custom Category' });
+                    }
+                  }}
+                  className="w-full px-4 py-3 rounded-xl border-2 border-tan-200 focus:border-peach-400 focus:outline-none bg-cream-50 font-bold text-ink-900"
+                >
+                  <option value="Cozy Games">Cozy Games</option>
+                  <option value="Puzzle">Puzzle</option>
+                  <option value="Organization">Organization</option>
+                  <option value="Life Sim">Life Sim</option>
+                  <option value="Custom">Custom / Other Category...</option>
+                </select>
+                {(!['Cozy Games', 'Puzzle', 'Organization', 'Life Sim'].includes(editingGame.category) || editingGame.category === 'Custom Category') && (
+                  <input
+                    value={editingGame.category}
+                    onChange={(e) => setEditingGame({ ...editingGame, category: e.target.value })}
+                    placeholder="Enter custom category name (e.g. Cooking Sim, Story RPG)..."
+                    className="w-full px-4 py-2.5 rounded-xl border-2 border-tan-200 focus:border-peach-400 focus:outline-none bg-white text-sm font-semibold"
+                  />
+                )}
+              </div>
             </div>
             <div>
               <label className="block font-bold text-ink-900 mb-2">Game Link</label>
@@ -275,6 +480,33 @@ export function AdminDashboard() {
                           required
                         />
                       </div>
+
+                      {/* Step Spoiler Toggle & Hint */}
+                      <div className="p-3 bg-cream-100 rounded-lg border border-tan-200 flex flex-col gap-2">
+                        <label className="flex items-center gap-2 cursor-pointer text-xs font-bold text-ink-900">
+                          <input 
+                            type="checkbox"
+                            checked={!!step.hasSpoiler}
+                            onChange={(e) => {
+                              updateStep(sIndex, stepIndex, 'hasSpoiler', e.target.checked);
+                              if (e.target.checked && !step.spoilerText) {
+                                updateStep(sIndex, stepIndex, 'spoilerText', 'Spoiler warning: Click to reveal solution');
+                              }
+                            }}
+                            className="w-4 h-4 accent-peach-500 rounded cursor-pointer"
+                          />
+                          <span>Mark this step as a spoiler (blurs / hides solution until clicked)</span>
+                        </label>
+                        {step.hasSpoiler && (
+                          <input
+                            value={step.spoilerText || ''}
+                            onChange={(e) => updateStep(sIndex, stepIndex, 'spoilerText', e.target.value)}
+                            placeholder="Spoiler warning text (e.g. Puzzle solution ahead)..."
+                            className="w-full px-3 py-1.5 text-xs rounded-lg border border-tan-200 bg-white focus:outline-none font-medium text-ink-900"
+                          />
+                        )}
+                      </div>
+
                       <div>
                         <label className="text-xs font-bold text-tan-500 mb-1 block">Step Image (URL or Upload)</label>
                         <div className="flex gap-2">
@@ -322,7 +554,10 @@ export function AdminDashboard() {
             <Plus size={20} /> Add New Walkthrough Section
           </button>
 
-          <div className="mt-8 flex justify-end border-t-2 border-tan-100 pt-6">
+          <div className="mt-8 flex flex-wrap items-center justify-between gap-4 border-t-2 border-tan-100 pt-6">
+            <span className="text-xs font-semibold text-tan-500">
+              Auto-saved locally. Clicking Save confirms all sections and closes the editor.
+            </span>
             <button type="submit" className="site-button bg-earth-500 text-white hover:bg-earth-600">
               <Save size={18} /> Save Changes
             </button>
@@ -335,9 +570,77 @@ export function AdminDashboard() {
   // --- MAIN DASHBOARD VIEW ---
   return (
     <div className="max-w-5xl mx-auto px-4 py-10 animate-fade-in">
-      <div className="mb-8">
-        <h2 className="text-4xl font-display font-bold text-ink-900 mb-2">Admin Dashboard</h2>
-        <p className="text-tan-600 font-semibold">Manage your site's content. Changes auto-save to your local storage.</p>
+      {/* Draft Recovery Alert (Shown if a crash or power outage occurred while editing) */}
+      {savedDraft && !editingGame && (
+        <div className="mb-6 p-4 rounded-2xl bg-amber-50 border-2 border-amber-300 shadow-cozy-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 animate-fade-in">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 bg-amber-100 text-amber-700 rounded-xl">
+              <AlertTriangle size={22} />
+            </div>
+            <div>
+              <h4 className="font-bold text-ink-900">Auto-saved draft recovered</h4>
+              <p className="text-xs text-tan-600 font-medium">
+                Found an in-progress draft for <span className="font-bold text-ink-900">"{savedDraft.game.title || 'Untitled Game'}"</span> saved at {new Date(savedDraft.timestamp).toLocaleTimeString()} ({new Date(savedDraft.timestamp).toLocaleDateString()}).
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 self-end sm:self-center">
+            <button
+              type="button"
+              onClick={handleResumeDraft}
+              className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl text-xs transition-colors flex items-center gap-1.5 shadow-sm"
+            >
+              <RotateCcw size={14} /> Resume Editing Draft
+            </button>
+            <button
+              type="button"
+              onClick={handleDiscardDraft}
+              className="px-3 py-2 text-tan-500 hover:text-red-600 hover:bg-red-50 font-bold rounded-xl text-xs transition-colors"
+            >
+              Discard Draft
+            </button>
+          </div>
+        </div>
+      )}
+
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
+        <div>
+          <h2 className="text-4xl font-display font-bold text-ink-900 mb-2">Admin Dashboard</h2>
+          <p className="text-tan-600 font-semibold">Manage your site's content. Changes auto-save continuously to protect against sudden PC shutdown.</p>
+        </div>
+
+        {/* Global Cloud Sync Status Badge & Manual Trigger */}
+        <div className="flex items-center gap-3 bg-white px-4 py-2 rounded-2xl border border-tan-200 shadow-cozy-xs">
+          {syncStatus === 'saving' && (
+            <span className="flex items-center gap-1.5 text-xs font-bold text-earth-700 animate-pulse">
+              <RefreshCw size={14} className="animate-spin" /> Syncing to cloud...
+            </span>
+          )}
+          {syncStatus === 'synced' && (
+            <span className="flex items-center gap-1.5 text-xs font-bold text-sage-700">
+              <CheckCircle size={14} /> Cloud synced {lastSyncedAt ? `(${lastSyncedAt})` : ''}
+            </span>
+          )}
+          {syncStatus === 'error' && (
+            <span className="flex items-center gap-1.5 text-xs font-bold text-red-700">
+              <AlertCircle size={14} /> Cloud sync error (Saved on PC)
+            </span>
+          )}
+          {syncStatus === 'offline' && (
+            <span className="flex items-center gap-1.5 text-xs font-bold text-tan-700">
+              <WifiOff size={14} /> Offline mode (Saved on PC)
+            </span>
+          )}
+          <button
+            type="button"
+            onClick={() => void forceCloudSync()}
+            disabled={syncStatus === 'saving'}
+            className="text-xs font-bold px-3 py-1.5 rounded-lg border border-tan-300 bg-cream-50 hover:bg-cream-100 text-ink-900 transition-colors flex items-center gap-1.5 disabled:opacity-50"
+            title="Force cloud synchronization now"
+          >
+            <Cloud size={14} /> Sync Now
+          </button>
+        </div>
       </div>
 
       <div className="flex gap-4 mb-6 border-b-2 border-tan-200 pb-2">
@@ -384,7 +687,7 @@ export function AdminDashboard() {
           <div className="flex flex-wrap items-center justify-end gap-3 border-t-2 border-tan-100 pt-5">
             {assetSaveMessage && <span className="text-sm font-bold text-sage-600" role="status">{assetSaveMessage}</span>}
             <button type="button" onClick={handleSaveAssets} className="site-button bg-earth-500 text-white hover:bg-earth-600">
-              <Save size={18} /> Save Changes
+              <Save size={18} /> Save & Sync Assets
             </button>
           </div>
 
@@ -490,7 +793,7 @@ export function AdminDashboard() {
 
                       <div className="flex flex-col gap-3">
                         {link.wallets.map((wallet, wIndex) => (
-                            <div key={wIndex} className="notepad-step p-4 flex flex-col gap-3">
+                          <div key={wIndex} className="notepad-step p-4 flex flex-col gap-3">
                             <div className="flex gap-2 items-center">
                               <input 
                                 value={wallet.name}
@@ -593,8 +896,15 @@ export function AdminDashboard() {
                   style={{ backgroundImage: `url(${game.coverImage})`}} 
                 />
                 <div>
-                  <h3 className="font-bold text-xl text-ink-900">{game.title}</h3>
-                  <span className="text-sm font-semibold text-tan-500 bg-tan-100 px-2 py-1 rounded-md">{game.walkthrough.length} Walkthrough Sections</span>
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-bold text-xl text-ink-900">{game.title}</h3>
+                    <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-peach-100 text-peach-700 border border-peach-200">
+                      {game.category || 'Cozy Games'}
+                    </span>
+                  </div>
+                  <span className="text-sm font-semibold text-tan-500 bg-tan-100 px-2 py-1 rounded-md mt-1 inline-block">
+                    {game.walkthrough.length} Walkthrough Sections
+                  </span>
                 </div>
               </div>
               <div className="flex gap-3">
