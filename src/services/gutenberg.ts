@@ -833,7 +833,6 @@ export function convertGutenbergToStory(book: GutenbergBook): Story {
         wordCount: 0,
         readTimeMinutes: 5,
         publishedDate: 'Project Gutenberg Archive',
-        authorNote: `eBook #${book.id}. Unabridged text loaded directly from Project Gutenberg archives.`,
         content: [
           `Preparing authentic unabridged text of "${book.title}" by ${authorName} directly from the Project Gutenberg archive...`,
           `Please wait a moment while the full text is formatted into chapters.`
@@ -982,55 +981,81 @@ export function parseRawGutenbergText(book: GutenbergBook, rawText: string): Sto
   if (endMatch) body = body.slice(0, endMatch.index);
 
   const lines = body.split('\n');
-  const candidateIndices: { lineIndex: number; heading: string }[] = [];
-
-  const chapterLineRegexes = [
-    // 1. "CHAPTER I", "CHAPTER 1.", "Chapter I: Down the Rabbit-Hole", "CHAPTER XIII", "STAVE ONE"
-    /^\s*(?:CHAPTER|Chapter|STAVE|Stave|BOOK|Book|LETTER|Letter|ADVENTURE|Adventure|STORY|Story|PART|Part|CANTO|Canto|ACT|Act|SCENE|Scene)\s+([IVXLCDM0-9]+|[A-Za-z]+)[.:]?(?:\s+[-–—:]\s*|\s+)?([^\n]*)$/i,
-    // 2. Roman numeral followed by period and uppercase title: "I. A SCANDAL IN BOHEMIA", "IV. THE BOSCOMBE VALLEY MYSTERY"
-    /^\s*([IVXLCDM]+)\.\s+([A-Z0-9'’"\s,–—-]{3,})$/,
-  ];
+  const rawCandidates: { lineIndex: number; heading: string }[] = [];
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i].trim();
-    if (!line) continue;
     if (
+      !line ||
       line.includes('[Illustration') ||
+      line.startsWith('***') ||
       line.startsWith('Heading to') ||
       line.startsWith('Tailpiece') ||
-      line.startsWith('***')
+      line.endsWith(',') ||
+      line.endsWith(';')
     ) {
       continue;
     }
 
-    for (const rx of chapterLineRegexes) {
-      if (rx.test(line)) {
-        const prevBlank = i === 0 || lines[i - 1].trim() === '';
-        if (prevBlank) {
-          candidateIndices.push({ lineIndex: i, heading: line });
+    let heading = '';
+    // 1. "CHAPTER I", "Chapter 1.", "STAVE ONE", "BOOK FIRST", "ACT I"
+    if (/^\s*(?:CHAPTER|Chapter|STAVE|Stave|BOOK|Book)\s+([IVXLCDM0-9]+|[A-Za-z]+)[.:]?/i.test(line)) {
+      heading = line;
+    } else if (/^\s*LETTER\s+[0-9IVXLCDM]+[.:]?/i.test(line)) {
+      heading = line;
+    } else if (/^\s*(?:THE\s+)?ADVENTURE\s+(?:OF\s+[A-Z0-9'’"\s]+|[IVXLCDM0-9]+)\b/i.test(line)) {
+      heading = line;
+    } else if (/^\s*([IVXLCDM]+)\.\s+([A-Z0-9'’"\s,–—-]{3,})$/.test(line)) {
+      heading = line;
+    } else if (/^\s*([IVXLCDM]+)\.\s*$/.test(line)) {
+      // Standalone Roman numeral (e.g. Little Women "I." followed by all-caps title "PLAYING PILGRIMS.")
+      let subtitle = '';
+      for (let j = i + 1; j <= i + 3 && j < lines.length; j++) {
+        const next = lines[j].trim();
+        if (next) {
+          if (
+            next.length >= 3 &&
+            next.length < 75 &&
+            next === next.toUpperCase() &&
+            !next.startsWith('[') &&
+            !next.includes('CHAPTER')
+          ) {
+            subtitle = next;
+          }
           break;
         }
       }
+      if (subtitle) {
+        heading = `${line} ${subtitle}`;
+      }
+    }
+
+    if (heading) {
+      rawCandidates.push({ lineIndex: i, heading });
     }
   }
 
-  // Filter out TOC entries: real chapters have at least 10 lines and 400 characters between headings
+  // Filter out TOC entries: real chapters are separated by at least 12 lines from adjacent headings
   const candidateChapters: { title: string; heading: string; lines: string[] }[] = [];
-  for (let c = 0; c < candidateIndices.length; c++) {
-    const curr = candidateIndices[c];
-    const next = candidateIndices[c + 1];
+  for (let c = 0; c < rawCandidates.length; c++) {
+    const curr = rawCandidates[c];
+    const prev = c > 0 ? rawCandidates[c - 1] : null;
+    const next = rawCandidates[c + 1];
     const nextLine = next ? next.lineIndex : lines.length;
-    const lineSpan = nextLine - curr.lineIndex;
+
+    // Reject clustered TOC entries
+    if (prev && curr.lineIndex - prev.lineIndex < 12) continue;
+    if (next && next.lineIndex - curr.lineIndex < 12) continue;
 
     let charCount = 0;
     for (let j = curr.lineIndex; j < nextLine; j++) {
       charCount += lines[j].length;
     }
 
-    if (charCount >= 400 && lineSpan >= 10) {
+    if (charCount >= 500 && nextLine - curr.lineIndex >= 10) {
       const chapterLines = lines.slice(curr.lineIndex, nextLine);
       let title = curr.heading;
-      // Extract subtitle if present on line 2
+      // Extract subtitle if present on line 2 and not already in heading
       if (
         chapterLines.length > 2 &&
         chapterLines[1].trim() === '' &&
@@ -1039,7 +1064,12 @@ export function parseRawGutenbergText(book: GutenbergBook, rawText: string): Sto
         !chapterLines[2].includes('***') &&
         !chapterLines[2].includes('[')
       ) {
-        title = `${curr.heading}: ${chapterLines[2].trim()}`;
+        const sub = chapterLines[2].trim();
+        const headingLower = curr.heading.toLowerCase();
+        const subLower = sub.toLowerCase();
+        if (!headingLower.includes(subLower)) {
+          title = `${curr.heading}: ${sub}`;
+        }
       }
       candidateChapters.push({
         title,
@@ -1104,7 +1134,6 @@ export function parseRawGutenbergText(book: GutenbergBook, rawText: string): Sto
         wordCount: totalWords,
         readTimeMinutes: Math.max(2, Math.round(totalWords / 200)),
         publishedDate: 'Project Gutenberg Archive',
-        authorNote: `Authentic unabridged text transcribed by Project Gutenberg volunteers. eBook #${book.id}.`,
         content: paragraphs,
       };
     });
@@ -1151,7 +1180,6 @@ export function parseRawGutenbergText(book: GutenbergBook, rawText: string): Sto
       wordCount: words,
       readTimeMinutes: Math.max(3, Math.round(words / 200)),
       publishedDate: 'Project Gutenberg Archive',
-      authorNote: `Unabridged text transcribed from Project Gutenberg archives (eBook #${book.id}).`,
       content: paras,
     });
   }

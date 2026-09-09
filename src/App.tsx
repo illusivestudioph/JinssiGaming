@@ -127,7 +127,6 @@ function AppContent() {
               wordCount: 0,
               readTimeMinutes: 5,
               publishedDate: 'Project Gutenberg Archive',
-              authorNote: `Connecting to Project Gutenberg archive for eBook #${gbId}...`,
               content: [
                 `Downloading authentic unabridged text directly from Project Gutenberg archives...`
               ],
@@ -388,12 +387,12 @@ function AppContent() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header view={view} onNavigate={handleNavigate} />
+      {!selectedStory && <Header view={view} onNavigate={handleNavigate} />}
 
-      <main className="flex-1">{renderMainContent()}</main>
+      <main className="flex-1 flex flex-col">{renderMainContent()}</main>
 
-      <CtaFooter onNavigate={handleNavigate} />
-      <CookieConsent />
+      {!selectedStory && <CtaFooter onNavigate={handleNavigate} />}
+      {!selectedStory && <CookieConsent />}
     </div>
   );
 }

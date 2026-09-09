@@ -47,6 +47,8 @@ const themeStyles: Record<
     border: string;
     navBg: string;
     metaText: string;
+    rawBg: string;
+    rawText: string;
   }
 > = {
   paper: {
@@ -57,6 +59,8 @@ const themeStyles: Record<
     border: 'border-[#E6DACB]',
     navBg: 'bg-[#FBF8F1]/95 backdrop-blur-md',
     metaText: 'text-[#7D7065]',
+    rawBg: '#FBF8F1',
+    rawText: '#2C2723',
   },
   sepia: {
     bg: 'bg-[#F4ECD8]',
@@ -66,6 +70,8 @@ const themeStyles: Record<
     border: 'border-[#DECFA9]',
     navBg: 'bg-[#F4ECD8]/95 backdrop-blur-md',
     metaText: 'text-[#846E53]',
+    rawBg: '#F4ECD8',
+    rawText: '#433422',
   },
   dark: {
     bg: 'bg-[#18181C]',
@@ -75,15 +81,19 @@ const themeStyles: Record<
     border: 'border-[#32323C]',
     navBg: 'bg-[#18181C]/95 backdrop-blur-md',
     metaText: 'text-[#9A979B]',
+    rawBg: '#18181C',
+    rawText: '#DDD9D2',
   },
   cream: {
     bg: 'bg-[#FAF7F2]',
     text: 'text-stone-800',
     accent: 'text-peach-500',
     cardBg: 'bg-white',
-    border: 'border-tan-200',
+    border: 'border-[#EBE3D7]',
     navBg: 'bg-[#FAF7F2]/95 backdrop-blur-md',
     metaText: 'text-stone-500',
+    rawBg: '#FAF7F2',
+    rawText: '#292524',
   },
 };
 
@@ -209,6 +219,24 @@ export function StoryReaderView({
     localStorage.setItem('jinssi-reader-fontfamily', newFamily);
   };
 
+  // Synchronize document background with chosen reading theme
+  useEffect(() => {
+    const originalBodyBg = document.body.style.backgroundColor;
+    const originalHtmlBg = document.documentElement.style.backgroundColor;
+    const originalBodyColor = document.body.style.color;
+    const currentTheme = themeStyles[theme];
+
+    document.body.style.backgroundColor = currentTheme.rawBg;
+    document.documentElement.style.backgroundColor = currentTheme.rawBg;
+    document.body.style.color = currentTheme.rawText;
+
+    return () => {
+      document.body.style.backgroundColor = originalBodyBg;
+      document.documentElement.style.backgroundColor = originalHtmlBg;
+      document.body.style.color = originalBodyColor;
+    };
+  }, [theme]);
+
   // Auto-save reading bookmark whenever chapter changes
   useEffect(() => {
     if (!currentChapter) return;
@@ -277,6 +305,61 @@ export function StoryReaderView({
         >
           Return to Bookshelf
         </button>
+      </div>
+    );
+  }
+
+  // If we are currently downloading or if this is an unloaded Gutenberg preview stub
+  const isStubOrLoading =
+    isPullingGutenberg ||
+    (!story.isLiveGutenberg &&
+      Boolean(gutenbergId) &&
+      (currentChapter.wordCount === 0 ||
+        currentChapter.content.join(' ').length < 250 ||
+        currentChapter.title.includes('Opening Unabridged') ||
+        currentChapter.title.includes('Loading Unabridged')));
+
+  if (isStubOrLoading) {
+    return (
+      <div
+        className={`min-h-screen flex flex-col items-center justify-center px-4 py-12 transition-colors duration-300 ${currentThemeStyle.bg} ${currentThemeStyle.text}`}
+      >
+        <div className="max-w-md w-full text-center space-y-6 animate-fade-in">
+          <div className="w-16 h-16 mx-auto rounded-2xl bg-peach-500/10 border border-peach-500/20 flex items-center justify-center">
+            <BookOpen className="w-8 h-8 text-peach-500 animate-pulse" />
+          </div>
+
+          <div className="space-y-2">
+            <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border ${currentThemeStyle.border} opacity-80`}>
+              <span>{story.genre || 'Classic Literature'}</span>
+              {gutenbergId && <span>• eBook #{gutenbergId}</span>}
+            </div>
+            <h1 className="font-display font-bold text-2xl sm:text-3xl leading-tight">
+              {story.title}
+            </h1>
+            <p className="text-sm font-semibold opacity-75">
+              By {story.author}
+            </p>
+          </div>
+
+          <div className={`p-5 rounded-2xl border ${currentThemeStyle.border} ${currentThemeStyle.cardBg} space-y-2.5 shadow-sm`}>
+            <div className="flex items-center justify-center gap-2 text-xs font-bold text-peach-600">
+              <RefreshCw className="w-4 h-4 animate-spin text-peach-500" />
+              <span>{pullStatus || 'Transcribing unabridged text from Project Gutenberg...'}</span>
+            </div>
+            <p className="text-[11px] opacity-70">
+              Formatting complete authentic text and dividing into chapters.
+            </p>
+          </div>
+
+          <button
+            onClick={onBackToLibrary}
+            className={`inline-flex items-center gap-2 text-xs font-bold py-2.5 px-5 rounded-xl border ${currentThemeStyle.border} hover:opacity-80 transition-opacity`}
+          >
+            <ArrowLeft className="w-3.5 h-3.5" />
+            <span>Return to Bookshelf</span>
+          </button>
+        </div>
       </div>
     );
   }
@@ -382,14 +465,14 @@ export function StoryReaderView({
             className={`w-full max-w-sm h-full shadow-2xl p-6 overflow-y-auto flex flex-col justify-between ${currentThemeStyle.bg} border-l ${currentThemeStyle.border}`}
           >
             <div>
-              <div className="flex items-center justify-between pb-4 border-b border-black/10">
+              <div className={`flex items-center justify-between pb-4 border-b ${currentThemeStyle.border}`}>
                 <div className="flex items-center gap-2">
                   <BookOpen className="w-5 h-5 text-peach-500" />
                   <h3 className="font-display font-bold text-lg">Table of Contents</h3>
                 </div>
                 <button
                   onClick={() => setShowToc(false)}
-                  className="p-1 rounded-full hover:bg-black/5"
+                  className="p-1 rounded-full hover:opacity-75"
                   aria-label="Close menu"
                 >
                   <X className="w-5 h-5" />
@@ -410,10 +493,10 @@ export function StoryReaderView({
 
                 {/* Gutenberg Upgrade option inside TOC */}
                 {gutenbergId && !story.isLiveGutenberg && (
-                  <div className="p-3 mb-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-left">
+                  <div className={`p-3 mb-3 rounded-xl border ${currentThemeStyle.border} ${currentThemeStyle.cardBg} text-left`}>
                     <div className="flex items-center gap-2 mb-1">
-                      <Sparkles className="w-3.5 h-3.5 text-amber-600" />
-                      <span className="text-xs font-bold text-amber-900 dark:text-amber-200">
+                      <Sparkles className="w-3.5 h-3.5 text-peach-500" />
+                      <span className="text-xs font-bold">
                         Unabridged Gutenberg Text
                       </span>
                     </div>
@@ -424,7 +507,7 @@ export function StoryReaderView({
                       type="button"
                       disabled={isPullingGutenberg}
                       onClick={handlePullUnabridgedGutenberg}
-                      className="w-full py-1.5 px-3 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm transition-all"
+                      className="w-full py-1.5 px-3 rounded-lg bg-peach-500 hover:bg-peach-600 text-ink-900 text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm transition-all"
                     >
                       {isPullingGutenberg ? (
                         <>
@@ -453,7 +536,7 @@ export function StoryReaderView({
                         className={`w-full text-left p-3 rounded-xl transition-all flex items-start justify-between gap-2 border ${
                           isCurrent
                             ? `border-peach-400 bg-peach-500/10 font-bold`
-                            : `border-transparent hover:border-black/10 hover:bg-black/5`
+                            : `border-transparent hover:${currentThemeStyle.border} hover:opacity-85`
                         }`}
                       >
                         <div className="min-w-0 flex-1">
@@ -474,7 +557,7 @@ export function StoryReaderView({
               </div>
             </div>
 
-            <div className="pt-4 border-t border-black/10 text-xs opacity-60 text-center">
+            <div className={`pt-4 border-t ${currentThemeStyle.border} text-xs opacity-60 text-center`}>
               Story by {story.author}
             </div>
           </div>
@@ -488,14 +571,14 @@ export function StoryReaderView({
             className={`w-full max-w-sm h-full shadow-2xl p-6 overflow-y-auto flex flex-col justify-between ${currentThemeStyle.bg} border-l ${currentThemeStyle.border}`}
           >
             <div>
-              <div className="flex items-center justify-between pb-4 border-b border-black/10">
+              <div className={`flex items-center justify-between pb-4 border-b ${currentThemeStyle.border}`}>
                 <div className="flex items-center gap-2">
                   <Sliders className="w-5 h-5 text-peach-500" />
                   <h3 className="font-display font-bold text-lg">Reading Preferences</h3>
                 </div>
                 <button
                   onClick={() => setShowSettings(false)}
-                  className="p-1 rounded-full hover:bg-black/5"
+                  className="p-1 rounded-full hover:opacity-75"
                   aria-label="Close preferences"
                 >
                   <X className="w-5 h-5" />
@@ -503,7 +586,7 @@ export function StoryReaderView({
               </div>
 
               {/* Theme Selector */}
-              <div className="py-5 border-b border-black/10">
+              <div className={`py-5 border-b ${currentThemeStyle.border}`}>
                 <label className="text-xs font-bold uppercase tracking-wider opacity-60 block mb-3">
                   Theme Palette
                 </label>
@@ -527,8 +610,8 @@ export function StoryReaderView({
                   </button>
                   <button
                     onClick={() => handleThemeChange('cream')}
-                    className={`py-2.5 px-3 rounded-xl text-xs font-bold border-2 transition-all flex items-center justify-center gap-2 bg-[#FFFFFF] text-stone-800 ${
-                      theme === 'cream' ? 'border-peach-400 shadow-sm' : 'border-stone-200'
+                    className={`py-2.5 px-3 rounded-xl text-xs font-bold border-2 transition-all flex items-center justify-center gap-2 bg-[#FAF7F2] text-stone-800 ${
+                      theme === 'cream' ? 'border-peach-400 shadow-sm' : 'border-[#EBE3D7]'
                     }`}
                   >
                     <span>Cream</span>
@@ -546,7 +629,7 @@ export function StoryReaderView({
               </div>
 
               {/* Font Size Selector */}
-              <div className="py-5 border-b border-black/10">
+              <div className={`py-5 border-b ${currentThemeStyle.border}`}>
                 <label className="text-xs font-bold uppercase tracking-wider opacity-60 block mb-3">
                   Font Size
                 </label>
@@ -558,7 +641,7 @@ export function StoryReaderView({
                       className={`py-2 px-1 rounded-xl text-xs font-bold border text-center transition-all ${
                         fontSize === size
                           ? 'border-peach-500 bg-peach-500/10 font-bold'
-                          : 'border-black/10 hover:border-black/20'
+                          : `${currentThemeStyle.border} hover:opacity-80`
                       }`}
                     >
                       {size === 'sm' && 'Small'}
@@ -581,7 +664,7 @@ export function StoryReaderView({
                     className={`w-full py-2.5 px-3 rounded-xl text-sm font-serif border text-left flex items-center justify-between transition-all ${
                       fontFamily === 'serif'
                         ? 'border-peach-500 bg-peach-500/10 font-bold'
-                        : 'border-black/10 hover:border-black/20'
+                        : `${currentThemeStyle.border} hover:opacity-80`
                     }`}
                   >
                     <span>Cozy Serif (Classic Novel)</span>
@@ -592,7 +675,7 @@ export function StoryReaderView({
                     className={`w-full py-2.5 px-3 rounded-xl text-sm font-sans border text-left flex items-center justify-between transition-all ${
                       fontFamily === 'sans'
                         ? 'border-peach-500 bg-peach-500/10 font-bold'
-                        : 'border-black/10 hover:border-black/20'
+                        : `${currentThemeStyle.border} hover:opacity-80`
                     }`}
                   >
                     <span>Modern Sans (Crisp & Clean)</span>
@@ -603,7 +686,7 @@ export function StoryReaderView({
                     className={`w-full py-2.5 px-3 rounded-xl text-sm font-mono border text-left flex items-center justify-between transition-all ${
                       fontFamily === 'mono'
                         ? 'border-peach-500 bg-peach-500/10 font-bold'
-                        : 'border-black/10 hover:border-black/20'
+                        : `${currentThemeStyle.border} hover:opacity-80`
                     }`}
                   >
                     <span>Typewriter Mono (Indie Note)</span>
@@ -613,7 +696,7 @@ export function StoryReaderView({
               </div>
             </div>
 
-            <div className="pt-4 border-t border-black/10 text-xs opacity-60 text-center">
+            <div className={`pt-4 border-t ${currentThemeStyle.border} text-xs opacity-60 text-center`}>
               Preferences are automatically saved to your browser.
             </div>
           </div>
@@ -622,60 +705,9 @@ export function StoryReaderView({
 
       {/* Main Chapter Content Container */}
       <main className="max-w-2xl sm:max-w-3xl mx-auto px-5 sm:px-8 py-8 sm:py-16">
-        {/* Gutenberg Status Banner / Upgrade Callout */}
-        {story.isLiveGutenberg && (
-          <div className="mb-8 p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-between gap-3 text-left">
-            <div className="flex items-center gap-2.5">
-              <Sparkles className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
-              <div>
-                <p className="text-xs font-bold text-emerald-900 dark:text-emerald-200">
-                  Verified Project Gutenberg Archive Edition
-                </p>
-                <p className="text-[11px] text-emerald-800/80 dark:text-emerald-300/80">
-                  Transcribed directly from Project Gutenberg eBook #{gutenbergId || story.gutenbergId} • {story.chapters.length} complete unabridged chapters
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {gutenbergId && !story.isLiveGutenberg && (
-          <div className="mb-8 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-left">
-            <div className="flex items-center gap-3">
-              <Library className="w-5 h-5 text-amber-600 shrink-0" />
-              <div>
-                <p className="text-xs font-bold text-amber-950 dark:text-amber-100">
-                  Read Full Unabridged Edition from Project Gutenberg
-                </p>
-                <p className="text-[11px] text-amber-900/80 dark:text-amber-200/80">
-                  Currently reading curated edition. Pull the full archival text (eBook #{gutenbergId}) live from Gutenberg servers on demand.
-                </p>
-              </div>
-            </div>
-            <button
-              type="button"
-              disabled={isPullingGutenberg}
-              onClick={handlePullUnabridgedGutenberg}
-              className="w-full sm:w-auto px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shrink-0 flex items-center justify-center gap-1.5 shadow-sm transition-all"
-            >
-              {isPullingGutenberg ? (
-                <>
-                  <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-                  <span className="truncate max-w-[140px]">{pullStatus || 'Connecting...'}</span>
-                </>
-              ) : (
-                <>
-                  <Download className="w-3.5 h-3.5" />
-                  <span>Pull Unabridged Gutenberg Text</span>
-                </>
-              )}
-            </button>
-          </div>
-        )}
-
         {/* Chapter Header */}
-        <div className="mb-10 sm:mb-14 pb-8 border-b border-black/10 text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold border border-black/10 mb-4 opacity-75">
+        <div className={`mb-10 sm:mb-14 pb-8 border-b ${currentThemeStyle.border} text-center`}>
+          <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold border ${currentThemeStyle.border} mb-4 opacity-75`}>
             <span>{story.genre}</span>
             <span>•</span>
             <span>By {story.author}</span>
@@ -724,8 +756,8 @@ export function StoryReaderView({
           })}
         </article>
 
-        {/* Author Note Box (if present) */}
-        {currentChapter.authorNote && (
+        {/* Genuine author notes for non-public domain stories */}
+        {!story.isPublicDomain && !story.isLiveGutenberg && !gutenbergId && currentChapter.authorNote && (
           <div
             className={`mt-12 p-6 rounded-2xl border ${currentThemeStyle.border} ${currentThemeStyle.cardBg} transition-colors`}
           >
@@ -733,15 +765,25 @@ export function StoryReaderView({
               <Coffee className="w-4 h-4 text-peach-500" />
               <span>Author's Note from {story.author}</span>
             </div>
-            <p className={`text-xs sm:text-sm italic opacity-85 leading-relaxed`}>
+            <p className="text-xs sm:text-sm italic opacity-85 leading-relaxed">
               "{currentChapter.authorNote}"
+            </p>
+          </div>
+        )}
+
+        {/* Public domain archive provenance badge (clean, dignified, no fake quotes) */}
+        {story.isPublicDomain && (
+          <div className="my-10 text-center opacity-60">
+            <p className="text-[11px] font-serif tracking-wide">
+              Public domain work preserved and transcribed from Project Gutenberg archive
+              {gutenbergId ? ` (eBook #${gutenbergId})` : ''}.
             </p>
           </div>
         )}
 
         {/* Chapter Completion Stamp */}
         <div className="my-12 text-center">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-full border border-black/15 text-stone-400 mb-3">
+          <div className={`inline-flex items-center justify-center w-12 h-12 rounded-full border ${currentThemeStyle.border} text-stone-400 mb-3`}>
             <BookOpen className="w-5 h-5" />
           </div>
           <p className="text-xs uppercase tracking-widest opacity-50 font-bold">
@@ -750,7 +792,7 @@ export function StoryReaderView({
         </div>
 
         {/* Chapter Navigation Bar */}
-        <div className="pt-6 border-t border-black/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className={`pt-6 border-t ${currentThemeStyle.border} flex flex-col sm:flex-row items-center justify-between gap-4`}>
           {prevChapter ? (
             <button
               onClick={() => onSelectChapter(prevChapter.chapterNumber)}
