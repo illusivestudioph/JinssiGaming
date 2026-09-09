@@ -969,19 +969,26 @@ export function getGutenbergId(story: Story): number | null {
 /**
  * Parse authentic raw text pulled directly from Project Gutenberg archives into a multi-chapter Story object.
  */
-export function parseRawGutenbergText(book: GutenbergBook, rawText: string): Story {
+export function parseRawGutenbergText(book: GutenbergBook, rawText: string, isPreCleaned = false): Story {
   const text = rawText.replace(/\r\n/g, '\n');
 
-  // Strip Gutenberg license header
-  const startMatch = text.match(/\*\*\* START OF (THE|THIS) PROJECT GUTENBERG EBOOK[^\n]*\n/i);
-  let body = startMatch ? text.slice(startMatch.index! + startMatch[0].length) : text;
+  let body: string;
+  if (isPreCleaned) {
+    // RapidAPI /books/{id}/text already stripped the Gutenberg header and footer
+    body = text;
+  } else {
+    // Strip Gutenberg license header
+    const startMatch = text.match(/\*\*\* START OF (THE|THIS) PROJECT GUTENBERG EBOOK[^\n]*\n/i);
+    body = startMatch ? text.slice(startMatch.index! + startMatch[0].length) : text;
 
-  // Strip Gutenberg license footer
-  const endMatch = body.match(/\*\*\* END OF (THE|THIS) PROJECT GUTENBERG EBOOK/i);
-  if (endMatch) body = body.slice(0, endMatch.index);
+    // Strip Gutenberg license footer
+    const endMatch = body.match(/\*\*\* END OF (THE|THIS) PROJECT GUTENBERG EBOOK/i);
+    if (endMatch) body = body.slice(0, endMatch.index);
+  }
 
   const lines = body.split('\n');
   const rawCandidates: { lineIndex: number; heading: string }[] = [];
+
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i].trim();
@@ -1236,64 +1243,92 @@ export async function fetchAndParseGutenbergBook(
 
   onProgress?.(`Connecting to Project Gutenberg archive (eBook #${book.id})...`);
 
-  // 2. Build list of download URLs to attempt
-  // NOTE: /api/gutenberg/* only works in dev (Vite proxy). In production (Cloudflare Pages)
-  // those paths return 404, so we skip them and go straight to CORS proxies.
-  const gutenbergTextUrl = `https://www.gutenberg.org/cache/epub/${book.id}/pg${book.id}.txt`;
-  const gutenbergAltUrl = `https://www.gutenberg.org/files/${book.id}/${book.id}-0.txt`;
-
-  const urlsToTry: string[] = [];
-
-  // Dev-only Vite proxy (ignored in production)
-  if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
-    urlsToTry.push(
-      `/api/gutenberg/cache/epub/${book.id}/pg${book.id}.txt`,
-      `/api/gutenberg/files/${book.id}/${book.id}-0.txt`,
-      `/api/gutenberg/files/${book.id}/${book.id}.txt`,
-    );
-  }
-
-  // Explicit format URLs from the API (sometimes already CORS-safe CDN links)
-  if (book.formats?.['text/plain; charset=utf-8']) {
-    urlsToTry.push(book.formats['text/plain; charset=utf-8']);
-  }
-  if (book.formats?.['text/plain']) {
-    urlsToTry.push(book.formats['text/plain']);
-  }
-
-  // CORS proxies that work in production
-  urlsToTry.push(
-    `https://api.allorigins.win/raw?url=${encodeURIComponent(gutenbergTextUrl)}`,
-    `https://api.allorigins.win/raw?url=${encodeURIComponent(gutenbergAltUrl)}`,
-    `https://corsproxy.io/?url=${encodeURIComponent(gutenbergTextUrl)}`,
-    `https://corsproxy.io/?url=${encodeURIComponent(gutenbergAltUrl)}`,
-    gutenbergTextUrl,
-    gutenbergAltUrl,
-  );
-
+  // 2. PRIMARY: Use RapidAPI /books/{id}/text?cleaning_mode=simple
+  //    This returns already-cleaned plain text with no CORS issues, works in production.
   let rawText = '';
-  for (const url of urlsToTry) {
-    try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 8000);
-      const res = await fetch(url, { signal: controller.signal });
-      clearTimeout(timeoutId);
-      if (res.ok) {
-        const text = await res.text();
-        if (text && text.length > 5000 && !text.includes('<!DOCTYPE html>')) {
-          rawText = text;
-          break;
-        }
+  let isPreCleaned = false;
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000);
+    const rapidTextRes = await fetch(
+      `${RAPIDAPI_GUTENBERG_BASE}/books/${book.id}/text?cleaning_mode=simple`,
+      {
+        signal: controller.signal,
+        headers: {
+          'x-rapidapi-host': RAPIDAPI_GUTENBERG_HOST,
+          'x-rapidapi-key': RAPIDAPI_GUTENBERG_KEY,
+          'Content-Type': 'application/json',
+        },
       }
-    } catch {
-      // try next url
+    );
+    clearTimeout(timeoutId);
+    if (rapidTextRes.ok) {
+      const data = await rapidTextRes.json() as { text?: string; book_id?: number };
+      if (data.text && data.text.length > 5000) {
+        rawText = data.text;
+        isPreCleaned = true; // API already stripped headers/footers
+      }
+    }
+  } catch {
+    // fall through to CORS proxy approach
+  }
+
+  // 3. FALLBACK: CORS proxies + direct Gutenberg URLs (dev-only proxy or public proxies)
+  if (!rawText) {
+    const gutenbergTextUrl = `https://www.gutenberg.org/cache/epub/${book.id}/pg${book.id}.txt`;
+    const gutenbergAltUrl = `https://www.gutenberg.org/files/${book.id}/${book.id}-0.txt`;
+    const urlsToTry: string[] = [];
+
+    // Dev-only Vite proxy (ignored in production)
+    if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
+      urlsToTry.push(
+        `/api/gutenberg/cache/epub/${book.id}/pg${book.id}.txt`,
+        `/api/gutenberg/files/${book.id}/${book.id}-0.txt`,
+        `/api/gutenberg/files/${book.id}/${book.id}.txt`,
+      );
+    }
+
+    // Explicit format URLs from the API (sometimes already CORS-safe CDN links)
+    if (book.formats?.['text/plain; charset=utf-8']) {
+      urlsToTry.push(book.formats['text/plain; charset=utf-8']);
+    }
+    if (book.formats?.['text/plain']) {
+      urlsToTry.push(book.formats['text/plain']);
+    }
+
+    // CORS proxies that work in production
+    urlsToTry.push(
+      `https://api.allorigins.win/raw?url=${encodeURIComponent(gutenbergTextUrl)}`,
+      `https://api.allorigins.win/raw?url=${encodeURIComponent(gutenbergAltUrl)}`,
+      `https://corsproxy.io/?url=${encodeURIComponent(gutenbergTextUrl)}`,
+      `https://corsproxy.io/?url=${encodeURIComponent(gutenbergAltUrl)}`,
+      gutenbergTextUrl,
+      gutenbergAltUrl,
+    );
+
+    for (const url of urlsToTry) {
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 8000);
+        const res = await fetch(url, { signal: controller.signal });
+        clearTimeout(timeoutId);
+        if (res.ok) {
+          const text = await res.text();
+          if (text && text.length > 5000 && !text.includes('<!DOCTYPE html>')) {
+            rawText = text;
+            break;
+          }
+        }
+      } catch {
+        // try next url
+      }
     }
   }
 
-  // 3. Parse authentic unabridged text into real chapters
+  // 4. Parse authentic unabridged text into real chapters
   if (rawText) {
     onProgress?.('Parsing authentic chapters & unabridged prose...');
-    const parsedStory = parseRawGutenbergText(book, rawText);
+    const parsedStory = parseRawGutenbergText(book, rawText, isPreCleaned);
     if (parsedStory.chapters.length > 0) {
       try {
         localStorage.setItem(cacheKey, JSON.stringify(parsedStory));
