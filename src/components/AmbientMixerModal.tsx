@@ -35,6 +35,8 @@ export function AmbientMixerModal({ isOpen, onClose }: AmbientMixerModalProps) {
     setAmbientFire,
     setAmbientWind,
     applyPreset,
+    activePreset,
+    ambientTheme,
     sfxEnabled,
     toggleSfx,
     playCheckSfx,
@@ -65,12 +67,19 @@ export function AmbientMixerModal({ isOpen, onClose }: AmbientMixerModalProps) {
 
   if (!isOpen) return null;
 
-  const presets: { id: SoundPreset; label: string; icon: string }[] = [
-    { id: 'rainy', label: 'Rainy Cafe', icon: '🌧️' },
-    { id: 'campfire', label: 'Campfire', icon: '🪵' },
-    { id: 'reading', label: 'Cozy Study', icon: '📖' },
-    { id: 'nature', label: 'Forest Wind', icon: '🍃' },
+  const presets: { id: SoundPreset; label: string; icon: string; theme: string }[] = [
+    { id: 'rainy', label: 'Rainy Cafe', icon: '🌧️', theme: 'rain' },
+    { id: 'campfire', label: 'Campfire', icon: '🪵', theme: 'fire' },
+    { id: 'reading', label: 'Cozy Study', icon: '📖', theme: 'default' },
+    { id: 'nature', label: 'Forest Wind', icon: '🍃', theme: 'wind' },
   ];
+
+  const themeTrackLabels: Record<string, string> = {
+    default: 'Cozy Study',
+    rain: 'Rainy Cafe',
+    fire: 'Campfire',
+    wind: 'Forest Wind',
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink-900/40 backdrop-blur-sm animate-fade-in">
@@ -124,17 +133,25 @@ export function AmbientMixerModal({ isOpen, onClose }: AmbientMixerModalProps) {
             )}
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-            {presets.map((preset) => (
-              <button
-                key={preset.id}
-                type="button"
-                onClick={() => applyPreset(preset.id)}
-                className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl border border-tan-200 bg-white hover:bg-peach-50/80 hover:border-peach-300 text-xs font-bold text-ink-800 shadow-cozy-sm transition-all active:scale-95"
-              >
-                <span>{preset.icon}</span>
-                <span>{preset.label}</span>
-              </button>
-            ))}
+            {presets.map((preset) => {
+              const isSelected =
+                activePreset === preset.id || (activePreset === null && ambientTheme === preset.theme);
+              return (
+                <button
+                  key={preset.id}
+                  type="button"
+                  onClick={() => applyPreset(preset.id)}
+                  className={`flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl border text-xs font-bold shadow-cozy-sm transition-all active:scale-95 ${
+                    isSelected
+                      ? 'border-peach-400 bg-peach-50 text-peach-700 ring-2 ring-peach-300/50'
+                      : 'border-tan-200 bg-white hover:bg-peach-50/80 hover:border-peach-300 text-ink-800'
+                  }`}
+                >
+                  <span>{preset.icon}</span>
+                  <span>{preset.label}</span>
+                </button>
+              );
+            })}
           </div>
         </div>
 
@@ -142,7 +159,7 @@ export function AmbientMixerModal({ isOpen, onClose }: AmbientMixerModalProps) {
         <div className="space-y-4 bg-cream-100/70 p-3.5 rounded-2xl border border-tan-200 mb-5">
           {/* Lo-Fi Background Music */}
           <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2 w-28 flex-shrink-0">
+            <div className="flex items-center gap-2 w-32 flex-shrink-0">
               <button
                 type="button"
                 onClick={() => void togglePlayback()}
@@ -153,7 +170,12 @@ export function AmbientMixerModal({ isOpen, onClose }: AmbientMixerModalProps) {
               >
                 {playing ? <Pause className="w-3.5 h-3.5" /> : <Music className="w-3.5 h-3.5" />}
               </button>
-              <span className="text-xs font-bold text-ink-800">Lo-Fi Music</span>
+              <div className="flex flex-col">
+                <span className="text-xs font-bold text-ink-800 leading-tight">Lo-Fi Music</span>
+                <span className="text-[10px] text-tan-500 font-medium leading-tight truncate max-w-[85px]">
+                  {themeTrackLabels[ambientTheme] || 'BGM'}
+                </span>
+              </div>
             </div>
             <input
               type="range"

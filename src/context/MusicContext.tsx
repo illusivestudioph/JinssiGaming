@@ -13,8 +13,18 @@ const mutedStorageKey = 'jinssi-bgm-muted';
 const rainStorageKey = 'jinssi-ambient-rain';
 const fireStorageKey = 'jinssi-ambient-fire';
 const windStorageKey = 'jinssi-ambient-wind';
+const themeStorageKey = 'jinssi-ambient-theme';
 const sfxStorageKey = 'jinssi-sfx-enabled';
 const musicVolumeScale = 0.5;
+
+export type AmbientTheme = 'default' | 'rain' | 'fire' | 'wind';
+
+export const THEME_BGM_TRACKS: Record<AmbientTheme, string> = {
+  default: '/bgm.mp3',
+  rain: '/rain.mp3',
+  fire: '/camp.mp3',
+  wind: '/forest.mp3',
+};
 
 function readSavedFloat(key: string, defaultVal: number): number {
   if (typeof window === 'undefined') return defaultVal;
@@ -43,7 +53,7 @@ export interface MusicContextValue {
   playMusic: () => Promise<void>;
   pauseMusic: () => void;
 
-  // Ambient Soundscapes
+  // Ambient Sounds
   ambientRain: number;
   ambientFire: number;
   ambientWind: number;
@@ -51,6 +61,7 @@ export interface MusicContextValue {
   setAmbientFire: (vol: number) => void;
   setAmbientWind: (vol: number) => void;
   applyPreset: (preset: SoundPreset) => void;
+  activePreset: SoundPreset | null;
 
   // SFX
   sfxEnabled: boolean;
@@ -61,7 +72,8 @@ export interface MusicContextValue {
 
   // Active Ambience Summary
   hasActiveAmbience: boolean;
-  ambientTheme: 'default' | 'rain' | 'fire' | 'wind';
+  ambientTheme: AmbientTheme;
+  setAmbientTheme: (theme: AmbientTheme) => void;
 }
 
 const MusicContext = createContext<MusicContextValue | null>(null);
@@ -81,20 +93,22 @@ export function MusicProvider({ children }: { children: ReactNode }) {
   // Sound Effects
   const [sfxEnabled, setSfxEnabled] = useState<boolean>(() => readSavedBool(sfxStorageKey, true));
 
-  // Ambient Theme Calculation
-  const ambientTheme = (() => {
-    if (muted) return 'default';
-    if (ambientRain > 0 && ambientRain >= ambientFire && ambientRain >= ambientWind) {
-      return 'rain';
-    }
-    if (ambientFire > 0 && ambientFire >= ambientWind) {
-      return 'fire';
-    }
-    if (ambientWind > 0) {
-      return 'wind';
+  // Theme & Atmosphere selection
+  const [ambientTheme, setAmbientThemeState] = useState<AmbientTheme>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem(themeStorageKey) as AmbientTheme | null;
+      if (saved && (saved === 'default' || saved === 'rain' || saved === 'fire' || saved === 'wind')) {
+        return saved;
+      }
     }
     return 'default';
-  })();
+  });
+  const [activePreset, setActivePreset] = useState<SoundPreset | null>('reading');
+
+  const setAmbientTheme = (theme: AmbientTheme) => {
+    setAmbientThemeState(theme);
+    localStorage.setItem(themeStorageKey, theme);
+  };
 
   // Synchronize HTML data-ambient-theme and <meta name="theme-color">
   useEffect(() => {
@@ -113,14 +127,14 @@ export function MusicProvider({ children }: { children: ReactNode }) {
       document.head.appendChild(metaTag);
     }
 
-    const themeColors: Record<string, string> = {
+    const themeColors: Record<AmbientTheme, string> = {
       rain: '#ebf2fd',
       fire: '#fef4eb',
       wind: '#f1f7f0',
       default: '#fefcf7',
     };
 
-    metaTag.content = themeColors[ambientTheme] || '#fdf8f1';
+    metaTag.content = themeColors[ambientTheme] || '#fefcf7';
   }, [ambientTheme]);
 
   const settingsRef = useRef({ muted, userVolume, ambientRain, ambientFire, ambientWind });
@@ -129,6 +143,11 @@ export function MusicProvider({ children }: { children: ReactNode }) {
   const playMusic = async () => {
     const audio = audioRef.current;
     if (!audio) return;
+    const targetTrack = THEME_BGM_TRACKS[ambientTheme] || '/bgm.mp3';
+    if (!audio.src.endsWith(targetTrack)) {
+      audio.src = targetTrack;
+      audio.load();
+    }
     let volume = userVolume;
     if (muted) {
       setMuted(false);
@@ -182,6 +201,10 @@ export function MusicProvider({ children }: { children: ReactNode }) {
     if (!muted) {
       ambientEngine.setRainVolume(clamped);
     }
+    if (clamped >= 0.5 && clamped > ambientFire && clamped > ambientWind) {
+      setAmbientTheme('rain');
+      setActivePreset(null);
+    }
   };
 
   const setAmbientFire = (vol: number) => {
@@ -191,6 +214,10 @@ export function MusicProvider({ children }: { children: ReactNode }) {
     if (!muted) {
       ambientEngine.setFireVolume(clamped);
     }
+    if (clamped >= 0.5 && clamped > ambientRain && clamped > ambientWind) {
+      setAmbientTheme('fire');
+      setActivePreset(null);
+    }
   };
 
   const setAmbientWind = (vol: number) => {
@@ -199,6 +226,10 @@ export function MusicProvider({ children }: { children: ReactNode }) {
     localStorage.setItem(windStorageKey, String(clamped));
     if (!muted) {
       ambientEngine.setWindVolume(clamped);
+    }
+    if (clamped >= 0.5 && clamped > ambientRain && clamped > ambientFire) {
+      setAmbientTheme('wind');
+      setActivePreset(null);
     }
   };
 
@@ -229,31 +260,37 @@ export function MusicProvider({ children }: { children: ReactNode }) {
   };
 
   const applyPreset = (preset: SoundPreset) => {
+    setActivePreset(preset);
     if (muted && preset !== 'reset') {
       setMuted(false);
       ambientEngine.setMasterMuted(false);
     }
     if (preset === 'rainy') {
+      setAmbientTheme('rain');
       setAmbientRain(0.65);
-      setAmbientFire(0);
+      setAmbientFire(0.15);
       setAmbientWind(0);
       void playMusic();
     } else if (preset === 'campfire') {
+      setAmbientTheme('fire');
       setAmbientRain(0);
       setAmbientFire(0.7);
-      setAmbientWind(0);
+      setAmbientWind(0.2);
       void playMusic();
     } else if (preset === 'reading') {
-      setAmbientRain(0);
-      setAmbientFire(0);
-      setAmbientWind(0);
+      setAmbientTheme('default');
+      setAmbientRain(0.25);
+      setAmbientFire(0.2);
+      setAmbientWind(0.1);
       void playMusic();
     } else if (preset === 'nature') {
-      setAmbientRain(0);
+      setAmbientTheme('wind');
+      setAmbientRain(0.2);
       setAmbientFire(0);
       setAmbientWind(0.65);
       void playMusic();
     } else if (preset === 'reset') {
+      setAmbientTheme('default');
       setAmbientRain(0);
       setAmbientFire(0);
       setAmbientWind(0);
@@ -274,9 +311,26 @@ export function MusicProvider({ children }: { children: ReactNode }) {
     }
   }, [muted, ambientRain, ambientFire, ambientWind]);
 
+  // Switch BGM audio track when ambientTheme changes
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const targetTrack = THEME_BGM_TRACKS[ambientTheme] || '/bgm.mp3';
+    if (!audio.src.endsWith(targetTrack)) {
+      const wasPlaying = !audio.paused && !audio.ended;
+      audio.src = targetTrack;
+      audio.load();
+      if (wasPlaying && !muted && userVolume > 0) {
+        void audio.play().catch(() => setAudioError(true));
+      }
+    }
+  }, [ambientTheme, muted, userVolume]);
+
   // Initialize single persistent Audio element on mount
   useEffect(() => {
-    const audio = new Audio('/bgm.mp3');
+    const initialTrack = THEME_BGM_TRACKS[ambientTheme] || '/bgm.mp3';
+    const audio = new Audio(initialTrack);
     audio.autoplay = true;
     audio.loop = true;
     audio.setAttribute('playsinline', 'true');
@@ -362,6 +416,7 @@ export function MusicProvider({ children }: { children: ReactNode }) {
         setAmbientFire,
         setAmbientWind,
         applyPreset,
+        activePreset,
 
         sfxEnabled,
         toggleSfx,
@@ -371,6 +426,7 @@ export function MusicProvider({ children }: { children: ReactNode }) {
 
         hasActiveAmbience,
         ambientTheme,
+        setAmbientTheme,
       }}
     >
       {children}
