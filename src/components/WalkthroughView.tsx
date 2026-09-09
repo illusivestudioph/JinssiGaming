@@ -433,7 +433,7 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
       </div>
 
       {showCongratulations && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto p-4 sm:p-6">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto p-4 sm:p-6 pt-64 pb-12">
           <div
             className="fixed inset-0 bg-ink-900/70 backdrop-blur-sm"
             aria-hidden="true"
@@ -456,17 +456,19 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
             ))}
           </div>
 
-          <div className="relative z-10 w-full max-w-md my-auto pt-24 sm:pt-28">
+          <div className="relative z-10 w-full max-w-md my-auto">
             {/* Tuturo Character standing behind the card greeting */}
-            <div className="absolute left-1/2 -translate-x-1/2 top-0 z-0 pointer-events-none w-48 sm:w-56 select-none animate-float">
-              <img
-                src="/tuturo.png"
-                alt="Tuturo greeting you"
-                className="w-full h-auto object-contain mx-auto filter drop-shadow-md"
-                draggable={false}
-              />
-              <div className="absolute -top-1 -right-2 sm:-right-4 bg-white/95 border-2 border-tan-300 rounded-full px-2.5 py-0.5 shadow-cozy-sm text-[11px] sm:text-xs font-bold text-peach-600 rotate-6">
-                Tuturu~♪
+            <div className="absolute left-1/2 -translate-x-1/2 -top-[215px] sm:-top-[255px] z-0 pointer-events-none w-64 sm:w-72 select-none animate-float">
+              <div className="relative">
+                <img
+                  src="/tuturo.png"
+                  alt="Tuturo greeting you"
+                  className="w-full h-auto object-contain mx-auto filter drop-shadow-xl"
+                  draggable={false}
+                />
+                <div className="absolute top-24 -right-1 sm:-right-3 bg-white/95 border-2 border-tan-300 rounded-full px-3 py-1 shadow-cozy-md text-xs sm:text-sm font-extrabold text-peach-600 rotate-12">
+                  Tuturu~♪
+                </div>
               </div>
             </div>
 
