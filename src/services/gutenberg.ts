@@ -667,9 +667,45 @@ export const FALLBACK_GUTENBERG_CATALOG: GutenbergBook[] = [
   }
 ];
 
+// Project Gutenberg Free Books API (RapidAPI integration)
+export const RAPIDAPI_GUTENBERG_KEY = 'b445d3737dmsh72e55ee6b50e480p1e515ajsnd80dca311de3';
+export const RAPIDAPI_GUTENBERG_HOST = 'project-gutenberg-free-books-api1.p.rapidapi.com';
+export const RAPIDAPI_GUTENBERG_BASE = 'https://project-gutenberg-free-books-api1.p.rapidapi.com';
+
+export interface GutenbergSubjectItem {
+  id: number;
+  name: string;
+  category: string | null;
+  book_count: number;
+  download_count: number;
+}
+
 /**
- * Fetch books from Gutendex API with fast timeout, falling back gracefully to the rich 60+ book catalog.
- * Point 1 fix: Searches title, author, subjects, and keywords. If no results match, returns [] so users aren't trapped in an 8-book loop.
+ * Fetch subjects from RapidAPI Project Gutenberg API.
+ */
+export async function fetchGutenbergSubjects(): Promise<GutenbergSubjectItem[]> {
+  try {
+    const res = await fetch(`${RAPIDAPI_GUTENBERG_BASE}/subjects`, {
+      headers: {
+        'x-rapidapi-host': RAPIDAPI_GUTENBERG_HOST,
+        'x-rapidapi-key': RAPIDAPI_GUTENBERG_KEY,
+        'Content-Type': 'application/json',
+      },
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data.results && Array.isArray(data.results)) {
+        return data.results;
+      }
+    }
+  } catch {
+    // ignore
+  }
+  return [];
+}
+
+/**
+ * Fetch books from RapidAPI Project Gutenberg API, falling back to Gutendex and verified catalog.
  */
 export async function searchGutenbergBooks(
   query: string = '',
@@ -692,14 +728,34 @@ export async function searchGutenbergBooks(
     return titleMatch || authorMatch || subjectMatch || bookshelfMatch;
   });
 
-  if (localMatches.length > 0) {
-    return localMatches;
+  // 2. Query RapidAPI Project Gutenberg API (fastest, relevance-ranked over 76,000 titles)
+  const searchParam = encodeURIComponent(trimmed);
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 4000);
+
+    const rapidRes = await fetch(`${RAPIDAPI_GUTENBERG_BASE}/books?q=${searchParam}`, {
+      signal: signal || controller.signal,
+      headers: {
+        'x-rapidapi-host': RAPIDAPI_GUTENBERG_HOST,
+        'x-rapidapi-key': RAPIDAPI_GUTENBERG_KEY,
+        'Content-Type': 'application/json',
+      },
+    });
+    clearTimeout(timeoutId);
+
+    if (rapidRes.ok) {
+      const data = (await rapidRes.json()) as GutendexResponse;
+      if (data.results && data.results.length > 0) {
+        return data.results;
+      }
+    }
+  } catch {
+    // If RapidAPI fails or times out, proceed to next
   }
 
-  // 2. If no local matches, query live Gutendex API with 3.5s timeout
-  const searchParam = encodeURIComponent(trimmed);
+  // 3. Fallback to Gutendex open API
   const url = `https://gutendex.com/books/?search=${searchParam}&languages=en`;
-
   try {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 3500);
@@ -710,7 +766,6 @@ export async function searchGutenbergBooks(
         Accept: 'application/json',
       },
     });
-
     clearTimeout(timeoutId);
 
     if (response.ok) {
@@ -723,7 +778,7 @@ export async function searchGutenbergBooks(
     // If live API times out or fails (e.g. CORS or offline)
   }
 
-  return [];
+  return localMatches;
 }
 
 /**
@@ -816,59 +871,110 @@ export function convertGutenbergToStory(book: GutenbergBook): Story {
 export const GUTENBERG_ID_MAP: Record<string, number> = {
   // Classic Literature
   'classic-secret-garden': 113,
+  'the-secret-garden': 113,
   'classic-anne-of-green-gables': 45,
+  'anne-of-green-gables': 45,
   'classic-pride-and-prejudice': 1342,
+  'pride-and-prejudice': 1342,
   'classic-jane-eyre': 1260,
+  'jane-eyre': 1260,
   'classic-wuthering-heights': 768,
+  'wuthering-heights': 768,
   'classic-little-women': 514,
+  'little-women': 514,
   'classic-tale-of-two-cities': 98,
+  'a-tale-of-two-cities': 98,
   'classic-great-expectations': 1400,
+  'great-expectations': 1400,
   'classic-christmas-carol': 46,
+  'a-christmas-carol': 46,
   'classic-emma': 158,
+  'emma': 158,
   'classic-sense-and-sensibility': 161,
+  'sense-and-sensibility': 161,
   'classic-persuasion': 105,
+  'persuasion': 105,
 
   // Cozy Fantasy
   'fantasy-alice-wonderland': 11,
+  'alices-adventures-in-wonderland': 11,
   'fantasy-wind-in-willows': 289,
+  'the-wind-in-the-willows': 289,
   'fantasy-wizard-of-oz': 55,
+  'the-wonderful-wizard-of-oz': 55,
   'fantasy-peter-pan': 16,
+  'peter-and-wendy': 16,
   'fantasy-grimms-fairy-tales': 2591,
+  'grimms-fairy-tales': 2591,
   'fantasy-princess-curdie': 708,
+  'the-princess-and-the-goblin': 708,
   'fantasy-blue-fairy-book': 503,
+  'the-blue-fairy-book': 503,
   'fantasy-five-children-and-it': 778,
+  'five-children-and-it': 778,
   'fantasy-water-babies': 1018,
+  'the-water-babies': 1018,
   'fantasy-house-at-pooh-corner': 67098,
   'fantasy-just-so-stories': 2781,
+  'just-so-stories': 2781,
   'fantasy-jungle-book': 236,
+  'the-jungle-book': 236,
 
   // Mystery & Gothic
+  'hound-of-baskervilles': 2852,
+  'the-hound-of-the-baskervilles': 2852,
   'mystery-hound-baskervilles': 2852,
+  'adventures-of-sherlock-holmes': 1661,
+  'the-adventures-of-sherlock-holmes': 1661,
   'mystery-adventures-sherlock': 1661,
-  'mystery-study-in-scarlet': 244,
-  'mystery-sign-of-four': 2097,
-  'mystery-father-brown-innocence': 2097,
-  'mystery-moonstone': 155,
-  'mystery-woman-in-white': 583,
-  'mystery-frankenstein': 84,
-  'mystery-dracula': 345,
-  'mystery-jekyll-and-hyde': 43,
-  'mystery-picture-dorian-gray': 174,
+  'innocence-of-father-brown': 204,
+  'the-innocence-of-father-brown': 204,
+  'mystery-father-brown-innocence': 204,
+  'mystery-yellow-room': 15689,
+  'the-mystery-of-the-yellow-room': 15689,
+  'murders-rue-morgue': 2147,
+  'the-murders-in-the-rue-morgue': 2147,
   'mystery-murders-rue-morgue': 2147,
+  'the-moonstone': 155,
+  'mystery-moonstone': 155,
+  'study-in-scarlet': 244,
+  'mystery-study-in-scarlet': 244,
+  'sign-of-four': 2097,
+  'mystery-sign-of-four': 2097,
+  'woman-in-white': 583,
+  'mystery-woman-in-white': 583,
+  'frankenstein': 84,
+  'mystery-frankenstein': 84,
+  'dracula': 345,
+  'mystery-dracula': 345,
+  'jekyll-and-hyde': 43,
+  'mystery-jekyll-and-hyde': 43,
+  'picture-dorian-gray': 174,
+  'mystery-picture-dorian-gray': 174,
 
   // Study Materials & Philosophy
   'study-art-of-war': 132,
+  'the-art-of-war': 132,
   'study-meditations-marcus-aurelius': 2680,
+  'meditations': 2680,
   'study-walden-thoreau': 205,
+  'walden': 205,
   'study-republic-plato': 1497,
+  'the-republic': 1497,
   'study-prince-machiavelli': 1232,
+  'the-prince': 1232,
   'study-wealth-of-nations': 3300,
+  'the-wealth-of-nations': 3300,
   'study-elements-style': 37134,
   'study-self-reliance-emerson': 16643,
+  'self-reliance': 16643,
   'study-autobiography-franklin': 20203,
+  'the-autobiography-of-benjamin-franklin': 20203,
   'study-poetics-aristotle': 1974,
+  'poetics': 1974,
   'study-discourse-on-method': 59,
   'study-letters-from-stoic': 64575,
+  'letters-from-a-stoic': 64575,
 };
 
 export function getGutenbergId(story: Story): number | null {

@@ -158,6 +158,15 @@ export function StoryReaderView({
     }
   };
 
+  // Automatically pull the real Gutenberg text if the book only has short placeholder stubs
+  useEffect(() => {
+    if (!gutenbergId || isPullingGutenberg || story.isLiveGutenberg) return;
+    const hasShortContent = story.chapters.some((ch) => ch.content.join(' ').length < 350);
+    if (hasShortContent) {
+      handlePullUnabridgedGutenberg();
+    }
+  }, [story.id, gutenbergId]);
+
   // UI state
   const [showToc, setShowToc] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
