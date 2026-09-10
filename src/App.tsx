@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import type { Game } from '@/data/games';
+import { categories, type Game } from '@/data/games';
 import type { Article } from '@/data/articles';
 import type { Story } from '@/data/stories';
 import { GUTENBERG_ID_MAP } from '@/services/gutenberg';
@@ -20,7 +20,7 @@ import { ContactPage } from '@/components/ContactPage';
 import { CookieConsent } from '@/components/CookieConsent';
 import { AdSenseUnit } from '@/components/AdSenseUnit';
 import { GameCard } from '@/components/GameCard';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Search, Gamepad2 } from 'lucide-react';
 
 // 1. Context Provider
 import { SiteContentProvider, useSiteContent } from '@/context/SiteContentContext'; 
@@ -456,32 +456,124 @@ function WalkthroughsPage({
   progressMap: Record<string, number>;
 }) {
   const { games } = useSiteContent(); 
+  const [selectedCategory, setSelectedCategory] = useState<string>('All');
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const availableCategories = useMemo(() => {
+    const list = ['All'];
+    categories.forEach((c) => {
+      if (c !== 'All' && !list.includes(c)) list.push(c);
+    });
+    games.forEach((g) => {
+      if (g.category && !list.includes(g.category.trim())) {
+        list.push(g.category.trim());
+      }
+    });
+    return list;
+  }, [games]);
+
+  const filteredGames = useMemo(() => {
+    return games.filter((game) => {
+      const matchesCategory =
+        selectedCategory === 'All' || game.category === selectedCategory;
+
+      const q = searchQuery.toLowerCase().trim();
+      const matchesSearch =
+        !q ||
+        game.title.toLowerCase().includes(q) ||
+        game.developer.toLowerCase().includes(q) ||
+        game.description.toLowerCase().includes(q) ||
+        (game.category && game.category.toLowerCase().includes(q));
+
+      return matchesCategory && matchesSearch;
+    });
+  }, [games, selectedCategory, searchQuery]);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-      <div className="text-center mb-10 animate-fade-in">
-        <div className="library-badge inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold mb-4 shadow-cozy-sm">
-          <span>Step-by-step guides</span>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 animate-fade-in">
+      {/* Header Banner */}
+      <div className="text-center max-w-2xl mx-auto mb-10">
+        <div>
+          <div className="library-badge inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold mb-3 shadow-cozy-sm">
+            <Gamepad2 className="w-3.5 h-3.5" />
+            <span>Step-by-step guides</span>
+          </div>
         </div>
-        <h1 className="page-title font-display text-3xl sm:text-5xl font-700 text-ink-900 mb-4 leading-tight">
+        <h1 className="font-display text-3xl sm:text-4xl font-extrabold text-ink-900 tracking-tight mb-3">
           Walkthroughs
         </h1>
-        <p className="text-base sm:text-lg text-tan-500 max-w-2xl mx-auto leading-relaxed">
-          Pick a game and follow our visual, WikiHow-style guides. Track your
-          progress with satisfying checkboxes as you go.
+        <p className="text-base text-ink-700 leading-relaxed font-sans">
+          Pick a game and follow our visual, WikiHow-style guides. Track your progress with satisfying checkboxes as you go.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pt-3">
-        {games.map((game) => (
-          <GameCard
-            key={game.id}
-            game={game}
-            onClick={() => onSelectGame(game)}
-            completedCount={progressMap[game.id] || 0}
+      {/* Search & Filter Controls */}
+      <div className="mb-10 space-y-4 max-w-4xl mx-auto">
+        {/* Search Bar */}
+        <div className="relative">
+          <Search className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-tan-400 pointer-events-none" />
+          <input
+            type="text"
+            placeholder="Search cozy games, guides, or genres (e.g. Tiny Glade, Unpacking)..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="bookshelf-search-input w-full pl-12 pr-4 py-3 rounded-2xl bg-cream-50 border-2 border-tan-200 text-ink-900 placeholder:text-tan-400 focus:outline-none focus:border-peach-400 transition-colors shadow-cozy-sm"
           />
-        ))}
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery('')}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-tan-400 hover:text-ink-900 bg-cream-200 px-2 py-1 rounded-lg"
+            >
+              Clear
+            </button>
+          )}
+        </div>
+
+        {/* Category Pill Filters */}
+        <div className="flex flex-wrap gap-2 justify-center items-center">
+          {availableCategories.map((category) => (
+            <button
+              key={category}
+              onClick={() => setSelectedCategory(category)}
+              className={`category-filter-pill px-4 py-1.5 rounded-xl text-xs font-bold transition-all shadow-cozy-sm ${
+                selectedCategory === category
+                  ? 'category-filter-active bg-peach-500 text-white shadow-cozy-md scale-105'
+                  : 'category-filter-inactive bg-cream-100 text-tan-600 hover:bg-cream-200 hover:text-ink-900 border border-tan-200'
+              }`}
+            >
+              {category}
+            </button>
+          ))}
+        </div>
       </div>
+
+      {/* Games Grid */}
+      {filteredGames.length === 0 ? (
+        <div className="notepad-card p-12 text-center max-w-md mx-auto">
+          <p className="text-lg font-bold text-ink-800 mb-2">No walkthroughs found</p>
+          <p className="text-sm text-tan-500 mb-4">Try adjusting your search terms or selecting another category.</p>
+          <button
+            onClick={() => {
+              setSelectedCategory('All');
+              setSearchQuery('');
+            }}
+            className="px-4 py-2 bg-peach-500 text-white text-xs font-bold rounded-xl shadow-cozy-sm hover:bg-peach-600 transition-colors"
+          >
+            Reset Filters
+          </button>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pt-3">
+          {filteredGames.map((game) => (
+            <GameCard
+              key={game.id}
+              game={game}
+              onClick={() => onSelectGame(game)}
+              completedCount={progressMap[game.id] || 0}
+            />
+          ))}
+        </div>
+      )}
       <AdSenseUnit slot={import.meta.env.VITE_ADSENSE_SLOT || ''} />
     </div>
   );
