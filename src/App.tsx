@@ -19,6 +19,7 @@ import { TermsPage } from '@/components/TermsPage';
 import { ContactPage } from '@/components/ContactPage';
 import { CookieConsent } from '@/components/CookieConsent';
 import { AdSenseUnit } from '@/components/AdSenseUnit';
+import { GameCard } from '@/components/GameCard';
 import { ArrowRight } from 'lucide-react';
 
 // 1. Context Provider
@@ -342,7 +343,12 @@ function AppContent() {
         <>
           <Hero />
           <div className="py-8 space-y-4">
-            <GameDirectory onSelectGame={handleSelectGame} progressMap={progressMap} />
+            <GameDirectory
+              onSelectGame={handleSelectGame}
+              progressMap={progressMap}
+              onNavigateToWalkthroughs={() => handleNavigate('walkthroughs')}
+              limit={3}
+            />
             <HomeBookshelfSection
               onSelectStory={handleSelectStory}
               onNavigateToBookshelf={() => handleNavigate('stories')}
@@ -457,9 +463,9 @@ function WalkthroughsPage({
         <div className="library-badge inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold mb-4 shadow-cozy-sm">
           <span>Step-by-step guides</span>
         </div>
-        <h2 className="page-title font-display text-3xl sm:text-5xl font-700 text-ink-900 mb-4 leading-tight">
+        <h1 className="page-title font-display text-3xl sm:text-5xl font-700 text-ink-900 mb-4 leading-tight">
           Walkthroughs
-        </h2>
+        </h1>
         <p className="text-base sm:text-lg text-tan-500 max-w-2xl mx-auto leading-relaxed">
           Pick a game and follow our visual, WikiHow-style guides. Track your
           progress with satisfying checkboxes as you go.
@@ -467,59 +473,14 @@ function WalkthroughsPage({
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pt-3">
-        {games.map((game) => {
-          const totalSteps = game.walkthrough.reduce(
-            (sum, ch) => sum + ch.steps.length,
-            0
-          );
-          const completed = progressMap[game.id] || 0;
-          const percent = totalSteps > 0 ? Math.round((completed / totalSteps) * 100) : 0;
-          return (
-            <button
-              key={game.id}
-              onClick={() => onSelectGame(game)}
-              className="game-summary-card cozy-card cozy-card-hover text-left w-full group focus:outline-none focus:ring-2 focus:ring-peach-300"
-            >
-              <div className="h-32 relative overflow-hidden rounded-t-[1.35rem]">
-                <img
-                  src={game.coverImage}
-                  alt={game.coverAlt}
-                  loading="lazy"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <div
-                  className="absolute inset-0"
-                  style={{
-                    background: `linear-gradient(135deg, ${game.accentColor}22, ${game.accentColor}44)`,
-                  }}
-                />
-              </div>
-              <div className="game-summary-content p-5">
-                <h3 className="font-display text-base font-600 text-ink-900 mb-2 leading-snug">
-                  {game.title}
-                </h3>
-                <div className="game-summary-progress flex items-center gap-3 mb-3">
-                  <div className="flex-1 h-2 rounded-full bg-cream-300 overflow-hidden progress-bar-track">
-                    <div
-                      className="h-full rounded-full transition-all duration-500 progress-bar-fill"
-                      style={{
-                        width: `${percent}%`,
-                        backgroundColor: 'var(--theme-accent)',
-                      }}
-                    />
-                  </div>
-                  <span className="text-xs font-bold text-tan-500 whitespace-nowrap">
-                    {completed}/{totalSteps}
-                  </span>
-                </div>
-                <div className="flex items-center gap-1 text-sm font-semibold text-tan-600 group-hover:text-ink-900 transition-colors">
-                  <span>Start reading</span>
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </div>
-              </div>
-            </button>
-          );
-        })}
+        {games.map((game) => (
+          <GameCard
+            key={game.id}
+            game={game}
+            onClick={() => onSelectGame(game)}
+            completedCount={progressMap[game.id] || 0}
+          />
+        ))}
       </div>
       <AdSenseUnit slot={import.meta.env.VITE_ADSENSE_SLOT || ''} />
     </div>
