@@ -31,14 +31,14 @@ export function MagneticText({
   text,
   className = '',
   as: Component = 'span',
-  radius = 20,
-  feather = 75,
-  strength = 0.55, // Medium strength
-  rotation = 9, // Subtle medium tilt (9 degrees max)
-  scatter = 0.25, // Gentle organic scatter
-  spring = 0.32,
-  damping = 0.25,
-  maxDisplacement = 13, // Medium displacement limit to preserve word structure
+  radius = 28,
+  feather = 110,
+  strength = 0.82, // Punchy and responsive magnetic push
+  rotation = 16, // Distinct, playful tilt (16 degrees max)
+  scatter = 0.42, // Organic scatter
+  spring = 0.38,
+  damping = 0.18, // Crisp spring return
+  maxDisplacement = 24, // Noticeably more powerful displacement
 }: MagneticTextProps) {
   const containerRef = useRef<HTMLElement | null>(null);
   const lettersRef = useRef<LetterState[]>([]);
@@ -59,7 +59,7 @@ export function MagneticText({
     });
   }, [text]);
 
-  // Medium magnetic physics loop (radial push + gentle tilt, zero clipping)
+  // Magnetic physics loop (radial push + playful tilt, zero clipping)
   const updatePhysics = useCallback(() => {
     let hasMotion = false;
     const mouse = mousePosRef.current;
@@ -89,23 +89,23 @@ export function MagneticText({
         if (s > 0) {
           const c = dist > 0.01 ? dx / dist : 1;
           const l = dist > 0.01 ? dy / dist : 0;
-          const u = radius + (item.width || 16) * 0.3;
+          const u = radius + (item.width || 18) * 0.4;
           const d = Math.max(0, u - dist);
           const f = s * s;
-          const push = d * strength * f * 1.6;
+          const push = d * strength * f * 2.0;
           const h = item.seed * Math.PI * 2;
-          const noise = f * 12 * scatter;
+          const noise = f * 18 * scatter;
           const noiseX = Math.cos(h + dist * 0.02) * noise;
           const noiseY = Math.sin(h + dist * 0.02) * noise;
 
           const rawX = c * push + noiseX;
           const rawY = l * push + noiseY;
 
-          // Clamp displacement to medium limits so letters stay readable
+          // Clamp displacement so power is felt without breaking word cohesion
           targetX = Math.max(-maxDisplacement, Math.min(maxDisplacement, rawX));
           targetY = Math.max(-maxDisplacement, Math.min(maxDisplacement, rawY));
 
-          // Subtle natural tilt based on cursor angle
+          // Natural tilt based on cursor angle
           targetAngle = (Math.atan2(l, c) + Math.PI / 2) * f * rotationRad;
           targetAngle = Math.max(-rotationRad, Math.min(rotationRad, targetAngle));
         }
