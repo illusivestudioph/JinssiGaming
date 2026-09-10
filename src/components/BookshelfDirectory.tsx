@@ -176,7 +176,7 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 animate-fade-in">
       {/* Top Banner */}
       <div className="text-center max-w-2xl mx-auto mb-8">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-peach-100 text-peach-700 text-xs font-bold mb-3 shadow-cozy-sm">
+        <div className="library-badge inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-peach-100 text-peach-700 text-xs font-bold mb-3 shadow-cozy-sm">
           <Library className="w-4 h-4 text-peach-600" />
           <span>Project Gutenberg Public Library</span>
         </div>
@@ -191,7 +191,7 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
       {/* Resume Reading Widget if available */}
       {lastRead && (
         <div className="mb-10 max-w-4xl mx-auto">
-          <div className="p-5 sm:p-6 rounded-2xl bg-peach-50/90 border-2 border-peach-200 shadow-cozy-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="jump-back-in-card p-5 sm:p-6 rounded-2xl bg-peach-50/90 border-2 border-peach-200 shadow-cozy-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex items-start gap-4">
               <div className="w-12 h-12 rounded-2xl bg-peach-400 text-ink-900 flex items-center justify-center shrink-0 shadow-cozy-xs">
                 <Bookmark className="w-6 h-6" />
@@ -330,7 +330,7 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
                   className="notepad-card group overflow-hidden flex flex-col justify-between hover:-translate-y-1 transition-all duration-300 shadow-cozy-md"
                 >
                   <div>
-                    <div className="h-56 relative overflow-hidden bg-cream-200 flex items-center justify-center p-2">
+                    <div className="book-cover-container h-56 relative overflow-hidden bg-cream-200 flex items-center justify-center p-2">
                       <img
                         src={story.coverImage}
                         alt={story.coverAlt}
@@ -435,7 +435,7 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
                     >
                       <div>
                         {/* Cover Image Container */}
-                        <div className="h-56 relative overflow-hidden bg-cream-200 flex items-center justify-center p-2">
+                        <div className="book-cover-container h-56 relative overflow-hidden bg-cream-200 flex items-center justify-center p-2">
                           <img
                             src={coverImage}
                             alt={`Actual Project Gutenberg cover for ${book.title}`}

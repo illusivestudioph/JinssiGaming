@@ -1739,30 +1739,131 @@ button[type="submit"].site-button:hover,
   color: var(--text-main) !important;
 }
 
-/* Spoilers toggle track */
-.spoilers-toggle-track.bg-peach-400,
-[data-ambient-theme] .spoilers-toggle-track.bg-peach-400 {
-  background-color: var(--theme-accent) !important;
-}
+/* ============================================================
+   DYNAMIC THEME ACCENT & PALETTE HARMONIZATION
+   Ensures all badges, cards, kicker texts, inputs, and borders
+   faithfully follow the active ambient theme (Rain blue, Wind green, Fire warm)
+   ============================================================ */
 
-/* Text and border peach helpers dynamically bound to theme accent */
+/* Text & Icon accents */
+[data-ambient-theme] .text-peach-300,
+[data-ambient-theme] .text-peach-400,
 [data-ambient-theme] .text-peach-500,
 [data-ambient-theme] .text-peach-600 {
   color: var(--theme-accent) !important;
 }
-[data-ambient-theme] .border-peach-300,
-[data-ambient-theme] .border-peach-400 {
-  border-color: var(--theme-accent-soft) !important;
+
+[data-ambient-theme] .text-peach-700,
+[data-ambient-theme] .text-peach-800,
+[data-ambient-theme] .text-peach-900 {
+  color: var(--section-kicker-color) !important;
 }
-[data-ambient-theme] .hover\:border-peach-300:hover,
-[data-ambient-theme] .hover\:border-peach-400:hover {
-  border-color: var(--theme-accent) !important;
-}
-[data-ambient-theme] .hover\:text-peach-600:hover {
+
+[data-ambient-theme] .hover\:text-peach-600:hover,
+[data-ambient-theme] .hover\:text-peach-700:hover,
+[data-ambient-theme] .group:hover .group-hover\:text-peach-600,
+[data-ambient-theme] .group:hover .group-hover\:text-peach-700 {
   color: var(--theme-accent) !important;
 }
+
+[data-ambient-theme] .fill-peach-300,
+[data-ambient-theme] .fill-peach-400,
+[data-ambient-theme] .fill-peach-500 {
+  fill: var(--theme-accent) !important;
+}
+
+/* Background tints and badges */
+[data-ambient-theme] .bg-peach-50,
+[data-ambient-theme] .bg-peach-50\/70,
+[data-ambient-theme] .bg-peach-50\/80,
+[data-ambient-theme] .bg-peach-50\/90,
+[data-ambient-theme] .bg-peach-500\/10 {
+  background-color: var(--card-done-bg) !important;
+}
+
+[data-ambient-theme] .bg-peach-100 {
+  background-color: var(--section-kicker-bg) !important;
+  border-color: var(--section-kicker-border) !important;
+}
+
+[data-ambient-theme] .bg-peach-200 {
+  background-color: var(--theme-accent-soft) !important;
+}
+
+[data-ambient-theme] .bg-peach-300,
+[data-ambient-theme] .bg-peach-400,
+[data-ambient-theme] .bg-peach-500,
+[data-ambient-theme] .bg-peach-600 {
+  background-color: var(--theme-accent) !important;
+  color: var(--theme-accent-text) !important;
+}
+
+[data-ambient-theme] .hover\:bg-peach-50:hover {
+  background-color: var(--card-done-bg) !important;
+}
+
+[data-ambient-theme] .hover\:bg-peach-100:hover,
+[data-ambient-theme] .hover\:bg-peach-200:hover {
+  background-color: var(--theme-accent-soft) !important;
+}
+
+[data-ambient-theme] .hover\:bg-peach-500:hover,
+[data-ambient-theme] .hover\:bg-peach-600:hover {
+  background-color: var(--theme-accent-hover) !important;
+}
+
+/* Borders and Rings */
+[data-ambient-theme] .border-peach-100,
+[data-ambient-theme] .border-peach-200,
+[data-ambient-theme] .border-peach-300,
+[data-ambient-theme] .border-peach-400,
+[data-ambient-theme] .border-peach-500,
+[data-ambient-theme] .border-peach-500\/20 {
+  border-color: var(--theme-accent-border) !important;
+}
+
+[data-ambient-theme] .hover\:border-peach-300:hover,
+[data-ambient-theme] .hover\:border-peach-400:hover,
+[data-ambient-theme] .hover\:border-peach-500:hover {
+  border-color: var(--theme-accent) !important;
+}
+
+[data-ambient-theme] .focus\:border-peach-400:focus,
+[data-ambient-theme] .focus\:border-peach-500:focus {
+  border-color: var(--theme-accent) !important;
+}
+
+[data-ambient-theme] .ring-peach-300,
+[data-ambient-theme] .ring-peach-400,
+[data-ambient-theme] .focus\:ring-peach-300:focus,
+[data-ambient-theme] .focus-visible\:ring-peach-300:focus-visible {
+  --tw-ring-color: var(--theme-accent-border) !important;
+}
+
 [data-ambient-theme] .accent-peach-400 {
   accent-color: var(--theme-accent) !important;
+}
+
+/* Card image container backgrounds (replaces yellow cream-200 with theme-matching background) */
+[data-ambient-theme] .notepad-card .bg-cream-200,
+[data-ambient-theme] .cozy-card .bg-cream-200,
+[data-ambient-theme] .book-cover-container,
+[data-ambient-theme] .h-56.bg-cream-200 {
+  background-color: var(--card-done-bg) !important;
+}
+
+/* Direct component helpers for Stories & Journal */
+[data-ambient-theme] .jump-back-in-card {
+  background-color: var(--card-done-bg) !important;
+  border-color: var(--theme-accent-border) !important;
+}
+[data-ambient-theme] .library-badge {
+  background-color: var(--section-kicker-bg) !important;
+  border-color: var(--section-kicker-border) !important;
+  color: var(--section-kicker-color) !important;
+}
+[data-ambient-theme] .library-badge svg {
+  color: var(--theme-accent) !important;
 }
 
 /* Header music pill under ambient themes */
