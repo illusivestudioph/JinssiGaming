@@ -27,7 +27,7 @@ export function Hero() {
       <div className="hero-copy relative z-10 flex flex-col items-center justify-center px-4 sm:px-8 pt-6 sm:pt-8 pb-1 text-center animate-fade-in w-full">
         <MagneticText
           as="h1"
-          text={"Your cozy sanctuary for\norganizing games & quiet stories."}
+          text={"Your Cozy Sanctuary for\nOrganizing Games & Quiet Stories."}
           className="hero-title"
         />
         <p className="hero-description mt-4 max-w-2xl mx-auto">
