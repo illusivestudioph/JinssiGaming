@@ -46,7 +46,7 @@ export function HomeBookshelfSection({
       {/* Section Header */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
         <div>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-peach-100 text-peach-700 text-xs font-bold mb-2 shadow-cozy-sm">
+          <div className="library-badge inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold mb-2 shadow-cozy-sm">
             <BookMarked className="w-3.5 h-3.5 text-peach-600" />
             <span>Public Domain Archive & Free Library</span>
           </div>
@@ -60,7 +60,7 @@ export function HomeBookshelfSection({
 
         <button
           onClick={onNavigateToBookshelf}
-          className="inline-flex items-center gap-2 text-xs font-bold text-peach-600 hover:text-peach-700 transition-colors bg-cream-100 hover:bg-cream-200 border border-tan-200 px-4 py-2 rounded-xl shadow-cozy-sm self-start sm:self-auto"
+          className="bookshelf-browse-btn inline-flex items-center gap-2 text-xs font-bold transition-all px-4 py-2 rounded-xl shadow-cozy-sm self-start sm:self-auto"
         >
           <BookOpen className="w-4 h-4" />
           <span>Browse 70,000+ Free eBooks</span>
@@ -76,7 +76,7 @@ export function HomeBookshelfSection({
       )}
 
       {/* Featured Stories Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-3">
         {featuredBooks.map((book) => {
           const authorName = book.authors[0]?.name
             ? book.authors[0].name.split(',').reverse().join(' ').trim()
@@ -90,20 +90,17 @@ export function HomeBookshelfSection({
             <article
               key={book.id}
               onClick={() => !isLoadingThis && handleReadBook(book)}
-              className="notepad-card group cursor-pointer overflow-hidden flex flex-col justify-between hover:-translate-y-1 transition-all duration-300 shadow-cozy-md"
+              className="notepad-card group cursor-pointer flex flex-col justify-between hover:-translate-y-1 transition-all duration-300 shadow-cozy-md"
             >
               <div>
-                <div className="h-52 relative overflow-hidden bg-cream-200 flex items-center justify-center">
+                <div className="book-cover-container h-52 relative overflow-hidden bg-cream-200 flex items-center justify-center rounded-t-[1.1rem]">
                   <img
                     src={coverImage}
                     alt={`Actual Project Gutenberg cover for ${book.title}`}
                     className="w-full h-full object-contain p-2 transition-transform duration-500 group-hover:scale-105"
                     loading="lazy"
                   />
-                  <div className="absolute top-3 left-3 bg-cream-100/95 backdrop-blur-xs border border-tan-300/80 px-2.5 py-0.5 rounded-full text-[11px] font-bold text-ink-800 shadow-cozy-sm">
-                    eBook #{book.id}
-                  </div>
-                  <div className="absolute top-3 right-3 bg-amber-600 text-white px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-cozy-sm">
+                  <div className="public-domain-tag absolute top-3 right-3 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-cozy-sm">
                     Public Domain
                   </div>
                 </div>

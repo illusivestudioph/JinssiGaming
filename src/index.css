@@ -839,7 +839,7 @@
 
   .notepad-card {
     position: relative;
-    overflow: visible;
+    overflow: visible !important;
     color: var(--card-text);
     background:
       linear-gradient(var(--card-bg) 1.5rem, transparent 1.5rem) 0 0 / 100% 1.6rem,
@@ -848,6 +848,10 @@
     border-radius: 1.2rem 0.7rem 1rem 0.85rem;
     box-shadow: 0.35rem 0.4rem 0 var(--card-shadow), inset 0 0 1.2rem rgba(0, 0, 0, 0.06);
     transition: background-color 0.4s ease, border-color 0.4s ease, color 0.4s ease, box-shadow 0.4s ease;
+  }
+
+  .notepad-card.overflow-hidden {
+    overflow: visible !important;
   }
 
   .notepad-card::before {
@@ -1470,9 +1474,6 @@
 [data-ambient-theme] .site-nav-link:hover {
   color: var(--page-title-hover);
 }
-[data-ambient-theme] .text-peach-600 {
-  color: #ff8c75;
-}
 [data-ambient-theme] .page-title:hover {
   color: var(--page-title-hover);
   text-shadow: var(--page-title-shadow);
@@ -1870,6 +1871,108 @@ button[type="submit"].site-button:hover,
 [data-ambient-theme] header .bg-cream-50\/90 {
   background-color: var(--header-music-pill-bg) !important;
   border-color: var(--header-music-pill-border) !important;
+}
+
+/* ============================================================
+   PUBLIC DOMAIN TAG THEME HARMONIZATION
+   ============================================================ */
+.public-domain-tag {
+  background-color: #d97706;
+  color: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+[data-ambient-theme="rain"] .public-domain-tag {
+  background-color: #2563eb !important;
+  color: #ffffff !important;
+  border-color: #1d4ed8 !important;
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3) !important;
+}
+
+[data-ambient-theme="wind"] .public-domain-tag {
+  background-color: #15803d !important;
+  color: #ffffff !important;
+  border-color: #166534 !important;
+  box-shadow: 0 2px 6px rgba(21, 128, 61, 0.3) !important;
+}
+
+[data-ambient-theme="fire"] .public-domain-tag {
+  background-color: #c2410c !important;
+  color: #ffffff !important;
+  border-color: #9a3412 !important;
+  box-shadow: 0 2px 6px rgba(194, 65, 12, 0.3) !important;
+}
+
+[data-ambient-theme="default"] .public-domain-tag {
+  background-color: #d97706 !important;
+  color: #ffffff !important;
+  border-color: #b45309 !important;
+}
+
+/* ============================================================
+   BOOKSHELF & JOURNAL CONTROLS HARMONIZATION
+   ============================================================ */
+.bookshelf-browse-btn {
+  background-color: #fdfaf3;
+  border: 1px solid #d8c6b3;
+  color: #c2410c;
+}
+.bookshelf-browse-btn:hover {
+  background-color: #f7eee1;
+  color: #9a3412;
+}
+
+[data-ambient-theme] .bookshelf-browse-btn {
+  background-color: var(--btn-secondary-bg) !important;
+  border-color: var(--theme-accent-border) !important;
+  color: var(--theme-accent) !important;
+}
+[data-ambient-theme] .bookshelf-browse-btn:hover {
+  background-color: var(--btn-secondary-hover-bg) !important;
+  border-color: var(--theme-accent) !important;
+  color: var(--section-kicker-color) !important;
+}
+
+/* Bookshelf Search Input */
+[data-ambient-theme] .bookshelf-search-input {
+  background-color: var(--card-bg) !important;
+  border-color: var(--card-border) !important;
+  color: var(--text-main) !important;
+}
+[data-ambient-theme] .bookshelf-search-input:focus {
+  border-color: var(--theme-accent) !important;
+  box-shadow: 0 0 0 3px var(--theme-accent-soft) !important;
+}
+[data-ambient-theme] .bookshelf-search-input::placeholder {
+  color: var(--text-muted) !important;
+}
+
+/* Category Filter Pills */
+[data-ambient-theme] .category-filter-inactive {
+  background-color: var(--card-bg) !important;
+  border-color: var(--card-border) !important;
+  color: var(--text-muted) !important;
+}
+[data-ambient-theme] .category-filter-inactive:hover {
+  background-color: var(--card-done-bg) !important;
+  border-color: var(--theme-accent-border) !important;
+  color: var(--text-main) !important;
+}
+
+[data-ambient-theme] .category-filter-active {
+  background-color: var(--theme-accent) !important;
+  color: #ffffff !important;
+  box-shadow: 0 3px 10px var(--theme-accent-soft) !important;
+}
+
+/* Harmonize generic tan borders and dividers under active ambient theme */
+[data-ambient-theme] .border-tan-200,
+[data-ambient-theme] .border-tan-200\/70,
+[data-ambient-theme] .border-tan-200\/50,
+[data-ambient-theme] .border-tan-300,
+[data-ambient-theme] .border-tan-300\/80 {
+  border-color: var(--card-border) !important;
 }
 
 /* ============================================================

@@ -22,7 +22,7 @@ export function HomeJournalSection({
       {/* Section Header */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
         <div>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-peach-100 text-peach-700 text-xs font-bold mb-2 shadow-cozy-sm">
+          <div className="library-badge inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold mb-2 shadow-cozy-sm">
             <Coffee className="w-3.5 h-3.5 text-peach-600" />
             <span>Cozy Tea Time Reads</span>
           </div>
@@ -36,7 +36,7 @@ export function HomeJournalSection({
 
         <button
           onClick={onNavigateToJournal}
-          className="inline-flex items-center gap-2 text-xs font-bold text-peach-600 hover:text-peach-700 transition-colors bg-cream-100 hover:bg-cream-200 border border-tan-200 px-4 py-2 rounded-xl shadow-cozy-sm self-start sm:self-auto"
+          className="bookshelf-browse-btn inline-flex items-center gap-2 text-xs font-bold transition-all px-4 py-2 rounded-xl shadow-cozy-sm self-start sm:self-auto"
         >
           <BookOpen className="w-4 h-4" />
           <span>Explore All Articles</span>
@@ -45,15 +45,15 @@ export function HomeJournalSection({
       </div>
 
       {/* Featured 3 Articles Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-3">
         {featuredArticles.map((article) => (
           <article
             key={article.id}
             onClick={() => onSelectArticle(article)}
-            className="notepad-card group cursor-pointer overflow-hidden flex flex-col justify-between hover:-translate-y-1 transition-all duration-300 shadow-cozy-md"
+            className="notepad-card group cursor-pointer flex flex-col justify-between hover:-translate-y-1 transition-all duration-300 shadow-cozy-md"
           >
             <div>
-              <div className="h-44 relative overflow-hidden bg-cream-200">
+              <div className="h-44 relative overflow-hidden bg-cream-200 rounded-t-[1.1rem]">
                 <img
                   src={article.coverImage}
                   alt={article.coverAlt}

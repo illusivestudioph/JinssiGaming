@@ -245,7 +245,7 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
             placeholder="Search over 70,000 books by title, author, or keyword (e.g. Sherlock Holmes, Jane Austen, Dracula, Meditations)..."
             value={searchQuery}
             onChange={(e) => handleSearchChange(e.target.value)}
-            className="w-full pl-12 pr-20 py-3.5 rounded-2xl bg-cream-50 border-2 border-tan-200 text-ink-900 placeholder:text-tan-400 focus:outline-none focus:border-peach-400 transition-colors shadow-cozy-sm text-sm"
+            className="bookshelf-search-input w-full pl-12 pr-20 py-3.5 rounded-2xl bg-cream-50 border-2 border-tan-200 text-ink-900 placeholder:text-tan-400 focus:outline-none focus:border-peach-400 transition-colors shadow-cozy-sm text-sm"
           />
           {searchQuery && (
             <button
@@ -263,10 +263,10 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
             <button
               key={preset.label}
               onClick={() => handleSelectCategory(preset.label)}
-              className={`px-4 py-1.5 rounded-xl text-xs font-bold transition-all shadow-cozy-sm ${
+              className={`category-filter-pill px-4 py-1.5 rounded-xl text-xs font-bold transition-all shadow-cozy-sm ${
                 activeCategory === preset.label
-                  ? 'bg-peach-500 text-white shadow-cozy-md scale-105'
-                  : 'bg-cream-100 text-tan-600 hover:bg-cream-200 hover:text-ink-900 border border-tan-200'
+                  ? 'category-filter-active bg-peach-500 text-white shadow-cozy-md scale-105'
+                  : 'category-filter-inactive bg-cream-100 text-tan-600 hover:bg-cream-200 hover:text-ink-900 border border-tan-200'
               }`}
             >
               {preset.label}
@@ -276,10 +276,10 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
           {/* User's Saved Bookmarks Pill */}
           <button
             onClick={() => handleSelectCategory('⭐ My Saved Books')}
-            className={`px-4 py-1.5 rounded-xl text-xs font-bold transition-all shadow-cozy-sm flex items-center gap-1.5 ${
+            className={`category-filter-pill px-4 py-1.5 rounded-xl text-xs font-bold transition-all shadow-cozy-sm flex items-center gap-1.5 ${
               activeCategory === '⭐ My Saved Books'
-                ? 'bg-peach-500 text-white shadow-cozy-md scale-105'
-                : 'bg-cream-100 text-tan-600 hover:bg-cream-200 hover:text-ink-900 border border-tan-200'
+                ? 'category-filter-active bg-peach-500 text-white shadow-cozy-md scale-105'
+                : 'category-filter-inactive bg-cream-100 text-tan-600 hover:bg-cream-200 hover:text-ink-900 border border-tan-200'
             }`}
           >
             <span>⭐ My Saved Books</span>
@@ -323,14 +323,14 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pt-3">
               {userBookmarks.map((story) => (
                 <div
                   key={story.id}
-                  className="notepad-card group overflow-hidden flex flex-col justify-between hover:-translate-y-1 transition-all duration-300 shadow-cozy-md"
+                  className="notepad-card group flex flex-col justify-between hover:-translate-y-1 transition-all duration-300 shadow-cozy-md"
                 >
                   <div>
-                    <div className="book-cover-container h-56 relative overflow-hidden bg-cream-200 flex items-center justify-center p-2">
+                    <div className="book-cover-container h-56 relative overflow-hidden bg-cream-200 flex items-center justify-center p-2 rounded-t-[1.1rem]">
                       <img
                         src={story.coverImage}
                         alt={story.coverAlt}
@@ -413,7 +413,7 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
             </div>
           ) : (
             <div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pt-3">
                 {books.map((book) => {
                   const authorName = book.authors[0]?.name
                     ? book.authors[0].name.split(',').reverse().join(' ').trim()
@@ -431,20 +431,17 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
                   return (
                     <div
                       key={book.id}
-                      className="notepad-card group overflow-hidden flex flex-col justify-between hover:-translate-y-1 transition-all duration-300 shadow-cozy-md"
+                      className="notepad-card group flex flex-col justify-between hover:-translate-y-1 transition-all duration-300 shadow-cozy-md"
                     >
                       <div>
                         {/* Cover Image Container */}
-                        <div className="book-cover-container h-56 relative overflow-hidden bg-cream-200 flex items-center justify-center p-2">
+                        <div className="book-cover-container h-56 relative overflow-hidden bg-cream-200 flex items-center justify-center p-2 rounded-t-[1.1rem]">
                           <img
                             src={coverImage}
                             alt={`Actual Project Gutenberg cover for ${book.title}`}
                             className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
                             loading="lazy"
                           />
-                          <div className="absolute top-3 left-3 bg-cream-100/95 backdrop-blur-xs border border-tan-300/80 px-2.5 py-0.5 rounded-full text-[10px] font-bold text-ink-800 shadow-cozy-sm">
-                            eBook #{book.id}
-                          </div>
 
                           <button
                             type="button"

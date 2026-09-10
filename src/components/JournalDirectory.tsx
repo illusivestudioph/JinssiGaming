@@ -111,12 +111,12 @@ export function JournalDirectory({ onSelectArticle }: JournalDirectoryProps) {
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 pt-3">
           {filteredArticles.map((article) => (
             <article
               key={article.id}
               onClick={() => onSelectArticle(article)}
-              className="notepad-card group cursor-pointer overflow-hidden flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-cozy-lg"
+              className="notepad-card group cursor-pointer flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-cozy-lg"
             >
               <div>
                 {/* Article Cover Image */}
