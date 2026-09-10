@@ -170,7 +170,7 @@ function normalizeContent(parsed: Partial<SavedContent> | null | undefined): Sav
     heroImage: parsed?.heroImage === '/banner.jpeg'
       ? defaultContent.heroImage
       : typeof parsed?.heroImage === 'string' ? parsed.heroImage : defaultContent.heroImage,
-    logoImage: (parsed?.logoImage === '/logo.png' || parsed?.logoImage === '/image.png')
+    logoImage: (parsed?.logoImage === '/logo.png' || parsed?.logoImage === '/image.png' || parsed?.logoImage?.startsWith('data:image'))
       ? defaultContent.logoImage
       : typeof parsed?.logoImage === 'string'
         ? parsed.logoImage

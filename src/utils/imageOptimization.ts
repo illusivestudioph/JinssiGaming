@@ -152,6 +152,14 @@ export function getOptimizedImageUrl(
       return urlObj.toString();
     }
 
+    // 4. Steam Community / Akamai CDN Optimization (e.g. ss_dfd3c87..., ss_7d2880...)
+    if (url.includes('steamstatic.com') || url.includes('steamcontent.com')) {
+      if (width <= 800 && url.includes('.1920x1080.jpg')) {
+        return url.replace('.1920x1080.jpg', '.600x338.jpg');
+      }
+      return url;
+    }
+
     return url;
   } catch {
     return url;
