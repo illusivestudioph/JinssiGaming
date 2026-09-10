@@ -2073,7 +2073,7 @@ button[type="submit"].site-button:hover,
 }
 
 [data-ambient-theme] .progress-bar-track,
-[data-ambient-theme] .bg-cream-300:not(.ambient-sound-lounge) {
+[data-ambient-theme] .bg-cream-300 {
   background-color: var(--card-done-bg) !important;
 }
 
@@ -2095,9 +2095,9 @@ button[type="submit"].site-button:hover,
 }
 
 /* Cream Backgrounds */
-[data-ambient-theme] .bg-cream-50:not(.ambient-sound-lounge),
-[data-ambient-theme] .bg-cream-100:not(header):not(.ambient-sound-lounge),
-[data-ambient-theme] .bg-cream-200:not(.ambient-sound-lounge) {
+[data-ambient-theme] .bg-cream-50,
+[data-ambient-theme] .bg-cream-100:not(header),
+[data-ambient-theme] .bg-cream-200 {
   background-color: var(--card-bg) !important;
 }
 
@@ -2112,54 +2112,81 @@ button[type="submit"].site-button:hover,
 }
 
 /* ============================================================
-   SOUND LOUNGE MODAL PROTECTION
-   Always maintains its cozy cream physical clipboard stationery look
+   SAGE, EARTH & CELEBRATION UNIVERSAL HARMONIZATION
+   Harmonizes completion modal checkmark, celebration buttons,
+   and earth/peach action buttons across themes.
    ============================================================ */
-.ambient-sound-lounge,
-.ambient-sound-lounge.notepad-card {
-  --card-bg: #fdfbf7 !important;
-  --card-line: #e6e0d4 !important;
-  --card-border: #5e5148 !important;
-  --card-shadow: #d6c6b3 !important;
-  --card-tape: rgba(255, 221, 161, 0.85) !important;
-  --card-tape-border: rgba(0, 0, 0, 0.1) !important;
-  --card-text: #4a3f38 !important;
-  background-color: #fdf8f1 !important;
-  color: #4a3f38 !important;
-  border-color: #d0bd9e !important;
+[data-ambient-theme] .bg-sage-50,
+[data-ambient-theme] .bg-sage-100,
+[data-ambient-theme] .bg-sage-200,
+[data-ambient-theme] .bg-sage-300 {
+  background-color: var(--section-kicker-bg) !important;
+  border-color: var(--theme-accent-border) !important;
 }
 
-.ambient-sound-lounge .text-ink-900,
-[data-ambient-theme] .ambient-sound-lounge .text-ink-900 {
-  color: #3a2e22 !important;
+[data-ambient-theme] .text-sage-500,
+[data-ambient-theme] .text-sage-600,
+[data-ambient-theme] .text-sage-700 {
+  color: var(--theme-accent) !important;
 }
 
-.ambient-sound-lounge .text-ink-800,
+[data-ambient-theme] .border-sage-100,
+[data-ambient-theme] .border-sage-200,
+[data-ambient-theme] .border-sage-300 {
+  border-color: var(--theme-accent-border) !important;
+}
+
+[data-ambient-theme] .celebration-check-circle {
+  background-color: var(--section-kicker-bg) !important;
+  border-color: var(--theme-accent-border) !important;
+  color: var(--theme-accent) !important;
+}
+
+[data-ambient-theme] .celebration-check-circle svg,
+[data-ambient-theme] .celebration-check-circle * {
+  color: var(--theme-accent) !important;
+}
+
+[data-ambient-theme] .celebration-pop-btn,
+[data-ambient-theme] .bg-earth-500,
+[data-ambient-theme] .bg-earth-600 {
+  background-color: var(--theme-accent) !important;
+  color: var(--theme-accent-text, #ffffff) !important;
+}
+
+[data-ambient-theme] .celebration-pop-btn:hover,
+[data-ambient-theme] .hover\:bg-earth-600:hover {
+  background-color: var(--theme-accent-hover, var(--theme-accent)) !important;
+  color: var(--theme-accent-text, #ffffff) !important;
+}
+
+/* ============================================================
+   SOUND LOUNGE MODAL THEME HARMONIZATION
+   Harmonizes modal card, tape, sliders, buttons, and backgrounds
+   with whichever ambient sound theme is currently active.
+   ============================================================ */
+[data-ambient-theme] .ambient-sound-lounge {
+  background-color: var(--card-bg) !important;
+  border-color: var(--card-border) !important;
+  color: var(--card-text) !important;
+}
+
+[data-ambient-theme] .ambient-sound-lounge .sound-effects-card,
+[data-ambient-theme] .ambient-sound-lounge .bg-white {
+  background-color: var(--card-bg) !important;
+  border-color: var(--card-border) !important;
+  color: var(--card-text) !important;
+}
+
+[data-ambient-theme] .ambient-sound-lounge .text-ink-900,
 [data-ambient-theme] .ambient-sound-lounge .text-ink-800 {
-  color: #4a3a2c !important;
+  color: var(--text-main) !important;
 }
 
-.ambient-sound-lounge .text-tan-500,
-[data-ambient-theme] .ambient-sound-lounge .text-tan-500 {
-  color: #8f764f !important;
-}
-
-.ambient-sound-lounge .text-tan-400,
+[data-ambient-theme] .ambient-sound-lounge .text-tan-500,
+[data-ambient-theme] .ambient-sound-lounge .text-tan-600,
 [data-ambient-theme] .ambient-sound-lounge .text-tan-400 {
-  color: #9b7a4d !important;
-}
-
-.ambient-sound-lounge button.bg-white,
-[data-ambient-theme] .ambient-sound-lounge button.bg-white {
-  background-color: #ffffff !important;
-  color: #3a2e22 !important;
-  border-color: #e2d4bf !important;
-}
-
-.ambient-sound-lounge button.bg-white:hover,
-[data-ambient-theme] .ambient-sound-lounge button.bg-white:hover {
-  background-color: #fff5f0 !important;
-  border-color: #ffb0a0 !important;
+  color: var(--text-muted) !important;
 }
 
 

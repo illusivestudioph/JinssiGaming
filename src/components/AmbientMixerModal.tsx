@@ -84,7 +84,7 @@ export function AmbientMixerModal({ isOpen, onClose }: AmbientMixerModalProps) {
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink-900/40 backdrop-blur-sm animate-fade-in">
       <div
         ref={modalRef}
-        className="ambient-sound-lounge notepad-card w-full max-w-md bg-cream-50 border-2 border-tan-300 shadow-cozy-lg p-5 sm:p-6 relative animate-pop overflow-hidden"
+        className="ambient-sound-lounge notepad-card w-full max-w-md shadow-cozy-lg p-5 sm:p-6 relative animate-pop"
         role="dialog"
         aria-modal="true"
         aria-labelledby="ambient-mixer-title"
@@ -92,7 +92,14 @@ export function AmbientMixerModal({ isOpen, onClose }: AmbientMixerModalProps) {
         {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b-2 border-tan-200 mb-4">
           <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-xl bg-peach-100 text-peach-600">
+            <div
+              className="p-2 rounded-xl"
+              style={{
+                backgroundColor: 'var(--section-kicker-bg)',
+                color: 'var(--theme-accent)',
+                border: '1px solid var(--theme-accent-border)',
+              }}
+            >
               <Sliders className="w-5 h-5" />
             </div>
             <div>
@@ -118,7 +125,7 @@ export function AmbientMixerModal({ isOpen, onClose }: AmbientMixerModalProps) {
         <div className="mb-5">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-bold uppercase tracking-wider text-tan-500 flex items-center gap-1">
-              <Sliders className="w-3.5 h-3.5 text-peach-500" />
+              <Sliders className="w-3.5 h-3.5" style={{ color: 'var(--theme-accent)' }} />
               Quick Atmosphere Presets
             </span>
             {(ambientRain > 0 || ambientFire > 0 || ambientWind > 0) && (
@@ -142,9 +149,19 @@ export function AmbientMixerModal({ isOpen, onClose }: AmbientMixerModalProps) {
                   onClick={() => applyPreset(preset.id)}
                   className={`flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl border text-xs font-bold shadow-cozy-sm transition-all active:scale-95 ${
                     isSelected
-                      ? 'border-peach-400 bg-peach-50 text-peach-700 ring-2 ring-peach-300/50'
-                      : 'border-tan-200 bg-white hover:bg-peach-50/80 hover:border-peach-300 text-ink-800'
+                      ? 'border-transparent ring-2'
+                      : 'border-tan-200 bg-white hover:bg-cream-100 text-ink-800'
                   }`}
+                  style={
+                    isSelected
+                      ? {
+                          backgroundColor: 'var(--section-kicker-bg)',
+                          borderColor: 'var(--theme-accent)',
+                          color: 'var(--section-kicker-color)',
+                          boxShadow: '0 0 0 2px var(--theme-accent-border)',
+                        }
+                      : undefined
+                  }
                 >
                   <span>{preset.icon}</span>
                   <span>{preset.label}</span>
@@ -163,8 +180,16 @@ export function AmbientMixerModal({ isOpen, onClose }: AmbientMixerModalProps) {
                 type="button"
                 onClick={() => void togglePlayback()}
                 className={`p-1.5 rounded-lg transition-colors ${
-                  playing ? 'bg-[#FD9A4D] text-white' : 'bg-cream-200 text-tan-600'
+                  playing ? 'text-white' : 'bg-cream-200 text-tan-600'
                 }`}
+                style={
+                  playing
+                    ? {
+                        backgroundColor: 'var(--theme-accent)',
+                        color: 'var(--theme-accent-text, #ffffff)',
+                      }
+                    : undefined
+                }
                 title={playing ? 'Pause music' : 'Play music'}
               >
                 {playing ? <Pause className="w-3.5 h-3.5" /> : <Music className="w-3.5 h-3.5" />}
@@ -183,7 +208,8 @@ export function AmbientMixerModal({ isOpen, onClose }: AmbientMixerModalProps) {
               step="0.05"
               value={userVolume}
               onChange={(e) => setVolume(Number(e.target.value))}
-              className="flex-1 accent-[#FD9A4D] cursor-pointer"
+              className="flex-1 cursor-pointer"
+              style={{ accentColor: 'var(--theme-accent)' }}
               aria-label="Lo-Fi Music volume"
             />
             <span className="text-[11px] font-bold text-tan-500 w-8 text-right">
@@ -285,7 +311,10 @@ export function AmbientMixerModal({ isOpen, onClose }: AmbientMixerModalProps) {
         {/* Tactile Sound Effects Section */}
         <div className="flex items-center justify-between p-3 rounded-xl border border-tan-200 bg-white mb-5">
           <div className="flex items-center gap-2">
-            <CheckCircle2 className={`w-4 h-4 ${sfxEnabled ? 'text-sage-500' : 'text-tan-400'}`} />
+            <CheckCircle2
+              className="w-4 h-4 transition-colors"
+              style={{ color: sfxEnabled ? 'var(--theme-accent)' : 'var(--text-muted)' }}
+            />
             <div>
               <p className="text-xs font-bold text-ink-900">Tactile Sound Effects</p>
               <p className="text-[11px] text-tan-500 font-medium">Checklist clicks & dropdown navigation</p>
@@ -295,7 +324,7 @@ export function AmbientMixerModal({ isOpen, onClose }: AmbientMixerModalProps) {
             <button
               type="button"
               onClick={() => playCheckSfx(true)}
-              className="px-2 py-1 text-[11px] font-bold rounded-md bg-cream-100 hover:bg-cream-200 text-ink-800 transition-colors"
+              className="px-2 py-1 text-[11px] font-bold rounded-md bg-cream-100 hover:bg-cream-200 text-ink-800 transition-colors border border-tan-200/50"
               title="Preview checklist check sound"
             >
               Test Check
@@ -303,7 +332,7 @@ export function AmbientMixerModal({ isOpen, onClose }: AmbientMixerModalProps) {
             <button
               type="button"
               onClick={() => playDropdownSfx(true)}
-              className="px-2 py-1 text-[11px] font-bold rounded-md bg-cream-100 hover:bg-cream-200 text-ink-800 transition-colors"
+              className="px-2 py-1 text-[11px] font-bold rounded-md bg-cream-100 hover:bg-cream-200 text-ink-800 transition-colors border border-tan-200/50"
               title="Preview dropdown menu sound"
             >
               Test Dropdown
@@ -311,9 +340,10 @@ export function AmbientMixerModal({ isOpen, onClose }: AmbientMixerModalProps) {
             <button
               type="button"
               onClick={toggleSfx}
-              className={`w-9 h-5 rounded-full transition-colors relative ${
-                sfxEnabled ? 'bg-sage-400' : 'bg-cream-300'
-              }`}
+              className="w-9 h-5 rounded-full transition-colors relative"
+              style={{
+                backgroundColor: sfxEnabled ? 'var(--theme-accent)' : 'var(--card-line, #dce8fc)',
+              }}
               aria-label="Toggle step sound effects"
             >
               <span
@@ -332,13 +362,21 @@ export function AmbientMixerModal({ isOpen, onClose }: AmbientMixerModalProps) {
             onClick={toggleMute}
             className="flex items-center gap-1.5 font-bold text-tan-600 hover:text-ink-900 transition-colors"
           >
-            {muted ? <VolumeX className="w-4 h-4 text-rose-500" /> : <Volume2 className="w-4 h-4 text-earth-600" />}
+            {muted ? (
+              <VolumeX className="w-4 h-4 text-rose-500" />
+            ) : (
+              <Volume2 className="w-4 h-4" style={{ color: 'var(--theme-accent)' }} />
+            )}
             <span>{muted ? 'Unmute All Audio' : 'Mute Master Audio'}</span>
           </button>
           <button
             type="button"
             onClick={onClose}
-            className="site-button bg-earth-500 text-white hover:bg-earth-600 px-4 py-1.5 text-xs"
+            className="site-button px-5 py-1.5 text-xs font-bold rounded-xl shadow-cozy-sm transition-all active:scale-95"
+            style={{
+              backgroundColor: 'var(--theme-accent)',
+              color: 'var(--theme-accent-text, #ffffff)',
+            }}
           >
             Done
           </button>

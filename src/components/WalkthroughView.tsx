@@ -510,7 +510,14 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
               >
                 <X className="h-5 w-5" />
               </button>
-              <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-sage-200 text-sage-500 shadow-inner">
+              <div
+                className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full shadow-inner celebration-check-circle"
+                style={{
+                  backgroundColor: 'var(--section-kicker-bg)',
+                  color: 'var(--theme-accent)',
+                  border: '2px solid var(--theme-accent-border)',
+                }}
+              >
                 <Check className="h-9 w-9" strokeWidth={3} aria-hidden="true" />
               </div>
               <p className="mb-2 font-display text-3xl font-700 text-ink-900" id="congratulations-title">
@@ -525,7 +532,11 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
                 <button
                   type="button"
                   onClick={triggerConfettiBurst}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold uppercase tracking-wider text-sage-700 bg-sage-100 hover:bg-sage-200 active:scale-95 rounded-full transition-all duration-150 shadow-sm"
+                  className="inline-flex items-center gap-1.5 px-5 py-2.5 text-xs font-bold uppercase tracking-wider active:scale-95 rounded-full transition-all duration-150 shadow-cozy-sm celebration-pop-btn"
+                  style={{
+                    backgroundColor: 'var(--theme-accent)',
+                    color: 'var(--theme-accent-text, #ffffff)',
+                  }}
                 >
                   🎉 Pop Confetti Again
                 </button>
