@@ -155,6 +155,17 @@ export function HomeBookshelfSection({
           );
         })}
       </div>
+
+      {/* "See More" bottom button on Home */}
+      <div className="mt-8 text-center">
+        <button
+          onClick={onNavigateToBookshelf}
+          className="bookshelf-browse-btn inline-flex items-center gap-2 text-xs font-bold transition-all px-6 py-3 rounded-xl shadow-cozy-sm hover:scale-105"
+        >
+          <span>See All 70,000+ Free eBooks</span>
+          <ArrowRight className="w-4 h-4" />
+        </button>
+      </div>
     </section>
   );
 }
