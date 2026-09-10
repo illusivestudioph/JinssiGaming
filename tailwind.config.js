@@ -76,6 +76,8 @@ export default {
       fontFamily: {
         sans: ['"Nunito"', 'system-ui', 'sans-serif'],
         display: ['"Fredoka"', 'system-ui', 'sans-serif'],
+        witchcraft: ['"Witchcraft"', '"Fredoka"', 'system-ui', 'sans-serif'],
+        matcha: ['"Matcha Mint"', '"Fredoka"', 'system-ui', 'sans-serif'],
       },
       borderRadius: {
         'xl': '1rem',
