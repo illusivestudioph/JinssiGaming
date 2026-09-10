@@ -29,9 +29,6 @@ export function Hero() {
           as="h1"
           text="Your cozy sanctuary for organizing games & quiet stories."
           className="hero-title"
-          strength={0.4}
-          radius={130}
-          maxDisplacement={20}
         />
         <p className="hero-description mt-3">
           Step-by-step visual walkthroughs for peaceful organizing games, soothing classic stories to read, and calming lo-fi soundscapes to help you unwind.

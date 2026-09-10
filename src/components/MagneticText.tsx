@@ -1,29 +1,22 @@
-import React, { useRef, useEffect, useState, useCallback, useMemo } from 'react';
+import React, { useRef, useEffect, useCallback, useMemo } from 'react';
 
-interface MagneticRollingTextProps {
+interface MagneticTextProps {
   text: string;
   className?: string;
   as?: 'h1' | 'h2' | 'h3' | 'h4' | 'span' | 'div';
-  // Magnetic physics parameters (matched to peaceful-feel demo)
-  radius?: number; // 8 - 25px
-  feather?: number; // 90px falloff
-  strength?: number; // 100%
-  rotation?: number; // 25deg
-  scatter?: number; // 65%
-  spring?: number; // 0.4s
-  damping?: number; // 0.1s
-  // Rolling parameters (per-word)
-  duplicateCount?: number;
-  rollDuration?: number;
-  staggerDelay?: number;
-  blurIntensity?: number;
-  autoPlay?: boolean;
+  // Medium intensity magnetic physics
+  radius?: number;
+  feather?: number;
+  strength?: number;
+  rotation?: number; // degrees
+  scatter?: number;
+  spring?: number;
+  damping?: number;
+  maxDisplacement?: number;
 }
 
 interface LetterState {
   el: HTMLSpanElement;
-  homeX: number;
-  homeY: number;
   x: number;
   y: number;
   vx: number;
@@ -38,54 +31,27 @@ export function MagneticText({
   text,
   className = '',
   as: Component = 'span',
-  radius = 18,
-  feather = 95,
-  strength = 1.0,
-  rotation = 25, // degrees
-  scatter = 0.65, // 65%
-  spring = 0.38,
-  damping = 0.22,
-  duplicateCount = 5,
-  rollDuration = 1.0,
-  staggerDelay = 0.045, // per word stagger
-  blurIntensity = 2.5,
-  autoPlay = true,
-}: MagneticRollingTextProps) {
+  radius = 20,
+  feather = 75,
+  strength = 0.55, // Medium strength
+  rotation = 9, // Subtle medium tilt (9 degrees max)
+  scatter = 0.25, // Gentle organic scatter
+  spring = 0.32,
+  damping = 0.25,
+  maxDisplacement = 13, // Medium displacement limit to preserve word structure
+}: MagneticTextProps) {
   const containerRef = useRef<HTMLElement | null>(null);
   const lettersRef = useRef<LetterState[]>([]);
   const mousePosRef = useRef<{ x: number; y: number } | null>(null);
   const animFrameId = useRef<number | null>(null);
   const isHoveredRef = useRef(false);
 
-  // Per-word rolling state
-  const [isRolling, setIsRolling] = useState(false);
-  const [replayKey, setReplayKey] = useState(0);
-
-  useEffect(() => {
-    if (autoPlay) {
-      const timer = setTimeout(() => {
-        setIsRolling(true);
-      }, 80);
-      return () => clearTimeout(timer);
-    }
-  }, [autoPlay, replayKey]);
-
-  const handleReplay = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setIsRolling(false);
-    setTimeout(() => {
-      setReplayKey((k) => k + 1);
-      setIsRolling(true);
-    }, 40);
-  };
-
-  // Structured words and letters with pseudo-random seed
+  // Split text into words and letters
   const words = useMemo(() => {
     let globalIdx = 0;
     return text.split(' ').map((word) => {
       const letters = Array.from(word).map((char) => {
         const idx = globalIdx++;
-        // Pseudo-random deterministic seed for scatter dispersion
         const seed = ((idx * 137.5) % 100) / 100;
         return { char, idx, seed };
       });
@@ -93,7 +59,7 @@ export function MagneticText({
     });
   }, [text]);
 
-  // Framer Magnetic Text physics loop (radial push + 25deg rotation + 65% scatter)
+  // Medium magnetic physics loop (radial push + gentle tilt, zero clipping)
   const updatePhysics = useCallback(() => {
     let hasMotion = false;
     const mouse = mousePosRef.current;
@@ -113,31 +79,34 @@ export function MagneticText({
         const letterCenterX = rect.left + rect.width / 2;
         const letterCenterY = rect.top + rect.height / 2;
 
-        const dx = letterCenterX - mouse.x; // vector AWAY from cursor
+        const dx = letterCenterX - mouse.x; // push away from cursor
         const dy = letterCenterY - mouse.y;
         const dist = Math.hypot(dx, dy);
 
-        // Falloff calculation matching Framer peaceful-feel
+        // Falloff zone
         const s = 1 - Math.max(0, Math.min(1, (dist - radius) / feather));
 
         if (s > 0) {
           const c = dist > 0.01 ? dx / dist : 1;
           const l = dist > 0.01 ? dy / dist : 0;
-          const u = radius + (item.width || 18) * 0.35;
+          const u = radius + (item.width || 16) * 0.3;
           const d = Math.max(0, u - dist);
           const f = s * s;
-          const p = d * strength * f * 2.2;
+          const push = d * strength * f * 1.6;
           const h = item.seed * Math.PI * 2;
-          const g = f * 32 * scatter * 1.35;
-          const noiseX = Math.cos(h + dist * 0.018) * g;
-          const noiseY = Math.sin(h + dist * 0.018) * g;
+          const noise = f * 12 * scatter;
+          const noiseX = Math.cos(h + dist * 0.02) * noise;
+          const noiseY = Math.sin(h + dist * 0.02) * noise;
 
-          targetX = c * p + noiseX;
-          targetY = l * p + noiseY;
+          const rawX = c * push + noiseX;
+          const rawY = l * push + noiseY;
 
-          // Rotation angle away from cursor
+          // Clamp displacement to medium limits so letters stay readable
+          targetX = Math.max(-maxDisplacement, Math.min(maxDisplacement, rawX));
+          targetY = Math.max(-maxDisplacement, Math.min(maxDisplacement, rawY));
+
+          // Subtle natural tilt based on cursor angle
           targetAngle = (Math.atan2(l, c) + Math.PI / 2) * f * rotationRad;
-          // Clamp angle within [-rotation, rotation]
           targetAngle = Math.max(-rotationRad, Math.min(rotationRad, targetAngle));
         }
       }
@@ -151,14 +120,14 @@ export function MagneticText({
       item.y += item.vy;
 
       // Angle spring lerp
-      item.angle += (targetAngle - item.angle) * 0.28;
+      item.angle += (targetAngle - item.angle) * 0.25;
 
       const moving =
-        Math.abs(item.x) > 0.05 ||
-        Math.abs(item.y) > 0.05 ||
-        Math.abs(item.vx) > 0.05 ||
-        Math.abs(item.vy) > 0.05 ||
-        Math.abs(item.angle) > 0.005;
+        Math.abs(item.x) > 0.04 ||
+        Math.abs(item.y) > 0.04 ||
+        Math.abs(item.vx) > 0.04 ||
+        Math.abs(item.vy) > 0.04 ||
+        Math.abs(item.angle) > 0.003;
 
       if (moving) {
         hasMotion = true;
@@ -179,7 +148,7 @@ export function MagneticText({
     } else {
       animFrameId.current = null;
     }
-  }, [radius, feather, strength, rotation, scatter, spring, damping]);
+  }, [radius, feather, strength, rotation, scatter, spring, damping, maxDisplacement]);
 
   const startAnimation = useCallback(() => {
     if (!animFrameId.current) {
@@ -221,8 +190,6 @@ export function MagneticText({
       if (!lettersRef.current[idx]) {
         lettersRef.current[idx] = {
           el,
-          homeX: 0,
-          homeY: 0,
           x: 0,
           y: 0,
           vx: 0,
@@ -230,7 +197,7 @@ export function MagneticText({
           angle: 0,
           targetAngle: 0,
           seed,
-          width: rect.width || 18,
+          width: rect.width || 16,
         };
       } else {
         lettersRef.current[idx].el = el;
@@ -239,94 +206,44 @@ export function MagneticText({
     }
   };
 
-  const scrollPercent = ((duplicateCount - 1) / duplicateCount) * 100;
-
   return (
     <Component
       ref={containerRef as any}
-      className={`magnetic-rolling-text-container select-none ${className}`}
+      className={`magnetic-text-container select-none ${className}`}
+      style={{ overflow: 'visible' }}
       onPointerEnter={handlePointerEnter}
       onPointerMove={handlePointerMove}
       onPointerLeave={handlePointerLeave}
-      onClick={handleReplay}
-      title="Click to roll words again"
       aria-label={text}
     >
-      {words.map((w, wordIdx) => {
-        const wordDelay = wordIdx * staggerDelay;
-        const duplicates = Array(duplicateCount).fill(w.word);
-
-        return (
-          <span
-            key={`word-${wordIdx}-${replayKey}`}
-            className="magnetic-word-wrapper inline-block whitespace-nowrap mr-[0.28em] last:mr-0 align-baseline"
-            style={{
-              display: 'inline-block',
-              whiteSpace: 'nowrap',
-              height: '1.24em',
-              overflow: 'hidden',
-              verticalAlign: 'baseline',
-            }}
-            aria-hidden="true"
-          >
-            {/* Word-by-Word Rolling Strip */}
+      {words.map((w, wordIdx) => (
+        <span
+          key={`word-${wordIdx}`}
+          className="magnetic-word inline-block whitespace-nowrap mr-[0.28em] last:mr-0 align-baseline"
+          style={{
+            display: 'inline-block',
+            whiteSpace: 'nowrap',
+            verticalAlign: 'baseline',
+            overflow: 'visible',
+          }}
+          aria-hidden="true"
+        >
+          {w.letters.map((l) => (
             <span
-              className="flex flex-col items-center justify-start"
+              key={`char-${l.idx}`}
+              ref={(el) => registerLetterRef(el, l.idx, l.seed)}
+              className="inline-block will-change-transform align-baseline select-none"
               style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'flex-start',
-                transform: isRolling
-                  ? `translate3d(0, -${scrollPercent.toFixed(4)}%, 0)`
-                  : 'translate3d(0, 0, 0)',
-                transition: isRolling
-                  ? `transform ${rollDuration}s cubic-bezier(0.25, 0.46, 0.45, 0.94) ${wordDelay}s, filter ${rollDuration * 0.7}s ease-out ${wordDelay}s`
-                  : 'none',
-                filter: isRolling ? 'blur(0px)' : `blur(${blurIntensity}px)`,
-                willChange: 'transform, filter',
+                display: 'inline-block',
+                verticalAlign: 'baseline',
+                overflow: 'visible',
               }}
             >
-              {duplicates.map((dupWord, dIdx) => {
-                const isFinalLanding = dIdx === duplicateCount - 1;
-
-                return (
-                  <span
-                    key={`dup-${dIdx}`}
-                    className="inline-flex items-center justify-center leading-none"
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      height: '1.24em',
-                      lineHeight: '1.24em',
-                    }}
-                  >
-                    {isFinalLanding ? (
-                      /* Final landed word contains interactive magnetic letters with rotation & scatter */
-                      w.letters.map((l) => (
-                        <span
-                          key={`char-${l.idx}`}
-                          ref={(el) => registerLetterRef(el, l.idx, l.seed)}
-                          className="inline-block will-change-transform align-baseline select-none"
-                          style={{
-                            display: 'inline-block',
-                            verticalAlign: 'baseline',
-                          }}
-                        >
-                          {l.char}
-                        </span>
-                      ))
-                    ) : (
-                      <span>{dupWord}</span>
-                    )}
-                  </span>
-                );
-              })}
+              {l.char}
             </span>
-          </span>
-        );
-      })}
+          ))}
+        </span>
+      ))}
     </Component>
   );
 }

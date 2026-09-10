@@ -438,15 +438,17 @@
     cursor: default;
   }
 
-  .magnetic-rolling-text-container {
+  .magnetic-text-container {
     display: block;
     line-height: 1.25;
+    overflow: visible;
   }
 
-  .magnetic-rolling-text-container .magnetic-word-wrapper {
+  .magnetic-text-container .magnetic-word {
     display: inline-block !important;
     white-space: nowrap !important;
     vertical-align: baseline !important;
+    overflow: visible !important;
   }
 
   .hero-description {
