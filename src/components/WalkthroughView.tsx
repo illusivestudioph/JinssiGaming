@@ -717,12 +717,14 @@ function WikiHowStep({
       {/* Step image — Changed from object-cover to object-contain with a neutral background container to preserve aspect ratio */}
       {image && (
         <div className="px-4 pb-3">
-          <div className="rounded-2xl overflow-hidden shadow-cozy-sm bg-cream-200/50 flex items-center justify-center max-h-[400px]">
+          <div className="rounded-2xl overflow-hidden shadow-cozy-sm bg-cream-200/50 flex items-center justify-center min-h-[220px] sm:min-h-[280px] max-h-[400px] w-full">
             <img
               src={image}
               alt={imageAlt || ""}
               loading="lazy"
               decoding="async"
+              width={640}
+              height={360}
               className={`w-full h-auto max-h-[400px] object-contain transition-all duration-500 ${
                 isDone ? 'opacity-60 grayscale' : 'opacity-100'
               }`}

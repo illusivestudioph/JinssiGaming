@@ -454,8 +454,8 @@ function WalkthroughsPage({
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
       <div className="text-center mb-10 animate-fade-in">
-        <div className="inline-flex items-center gap-2 pill bg-earth-100 text-earth-500 mb-4">
-          <span className="font-bold">Step-by-step guides</span>
+        <div className="library-badge inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold mb-4 shadow-cozy-sm">
+          <span>Step-by-step guides</span>
         </div>
         <h2 className="page-title font-display text-3xl sm:text-5xl font-700 text-ink-900 mb-4 leading-tight">
           Walkthroughs

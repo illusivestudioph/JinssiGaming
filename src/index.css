@@ -1966,7 +1966,139 @@ button[type="submit"].site-button:hover,
   box-shadow: 0 3px 10px var(--theme-accent-soft) !important;
 }
 
-/* Harmonize generic tan borders and dividers under active ambient theme */
+/* ============================================================
+   UNIVERSAL FULL-SITE AMBIENT THEME HARMONIZATION
+   Guarantees that EVERY badge, pill, card, input, progress bar,
+   and border across ALL pages (Walkthroughs, Journal, Stories,
+   Games, About, etc.) harmonizes with the active ambient theme.
+   ============================================================ */
+
+/* Earth palette mappings */
+[data-ambient-theme] .bg-earth-50,
+[data-ambient-theme] .bg-earth-100,
+[data-ambient-theme] .bg-earth-200 {
+  background-color: var(--section-kicker-bg) !important;
+  border-color: var(--section-kicker-border) !important;
+}
+
+[data-ambient-theme] .text-earth-500,
+[data-ambient-theme] .text-earth-600,
+[data-ambient-theme] .text-earth-700 {
+  color: var(--section-kicker-color) !important;
+}
+
+[data-ambient-theme] .border-earth-100,
+[data-ambient-theme] .border-earth-200,
+[data-ambient-theme] .border-earth-300 {
+  border-color: var(--theme-accent-border) !important;
+}
+
+/* All Pills, Category Buttons & Filter Badges across Walkthroughs, Journal, Bookshelf, and Games */
+[data-ambient-theme] .pill:not(.bg-peach-400):not(.bg-peach-500):not(.is-active),
+[data-ambient-theme] .category-filter-pill:not(.category-filter-active),
+[data-ambient-theme] .game-directory-filters button:not(.is-active) {
+  background-color: var(--btn-secondary-bg) !important;
+  border-color: var(--btn-secondary-border) !important;
+  color: var(--text-muted) !important;
+}
+
+[data-ambient-theme] .pill:not(.bg-peach-400):not(.bg-peach-500):not(.is-active):hover,
+[data-ambient-theme] .category-filter-pill:not(.category-filter-active):hover,
+[data-ambient-theme] .game-directory-filters button:not(.is-active):hover {
+  background-color: var(--btn-secondary-hover-bg) !important;
+  border-color: var(--theme-accent-border) !important;
+  color: var(--text-main) !important;
+}
+
+[data-ambient-theme] .pill.is-active,
+[data-ambient-theme] .pill.bg-peach-400,
+[data-ambient-theme] .pill.bg-peach-500,
+[data-ambient-theme] .category-filter-active,
+[data-ambient-theme] .game-directory-filters button.is-active {
+  background-color: var(--theme-accent) !important;
+  border-color: var(--theme-accent) !important;
+  color: var(--theme-accent-text) !important;
+  box-shadow: 0 2px 8px var(--theme-accent-soft) !important;
+}
+
+/* Section Kicker Badges */
+[data-ambient-theme] .library-badge,
+[data-ambient-theme] .pill.bg-earth-100,
+[data-ambient-theme] .pill.bg-peach-100 {
+  background-color: var(--section-kicker-bg) !important;
+  border-color: var(--section-kicker-border) !important;
+  color: var(--section-kicker-color) !important;
+}
+
+[data-ambient-theme] .library-badge *,
+[data-ambient-theme] .pill.bg-earth-100 *,
+[data-ambient-theme] .pill.bg-peach-100 * {
+  color: var(--section-kicker-color) !important;
+}
+
+/* Universal Input and Search Harmonization */
+[data-ambient-theme] input[type="text"],
+[data-ambient-theme] input[type="search"],
+[data-ambient-theme] .game-directory-tools input,
+[data-ambient-theme] .bookshelf-search-input {
+  background-color: var(--card-bg) !important;
+  border-color: var(--card-border) !important;
+  color: var(--text-main) !important;
+}
+
+[data-ambient-theme] input[type="text"]:focus,
+[data-ambient-theme] input[type="search"]:focus,
+[data-ambient-theme] .game-directory-tools input:focus,
+[data-ambient-theme] .bookshelf-search-input:focus {
+  border-color: var(--theme-accent) !important;
+  box-shadow: 0 0 0 3px var(--theme-accent-soft) !important;
+}
+
+[data-ambient-theme] input::placeholder,
+[data-ambient-theme] .placeholder-tan-400::placeholder {
+  color: var(--text-muted) !important;
+}
+
+/* Cards, Progress Bars, and Controls across Walkthroughs & Games */
+[data-ambient-theme] .game-summary-card,
+[data-ambient-theme] .cozy-card,
+[data-ambient-theme] .game-doodle-card {
+  background-color: var(--card-bg) !important;
+  border-color: var(--card-border) !important;
+  color: var(--card-text) !important;
+}
+
+[data-ambient-theme] .progress-bar-track,
+[data-ambient-theme] .bg-cream-300:not(.ambient-sound-lounge) {
+  background-color: var(--card-done-bg) !important;
+}
+
+[data-ambient-theme] .progress-bar-fill {
+  background-color: var(--theme-accent) !important;
+}
+
+[data-ambient-theme] .game-summary-progress span {
+  color: var(--text-muted) !important;
+}
+
+[data-ambient-theme] .game-summary-content .text-tan-600 {
+  color: var(--text-muted) !important;
+}
+
+[data-ambient-theme] .game-summary-card:hover .group-hover\:text-ink-900,
+[data-ambient-theme] .group:hover .group-hover\:text-ink-900 {
+  color: var(--theme-accent) !important;
+}
+
+/* Cream Backgrounds */
+[data-ambient-theme] .bg-cream-50:not(.ambient-sound-lounge),
+[data-ambient-theme] .bg-cream-100:not(header):not(.ambient-sound-lounge),
+[data-ambient-theme] .bg-cream-200:not(.ambient-sound-lounge) {
+  background-color: var(--card-bg) !important;
+}
+
+/* Borders and Dividers */
+[data-ambient-theme] .border-cream-300,
 [data-ambient-theme] .border-tan-200,
 [data-ambient-theme] .border-tan-200\/70,
 [data-ambient-theme] .border-tan-200\/50,

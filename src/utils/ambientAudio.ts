@@ -73,7 +73,7 @@ class AmbientSoundEngine {
   private dropdownBuffer: AudioBuffer | null = null;
   private sfxLoaded = false;
   private isMasterMuted = false;
-  private isPaused = false;
+  private isPaused = true;
 
   // No constructor preloading — all audio is lazy-loaded on demand.
 

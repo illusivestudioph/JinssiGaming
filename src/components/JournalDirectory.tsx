@@ -43,7 +43,7 @@ export function JournalDirectory({ onSelectArticle }: JournalDirectoryProps) {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 animate-fade-in">
       {/* Header Banner */}
       <div className="text-center max-w-2xl mx-auto mb-10">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-peach-100 text-peach-700 text-xs font-bold mb-3 shadow-cozy-sm">
+        <div className="library-badge inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold mb-3 shadow-cozy-sm">
           <BookOpen className="w-3.5 h-3.5" />
           <span>The Cozy Journal</span>
         </div>
@@ -65,7 +65,7 @@ export function JournalDirectory({ onSelectArticle }: JournalDirectoryProps) {
             placeholder="Search cozy articles, reviews, or tags (e.g. Tiny Glade, Organizing)..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-12 pr-4 py-3 rounded-2xl bg-cream-50 border-2 border-tan-200 text-ink-900 placeholder:text-tan-400 focus:outline-none focus:border-peach-400 transition-colors shadow-cozy-sm"
+            className="bookshelf-search-input w-full pl-12 pr-4 py-3 rounded-2xl bg-cream-50 border-2 border-tan-200 text-ink-900 placeholder:text-tan-400 focus:outline-none focus:border-peach-400 transition-colors shadow-cozy-sm"
           />
           {searchQuery && (
             <button
@@ -83,10 +83,10 @@ export function JournalDirectory({ onSelectArticle }: JournalDirectoryProps) {
             <button
               key={category}
               onClick={() => setSelectedCategory(category)}
-              className={`px-4 py-1.5 rounded-xl text-xs font-bold transition-all shadow-cozy-sm ${
+              className={`category-filter-pill px-4 py-1.5 rounded-xl text-xs font-bold transition-all shadow-cozy-sm ${
                 selectedCategory === category
-                  ? 'bg-peach-500 text-white shadow-cozy-md scale-105'
-                  : 'bg-cream-100 text-tan-600 hover:bg-cream-200 hover:text-ink-900 border border-tan-200'
+                  ? 'category-filter-active bg-peach-500 text-white shadow-cozy-md scale-105'
+                  : 'category-filter-inactive bg-cream-100 text-tan-600 hover:bg-cream-200 hover:text-ink-900 border border-tan-200'
               }`}
             >
               {category}
