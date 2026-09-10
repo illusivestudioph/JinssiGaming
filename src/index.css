@@ -3,7 +3,7 @@
 @font-face {
   font-family: 'Witchcraft';
   src: url('/Witchcraft Halloween.otf') format('opentype');
-  font-weight: normal;
+  font-weight: 100 900;
   font-style: normal;
   font-display: swap;
 }
@@ -11,7 +11,7 @@
 @font-face {
   font-family: 'Matcha Mint';
   src: url('/Matcha Mint.ttf') format('truetype');
-  font-weight: normal;
+  font-weight: 100 900;
   font-style: normal;
   font-display: swap;
 }
@@ -445,10 +445,10 @@
     margin: 0;
     color: var(--hero-title-color);
     font-family: 'Witchcraft', 'Fredoka', 'Nunito', sans-serif;
-    font-size: clamp(2.4rem, 5.2vw, 4.2rem);
+    font-size: clamp(2.85rem, 6.2vw, 5.2rem);
     font-weight: normal;
-    letter-spacing: 0.02em;
-    line-height: 1.2;
+    letter-spacing: 0.025em;
+    line-height: 1.14;
     text-shadow: 0.08rem 0.1rem 0 var(--theme-accent-soft, rgba(0, 0, 0, 0.06));
     transition: color 0.4s ease, text-shadow 0.3s ease, transform 0.3s ease;
     cursor: default;
@@ -536,6 +536,7 @@
 
   .page-title {
     display: inline-block;
+    font-family: 'Matcha Mint', 'Fredoka', 'Nunito', sans-serif !important;
     transition: color 250ms ease, transform 250ms ease, text-shadow 250ms ease;
   }
 
@@ -547,9 +548,21 @@
 
   .legal-copy h2 {
     color: #3a2e22;
-    font-family: 'Fredoka', 'Nunito', sans-serif;
+    font-family: 'Matcha Mint', 'Fredoka', 'Nunito', sans-serif;
     font-size: 1.35rem;
     font-weight: 700;
+  }
+
+  /* Ebook Reader Exemption: Preserve clean, readable book typography and exclude Matcha Mint */
+  .story-reader-view,
+  .story-reader-view h1,
+  .story-reader-view h2,
+  .story-reader-view h3,
+  .story-reader-view h4,
+  .story-reader-view h5,
+  .story-reader-view h6,
+  .story-reader-view .font-display {
+    font-family: inherit !important;
   }
 
   .legal-copy a {
@@ -756,7 +769,7 @@
 
   .turntable-label {
     max-width: 8rem;
-    font-family: 'Fredoka', 'Nunito', sans-serif;
+    font-family: 'Matcha Mint', 'Fredoka', 'Nunito', sans-serif;
     font-size: 1.05rem;
     font-weight: 700;
     line-height: 1.15;
@@ -1012,7 +1025,7 @@
   .game-directory-title {
     margin: 0;
     color: var(--text-main);
-    font-family: 'Fredoka', 'Nunito', sans-serif;
+    font-family: 'Matcha Mint', 'Fredoka', 'Nunito', sans-serif !important;
     font-size: clamp(2rem, 5vw, 3.2rem);
     font-weight: 700;
     line-height: 1.05;
@@ -1169,7 +1182,7 @@
   .game-doodle-title {
     margin-bottom: 0.5rem;
     color: var(--game-ink);
-    font-family: 'Fredoka', 'Nunito', sans-serif;
+    font-family: 'Matcha Mint', 'Fredoka', 'Nunito', sans-serif !important;
     font-size: clamp(1.35rem, 2vw, 1.65rem);
     font-weight: 700;
     line-height: 1.2;
@@ -1323,7 +1336,7 @@
     align-items: center;
     gap: 0.4rem;
     color: var(--section-kicker-color);
-    font-family: 'Fredoka', 'Nunito', sans-serif;
+    font-family: 'Matcha Mint', 'Fredoka', 'Nunito', sans-serif;
     font-size: 1rem;
     font-weight: 700;
   }

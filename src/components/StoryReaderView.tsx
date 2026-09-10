@@ -409,7 +409,7 @@ export function StoryReaderView({
   if (isStubOrLoading) {
     return (
       <div
-        className={`min-h-screen flex flex-col items-center justify-center px-4 py-12 transition-colors duration-300 ${currentThemeStyle.bg} ${currentThemeStyle.text}`}
+        className={`story-reader-view min-h-screen flex flex-col items-center justify-center px-4 py-12 transition-colors duration-300 ${currentThemeStyle.bg} ${currentThemeStyle.text}`}
       >
         <div className="max-w-md w-full text-center space-y-6 animate-fade-in">
           <div className="w-16 h-16 mx-auto rounded-2xl bg-peach-500/10 border border-peach-500/20 flex items-center justify-center">
@@ -421,7 +421,7 @@ export function StoryReaderView({
               <span>{story.genre || 'Classic Literature'}</span>
               {gutenbergId && <span>• eBook #{gutenbergId}</span>}
             </div>
-            <h1 className="font-display font-bold text-2xl sm:text-3xl leading-tight">
+            <h1 className="font-sans font-bold text-2xl sm:text-3xl leading-tight">
               {story.title}
             </h1>
             <p className="text-sm font-semibold opacity-75">
@@ -454,7 +454,7 @@ export function StoryReaderView({
   return (
     <div
       ref={topRef}
-      className={`min-h-screen transition-colors duration-300 ${currentThemeStyle.bg} ${currentThemeStyle.text}`}
+      className={`story-reader-view min-h-screen transition-colors duration-300 ${currentThemeStyle.bg} ${currentThemeStyle.text}`}
     >
       {/* Scroll Progress Bar at very top */}
       <div className="fixed top-0 left-0 right-0 h-1 z-50 bg-black/5">
@@ -602,7 +602,7 @@ export function StoryReaderView({
               <div className={`flex items-center justify-between pb-4 border-b ${currentThemeStyle.border}`}>
                 <div className="flex items-center gap-2">
                   <BookOpen className="w-5 h-5 text-peach-500" />
-                  <h3 className="font-display font-bold text-lg">Table of Contents</h3>
+                  <h3 className="font-sans font-bold text-lg">Table of Contents</h3>
                 </div>
                 <button
                   onClick={() => setShowToc(false)}
@@ -708,7 +708,7 @@ export function StoryReaderView({
               <div className={`flex items-center justify-between pb-4 border-b ${currentThemeStyle.border}`}>
                 <div className="flex items-center gap-2">
                   <Sliders className="w-5 h-5 text-peach-500" />
-                  <h3 className="font-display font-bold text-lg">Reading Preferences</h3>
+                  <h3 className="font-sans font-bold text-lg">Reading Preferences</h3>
                 </div>
                 <button
                   onClick={() => setShowSettings(false)}
@@ -852,7 +852,7 @@ export function StoryReaderView({
           </p>
 
           <h1
-            className={`font-display font-bold ${currentFontStyle.heading} mb-4 leading-tight`}
+            className={`font-bold ${currentFontStyle.heading} mb-4 leading-tight`}
           >
             {currentChapter.title}
           </h1>
@@ -940,7 +940,7 @@ export function StoryReaderView({
           <div
             className={`mt-12 p-6 rounded-2xl border ${currentThemeStyle.border} ${currentThemeStyle.cardBg} transition-colors`}
           >
-            <div className="flex items-center gap-2 mb-2 font-display font-bold text-sm">
+            <div className="flex items-center gap-2 mb-2 font-sans font-bold text-sm">
               <Coffee className="w-4 h-4 text-peach-500" />
               <span>Author's Note from {story.author}</span>
             </div>

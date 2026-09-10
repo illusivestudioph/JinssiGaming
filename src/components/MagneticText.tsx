@@ -46,16 +46,19 @@ export function MagneticText({
   const animFrameId = useRef<number | null>(null);
   const isHoveredRef = useRef(false);
 
-  // Split text into words and letters
-  const words = useMemo(() => {
+  // Split text into lines, words, and letters
+  const lines = useMemo(() => {
     let globalIdx = 0;
-    return text.split(' ').map((word) => {
-      const letters = Array.from(word).map((char) => {
-        const idx = globalIdx++;
-        const seed = ((idx * 137.5) % 100) / 100;
-        return { char, idx, seed };
+    return text.split('\n').map((line) => {
+      const words = line.trim().split(/\s+/).filter(Boolean).map((word) => {
+        const letters = Array.from(word).map((char) => {
+          const idx = globalIdx++;
+          const seed = ((idx * 137.5) % 100) / 100;
+          return { char, idx, seed };
+        });
+        return { word, letters };
       });
-      return { word, letters };
+      return words;
     });
   }, [text]);
 
@@ -214,32 +217,46 @@ export function MagneticText({
       onPointerEnter={handlePointerEnter}
       onPointerMove={handlePointerMove}
       onPointerLeave={handlePointerLeave}
-      aria-label={text}
+      aria-label={text.replace(/\n/g, ' ')}
     >
-      {words.map((w, wordIdx) => (
+      {lines.map((lineWords, lineIdx) => (
         <span
-          key={`word-${wordIdx}`}
-          className="magnetic-word inline-block whitespace-nowrap mr-[0.28em] last:mr-0 align-baseline"
+          key={`line-${lineIdx}`}
+          className="block w-full text-center"
           style={{
-            display: 'inline-block',
-            whiteSpace: 'nowrap',
-            verticalAlign: 'baseline',
+            display: 'block',
+            width: '100%',
+            textAlign: 'center',
             overflow: 'visible',
+            lineHeight: 'inherit',
           }}
-          aria-hidden="true"
         >
-          {w.letters.map((l) => (
+          {lineWords.map((w, wordIdx) => (
             <span
-              key={`char-${l.idx}`}
-              ref={(el) => registerLetterRef(el, l.idx, l.seed)}
-              className="inline-block will-change-transform align-baseline select-none"
+              key={`word-${lineIdx}-${wordIdx}`}
+              className="magnetic-word inline-block whitespace-nowrap mr-[0.28em] last:mr-0 align-baseline"
               style={{
                 display: 'inline-block',
+                whiteSpace: 'nowrap',
                 verticalAlign: 'baseline',
                 overflow: 'visible',
               }}
+              aria-hidden="true"
             >
-              {l.char}
+              {w.letters.map((l) => (
+                <span
+                  key={`char-${l.idx}`}
+                  ref={(el) => registerLetterRef(el, l.idx, l.seed)}
+                  className="inline-block will-change-transform align-baseline select-none"
+                  style={{
+                    display: 'inline-block',
+                    verticalAlign: 'baseline',
+                    overflow: 'visible',
+                  }}
+                >
+                  {l.char}
+                </span>
+              ))}
             </span>
           ))}
         </span>
