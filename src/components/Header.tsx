@@ -54,27 +54,27 @@ export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View)
 
   return (
     <>
-      <header className="bg-cream-100 border-b-2 border-tan-200 sticky top-0 z-40">
+      <header className="site-header bg-cream-100 border-b-2 border-tan-200 sticky top-0 z-40 transition-all duration-300">
         <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
           
           {/* LOGO WITH SECRET TRIGGER */}
-          <div className="flex items-center gap-3 cursor-pointer select-none" onClick={handleLogoClick}>
-            <img src={logoImage} alt="Site Logo" className="h-10 w-10 object-contain" />
-            <h1 className="font-display font-bold text-xl text-ink-900">Jinssi</h1>
+          <div className="site-logo-link flex items-center gap-3 cursor-pointer select-none group transition-all duration-300" onClick={handleLogoClick}>
+            <img src={logoImage} alt="Site Logo" className="site-logo-img h-10 w-10 object-contain transition-all duration-300" />
+            <span className="site-logo-text font-display font-bold text-xl sm:text-2xl text-ink-900 transition-all duration-300">Jinssi</span>
           </div>
 
           <div className="flex items-center gap-3 sm:gap-4">
-            <nav className="hidden items-center gap-4 md:flex">
-              <button aria-current={view === 'home' ? 'page' : undefined} onClick={() => handleNavigate('home')} className={`site-nav-link ${view === 'home' ? 'text-peach-500' : 'text-tan-600'}`}>Home</button>
-              <button aria-current={view === 'walkthroughs' ? 'page' : undefined} onClick={() => handleNavigate('walkthroughs')} className={`site-nav-link ${view === 'walkthroughs' ? 'text-peach-500' : 'text-tan-600'}`}>Walkthroughs</button>
-              <button aria-current={view === 'journal' ? 'page' : undefined} onClick={() => handleNavigate('journal')} className={`site-nav-link ${view === 'journal' ? 'text-peach-500' : 'text-tan-600'}`}>Journal</button>
-              <button aria-current={view === 'stories' ? 'page' : undefined} onClick={() => handleNavigate('stories')} className={`site-nav-link ${view === 'stories' ? 'text-peach-500' : 'text-tan-600'}`}>Stories</button>
-              <button aria-current={view === 'about' ? 'page' : undefined} onClick={() => handleNavigate('about')} className={`site-nav-link ${view === 'about' ? 'text-peach-500' : 'text-tan-600'}`}>About</button>
+            <nav className="hidden items-center gap-2 md:flex">
+              <button aria-current={view === 'home' ? 'page' : undefined} onClick={() => handleNavigate('home')} className={`site-nav-link ${view === 'home' ? 'text-peach-500 is-active' : 'text-tan-600'}`}>Home</button>
+              <button aria-current={view === 'walkthroughs' ? 'page' : undefined} onClick={() => handleNavigate('walkthroughs')} className={`site-nav-link ${view === 'walkthroughs' ? 'text-peach-500 is-active' : 'text-tan-600'}`}>Walkthroughs</button>
+              <button aria-current={view === 'journal' ? 'page' : undefined} onClick={() => handleNavigate('journal')} className={`site-nav-link ${view === 'journal' ? 'text-peach-500 is-active' : 'text-tan-600'}`}>Journal</button>
+              <button aria-current={view === 'stories' ? 'page' : undefined} onClick={() => handleNavigate('stories')} className={`site-nav-link ${view === 'stories' ? 'text-peach-500 is-active' : 'text-tan-600'}`}>Stories</button>
+              <button aria-current={view === 'about' ? 'page' : undefined} onClick={() => handleNavigate('about')} className={`site-nav-link ${view === 'about' ? 'text-peach-500 is-active' : 'text-tan-600'}`}>About</button>
               {view === 'admin' && <span className="font-bold text-earth-500 ml-4">Admin Mode</span>}
             </nav>
 
             {/* Persistent Header Music & Ambience Control */}
-            <div className="flex items-center gap-1.5 bg-cream-50/90 border border-tan-300/80 rounded-full px-2.5 py-1 shadow-cozy-sm">
+            <div className="header-music-pill flex items-center gap-1.5 bg-cream-50/90 border border-tan-300/80 rounded-full px-2.5 py-1 shadow-cozy-sm transition-all duration-300">
               <button
                 type="button"
                 onClick={() => void togglePlayback()}
