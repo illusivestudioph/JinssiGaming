@@ -201,7 +201,8 @@ export function MagneticText({
       {words.map((w, wordIdx) => (
         <span
           key={`word-${wordIdx}-${replayKey}`}
-          className="inline-block whitespace-nowrap mr-[0.28em] last:mr-0 align-top"
+          className="magnetic-word inline-block whitespace-nowrap mr-[0.28em] last:mr-0 align-baseline"
+          style={{ display: 'inline-block', whiteSpace: 'nowrap', verticalAlign: 'baseline' }}
           aria-hidden="true"
         >
           {w.letters.map((char) => {
@@ -215,17 +216,22 @@ export function MagneticText({
               <span
                 key={`char-${currentIdx}`}
                 ref={(el) => registerLetterRef(el, currentIdx)}
-                className="inline-block will-change-transform align-top"
+                className="magnetic-char-box inline-block will-change-transform align-baseline"
                 style={{
-                  height: '1.18em',
+                  display: 'inline-block',
+                  height: '1.2em',
                   overflow: 'hidden',
-                  verticalAlign: 'top',
+                  verticalAlign: 'baseline',
                 }}
               >
                 {/* Rolling Strip Column */}
                 <span
                   className="flex flex-col items-center justify-start"
                   style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'flex-start',
                     transform: isRolling
                       ? `translate3d(0, -${scrollPercent.toFixed(4)}%, 0)`
                       : 'translate3d(0, 0, 0)',
@@ -241,8 +247,11 @@ export function MagneticText({
                       key={`dup-${dIdx}`}
                       className="inline-flex items-center justify-center leading-none"
                       style={{
-                        height: '1.18em',
-                        lineHeight: '1.18em',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        height: '1.2em',
+                        lineHeight: '1.2em',
                       }}
                     >
                       {dupChar}
