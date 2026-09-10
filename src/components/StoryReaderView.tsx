@@ -22,8 +22,12 @@ import {
   Download,
   RefreshCw,
   Sparkles,
+  Music,
+  Pause,
 } from 'lucide-react';
 import { getGutenbergId, fetchGutenbergById } from '@/services/gutenberg';
+import { useMusic } from '@/context/MusicContext';
+import { AmbientMixerModal } from '@/components/AmbientMixerModal';
 
 interface StoryReaderViewProps {
   story: Story;
@@ -177,6 +181,14 @@ export function StoryReaderView({
     }
   }, [story.id, gutenbergId]);
 
+  // Music & Ambient Audio
+  const { playing, togglePlayback } = useMusic();
+  const [showMixer, setShowMixer] = useState(false);
+
+  // Line Marker State (exact paragraph where reader stopped)
+  const [markedLineIndex, setMarkedLineIndex] = useState<number | null>(null);
+  const [markerToastText, setMarkerToastText] = useState<string | null>(null);
+
   // UI state
   const [showToc, setShowToc] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
@@ -261,6 +273,81 @@ export function StoryReaderView({
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
   }, [chapterNumber]);
+
+  // Load saved line marker for this chapter and scroll to it
+  useEffect(() => {
+    if (!currentChapter) return;
+    try {
+      const saved = localStorage.getItem(`jinssi-line-marker-${story.id}-${currentChapter.chapterNumber}`);
+      if (saved !== null) {
+        const parsed = JSON.parse(saved);
+        if (typeof parsed?.lineIndex === 'number') {
+          setMarkedLineIndex(parsed.lineIndex);
+          // Smoothly scroll down to marked line after prose renders
+          const timer = setTimeout(() => {
+            const el = document.getElementById(`reader-line-${parsed.lineIndex}`);
+            if (el) {
+              el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+          }, 450);
+          return () => clearTimeout(timer);
+        }
+      }
+    } catch {
+      // ignore
+    }
+    setMarkedLineIndex(null);
+  }, [story.id, currentChapter?.chapterNumber]);
+
+  const handleToggleLineMarker = (index: number) => {
+    if (!currentChapter) return;
+    if (markedLineIndex === index) {
+      setMarkedLineIndex(null);
+      try {
+        localStorage.removeItem(`jinssi-line-marker-${story.id}-${currentChapter.chapterNumber}`);
+      } catch {
+        // ignore
+      }
+      setMarkerToastText('Line marker removed');
+      setTimeout(() => setMarkerToastText(null), 2400);
+    } else {
+      setMarkedLineIndex(index);
+      try {
+        const markerData = {
+          storyId: story.id,
+          chapterNumber: currentChapter.chapterNumber,
+          lineIndex: index,
+          updatedAt: Date.now(),
+        };
+        localStorage.setItem(
+          `jinssi-line-marker-${story.id}-${currentChapter.chapterNumber}`,
+          JSON.stringify(markerData)
+        );
+        // Also update general story progress so "Jump Back In" knows the exact line
+        const progressData = {
+          storyId: story.id,
+          chapterNumber: currentChapter.chapterNumber,
+          chapterTitle: currentChapter.title,
+          storyTitle: story.title,
+          lineIndex: index,
+          updatedAt: Date.now(),
+        };
+        localStorage.setItem(`jinssi-story-progress-${story.id}`, JSON.stringify(progressData));
+      } catch {
+        // ignore
+      }
+      setMarkerToastText(`Reading marker placed at paragraph ${index + 1}`);
+      setTimeout(() => setMarkerToastText(null), 2600);
+    }
+  };
+
+  const scrollToMarkedLine = () => {
+    if (markedLineIndex === null) return;
+    const el = document.getElementById(`reader-line-${markedLineIndex}`);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  };
 
   // Track reading progress through the chapter
   useEffect(() => {
@@ -410,7 +497,45 @@ export function StoryReaderView({
           </div>
 
           {/* Right Action Icons */}
-          <div className="flex items-center gap-1 sm:gap-2">
+          <div className="flex items-center gap-2 sm:gap-3">
+            {/* Quick jump to line marker button if one exists */}
+            {markedLineIndex !== null && (
+              <button
+                type="button"
+                onClick={scrollToMarkedLine}
+                className={`hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-bold border border-amber-400/50 bg-amber-500/10 text-amber-700 dark:text-amber-300 hover:bg-amber-500/20 transition-all shadow-cozy-xs`}
+                title={`Jump to paragraph ${markedLineIndex + 1} where you stopped`}
+              >
+                <Bookmark className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
+                <span>Line {markedLineIndex + 1}</span>
+              </button>
+            )}
+
+            {/* In-Reader Music & Ambience Control */}
+            <div className={`flex items-center gap-1 px-2 py-1 rounded-lg border ${currentThemeStyle.border} ${currentThemeStyle.cardBg}`}>
+              <button
+                type="button"
+                onClick={() => void togglePlayback()}
+                className={`p-1 rounded-md transition-colors ${
+                  playing ? 'text-peach-500 hover:text-peach-600' : 'opacity-70 hover:opacity-100'
+                }`}
+                title={playing ? 'Pause cozy music & ambience' : 'Play cozy reading music'}
+                aria-label={playing ? 'Pause music' : 'Play music'}
+              >
+                {playing ? <Pause className="w-4 h-4" /> : <Music className="w-4 h-4" />}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setShowMixer(true)}
+                className="p-1 rounded-md opacity-70 hover:opacity-100 transition-colors"
+                title="Cozy Sound Lounge (Rain, Fire, Wind)"
+                aria-label="Open sound mixer"
+              >
+                <Sliders className="w-3.5 h-3.5" />
+              </button>
+            </div>
+
             {/* Table of Contents button */}
             <button
               onClick={() => {
@@ -434,7 +559,7 @@ export function StoryReaderView({
               title="Reading Display & Themes"
               aria-label="Reading Display Settings"
             >
-              <Sliders className="w-4 h-4" />
+              <Type className="w-4 h-4" />
             </button>
 
             {/* Share / Copy button */}
@@ -450,8 +575,17 @@ export function StoryReaderView({
         </div>
       </header>
 
+
+      {/* Line Marker Notification Toast */}
+      {markerToastText && (
+        <div className="fixed bottom-6 right-6 z-40 bg-amber-900/95 text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow-lg border border-amber-400/40 flex items-center gap-2 animate-fade-in backdrop-blur-sm">
+          <Bookmark className="w-4 h-4 text-amber-300 fill-amber-300" />
+          <span>{markerToastText}</span>
+        </div>
+      )}
+
       {/* Auto-saved bookmark toast */}
-      {bookmarkSaved && (
+      {bookmarkSaved && !markerToastText && (
         <div className="fixed bottom-6 right-6 z-40 bg-stone-900/90 text-white text-xs font-semibold px-3 py-2 rounded-xl shadow-lg flex items-center gap-2 animate-fade-in">
           <Bookmark className="w-3.5 h-3.5 text-peach-300 fill-peach-300" />
           <span>Bookmark saved (Ch. {currentChapter.chapterNumber})</span>
@@ -741,17 +875,62 @@ export function StoryReaderView({
         </div>
 
         {/* Chapter Prose Body */}
-        <article className={`space-y-6 ${fontClass} ${currentFontStyle.body}`}>
+        <article className={`space-y-4 sm:space-y-6 ${fontClass} ${currentFontStyle.body}`}>
           {currentChapter.content.map((paragraph, idx) => {
-            // First paragraph drop-cap style or prominent feel
             const isFirst = idx === 0;
+            const isMarked = markedLineIndex === idx;
+
             return (
-              <p
+              <div
                 key={idx}
-                className={isFirst ? `${currentFontStyle.lead} opacity-95` : 'opacity-90'}
+                id={`reader-line-${idx}`}
+                className={`relative group/line transition-all duration-300 rounded-2xl p-3 sm:p-4 -mx-3 sm:-mx-4 ${
+                  isMarked
+                    ? 'bg-amber-500/15 dark:bg-amber-400/15 ring-2 ring-amber-400/80 shadow-cozy-sm'
+                    : 'hover:bg-black/[0.02] dark:hover:bg-white/[0.02]'
+                }`}
               >
-                {paragraph}
-              </p>
+                {/* Visual Line Marker Badge on the exact paragraph where they stopped */}
+                {isMarked && (
+                  <div className="flex items-center justify-between pb-2 mb-2 border-b border-amber-400/30 text-xs font-bold text-amber-700 dark:text-amber-300">
+                    <span className="inline-flex items-center gap-1.5">
+                      <Bookmark className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
+                      <span>Reading Marker — You stopped here</span>
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => handleToggleLineMarker(idx)}
+                      className="text-[11px] font-semibold opacity-70 hover:opacity-100 hover:underline cursor-pointer"
+                    >
+                      Clear marker
+                    </button>
+                  </div>
+                )}
+
+                <div className="flex items-start justify-between gap-3">
+                  <p
+                    className={`flex-1 ${isFirst ? `${currentFontStyle.lead} opacity-95` : 'opacity-90'} ${
+                      isMarked ? 'font-medium' : ''
+                    }`}
+                  >
+                    {paragraph}
+                  </p>
+
+                  <button
+                    type="button"
+                    onClick={() => handleToggleLineMarker(idx)}
+                    title={isMarked ? 'Remove line marker' : 'Mark this exact spot (save where you stopped)'}
+                    aria-label={isMarked ? 'Remove reading marker' : 'Mark exact reading line'}
+                    className={`p-1.5 rounded-lg transition-all shrink-0 mt-0.5 cursor-pointer ${
+                      isMarked
+                        ? 'text-amber-500 opacity-100 bg-amber-100 dark:bg-amber-950/60 shadow-xs'
+                        : 'text-stone-400 opacity-0 group-hover/line:opacity-100 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-stone-800 focus:opacity-100'
+                    }`}
+                  >
+                    <Bookmark className={`w-4 h-4 ${isMarked ? 'fill-current text-amber-500' : ''}`} />
+                  </button>
+                </div>
+              </div>
             );
           })}
         </article>
@@ -847,6 +1026,8 @@ export function StoryReaderView({
           </div>
         </div>
       )}
+      {/* Sound Lounge Modal */}
+      <AmbientMixerModal isOpen={showMixer} onClose={() => setShowMixer(false)} />
     </div>
   );
 }

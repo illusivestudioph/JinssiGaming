@@ -159,6 +159,7 @@ export function MusicProvider({ children }: { children: ReactNode }) {
     }
     audio.volume = volume * musicVolumeScale;
     setAudioError(false);
+    ambientEngine.setPaused(false);
     await audio.play().catch(() => setAudioError(true));
   };
 
@@ -167,6 +168,7 @@ export function MusicProvider({ children }: { children: ReactNode }) {
     if (audio) {
       audio.pause();
     }
+    ambientEngine.setPaused(true);
   };
 
   const togglePlayback = async () => {
@@ -199,6 +201,9 @@ export function MusicProvider({ children }: { children: ReactNode }) {
     const clamped = Math.max(0, Math.min(1, vol));
     setAmbientRainState(clamped);
     localStorage.setItem(rainStorageKey, String(clamped));
+    if (clamped > 0) {
+      ambientEngine.setPaused(false);
+    }
     if (!muted) {
       ambientEngine.setRainVolume(clamped);
     }
@@ -212,6 +217,9 @@ export function MusicProvider({ children }: { children: ReactNode }) {
     const clamped = Math.max(0, Math.min(1, vol));
     setAmbientFireState(clamped);
     localStorage.setItem(fireStorageKey, String(clamped));
+    if (clamped > 0) {
+      ambientEngine.setPaused(false);
+    }
     if (!muted) {
       ambientEngine.setFireVolume(clamped);
     }
@@ -225,6 +233,9 @@ export function MusicProvider({ children }: { children: ReactNode }) {
     const clamped = Math.max(0, Math.min(1, vol));
     setAmbientWindState(clamped);
     localStorage.setItem(windStorageKey, String(clamped));
+    if (clamped > 0) {
+      ambientEngine.setPaused(false);
+    }
     if (!muted) {
       ambientEngine.setWindVolume(clamped);
     }
@@ -336,8 +347,14 @@ export function MusicProvider({ children }: { children: ReactNode }) {
     audio.setAttribute('playsinline', 'true');
     audio.volume = settingsRef.current.muted ? 0 : settingsRef.current.userVolume * musicVolumeScale;
 
-    const handlePlay = () => setPlaying(true);
-    const handlePause = () => setPlaying(false);
+    const handlePlay = () => {
+      setPlaying(true);
+      ambientEngine.setPaused(false);
+    };
+    const handlePause = () => {
+      setPlaying(false);
+      ambientEngine.setPaused(true);
+    };
     const handleError = () => setAudioError(true);
 
     audio.addEventListener('play', handlePlay);

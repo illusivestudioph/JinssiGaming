@@ -73,6 +73,7 @@ class AmbientSoundEngine {
   private dropdownBuffer: AudioBuffer | null = null;
   private sfxLoaded = false;
   private isMasterMuted = false;
+  private isPaused = false;
 
   // No constructor preloading — all audio is lazy-loaded on demand.
 
@@ -191,7 +192,7 @@ class AmbientSoundEngine {
   }
 
   private syncTrackPlayback(track: AmbientTrackState) {
-    const effectiveVolume = this.isMasterMuted ? 0 : track.userVolume * track.volumeScale;
+    const effectiveVolume = (this.isMasterMuted || this.isPaused) ? 0 : track.userVolume * track.volumeScale;
 
     if (effectiveVolume > 0) {
       const ctx = this.initContext();
@@ -358,6 +359,22 @@ class AmbientSoundEngine {
    */
   public playDropdownSound() {
     this.playSfx('/dropdown.mp3', this.dropdownBuffer, 1.0, 0.7);
+  }
+
+  public setPaused(paused: boolean) {
+    this.isPaused = paused;
+    if (this.masterGain && this.ctx) {
+      const isSilenced = this.isMasterMuted || this.isPaused;
+      this.masterGain.gain.setTargetAtTime(isSilenced ? 0 : 1, this.ctx.currentTime, 0.08);
+    }
+    const hasActiveTracks = (Object.keys(this.tracks) as ('rain' | 'fire' | 'wind')[]).some(
+      (key) => this.tracks[key].userVolume > 0
+    );
+    if (hasActiveTracks || this.ctx) {
+      (Object.keys(this.tracks) as ('rain' | 'fire' | 'wind')[]).forEach((key) => {
+        this.syncTrackPlayback(this.tracks[key]);
+      });
+    }
   }
 
   public setMasterMuted(muted: boolean) {
