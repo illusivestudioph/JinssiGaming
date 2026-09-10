@@ -447,13 +447,14 @@
     margin: 0;
     color: var(--hero-title-color);
     font-family: 'Matcha Mint', 'Fredoka', 'Nunito', sans-serif;
-    font-size: clamp(1.75rem, 3.6vw, 3.25rem);
+    font-size: clamp(1.18rem, 4.8vw, 2.75rem);
     font-weight: 700;
     letter-spacing: 0.015em;
-    line-height: 1.18;
+    line-height: 1.22;
     text-shadow: 0.08rem 0.1rem 0 var(--theme-accent-soft, rgba(0, 0, 0, 0.06));
     transition: color 0.4s ease, text-shadow 0.3s ease, transform 0.3s ease;
     cursor: default;
+    text-wrap: balance;
   }
 
   .magnetic-text-container {

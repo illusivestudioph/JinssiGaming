@@ -55,10 +55,10 @@ export function GameDirectory({
             <Gamepad2 className="w-3.5 h-3.5 text-peach-600" />
             <span>Step-by-step Guides & Tidying Games</span>
           </div>
-          <h2 className="font-display text-2xl sm:text-3xl font-extrabold text-ink-900 tracking-tight">
+          <h2 className="font-display text-2xl sm:text-3xl font-extrabold text-ink-900 tracking-tight text-balance">
             Pick a little world to tidy up
           </h2>
-          <p className="text-sm text-ink-700 font-sans mt-1">
+          <p className="text-sm text-ink-700 font-sans mt-1 text-balance">
             Cozy checklists for shelves, shops, ponds, cellars, and every charming mess in between.
           </p>
         </div>

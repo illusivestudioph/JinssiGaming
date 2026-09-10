@@ -50,8 +50,8 @@ export function HomeBookshelfSection({
             <BookMarked className="w-3.5 h-3.5 text-peach-600" />
             <span>Public Domain Archive & Free Library</span>
           </div>
-          <h2 className="font-display text-2xl sm:text-3xl font-extrabold text-ink-900 tracking-tight">
-            Authentic Classics & Unabridged Literature
+          <h2 className="font-display text-2xl sm:text-3xl font-extrabold text-ink-900 tracking-tight text-balance">
+            Project Gutenberg Public Shelf
           </h2>
           <p className="text-sm text-ink-700 font-sans mt-1">
             Read complete, unabridged editions directly from Project Gutenberg archives with authentic book covers.

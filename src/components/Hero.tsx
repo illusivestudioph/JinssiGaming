@@ -36,7 +36,7 @@ export function Hero() {
           text={"Your Cozy Sanctuary for\nOrganizing Games & Quiet Stories."}
           className="hero-title"
         />
-        <p className="hero-description mt-4 max-w-2xl mx-auto">
+        <p className="hero-description mt-4 max-w-2xl mx-auto text-balance">
           Step-by-step visual walkthroughs for peaceful organizing games, soothing classic stories to read, and calming lo-fi soundscapes to help you unwind.
         </p>
       </div>
