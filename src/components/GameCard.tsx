@@ -23,74 +23,77 @@ export function GameCard({ game, onClick, completedCount = 0 }: GameCardProps) {
   const allDone = completedCount === totalSteps && totalSteps > 0;
 
   return (
-    <button
+    <article
       onClick={onClick}
-      className="game-doodle-card text-left w-full group focus:outline-none focus-visible:ring-2 focus-visible:ring-peach-300"
-      style={{ '--game-accent': game.accentColor } as React.CSSProperties}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onClick();
+        }
+      }}
+      tabIndex={0}
+      role="button"
+      className="notepad-card group cursor-pointer flex flex-col justify-between hover:-translate-y-1 transition-all duration-300 shadow-cozy-md h-full rounded-2xl text-left select-none focus:outline-none focus-visible:ring-2 focus-visible:ring-peach-400"
     >
-      <span className="game-doodle game-doodle-swirl" aria-hidden="true">〰</span>
+      <div>
+        {/* Cover Photo Header: exactly matching h-52 of Bookshelf and Journal cards */}
+        <div className="h-52 relative overflow-hidden bg-cream-200 rounded-t-[1.1rem]">
+          <img
+            src={game.coverImage}
+            alt={game.coverAlt}
+            loading="lazy"
+            decoding="async"
+            width={600}
+            height={400}
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+          <span className="absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-ink-900/80 backdrop-blur-sm text-cream-50 shadow-cozy-sm">
+            {game.category}
+          </span>
+          {allDone && (
+            <span className="absolute top-2.5 right-2.5 text-[10px] font-bold px-2 py-0.5 rounded-md bg-sage-300 text-ink-900 shadow-cozy-sm">
+              Complete!
+            </span>
+          )}
+        </div>
 
-      {allDone && (
-        <span className="game-complete-sticker animate-pop">
-          Complete!
-        </span>
-      )}
-
-      {/* Image header */}
-      <div className="game-card-photo">
-        <img
-          src={game.coverImage}
-          alt={game.coverAlt}
-          loading="lazy"
-          decoding="async"
-          width={600}
-          height={400}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-        />
+        {/* Card Body: padding p-5 and font-size matching Bookshelf and Journal cards */}
+        <div className="p-5">
+          <h3 className="font-display font-bold text-lg sm:text-xl text-ink-900 group-hover:text-peach-600 transition-colors line-clamp-1 mb-1.5 leading-snug">
+            {game.title}
+          </h3>
+          <p className="text-xs text-tan-500 font-bold mb-2">
+            by {game.developer}
+          </p>
+          <p className="text-xs sm:text-sm text-ink-700 font-sans line-clamp-2 leading-relaxed mb-4">
+            {game.description}
+          </p>
+        </div>
       </div>
 
-      {/* Card body */}
-      <div className="game-doodle-content">
-        <span
-          className="game-doodle-badge category-accent-pill"
-          style={{
-            backgroundColor: 'var(--theme-accent)',
-            color: 'var(--theme-accent-text)',
-          }}
-        >
-          {game.category}
-        </span>
-        <h3 className="game-doodle-title">
-          {game.title}
-        </h3>
-        <p className="text-xs text-tan-500 font-semibold mb-3">
-          by {game.developer}
-        </p>
-        <p className="text-sm text-ink-700 leading-relaxed mb-4 line-clamp-3">
-          {game.description}
-        </p>
-
+      {/* Card Footer: matching border-t border-tan-200/60 */}
+      <div className="px-5 pb-5 pt-2 border-t border-tan-200/60 flex items-center justify-between text-xs font-bold text-peach-600">
         {/* Progress bar */}
-        <div className="game-card-progress flex items-center gap-3">
-          <div className="flex-1 h-2.5 rounded-full bg-cream-300 overflow-hidden progress-bar-track">
+        <div className="flex items-center gap-2">
+          <div className="w-16 h-2 rounded-full bg-cream-300 overflow-hidden progress-bar-track">
             <div
               className="h-full rounded-full transition-all duration-500 progress-bar-fill"
               style={{
                 width: `${progressPercent}%`,
-                backgroundColor: 'var(--theme-accent)',
+                backgroundColor: 'var(--theme-accent, #fd9a4d)',
               }}
             />
           </div>
-          <span className="text-xs font-bold text-tan-500 whitespace-nowrap">
+          <span className="text-[11px] font-bold text-tan-500 whitespace-nowrap">
             {completedCount}/{totalSteps}
           </span>
         </div>
 
-        <div className="flex items-center gap-1 mt-4 text-sm font-semibold text-tan-600 group-hover:text-ink-900 transition-colors">
+        <div className="flex items-center gap-1 group-hover:translate-x-0.5 transition-transform text-xs font-bold text-peach-600">
           <span>Read walkthrough</span>
-          <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+          <ArrowRight className="w-3.5 h-3.5" />
         </div>
       </div>
-    </button>
+    </article>
   );
 }

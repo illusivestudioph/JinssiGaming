@@ -45,45 +45,48 @@ export function HomeJournalSection({
       </div>
 
       {/* Featured 3 Articles Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pt-3">
         {featuredArticles.map((article) => (
           <article
             key={article.id}
             onClick={() => onSelectArticle(article)}
-            className="notepad-card group cursor-pointer flex flex-col justify-between hover:-translate-y-1 transition-all duration-300 shadow-cozy-md"
+            className="notepad-card group cursor-pointer flex flex-col justify-between hover:-translate-y-1 transition-all duration-300 shadow-cozy-md h-full rounded-2xl"
           >
             <div>
-              <div className="h-44 relative overflow-hidden bg-cream-200 rounded-t-[1.1rem]">
+              <div className="h-52 relative overflow-hidden bg-cream-200 rounded-t-[1.1rem]">
                 <img
                   src={article.coverImage}
                   alt={article.coverAlt}
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 filter saturate-90 group-hover:saturate-100"
                   loading="lazy"
                 />
-                <span className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-md bg-ink-900/80 backdrop-blur-sm text-cream-50 text-[11px] font-bold">
+                <span className="absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-ink-900/80 backdrop-blur-sm text-cream-50 shadow-cozy-sm">
                   {article.category}
                 </span>
-                <span className="absolute top-2.5 right-2.5 inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-cream-50/90 backdrop-blur-sm text-ink-800 text-[11px] font-bold shadow-cozy-sm">
+                <span className="absolute top-2.5 right-2.5 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-cream-50/95 backdrop-blur-sm text-ink-800 text-[10px] font-bold shadow-cozy-sm">
                   <Clock className="w-3 h-3 text-peach-500" />
                   {article.readTimeMinutes} min
                 </span>
               </div>
 
               <div className="p-5">
-                <h3 className="font-display font-bold text-lg text-ink-900 group-hover:text-peach-600 transition-colors line-clamp-2 leading-snug mb-2">
+                <h3 className="font-display font-bold text-lg sm:text-xl text-ink-900 group-hover:text-peach-600 transition-colors line-clamp-1 mb-1.5 leading-snug">
                   {article.title}
                 </h3>
-                <p className="text-xs text-ink-700 line-clamp-2 font-sans leading-relaxed">
+                <p className="text-xs text-tan-500 font-bold mb-2">
+                  {article.date} • By Jinssi
+                </p>
+                <p className="text-xs sm:text-sm text-ink-700 font-sans line-clamp-2 leading-relaxed mb-4">
                   {article.subtitle}
                 </p>
               </div>
             </div>
 
-            <div className="px-5 pb-4 pt-2 border-t border-tan-200/50 flex items-center justify-between text-xs font-bold text-peach-600">
+            <div className="px-5 pb-5 pt-2 border-t border-tan-200/60 flex items-center justify-between text-xs font-bold text-peach-600">
               <span className="text-tan-500 text-[11px] font-semibold">{article.date}</span>
-              <span className="inline-flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+              <span className="inline-flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
                 Read More
-                <ArrowRight className="w-3 h-3" />
+                <ArrowRight className="w-3.5 h-3.5" />
               </span>
             </div>
           </article>

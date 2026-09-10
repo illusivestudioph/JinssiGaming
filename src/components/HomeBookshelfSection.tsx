@@ -90,7 +90,7 @@ export function HomeBookshelfSection({
             <article
               key={book.id}
               onClick={() => !isLoadingThis && handleReadBook(book)}
-              className="notepad-card group cursor-pointer flex flex-col justify-between hover:-translate-y-1 transition-all duration-300 shadow-cozy-md"
+              className="notepad-card group cursor-pointer flex flex-col justify-between hover:-translate-y-1 transition-all duration-300 shadow-cozy-md h-full rounded-2xl"
             >
               <div>
                 <div className="book-cover-container h-52 relative overflow-hidden bg-cream-200 flex items-center justify-center rounded-t-[1.1rem]">
@@ -100,7 +100,7 @@ export function HomeBookshelfSection({
                     className="w-full h-full object-contain p-2 transition-transform duration-500 group-hover:scale-105"
                     loading="lazy"
                   />
-                  <div className="public-domain-tag absolute top-3 right-3 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-cozy-sm">
+                  <div className="public-domain-tag absolute top-2.5 right-2.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-cozy-sm">
                     Public Domain
                   </div>
                 </div>
@@ -118,7 +118,7 @@ export function HomeBookshelfSection({
                     </span>
                   </div>
 
-                  <h3 className="font-display font-bold text-base sm:text-lg text-ink-900 group-hover:text-peach-600 transition-colors line-clamp-1 mb-1">
+                  <h3 className="font-display font-bold text-lg sm:text-xl text-ink-900 group-hover:text-peach-600 transition-colors line-clamp-1 mb-1.5 leading-snug">
                     {book.title}
                   </h3>
 
@@ -126,13 +126,13 @@ export function HomeBookshelfSection({
                     By {authorName}
                   </p>
 
-                  <p className="text-xs sm:text-sm text-ink-700 font-sans line-clamp-3 leading-relaxed mb-4">
+                  <p className="text-xs sm:text-sm text-ink-700 font-sans line-clamp-2 leading-relaxed mb-4">
                     {book.subjects.slice(0, 3).join(' • ')}
                   </p>
                 </div>
               </div>
 
-              <div className="px-5 pb-5 pt-2 border-t border-tan-200 flex items-center justify-between text-xs font-bold text-peach-600">
+              <div className="px-5 pb-5 pt-2 border-t border-tan-200/60 flex items-center justify-between text-xs font-bold text-peach-600">
                 <span className="flex items-center gap-1 text-tan-500 font-normal">
                   <Coffee className="w-3.5 h-3.5 text-peach-500" />
                   Gutenberg Archive
