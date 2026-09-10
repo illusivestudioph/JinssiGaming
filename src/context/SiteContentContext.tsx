@@ -164,9 +164,9 @@ function normalizeContent(parsed: Partial<SavedContent> | null | undefined): Sav
   }
 
   return {
-    games: Array.isArray(parsed?.games) ? parsed.games : initialGames,
+    games: Array.isArray(parsed?.games) && parsed.games.length > 0 ? parsed.games : initialGames,
     articles: normalizedArticles,
-    stories: normalizedStories,
+    stories: normalizedStories.length > 0 ? normalizedStories : initialStories,
     heroImage: parsed?.heroImage === '/banner.jpeg'
       ? defaultContent.heroImage
       : typeof parsed?.heroImage === 'string' ? parsed.heroImage : defaultContent.heroImage,
@@ -277,7 +277,24 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
           const localTimestamp = new Date(contentRef.current.updated_at).getTime();
 
           // If local has newer modifications (e.g. edited right before reload/offline), preserve local and push to Supabase
+          // Safety: ensure a stale local cache cannot accidentally wipe games or stories present in remote
           if (localTimestamp > remoteTimestamp) {
+            const localGameIds = new Set(contentRef.current.games.map((g) => g.id));
+            const missingGames = remoteNormalized.games.filter((rg) => !localGameIds.has(rg.id));
+            const localStoryIds = new Set(contentRef.current.stories.map((s) => s.id));
+            const missingStories = remoteNormalized.stories.filter((rs) => !localStoryIds.has(rs.id));
+
+            if (missingGames.length > 0 || missingStories.length > 0) {
+              const merged: SavedContent = {
+                ...contentRef.current,
+                games: [...contentRef.current.games, ...missingGames],
+                stories: [...contentRef.current.stories, ...missingStories],
+                updated_at: new Date().toISOString(),
+              };
+              contentRef.current = merged;
+              setContent(merged);
+            }
+
             setSyncStatus('saving');
             const { error: pushError } = await supabase.from('site_content').upsert({
               id: 'default',

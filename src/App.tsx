@@ -466,7 +466,7 @@ function WalkthroughsPage({
         </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pt-3">
         {games.map((game) => {
           const totalSteps = game.walkthrough.reduce(
             (sum, ch) => sum + ch.steps.length,
@@ -478,9 +478,9 @@ function WalkthroughsPage({
             <button
               key={game.id}
               onClick={() => onSelectGame(game)}
-              className="game-summary-card cozy-card cozy-card-hover text-left w-full overflow-hidden group focus:outline-none focus:ring-2 focus:ring-peach-300"
+              className="game-summary-card cozy-card cozy-card-hover text-left w-full group focus:outline-none focus:ring-2 focus:ring-peach-300"
             >
-              <div className="h-32 relative overflow-hidden">
+              <div className="h-32 relative overflow-hidden rounded-t-[1.35rem]">
                 <img
                   src={game.coverImage}
                   alt={game.coverAlt}
