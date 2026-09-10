@@ -429,11 +429,11 @@
     margin: 0;
     color: var(--hero-title-color);
     font-family: 'Fredoka', 'Nunito', sans-serif;
-    font-size: clamp(1.95rem, 3.8vw, 3.35rem);
+    font-size: clamp(2rem, 4.2vw, 3.1rem);
     font-weight: 700;
     letter-spacing: -0.015em;
-    line-height: 1.12;
-    text-shadow: var(--hero-title-shadow);
+    line-height: 1.15;
+    text-shadow: 0.06rem 0.08rem 0 var(--theme-accent-soft, rgba(0, 0, 0, 0.06));
     transition: color 0.4s ease, text-shadow 0.4s ease;
   }
 
@@ -444,11 +444,10 @@
   .hero-description {
     width: 100%;
     color: var(--hero-desc-color);
-    font-size: clamp(0.95rem, 1.4vw, 1.15rem);
-    font-weight: 700;
-    line-height: 1.45;
-    text-shadow: var(--hero-desc-shadow);
-    transition: color 0.4s ease, text-shadow 0.4s ease;
+    font-size: clamp(1rem, 1.35vw, 1.15rem);
+    font-weight: 600;
+    line-height: 1.55;
+    transition: color 0.4s ease;
   }
 
   .site-nav-link {

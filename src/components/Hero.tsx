@@ -4,31 +4,33 @@ export function Hero() {
   const { heroImage } = useSiteContent();
 
   return (
-    <div className="relative w-full h-[64vh] min-h-[540px] max-h-[750px] flex items-end justify-center overflow-hidden pb-8 sm:pb-12">
-      
-      {/* Background Image with feathered mask - aligned to top so Tuturo character artwork is completely visible above text */}
-      <div 
-        className="absolute inset-0 w-full h-full bg-cover bg-[center_top] bg-no-repeat z-0 pointer-events-none"
-        style={{ 
-          backgroundImage: `url(${heroImage})`,
-          WebkitMaskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 50%, rgba(0,0,0,0.3) 78%, rgba(0,0,0,0) 100%)',
-          maskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 50%, rgba(0,0,0,0.3) 78%, rgba(0,0,0,0) 100%)',
-        }}
-      />
-      
-      {/* Seamless feathered gradient blend into page background using theme variables */}
-      <div className="absolute inset-0 z-10 pointer-events-none hero-fade-overlay" />
+    <section className="w-full flex flex-col items-center">
+      {/* 1. Cover Banner: Pristine artwork with zero text overlay covering Tuturo */}
+      <div className="relative w-full h-[240px] sm:h-[340px] md:h-[420px] lg:h-[480px] overflow-hidden bg-cream-100">
+        <div 
+          className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat pointer-events-none"
+          style={{ 
+            backgroundImage: `url(${heroImage})`,
+          }}
+        />
+        {/* Soft subtle feathered fade at the bottom to melt into the page background */}
+        <div 
+          className="absolute inset-x-0 bottom-0 h-20 sm:h-28 pointer-events-none" 
+          style={{
+            background: 'linear-gradient(to bottom, transparent 0%, var(--hero-fade-solid) 100%)',
+          }}
+        />
+      </div>
 
-      {/* Hero Text Content - sits in the lower feathered gradient below the character artwork */}
-      <div className="hero-copy relative z-20 flex flex-col items-center justify-center px-4 text-center animate-fade-in max-w-3xl mx-auto">
+      {/* 2. Welcoming Intro Content: Cleanly positioned below the banner */}
+      <div className="hero-copy relative z-10 flex flex-col items-center justify-center px-4 pt-6 sm:pt-8 pb-1 text-center animate-fade-in max-w-3xl mx-auto">
         <h1 className="hero-title">
-          A cozy guide to organizing games &amp; quiet stories.
+          Your cozy sanctuary for organizing games &amp; quiet stories.
         </h1>
         <p className="hero-description mt-3 max-w-xl">
-          Step-by-step visual walkthroughs for peaceful organizing games, quiet stories to read, and calming lo-fi soundscapes.
+          Step-by-step visual walkthroughs for peaceful organizing games, soothing classic stories to read, and calming lo-fi soundscapes to help you unwind.
         </p>
       </div>
-      
-    </div>
+    </section>
   );
 }
