@@ -1,12 +1,17 @@
-import React, { useRef, useEffect, useCallback, useMemo } from 'react';
+import React, { useRef, useEffect, useState, useCallback, useMemo } from 'react';
 
-interface MagneticTextProps {
+interface MagneticRollingTextProps {
   text: string;
   className?: string;
   as?: 'h1' | 'h2' | 'h3' | 'h4' | 'span' | 'div';
   strength?: number;
   radius?: number;
   maxDisplacement?: number;
+  duplicateCount?: number;
+  rollDuration?: number;
+  staggerDelay?: number;
+  blurIntensity?: number;
+  autoPlay?: boolean;
 }
 
 interface LetterState {
@@ -21,15 +26,43 @@ export function MagneticText({
   text,
   className = '',
   as: Component = 'span',
-  strength = 0.38,
-  radius = 110,
-  maxDisplacement = 18,
-}: MagneticTextProps) {
+  strength = 0.4,
+  radius = 120,
+  maxDisplacement = 20,
+  duplicateCount = 6,
+  rollDuration = 1.1,
+  staggerDelay = 0.025,
+  blurIntensity = 3.5,
+  autoPlay = true,
+}: MagneticRollingTextProps) {
   const containerRef = useRef<HTMLElement | null>(null);
   const lettersRef = useRef<LetterState[]>([]);
   const mousePosRef = useRef<{ x: number; y: number } | null>(null);
   const animFrameId = useRef<number | null>(null);
   const isHoveredRef = useRef(false);
+
+  // Rolling animation state
+  const [isRolling, setIsRolling] = useState(false);
+  const [replayKey, setReplayKey] = useState(0);
+
+  // Start roll on mount
+  useEffect(() => {
+    if (autoPlay) {
+      const timer = setTimeout(() => {
+        setIsRolling(true);
+      }, 80);
+      return () => clearTimeout(timer);
+    }
+  }, [autoPlay, replayKey]);
+
+  const handleReplay = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsRolling(false);
+    setTimeout(() => {
+      setReplayKey((k) => k + 1);
+      setIsRolling(true);
+    }, 40);
+  };
 
   // Split text into words and letters while preserving spaces
   const words = useMemo(() => {
@@ -39,6 +72,7 @@ export function MagneticText({
     }));
   }, [text]);
 
+  // Magnetic cursor physics loop (60-120fps direct DOM manipulation)
   const updatePhysics = useCallback(() => {
     let hasMotion = false;
     const mouse = mousePosRef.current;
@@ -58,12 +92,10 @@ export function MagneticText({
         const dist = Math.hypot(dx, dy);
 
         if (dist < radius) {
-          // Non-linear falloff (stronger near the cursor, soft at edges)
-          const falloff = Math.pow(1 - dist / radius, 1.6);
+          const falloff = Math.pow(1 - dist / radius, 1.5);
           const pullX = dx * strength * falloff;
           const pullY = dy * strength * falloff;
 
-          // Clamp max displacement so text stays readable and doesn't collide wildly
           item.targetX = Math.max(-maxDisplacement, Math.min(maxDisplacement, pullX));
           item.targetY = Math.max(-maxDisplacement, Math.min(maxDisplacement, pullY));
         } else {
@@ -75,13 +107,12 @@ export function MagneticText({
         item.targetY = 0;
       }
 
-      // Smooth elastic lerp towards target
+      // Smooth elastic lerp toward target
       const prevX = item.currentX;
       const prevY = item.currentY;
       item.currentX += (item.targetX - item.currentX) * 0.22;
       item.currentY += (item.targetY - item.currentY) * 0.22;
 
-      // Check if letter is still in motion
       if (
         Math.abs(item.currentX - item.targetX) > 0.02 ||
         Math.abs(item.currentY - item.targetY) > 0.02 ||
@@ -111,9 +142,7 @@ export function MagneticText({
   }, [updatePhysics]);
 
   const handlePointerMove = (e: React.PointerEvent) => {
-    // Only apply on pointer devices that support hover (mouse / trackpad)
     if (e.pointerType === 'touch') return;
-
     mousePosRef.current = { x: e.clientX, y: e.clientY };
     isHoveredRef.current = true;
     startAnimation();
@@ -140,7 +169,6 @@ export function MagneticText({
     };
   }, []);
 
-  // Register DOM element refs
   const registerLetterRef = (el: HTMLSpanElement | null, idx: number) => {
     if (el) {
       if (!lettersRef.current[idx]) {
@@ -162,27 +190,65 @@ export function MagneticText({
   return (
     <Component
       ref={containerRef as any}
-      className={`magnetic-text-container ${className}`}
+      className={`magnetic-rolling-text-container select-none ${className}`}
       onPointerEnter={handlePointerEnter}
       onPointerMove={handlePointerMove}
       onPointerLeave={handlePointerLeave}
+      onClick={handleReplay}
+      title="Click to roll text again"
       aria-label={text}
     >
       {words.map((w, wordIdx) => (
         <span
-          key={`word-${wordIdx}`}
-          className="inline-block whitespace-nowrap mr-[0.28em] last:mr-0"
+          key={`word-${wordIdx}-${replayKey}`}
+          className="inline-block whitespace-nowrap mr-[0.28em] last:mr-0 align-top"
           aria-hidden="true"
         >
-          {w.letters.map((char, charIdx) => {
+          {w.letters.map((char) => {
             const currentIdx = globalLetterIdx++;
+            const charDelay = currentIdx * staggerDelay;
+            const duplicates = Array(duplicateCount).fill(char);
+
+            const scrollPercent = ((duplicateCount - 1) / duplicateCount) * 100;
+
             return (
               <span
-                key={`char-${wordIdx}-${charIdx}`}
+                key={`char-${currentIdx}`}
                 ref={(el) => registerLetterRef(el, currentIdx)}
-                className="inline-block will-change-transform select-none transition-colors duration-150"
+                className="inline-block will-change-transform align-top"
+                style={{
+                  height: '1.18em',
+                  overflow: 'hidden',
+                  verticalAlign: 'top',
+                }}
               >
-                {char}
+                {/* Rolling Strip Column */}
+                <span
+                  className="flex flex-col items-center justify-start"
+                  style={{
+                    transform: isRolling
+                      ? `translate3d(0, -${scrollPercent.toFixed(4)}%, 0)`
+                      : 'translate3d(0, 0, 0)',
+                    transition: isRolling
+                      ? `transform ${rollDuration}s cubic-bezier(0.25, 0.46, 0.45, 0.94) ${charDelay}s, filter ${rollDuration * 0.8}s ease-out ${charDelay}s`
+                      : 'none',
+                    filter: isRolling ? 'blur(0px)' : `blur(${blurIntensity}px)`,
+                    willChange: 'transform, filter',
+                  }}
+                >
+                  {duplicates.map((dupChar, dIdx) => (
+                    <span
+                      key={`dup-${dIdx}`}
+                      className="inline-flex items-center justify-center leading-none"
+                      style={{
+                        height: '1.18em',
+                        lineHeight: '1.18em',
+                      }}
+                    >
+                      {dupChar}
+                    </span>
+                  ))}
+                </span>
               </span>
             );
           })}
