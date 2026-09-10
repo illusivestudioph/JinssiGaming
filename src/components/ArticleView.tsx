@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import type { Article } from '@/data/articles';
 import { useSiteContent } from '@/context/SiteContentContext';
 import { CommentSection } from './CommentSection';
+import { getOptimizedImageUrl } from '@/utils/imageOptimization';
 import {
   ArrowLeft,
   Clock,
@@ -158,9 +159,11 @@ export function ArticleView({
           {/* Featured Cover Image */}
           <div className="relative rounded-2xl overflow-hidden mb-10 shadow-cozy-md">
             <img
-              src={article.coverImage}
+              src={getOptimizedImageUrl(article.coverImage, { width: 1200, quality: 80, format: 'webp' })}
               alt={article.coverAlt}
               className="w-full h-auto max-h-[440px] object-cover"
+              loading="lazy"
+              decoding="async"
             />
             {article.coverAlt && (
               <p className="text-xs text-tan-500 p-2.5 bg-cream-50/90 text-center italic border-t border-tan-200/50">
@@ -188,10 +191,11 @@ export function ArticleView({
                 {section.image && (
                   <div className="my-6 rounded-xl overflow-hidden shadow-cozy-sm border border-tan-200">
                     <img
-                      src={section.image}
+                      src={getOptimizedImageUrl(section.image, { width: 900, quality: 80, format: 'webp' })}
                       alt={section.imageAlt || 'Illustration'}
                       className="w-full h-auto max-h-96 object-cover"
                       loading="lazy"
+                      decoding="async"
                     />
                     {section.imageAlt && (
                       <p className="text-xs text-tan-500 p-2 bg-cream-50 text-center italic">

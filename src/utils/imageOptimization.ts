@@ -97,3 +97,59 @@ export async function convertImageToWebp(
     img.src = objectUrl;
   });
 }
+export interface ImageTransformOptions {
+  width?: number;
+  height?: number;
+  quality?: number;
+  format?: 'webp' | 'origin';
+  resize?: 'cover' | 'contain' | 'fill';
+}
+
+/**
+ * Transforms an image URL to use Supabase Storage Image Transformation API or CDN resizing.
+ * Automatically appends width, height, quality=80, and format=webp query parameters
+ * to dramatically reduce payload size down to under 50-100KB per image.
+ */
+export function getOptimizedImageUrl(
+  url: string | undefined | null,
+  options: ImageTransformOptions = {}
+): string {
+  if (!url || typeof url !== 'string') return '';
+  const { width = 600, height, quality = 80, format = 'webp' } = options;
+
+  try {
+    // 1. Supabase Storage Transformations
+    if (url.includes('/storage/v1/object/public/') || url.includes('/storage/v1/render/image/public/')) {
+      const urlObj = new URL(url);
+      urlObj.searchParams.set('width', width.toString());
+      if (height) urlObj.searchParams.set('height', height.toString());
+      urlObj.searchParams.set('quality', quality.toString());
+      urlObj.searchParams.set('format', format);
+      return urlObj.toString();
+    }
+
+    // 2. Unsplash Dynamic Optimization
+    if (url.includes('images.unsplash.com')) {
+      const urlObj = new URL(url);
+      urlObj.searchParams.set('w', width.toString());
+      if (height) urlObj.searchParams.set('h', height.toString());
+      urlObj.searchParams.set('q', quality.toString());
+      urlObj.searchParams.set('auto', 'format');
+      return urlObj.toString();
+    }
+
+    // 3. Pexels Dynamic Optimization
+    if (url.includes('images.pexels.com')) {
+      const urlObj = new URL(url);
+      urlObj.searchParams.set('w', width.toString());
+      if (height) urlObj.searchParams.set('h', height.toString());
+      urlObj.searchParams.set('auto', 'compress');
+      urlObj.searchParams.set('cs', 'tinysrgb');
+      return urlObj.toString();
+    }
+
+    return url;
+  } catch {
+    return url;
+  }
+}

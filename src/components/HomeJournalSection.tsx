@@ -1,6 +1,7 @@
 import { useSiteContent } from '@/context/SiteContentContext';
 import type { Article } from '@/data/articles';
 import { BookOpen, Clock, ArrowRight, Coffee } from 'lucide-react';
+import { getOptimizedImageUrl } from '@/utils/imageOptimization';
 
 interface HomeJournalSectionProps {
   onSelectArticle: (article: Article) => void;
@@ -55,10 +56,13 @@ export function HomeJournalSection({
             <div>
               <div className="h-52 relative overflow-hidden bg-cream-200 rounded-t-[1.1rem]">
                 <img
-                  src={article.coverImage}
+                  src={getOptimizedImageUrl(article.coverImage, { width: 600, quality: 80, format: 'webp' })}
                   alt={article.coverAlt}
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 filter saturate-90 group-hover:saturate-100"
                   loading="lazy"
+                  decoding="async"
+                  width={600}
+                  height={400}
                 />
                 <span className="absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-ink-900/80 backdrop-blur-sm text-cream-50 shadow-cozy-sm">
                   {article.category}

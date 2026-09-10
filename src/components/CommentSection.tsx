@@ -34,38 +34,85 @@ export function CommentSection({ gameId }: { gameId: string }) {
     return () => listener.subscription.unsubscribe();
   }, []);
 
-  useEffect(() => {
-    void supabase
+  const PAGE_SIZE = 15;
+  const [page, setPage] = useState(0);
+  const [hasMore, setHasMore] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
+
+  const fetchCommentsPage = async (pageNum: number, isAppend = false) => {
+    if (isAppend) setLoadingMore(true);
+    const from = pageNum * PAGE_SIZE;
+    const to = from + PAGE_SIZE - 1;
+
+    const { data, error } = await supabase
       .from('comments')
       .select('id, user_name, text, created_at, parent_id')
       .eq('game_id', gameId)
       .order('created_at', { ascending: false })
-      .then(({ data, error }) => {
-        if (error) console.error('Unable to load comments:', error.message);
-        setComments((data as Comment[]) || []);
-      });
+      .range(from, to);
 
-    void supabase
-      .from('comment_reactions')
-      .select('comment_id, user_id')
-      .eq('reaction', 'heart')
-      .then(({ data, error }) => {
-        if (error) {
-          console.error('Unable to load comment reactions:', error.message);
-          return;
-        }
-        const rows = data || [];
-        const counts: Record<string, number> = {};
-        rows.forEach((row) => {
-          const commentId = String(row.comment_id);
-          counts[commentId] = (counts[commentId] || 0) + 1;
-        });
-        setReactionCounts(counts);
-        if (user) {
-          setLikedComments(new Set(rows.filter((row) => row.user_id === user.id).map((row) => String(row.comment_id))));
-        }
-      });
+    if (error) {
+      console.error('Unable to load comments:', error.message);
+      if (isAppend) setLoadingMore(false);
+      return;
+    }
+
+    const fetched = (data as Comment[]) || [];
+    setHasMore(fetched.length === PAGE_SIZE);
+
+    setComments((prev) => {
+      const merged = isAppend ? [...prev, ...fetched] : fetched;
+
+      // Scoped reactions query: only query reactions for visible comments
+      const commentIds = merged.map((c) => c.id);
+      if (commentIds.length > 0) {
+        void supabase
+          .from('comment_reactions')
+          .select('comment_id, user_id')
+          .in('comment_id', commentIds)
+          .eq('reaction', 'heart')
+          .then(({ data: reactionData, error: reactionError }) => {
+            if (reactionError) {
+              console.error('Unable to load comment reactions:', reactionError.message);
+              return;
+            }
+            const rows = reactionData || [];
+            const counts: Record<string, number> = {};
+            rows.forEach((row) => {
+              const commentId = String(row.comment_id);
+              counts[commentId] = (counts[commentId] || 0) + 1;
+            });
+            setReactionCounts(counts);
+            if (user) {
+              setLikedComments(
+                new Set(
+                  rows
+                    .filter((row) => row.user_id === user.id)
+                    .map((row) => String(row.comment_id))
+                )
+              );
+            }
+          });
+      }
+
+      return merged;
+    });
+
+    if (isAppend) {
+      setPage(pageNum);
+      setLoadingMore(false);
+    }
+  };
+
+  useEffect(() => {
+    setPage(0);
+    void fetchCommentsPage(0, false);
   }, [gameId, user]);
+
+  const handleLoadMore = () => {
+    if (loadingMore || !hasMore) return;
+    void fetchCommentsPage(page + 1, true);
+  };
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -209,6 +256,17 @@ export function CommentSection({ gameId }: { gameId: string }) {
             onSubmitReply={() => void postReply(String(comment.id))}
           />
         ))}
+        {hasMore && (
+          <div className="text-center pt-2">
+            <button
+              onClick={handleLoadMore}
+              disabled={loadingMore}
+              className="site-button bg-cream-100 hover:bg-cream-200 border border-tan-200 text-xs font-bold text-tan-700 px-4 py-2 rounded-xl transition-all shadow-cozy-xs"
+            >
+              {loadingMore ? 'Loading older notes...' : 'Load more notes'}
+            </button>
+          </div>
+        )}
         {comments.length === 0 && (
           <p className="notepad-card p-6 text-center text-sm font-semibold text-tan-500">
             No notes yet. Be the first adventurer to leave one.

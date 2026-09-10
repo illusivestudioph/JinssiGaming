@@ -5,6 +5,7 @@ import { useMusic } from '@/context/MusicContext';
 import { CommentSection } from './CommentSection';
 import { TableOfContents } from './TableOfContents';
 import { ConfettiCanvas } from './ConfettiCanvas';
+import { getOptimizedImageUrl } from '@/utils/imageOptimization';
 import {
   ArrowLeft,
   Check,
@@ -236,8 +237,10 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
           }}
         >
           <img
-            src={game.coverImage}
+            src={getOptimizedImageUrl(game.coverImage, { width: 1200, quality: 80, format: 'webp' })}
             alt={game.coverAlt}
+            loading="lazy"
+            decoding="async"
             className="w-full h-full object-cover"
             style={{
               borderTopLeftRadius: 'calc(1.2rem - 0.16rem)',
@@ -730,7 +733,7 @@ function WikiHowStep({
         <div className="px-4 pb-3">
           <div className="rounded-2xl overflow-hidden shadow-cozy-sm bg-cream-200/50 flex items-center justify-center min-h-[220px] sm:min-h-[280px] max-h-[400px] w-full">
             <img
-              src={image}
+              src={getOptimizedImageUrl(image, { width: 800, quality: 80, format: 'webp' })}
               alt={imageAlt || ""}
               loading="lazy"
               decoding="async"

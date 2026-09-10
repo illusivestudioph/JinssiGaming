@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { useSiteContent } from '@/context/SiteContentContext';
 import { articleCategories, type Article } from '@/data/articles';
 import { BookOpen, Clock, Search, Tag, Coffee, ArrowRight } from 'lucide-react';
+import { getOptimizedImageUrl } from '@/utils/imageOptimization';
 
 interface JournalDirectoryProps {
   onSelectArticle: (article: Article) => void;
@@ -122,10 +123,13 @@ export function JournalDirectory({ onSelectArticle }: JournalDirectoryProps) {
                 {/* Article Cover Image */}
                 <div className="h-52 sm:h-60 relative overflow-hidden bg-cream-200 rounded-t-xl">
                   <img
-                    src={article.coverImage}
+                    src={getOptimizedImageUrl(article.coverImage, { width: 600, quality: 80, format: 'webp' })}
                     alt={article.coverAlt}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 filter saturate-90 group-hover:saturate-100"
                     loading="lazy"
+                    decoding="async"
+                    width={600}
+                    height={400}
                   />
                   <div className="absolute top-3 left-3 flex items-center gap-2">
                     <span className="px-2.5 py-1 rounded-lg bg-ink-900/80 backdrop-blur-sm text-cream-50 text-xs font-bold">

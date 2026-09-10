@@ -215,6 +215,8 @@ export function CtaFooter({ onNavigate }: { onNavigate: (view: 'about' | 'privac
                   <img
                     src={selectedWallet.qrCode}
                     alt={`${selectedWallet.name} payment QR code`}
+                    loading="lazy"
+                    decoding="async"
                     className="h-48 w-48 max-w-full object-contain"
                   />
                 </div>
@@ -252,6 +254,8 @@ export function CtaFooter({ onNavigate }: { onNavigate: (view: 'about' | 'privac
                 <img 
                   src={logoImage} 
                   alt="Jinssi Logo" 
+                  loading="lazy"
+                  decoding="async"
                   className="w-16 h-16 sm:w-20 sm:h-20 object-contain" 
                 />
               ) : (

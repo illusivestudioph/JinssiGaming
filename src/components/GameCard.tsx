@@ -1,5 +1,6 @@
 import type { Game } from '@/data/games';
 import { ArrowRight } from 'lucide-react';
+import { getOptimizedImageUrl } from '@/utils/imageOptimization';
 
 function getBadgeTextColor(hexColor: string) {
   const hex = hexColor.replace('#', '');
@@ -39,7 +40,7 @@ export function GameCard({ game, onClick, completedCount = 0 }: GameCardProps) {
         {/* Cover Photo Header: exactly matching h-52 of Bookshelf and Journal cards */}
         <div className="h-52 relative overflow-hidden bg-cream-200 rounded-t-[1.1rem]">
           <img
-            src={game.coverImage}
+            src={getOptimizedImageUrl(game.coverImage, { width: 600, quality: 80, format: 'webp' })}
             alt={game.coverAlt}
             loading="lazy"
             decoding="async"
