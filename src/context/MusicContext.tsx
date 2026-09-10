@@ -17,13 +17,15 @@ const themeStorageKey = 'jinssi-ambient-theme';
 const sfxStorageKey = 'jinssi-sfx-enabled';
 const musicVolumeScale = 0.5;
 
+const SUPABASE_AUDIO_BASE = `${import.meta.env.VITE_SUPABASE_URL || 'https://esjwkwgjnesyvnvuonmd.supabase.co'}/storage/v1/object/public/site-images/audio`;
+
 export type AmbientTheme = 'default' | 'rain' | 'fire' | 'wind';
 
 export const THEME_BGM_TRACKS: Record<AmbientTheme, string> = {
-  default: '/bgm.mp3',
-  rain: '/rain.mp3',
-  fire: '/camp.mp3',
-  wind: '/forest.mp3',
+  default: `${SUPABASE_AUDIO_BASE}/bgm.mp3`,
+  rain: `${SUPABASE_AUDIO_BASE}/rain.mp3`,
+  fire: `${SUPABASE_AUDIO_BASE}/camp.mp3`,
+  wind: `${SUPABASE_AUDIO_BASE}/forest.mp3`,
 };
 
 function readSavedFloat(key: string, defaultVal: number): number {
@@ -143,10 +145,9 @@ export function MusicProvider({ children }: { children: ReactNode }) {
   const playMusic = async () => {
     const audio = audioRef.current;
     if (!audio) return;
-    const targetTrack = THEME_BGM_TRACKS[ambientTheme] || '/bgm.mp3';
-    if (!audio.src.endsWith(targetTrack)) {
+    const targetTrack = THEME_BGM_TRACKS[ambientTheme] || THEME_BGM_TRACKS.default;
+    if (!audio.src || !audio.src.includes(targetTrack)) {
       audio.src = targetTrack;
-      audio.load();
     }
     let volume = userVolume;
     if (muted) {
@@ -316,22 +317,21 @@ export function MusicProvider({ children }: { children: ReactNode }) {
     const audio = audioRef.current;
     if (!audio) return;
 
-    const targetTrack = THEME_BGM_TRACKS[ambientTheme] || '/bgm.mp3';
-    if (!audio.src.endsWith(targetTrack)) {
+    const targetTrack = THEME_BGM_TRACKS[ambientTheme] || THEME_BGM_TRACKS.default;
+    if (audio.src && !audio.src.includes(targetTrack)) {
       const wasPlaying = !audio.paused && !audio.ended;
       audio.src = targetTrack;
-      audio.load();
       if (wasPlaying && !muted && userVolume > 0) {
         void audio.play().catch(() => setAudioError(true));
       }
     }
   }, [ambientTheme, muted, userVolume]);
 
-  // Initialize single persistent Audio element on mount
+  // Initialize single persistent Audio element on mount (idle until user explicitly plays)
   useEffect(() => {
-    const initialTrack = THEME_BGM_TRACKS[ambientTheme] || '/bgm.mp3';
-    const audio = new Audio(initialTrack);
-    audio.autoplay = true;
+    const audio = new Audio();
+    audio.autoplay = false;
+    audio.preload = 'none';
     audio.loop = true;
     audio.setAttribute('playsinline', 'true');
     audio.volume = settingsRef.current.muted ? 0 : settingsRef.current.userVolume * musicVolumeScale;
@@ -345,39 +345,10 @@ export function MusicProvider({ children }: { children: ReactNode }) {
     audio.addEventListener('error', handleError);
     audioRef.current = audio;
 
-    const startAfterInteraction = () => {
-      const settings = settingsRef.current;
-      if (!settings.muted && settings.userVolume > 0 && audio.paused) {
-        void audio
-          .play()
-          .then(() => {
-            window.removeEventListener('pointerdown', startAfterInteraction);
-            window.removeEventListener('keydown', startAfterInteraction);
-          })
-          .catch(() => setAudioError(true));
-      }
-      // Also prime ambient engine
-      if (!settings.muted) {
-        if (settings.ambientRain > 0) ambientEngine.setRainVolume(settings.ambientRain);
-        if (settings.ambientFire > 0) ambientEngine.setFireVolume(settings.ambientFire);
-        if (settings.ambientWind > 0) ambientEngine.setWindVolume(settings.ambientWind);
-      }
-    };
-
-    window.addEventListener('pointerdown', startAfterInteraction, { passive: true });
-    window.addEventListener('keydown', startAfterInteraction, { passive: true });
-
-    audio.load();
-    if (!settingsRef.current.muted && settingsRef.current.userVolume > 0) {
-      void audio.play().catch(() => setAudioError(true));
-    }
-
     return () => {
       audio.removeEventListener('play', handlePlay);
       audio.removeEventListener('pause', handlePause);
       audio.removeEventListener('error', handleError);
-      window.removeEventListener('pointerdown', startAfterInteraction);
-      window.removeEventListener('keydown', startAfterInteraction);
       audio.pause();
       audio.src = '';
       audioRef.current = null;

@@ -22,15 +22,17 @@ interface AmbientTrackState {
   isLoading: boolean;
 }
 
+const SUPABASE_AUDIO_BASE = `${import.meta.env.VITE_SUPABASE_URL || 'https://esjwkwgjnesyvnvuonmd.supabase.co'}/storage/v1/object/public/site-images/audio`;
+
 class AmbientSoundEngine {
   private ctx: AudioContext | null = null;
   private masterGain: GainNode | null = null;
 
-  // Real ambient tracks
+  // Real ambient tracks hosted on Supabase Storage
   private tracks: Record<'rain' | 'fire' | 'wind', AmbientTrackState> = {
     rain: {
       name: 'rain',
-      url: '/dragon-studio-cozy-midnight-rain-02-448573.mp3',
+      url: `${SUPABASE_AUDIO_BASE}/ambient-rain.mp3`,
       volumeScale: 0.75,
       buffer: null,
       gainNode: null,
@@ -42,7 +44,7 @@ class AmbientSoundEngine {
     },
     fire: {
       name: 'fire',
-      url: '/dragon-studio-fire-sounds-356121.mp3',
+      url: `${SUPABASE_AUDIO_BASE}/ambient-fire.mp3`,
       volumeScale: 0.7,
       buffer: null,
       gainNode: null,
@@ -54,7 +56,7 @@ class AmbientSoundEngine {
     },
     wind: {
       name: 'wind',
-      url: '/farshad_hamzavi-ambience-birds-wind-422207.mp3',
+      url: `${SUPABASE_AUDIO_BASE}/ambient-wind.mp3`,
       volumeScale: 0.65,
       buffer: null,
       gainNode: null,
