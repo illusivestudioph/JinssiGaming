@@ -429,10 +429,10 @@
     margin: 0;
     color: var(--hero-title-color);
     font-family: 'Fredoka', 'Nunito', sans-serif;
-    font-size: clamp(2.35rem, 5.5vw, 4.75rem);
+    font-size: clamp(1.95rem, 3.8vw, 3.35rem);
     font-weight: 700;
     letter-spacing: -0.015em;
-    line-height: 1.06;
+    line-height: 1.12;
     text-shadow: var(--hero-title-shadow);
     transition: color 0.4s ease, text-shadow 0.4s ease;
   }
@@ -444,8 +444,8 @@
   .hero-description {
     width: 100%;
     color: var(--hero-desc-color);
-    font-size: clamp(1rem, 2vw, 1.25rem);
-    font-weight: 800;
+    font-size: clamp(0.95rem, 1.4vw, 1.15rem);
+    font-weight: 700;
     line-height: 1.45;
     text-shadow: var(--hero-desc-shadow);
     transition: color 0.4s ease, text-shadow 0.4s ease;
