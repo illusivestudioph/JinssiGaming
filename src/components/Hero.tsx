@@ -20,12 +20,12 @@ export function Hero() {
       <div className="absolute inset-0 z-10 pointer-events-none hero-fade-overlay" />
 
       {/* Hero Text Content */}
-      <div className="hero-copy relative z-20 flex flex-col items-center justify-center px-4 text-center animate-fade-in">
+      <div className="hero-copy relative z-20 flex flex-col items-center justify-center px-4 text-center animate-fade-in max-w-4xl mx-auto">
         <h1 className="hero-title">
-          Your field guide to cozy games.
+          Your cozy sanctuary for organizing games &amp; quiet stories.
         </h1>
-        <p className="hero-description mt-4">
-          Clear, step-by-step visual walkthroughs to help you get unstuck and back to relaxing.
+        <p className="hero-description mt-4 max-w-2xl">
+          Step-by-step visual walkthroughs for peaceful organizing games, soothing classic stories to read, and calming lo-fi soundscapes to help you unwind.
         </p>
       </div>
       

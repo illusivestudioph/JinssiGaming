@@ -407,7 +407,43 @@
   header {
     background-color: var(--header-bg) !important;
     border-color: var(--header-border) !important;
-    transition: background-color 0.4s ease, border-color 0.4s ease;
+    transition: background-color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+  }
+
+  .header-nav-bar {
+    background-color: rgba(255, 255, 255, 0.72);
+    border-color: var(--header-border);
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+  }
+
+  [data-ambient-theme] .header-nav-bar {
+    background-color: rgba(255, 255, 255, 0.75);
+    border-color: var(--header-border);
+  }
+
+  .header-nav-pill-active {
+    background-color: var(--section-kicker-bg) !important;
+    color: var(--section-kicker-color) !important;
+    border: 1px solid var(--theme-accent-border) !important;
+  }
+
+  [data-ambient-theme] .header-nav-pill:not(.header-nav-pill-active) {
+    color: var(--text-body);
+  }
+
+  [data-ambient-theme] .header-nav-pill:not(.header-nav-pill-active):hover {
+    color: var(--text-main);
+    background-color: rgba(255, 255, 255, 0.95);
+  }
+
+  .header-audio-pill {
+    background-color: rgba(255, 255, 255, 0.85);
+    border-color: var(--header-border);
+  }
+
+  [data-ambient-theme] .header-audio-pill {
+    background-color: rgba(255, 255, 255, 0.9);
+    border-color: var(--header-border);
   }
 
   .hero-fade-overlay {
@@ -429,10 +465,10 @@
     margin: 0;
     color: var(--hero-title-color);
     font-family: 'Fredoka', 'Nunito', sans-serif;
-    font-size: clamp(3.25rem, 8vw, 6.8rem);
+    font-size: clamp(2.35rem, 5.5vw, 4.75rem);
     font-weight: 700;
-    letter-spacing: 0;
-    line-height: 0.94;
+    letter-spacing: -0.015em;
+    line-height: 1.06;
     text-shadow: var(--hero-title-shadow);
     transition: color 0.4s ease, text-shadow 0.4s ease;
   }

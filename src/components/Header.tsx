@@ -52,44 +52,97 @@ export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View)
     onNavigate(nextView);
   };
 
+  const navItems: { view: View; label: string; icon: string }[] = [
+    { view: 'home', label: 'Home', icon: '🏠' },
+    { view: 'walkthroughs', label: 'Walkthroughs', icon: '📋' },
+    { view: 'journal', label: 'Journal', icon: '☕' },
+    { view: 'stories', label: 'Stories', icon: '📖' },
+    { view: 'about', label: 'About', icon: '💛' },
+  ];
+
   return (
     <>
-      <header className="bg-cream-100 border-b-2 border-tan-200 sticky top-0 z-40">
-        <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
+      <header className="sticky top-0 z-40 backdrop-blur-md transition-all duration-300 shadow-[0_2px_12px_rgba(0,0,0,0.03)] border-b-2 border-[var(--header-border)]">
+        <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 sm:py-3 flex items-center justify-between">
           
-          {/* LOGO WITH SECRET TRIGGER */}
-          <div className="flex items-center gap-3 cursor-pointer select-none" onClick={handleLogoClick}>
-            <img src={logoImage} alt="Site Logo" className="h-10 w-10 object-contain" />
-            <h1 className="font-display font-bold text-xl text-ink-900">Jinssi</h1>
+          {/* COZY LOGO WITH SECRET TRIGGER */}
+          <div
+            className="flex items-center gap-2.5 cursor-pointer select-none group py-1 px-2.5 -ml-2 rounded-2xl transition-all duration-200 hover:bg-white/60 active:scale-95"
+            onClick={handleLogoClick}
+          >
+            <div className="relative">
+              <img
+                src={logoImage}
+                alt="Site Logo"
+                className="h-9 w-9 sm:h-10 sm:w-10 object-contain drop-shadow-sm group-hover:rotate-6 transition-transform duration-300"
+              />
+            </div>
+            <div className="flex flex-col">
+              <div className="flex items-center gap-1.5">
+                <span className="font-display font-bold text-xl sm:text-2xl text-ink-900 tracking-tight leading-none group-hover:text-[var(--theme-accent)] transition-colors">
+                  Jinssi
+                </span>
+                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-[var(--section-kicker-bg)] text-[var(--section-kicker-color)] border border-[var(--section-kicker-border)] leading-none shadow-cozy-xs">
+                  gaming
+                </span>
+              </div>
+              <span className="text-[10px] font-semibold text-tan-500 hidden sm:inline-block leading-tight mt-0.5">
+                cozy guides &amp; stories ☕
+              </span>
+            </div>
           </div>
 
-          <div className="flex items-center gap-3 sm:gap-4">
-            <nav className="hidden items-center gap-4 md:flex">
-              <button aria-current={view === 'home' ? 'page' : undefined} onClick={() => handleNavigate('home')} className={`site-nav-link ${view === 'home' ? 'text-peach-500' : 'text-tan-600'}`}>Home</button>
-              <button aria-current={view === 'walkthroughs' ? 'page' : undefined} onClick={() => handleNavigate('walkthroughs')} className={`site-nav-link ${view === 'walkthroughs' ? 'text-peach-500' : 'text-tan-600'}`}>Walkthroughs</button>
-              <button aria-current={view === 'journal' ? 'page' : undefined} onClick={() => handleNavigate('journal')} className={`site-nav-link ${view === 'journal' ? 'text-peach-500' : 'text-tan-600'}`}>Journal</button>
-              <button aria-current={view === 'stories' ? 'page' : undefined} onClick={() => handleNavigate('stories')} className={`site-nav-link ${view === 'stories' ? 'text-peach-500' : 'text-tan-600'}`}>Stories</button>
-              <button aria-current={view === 'about' ? 'page' : undefined} onClick={() => handleNavigate('about')} className={`site-nav-link ${view === 'about' ? 'text-peach-500' : 'text-tan-600'}`}>About</button>
-              {view === 'admin' && <span className="font-bold text-earth-500 ml-4">Admin Mode</span>}
+          <div className="flex items-center gap-2 sm:gap-3">
+            {/* COZY NAVIGATION ISLAND */}
+            <nav className="hidden items-center gap-1 md:flex p-1 rounded-full bg-white/70 backdrop-blur-sm border border-tan-200/80 shadow-cozy-xs header-nav-bar">
+              {navItems.map((item) => {
+                const isActive = view === item.view;
+                return (
+                  <button
+                    key={item.view}
+                    aria-current={isActive ? 'page' : undefined}
+                    onClick={() => handleNavigate(item.view)}
+                    className={`header-nav-pill px-3.5 py-1.5 rounded-full text-xs font-bold transition-all duration-200 flex items-center gap-1.5 select-none active:scale-95 ${
+                      isActive
+                        ? 'header-nav-pill-active shadow-cozy-xs'
+                        : 'text-ink-700 hover:text-ink-900 hover:bg-white/80'
+                    }`}
+                  >
+                    <span className="text-xs opacity-90">{item.icon}</span>
+                    <span>{item.label}</span>
+                  </button>
+                );
+              })}
+              {view === 'admin' && (
+                <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-earth-100 text-earth-700 border border-earth-200 ml-1">
+                  Admin Mode
+                </span>
+              )}
             </nav>
 
-            {/* Persistent Header Music & Ambience Control */}
-            <div className="flex items-center gap-1.5 bg-cream-50/90 border border-tan-300/80 rounded-full px-2.5 py-1 shadow-cozy-sm">
+            {/* COZY POCKET RADIO / BGM & AMBIENCE CONTROL */}
+            <div className="flex items-center gap-1 bg-white/80 backdrop-blur-sm border border-tan-300/70 rounded-full p-1 shadow-cozy-xs header-audio-pill">
               <button
                 type="button"
                 onClick={() => void togglePlayback()}
-                className="flex items-center gap-1.5 text-xs font-bold text-ink-800 hover:text-peach-600 transition-colors focus:outline-none"
+                className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold transition-all select-none active:scale-95 ${
+                  playing
+                    ? 'shadow-cozy-xs'
+                    : 'text-ink-800 hover:bg-cream-100'
+                }`}
+                style={
+                  playing
+                    ? {
+                        backgroundColor: 'var(--theme-accent)',
+                        color: 'var(--theme-accent-text, #ffffff)',
+                      }
+                    : undefined
+                }
                 title={playing ? 'Pause cozy background music' : 'Play cozy background music'}
                 aria-label={playing ? 'Pause background music' : 'Play background music'}
               >
-                <span
-                  className={`w-6 h-6 rounded-full flex items-center justify-center transition-all ${
-                    playing
-                      ? 'bg-peach-400 text-white shadow-cozy-sm animate-pulse-gentle'
-                      : 'bg-cream-200 text-tan-600'
-                  }`}
-                >
-                  {playing ? <Pause className="w-3 h-3" /> : <Music className="w-3 h-3" />}
+                <span className="w-4 h-4 flex items-center justify-center">
+                  {playing ? <Pause className="w-3.5 h-3.5" /> : <Music className="w-3.5 h-3.5" />}
                 </span>
                 <span className="hidden sm:inline font-sans text-xs">
                   {playing ? (muted ? 'Muted' : 'Music On') : 'BGM'}
@@ -100,17 +153,29 @@ export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View)
               <button
                 type="button"
                 onClick={() => setShowMixer(true)}
-                className={`p-1 rounded-full transition-colors relative ${
+                className={`p-1.5 rounded-full transition-all relative select-none active:scale-95 ${
                   hasActiveAmbience
-                    ? 'text-peach-600 bg-peach-100 hover:bg-peach-200'
-                    : 'text-tan-500 hover:text-ink-900 hover:bg-cream-200'
+                    ? 'shadow-cozy-xs'
+                    : 'text-tan-500 hover:text-ink-900 hover:bg-cream-100'
                 }`}
-                title="Open Ambient Sound Lounge (Rain, Fireplace, Wind)"
+                style={
+                  hasActiveAmbience
+                    ? {
+                        backgroundColor: 'var(--section-kicker-bg)',
+                        color: 'var(--section-kicker-color)',
+                        border: '1px solid var(--theme-accent-border)',
+                      }
+                    : undefined
+                }
+                title="Open Cozy Sound Lounge (Rain, Campfire, Wind)"
                 aria-label="Open ambient sound mixer"
               >
                 <Sliders className="w-3.5 h-3.5" />
                 {hasActiveAmbience && (
-                  <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-peach-500 ring-1 ring-white" />
+                  <span
+                    className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full ring-1 ring-white"
+                    style={{ backgroundColor: 'var(--theme-accent)' }}
+                  />
                 )}
               </button>
 
@@ -118,14 +183,14 @@ export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View)
                 <button
                   type="button"
                   onClick={toggleMute}
-                  className="p-1 rounded-full text-tan-500 hover:text-ink-900 transition-colors"
+                  className="p-1.5 rounded-full text-tan-500 hover:text-ink-900 hover:bg-cream-100 transition-colors select-none active:scale-95"
                   title={muted ? 'Unmute music' : 'Mute music'}
                   aria-label={muted ? 'Unmute music' : 'Mute music'}
                 >
                   {muted ? (
-                    <VolumeX className="w-3.5 h-3.5 text-tan-400" />
+                    <VolumeX className="w-3.5 h-3.5 text-rose-500" />
                   ) : (
-                    <Volume2 className="w-3.5 h-3.5 text-earth-600" />
+                    <Volume2 className="w-3.5 h-3.5" style={{ color: 'var(--theme-accent)' }} />
                   )}
                 </button>
               )}
@@ -133,57 +198,89 @@ export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View)
 
             <button
               type="button"
-              className="rounded-xl border-2 border-tan-200 bg-cream-50 p-2 text-tan-600 shadow-cozy-sm transition-colors hover:border-peach-300 hover:text-peach-500 md:hidden"
+              className="rounded-full border border-tan-300/80 bg-white/80 p-2 text-ink-700 shadow-cozy-xs transition-all hover:bg-white hover:text-ink-900 active:scale-95 md:hidden"
               onClick={() => {
                 playDropdownSfx();
                 setMobileMenuOpen((open) => !open);
               }}
-
               aria-expanded={mobileMenuOpen}
               aria-controls="mobile-navigation"
               aria-label={mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
             >
-              {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              {mobileMenuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
             </button>
           </div>
         </div>
 
         {mobileMenuOpen && (
-          <nav id="mobile-navigation" className="border-t-2 border-tan-200 px-4 py-3 md:hidden">
-            <div className="flex flex-col gap-1">
-              <button aria-current={view === 'home' ? 'page' : undefined} onClick={() => handleNavigate('home')} className={`site-nav-link text-left ${view === 'home' ? 'text-peach-500' : 'text-tan-600'}`}>Home</button>
-              <button aria-current={view === 'walkthroughs' ? 'page' : undefined} onClick={() => handleNavigate('walkthroughs')} className={`site-nav-link text-left ${view === 'walkthroughs' ? 'text-peach-500' : 'text-tan-600'}`}>Walkthroughs</button>
-              <button aria-current={view === 'journal' ? 'page' : undefined} onClick={() => handleNavigate('journal')} className={`site-nav-link text-left ${view === 'journal' ? 'text-peach-500' : 'text-tan-600'}`}>Journal</button>
-              <button aria-current={view === 'stories' ? 'page' : undefined} onClick={() => handleNavigate('stories')} className={`site-nav-link text-left ${view === 'stories' ? 'text-peach-500' : 'text-tan-600'}`}>Stories</button>
-              <button aria-current={view === 'about' ? 'page' : undefined} onClick={() => handleNavigate('about')} className={`site-nav-link text-left ${view === 'about' ? 'text-peach-500' : 'text-tan-600'}`}>About</button>
-              
-              {/* Mobile volume slider */}
-              <div className="mt-3 pt-3 border-t border-tan-200 flex items-center justify-between gap-3 text-xs text-tan-600 px-1">
-                <span className="font-bold">Music Volume:</span>
-                <input
-                  type="range"
-                  min="0"
-                  max="1"
-                  step="0.05"
-                  value={userVolume}
-                  onChange={(e) => setVolume(Number(e.target.value))}
-                  className="w-28 accent-peach-400"
-                  aria-label="Mobile music volume"
-                />
-              </div>
+          <nav
+            id="mobile-navigation"
+            className="border-t border-[var(--header-border)] px-4 py-4 md:hidden bg-[var(--header-bg)]/98 backdrop-blur-md animate-fade-in shadow-cozy"
+          >
+            <div className="flex flex-col gap-1.5">
+              {navItems.map((item) => {
+                const isActive = view === item.view;
+                return (
+                  <button
+                    key={item.view}
+                    aria-current={isActive ? 'page' : undefined}
+                    onClick={() => handleNavigate(item.view)}
+                    className={`w-full flex items-center justify-between px-4 py-2.5 rounded-2xl text-sm font-bold transition-all select-none active:scale-95 ${
+                      isActive
+                        ? 'header-nav-pill-active shadow-cozy-xs'
+                        : 'text-ink-800 hover:bg-white/80 bg-white/40'
+                    }`}
+                  >
+                    <span className="flex items-center gap-2.5">
+                      <span>{item.icon}</span>
+                      <span>{item.label}</span>
+                    </span>
+                    {isActive && (
+                      <span className="text-[10px] uppercase tracking-wider font-bold opacity-75">
+                        Active
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
 
-              {/* Mobile open ambient lounge */}
-              <button
-                type="button"
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  setShowMixer(true);
-                }}
-                className="mt-2.5 flex items-center justify-center gap-2 w-full py-2 px-3 rounded-xl bg-peach-100 text-peach-700 text-xs font-bold hover:bg-peach-200 transition-colors"
-              >
-                <Sliders className="w-3.5 h-3.5" />
-                Open Sound Lounge (Rain, Fireplace...)
-              </button>
+              {/* Mobile volume slider & Sound Lounge button */}
+              <div className="mt-3 p-3 rounded-2xl bg-white/60 border border-tan-200/80 flex flex-col gap-3">
+                <div className="flex items-center justify-between gap-3 text-xs text-ink-800">
+                  <span className="font-bold flex items-center gap-1.5">
+                    <Music className="w-3.5 h-3.5" style={{ color: 'var(--theme-accent)' }} />
+                    Music Volume:
+                  </span>
+                  <input
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.05"
+                    value={userVolume}
+                    onChange={(e) => setVolume(Number(e.target.value))}
+                    className="w-28 cursor-pointer"
+                    style={{ accentColor: 'var(--theme-accent)' }}
+                    aria-label="Mobile music volume"
+                  />
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    setShowMixer(true);
+                  }}
+                  className="flex items-center justify-center gap-2 w-full py-2.5 px-3 rounded-xl text-xs font-bold transition-all shadow-cozy-xs active:scale-95"
+                  style={{
+                    backgroundColor: 'var(--section-kicker-bg)',
+                    color: 'var(--section-kicker-color)',
+                    border: '1px solid var(--theme-accent-border)',
+                  }}
+                >
+                  <Sliders className="w-3.5 h-3.5" />
+                  <span>Open Sound Lounge (Rain, Campfire, Wind...)</span>
+                </button>
+              </div>
             </div>
           </nav>
         )}
