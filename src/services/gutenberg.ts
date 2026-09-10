@@ -9,6 +9,7 @@ export interface GutenbergPerson {
 export interface GutenbergBook {
   id: number;
   title: string;
+  alternative_title?: string;
   authors: GutenbergPerson[];
   subjects: string[];
   bookshelves: string[];
@@ -16,6 +17,8 @@ export interface GutenbergBook {
   formats: Record<string, string>;
   download_count: number;
   cover_image?: string;
+  summary?: string;
+  reading_ease_score?: string;
 }
 
 export interface GutendexResponse {
@@ -25,16 +28,36 @@ export interface GutendexResponse {
   results: GutenbergBook[];
 }
 
+// Bookshelf IDs from the RapidAPI /bookshelves endpoint
+// GET /bookshelves/{id} returns curated books for that category
 export const COZY_GUTENBERG_PRESETS = [
-  { label: 'All Classics', query: '' },
-  { label: 'Detective & Mystery', query: 'detective mystery' },
-  { label: 'Fairy Tales & Fantasy', query: 'fairy tales fantasy' },
-  { label: 'Romance & Drama', query: 'romance novel' },
-  { label: 'Philosophy & Focus', query: 'philosophy' },
-  { label: 'Adventure & Sci-Fi', query: 'adventure fiction' },
-  { label: 'Gothic & Horror', query: 'gothic horror' },
-  { label: 'Bedtime Comfort', query: 'nature country life' },
+  { label: 'All Classics',              bookshelfId: 9,   query: '' },
+  { label: 'Crime & Mystery',           bookshelfId: 14,  query: 'mystery' },
+  { label: 'Fantasy & Sci-Fi',          bookshelfId: 13,  query: 'fantasy' },
+  { label: 'Romance',                   bookshelfId: 25,  query: 'romance' },
+  { label: 'Philosophy & Ethics',       bookshelfId: 33,  query: 'philosophy' },
+  { label: 'Adventure',                 bookshelfId: 24,  query: 'adventure' },
+  { label: 'Mythology & Folklore',      bookshelfId: 57,  query: 'mythology' },
+  { label: 'Children & Young Adult',    bookshelfId: 46,  query: 'children' },
+  { label: 'Short Stories',             bookshelfId: 40,  query: 'short stories' },
+  { label: 'Nature & Cozy Living',      bookshelfId: 29,  query: 'nature' },
 ] as const;
+
+export type CozyPreset = (typeof COZY_GUTENBERG_PRESETS)[number];
+
+export interface GutenbergBookshelfItem {
+  id: number;
+  name: string;
+  description: string | null;
+  book_count: number;
+  download_count: number;
+  books: Array<{
+    id: number;
+    title: string;
+    download_count: number;
+    authors: GutenbergPerson[];
+  }>;
+}
 
 // Rich offline index of 60+ renowned public domain books with high-res covers and verified metadata
 export const FALLBACK_GUTENBERG_CATALOG: GutenbergBook[] = [
@@ -681,9 +704,61 @@ export interface GutenbergSubjectItem {
 }
 
 /**
- * Fetch subjects from RapidAPI Project Gutenberg API.
+ * Fetch books for a specific bookshelf category from RapidAPI.
+ * Returns book IDs from the shelf, then enriches each with full metadata.
  */
-export async function fetchGutenbergSubjects(): Promise<GutenbergSubjectItem[]> {
+export async function fetchGutenbergBookshelf(
+  bookshelfId: number,
+  signal?: AbortSignal
+): Promise<GutenbergBook[]> {
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 8000);
+
+    const res = await fetch(`${RAPIDAPI_GUTENBERG_BASE}/bookshelves/${bookshelfId}`, {
+      signal: signal || controller.signal,
+      headers: {
+        'x-rapidapi-host': RAPIDAPI_GUTENBERG_HOST,
+        'x-rapidapi-key': RAPIDAPI_GUTENBERG_KEY,
+        'Content-Type': 'application/json',
+      },
+    });
+    clearTimeout(timeoutId);
+
+    if (res.ok) {
+      const data = await res.json() as { results: GutenbergBookshelfItem[] };
+      const shelf = data.results?.[0];
+      if (shelf?.books && shelf.books.length > 0) {
+        // The shelf books have limited fields; build GutenbergBook objects from them
+        // and enrich cover images from standard Gutenberg CDN URL pattern
+        return shelf.books
+          .filter(b => b.id && b.title)
+          .map(b => ({
+            id: b.id,
+            title: b.title,
+            authors: b.authors || [],
+            subjects: [],
+            bookshelves: [shelf.name],
+            languages: ['en'],
+            formats: {
+              'image/jpeg': `https://www.gutenberg.org/cache/epub/${b.id}/pg${b.id}.cover.medium.jpg`,
+            },
+            cover_image: `https://www.gutenberg.org/cache/epub/${b.id}/pg${b.id}.cover.medium.jpg`,
+            download_count: b.download_count || 0,
+          } satisfies GutenbergBook));
+      }
+    }
+  } catch {
+    // fall through
+  }
+  return [];
+}
+
+
+/**
+ * Fetch all subjects from the RapidAPI Project Gutenberg API.
+ */
+async function fetchRapidApiSubjects(): Promise<unknown[]> {
   try {
     const res = await fetch(`${RAPIDAPI_GUTENBERG_BASE}/subjects`, {
       headers: {
@@ -1048,15 +1123,29 @@ export function parseRawGutenbergText(book: GutenbergBook, rawText: string, isPr
     }
   }
 
-  // Filter out TOC entries: real chapters are separated by at least 12 lines from adjacent headings
+  // Filter out TOC entries.
+  // Strategy: find the first large gap (≥12 lines) between consecutive headings.
+  // Everything before the gap is treated as a Table of Contents and discarded.
+  // Everything from the gap onward is real chapter content.
   const candidateChapters: { title: string; heading: string; lines: string[] }[] = [];
-  for (let c = 0; c < rawCandidates.length; c++) {
+
+  // Find the index of the first candidate that is ≥12 lines from its predecessor
+  let tocEndIdx = 0; // default: start from the very first candidate
+  for (let c = 1; c < rawCandidates.length; c++) {
+    const gap = rawCandidates[c].lineIndex - rawCandidates[c - 1].lineIndex;
+    if (gap >= 12) {
+      tocEndIdx = c;
+      break;
+    }
+  }
+
+  for (let c = tocEndIdx; c < rawCandidates.length; c++) {
     const curr = rawCandidates[c];
-    const prev = c > 0 ? rawCandidates[c - 1] : null;
+    const prev = c > tocEndIdx ? rawCandidates[c - 1] : null;
     const next = rawCandidates[c + 1];
     const nextLine = next ? next.lineIndex : lines.length;
 
-    // Reject clustered TOC entries
+    // Skip if still clustered (shouldn't happen after tocEndIdx but safety check)
     if (prev && curr.lineIndex - prev.lineIndex < 12) continue;
     if (next && next.lineIndex - curr.lineIndex < 12) continue;
 

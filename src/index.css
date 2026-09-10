@@ -310,7 +310,7 @@
     background-color: var(--bg-page);
     background-image:
       linear-gradient(var(--bg-page-tint-start), var(--bg-page-tint-end)),
-      url('/Background.jpeg'),
+      url('/Background.webp'),
       radial-gradient(circle at 1px 1px, var(--bg-page-dot) 1px, transparent 1.2px),
       linear-gradient(90deg, var(--bg-page-grid-h) 1px, transparent 1px),
       linear-gradient(var(--bg-page-grid-v) 1px, transparent 1px);

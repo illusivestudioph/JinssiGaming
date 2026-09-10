@@ -66,8 +66,8 @@ const defaultContent: SavedContent = {
   games: initialGames,
   articles: initialArticles,
   stories: initialStories,
-  heroImage: '/banner.jpeg',
-  logoImage: '/image.png',
+  heroImage: '/banner.webp',
+  logoImage: '/image.webp',
   ctaLinks: [
     { id: 'link-1', label: 'Email us', url: 'mailto:mjhanesultancruz1514@gmail.com' },
     { id: 'link-2', label: 'Threads @jinssi cruise', url: 'https://threads.net/' },
@@ -167,8 +167,10 @@ function normalizeContent(parsed: Partial<SavedContent> | null | undefined): Sav
     games: Array.isArray(parsed?.games) ? parsed.games : initialGames,
     articles: normalizedArticles,
     stories: normalizedStories,
-    heroImage: typeof parsed?.heroImage === 'string' ? parsed.heroImage : defaultContent.heroImage,
-    logoImage: parsed?.logoImage === '/logo.png'
+    heroImage: parsed?.heroImage === '/banner.jpeg'
+      ? defaultContent.heroImage
+      : typeof parsed?.heroImage === 'string' ? parsed.heroImage : defaultContent.heroImage,
+    logoImage: (parsed?.logoImage === '/logo.png' || parsed?.logoImage === '/image.png')
       ? defaultContent.logoImage
       : typeof parsed?.logoImage === 'string'
         ? parsed.logoImage

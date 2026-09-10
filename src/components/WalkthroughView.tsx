@@ -130,11 +130,11 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
       updateMeta('meta[name="description"]', 'Jinssi Gaming offers clear, visual walkthroughs and cozy guides for relaxing games.');
       updateMeta('meta[property="og:title"]', 'Jinssi Gaming | Cozy Game Walkthroughs');
       updateMeta('meta[property="og:description"]', 'Clear, visual walkthroughs and cozy guides for relaxing games.');
-      updateMeta('meta[property="og:image"]', '/banner.jpeg');
+      updateMeta('meta[property="og:image"]', '/banner.webp');
       updateMeta('meta[property="og:url"]', 'https://jinssigaming.pages.dev/');
       updateMeta('meta[name="twitter:title"]', 'Jinssi Gaming | Cozy Game Walkthroughs');
       updateMeta('meta[name="twitter:description"]', 'Clear, visual walkthroughs and cozy guides for relaxing games.');
-      updateMeta('meta[name="twitter:image"]', '/banner.jpeg');
+      updateMeta('meta[name="twitter:image"]', '/banner.webp');
       if (canonical) canonical.href = 'https://jinssigaming.pages.dev/';
     };
   }, [game.coverImage, game.description, game.id, shareTitle, shareUrl]);

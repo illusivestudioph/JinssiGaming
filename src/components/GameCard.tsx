@@ -42,6 +42,9 @@ export function GameCard({ game, onClick, completedCount = 0 }: GameCardProps) {
           src={game.coverImage}
           alt={game.coverAlt}
           loading="lazy"
+          decoding="async"
+          width={600}
+          height={400}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />
       </div>

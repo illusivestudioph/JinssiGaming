@@ -4,6 +4,9 @@
  * (Cozy Midnight Rain, Fireplace Crackles, Forest Wind & Birds)
  * with seamless Web Audio API looping, smooth volume ramping,
  * HTML5 Audio streaming fallback, and tactile UI click SFX.
+ *
+ * Audio is lazy-loaded: ambient tracks are only fetched when the user
+ * adjusts their volume above 0 (opts in). SFX are loaded on first use.
  */
 
 interface AmbientTrackState {
@@ -16,6 +19,7 @@ interface AmbientTrackState {
   audioElement: HTMLAudioElement | null;
   userVolume: number;
   stopTimer: number | null;
+  isLoading: boolean;
 }
 
 class AmbientSoundEngine {
@@ -34,6 +38,7 @@ class AmbientSoundEngine {
       audioElement: null,
       userVolume: 0,
       stopTimer: null,
+      isLoading: false,
     },
     fire: {
       name: 'fire',
@@ -45,6 +50,7 @@ class AmbientSoundEngine {
       audioElement: null,
       userVolume: 0,
       stopTimer: null,
+      isLoading: false,
     },
     wind: {
       name: 'wind',
@@ -56,26 +62,67 @@ class AmbientSoundEngine {
       audioElement: null,
       userVolume: 0,
       stopTimer: null,
+      isLoading: false,
     },
   };
 
   // Audio file buffers for tactile SFX
   private checkBuffer: AudioBuffer | null = null;
   private dropdownBuffer: AudioBuffer | null = null;
-  private isPreloading = false;
+  private sfxLoaded = false;
   private isMasterMuted = false;
 
-  constructor() {
-    if (typeof window !== 'undefined') {
-      setTimeout(() => {
-        this.preloadAudioFiles();
-      }, 0);
-    }
+  // No constructor preloading — all audio is lazy-loaded on demand.
+
+  /**
+   * Lazily load a single ambient track's buffer (called when user sets volume > 0).
+   */
+  private ensureTrackLoaded(track: AmbientTrackState) {
+    if (track.buffer || track.isLoading) return;
+    track.isLoading = true;
+
+    const ctx = this.initContext();
+    if (!ctx) return;
+
+    // Create HTML Audio fallback for immediate streaming while buffer decodes
+    this.initTrackAudioElement(track);
+
+    const decode = (buffer: ArrayBuffer): Promise<AudioBuffer> => {
+      return new Promise((resolve, reject) => {
+        try {
+          const res = ctx.decodeAudioData(buffer, resolve, reject);
+          if (res && typeof (res as Promise<AudioBuffer>).then === 'function') {
+            (res as Promise<AudioBuffer>).then(resolve).catch(reject);
+          }
+        } catch (err) {
+          reject(err);
+        }
+      });
+    };
+
+    fetch(track.url)
+      .then((res) => (res.ok ? res.arrayBuffer() : Promise.reject(new Error(`${track.url} failed`))))
+      .then(decode)
+      .then((buffer) => {
+        track.buffer = buffer;
+        track.isLoading = false;
+        // If user already adjusted volume while loading, start playing smoothly
+        if (track.userVolume > 0 && !this.isMasterMuted) {
+          this.syncTrackPlayback(track);
+        }
+      })
+      .catch(() => {
+        track.isLoading = false;
+        // If Web Audio decoding fails, fallback to HTMLAudioElement
+      });
   }
 
-  public preloadAudioFiles() {
-    if (typeof window === 'undefined' || this.isPreloading) return;
-    this.isPreloading = true;
+  /**
+   * Lazily load SFX buffers on first use (check.mp3 + dropdown.mp3 are ~41KB total).
+   */
+  private ensureSfxLoaded() {
+    if (this.sfxLoaded) return;
+    this.sfxLoaded = true;
 
     const ctx = this.initContext();
     if (!ctx) return;
@@ -93,7 +140,6 @@ class AmbientSoundEngine {
       });
     };
 
-    // 1. Preload tactile SFX
     fetch('/check.mp3')
       .then((res) => (res.ok ? res.arrayBuffer() : Promise.reject(new Error('check.mp3 failed'))))
       .then(decode)
@@ -109,26 +155,6 @@ class AmbientSoundEngine {
         this.dropdownBuffer = buffer;
       })
       .catch(() => {});
-
-    // 2. Preload ambient soundscapes
-    (Object.keys(this.tracks) as ('rain' | 'fire' | 'wind')[]).forEach((key) => {
-      const track = this.tracks[key];
-      this.initTrackAudioElement(track);
-
-      fetch(track.url)
-        .then((res) => (res.ok ? res.arrayBuffer() : Promise.reject(new Error(`${track.url} failed`))))
-        .then(decode)
-        .then((buffer) => {
-          track.buffer = buffer;
-          // If user already adjusted volume while loading, start playing smoothly
-          if (track.userVolume > 0 && !this.isMasterMuted) {
-            this.syncTrackPlayback(track);
-          }
-        })
-        .catch(() => {
-          // If Web Audio decoding fails, fallback to HTMLAudioElement
-        });
-    });
   }
 
   private initContext(): AudioContext | null {
@@ -167,6 +193,9 @@ class AmbientSoundEngine {
     const effectiveVolume = this.isMasterMuted ? 0 : track.userVolume * track.volumeScale;
 
     if (effectiveVolume > 0) {
+      // Lazy-load this track if not yet loaded
+      this.ensureTrackLoaded(track);
+
       if (track.stopTimer !== null) {
         window.clearTimeout(track.stopTimer);
         track.stopTimer = null;
@@ -267,8 +296,9 @@ class AmbientSoundEngine {
   ) {
     if (this.isMasterMuted) return;
 
-    if (!buffer && !this.isPreloading) {
-      this.preloadAudioFiles();
+    // Lazy-load SFX on first use
+    if (!this.sfxLoaded) {
+      this.ensureSfxLoaded();
     }
 
     const ctx = this.initContext();
@@ -340,4 +370,3 @@ class AmbientSoundEngine {
 }
 
 export const ambientEngine = new AmbientSoundEngine();
-
