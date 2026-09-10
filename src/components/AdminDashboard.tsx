@@ -7,6 +7,7 @@ import { ArticleEditor } from './admin/ArticleEditor';
 import { StoryEditor } from './admin/StoryEditor';
 import type { Story } from '@/data/stories';
 import { supabase } from '@/lib/supabase';
+import { convertImageToWebp } from '@/utils/imageOptimization';
 import { 
   Trash2, 
   Plus, 
@@ -126,17 +127,20 @@ export function AdminDashboard() {
   }, [uploadingKey]);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, uploadKey: string, onComplete: (url: string) => void) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const rawFile = e.target.files?.[0];
+    if (!rawFile) return;
 
     setUploadedKey(null);
     setUploadingKey(uploadKey);
 
-    const filePath = `${crypto.randomUUID()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '-')}`;
     try {
+      // Automatically convert image to optimized WebP format
+      const file = await convertImageToWebp(rawFile);
+      const filePath = `${crypto.randomUUID()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '-')}`;
+
       const { error } = await supabase.storage.from('site-images').upload(filePath, file, {
-        cacheControl: '3600',
-        contentType: file.type,
+        cacheControl: '31536000',
+        contentType: file.type || 'image/webp',
         upsert: false,
       });
 
@@ -148,6 +152,9 @@ export function AdminDashboard() {
       const { data } = supabase.storage.from('site-images').getPublicUrl(filePath);
       onComplete(data.publicUrl);
       setUploadedKey(uploadKey);
+    } catch (err) {
+      console.error('Image upload failed:', err);
+      alert('Could not process image upload.');
     } finally {
       setUploadingKey(null);
     }

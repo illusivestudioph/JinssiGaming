@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import type { Story, StoryChapter, StoryGenre } from '@/data/stories';
 import { storyGenres } from '@/data/stories';
 import { supabase } from '@/lib/supabase';
+import { convertImageToWebp } from '@/utils/imageOptimization';
 import {
   ChevronLeft,
   Save,
@@ -189,16 +190,18 @@ export function StoryEditor({
   };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const rawFile = e.target.files?.[0];
+    if (!rawFile) return;
 
     setUploading(true);
-    const filePath = `story-${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '-')}`;
 
     try {
+      const file = await convertImageToWebp(rawFile);
+      const filePath = `story-${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '-')}`;
+
       const { error } = await supabase.storage
         .from('site-images')
-        .upload(filePath, file, { cacheControl: '3600', upsert: false });
+        .upload(filePath, file, { cacheControl: '31536000', contentType: file.type || 'image/webp', upsert: false });
 
       if (error) {
         alert(`Upload error: ${error.message}`);

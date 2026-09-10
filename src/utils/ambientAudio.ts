@@ -191,10 +191,10 @@ class AmbientSoundEngine {
   }
 
   private syncTrackPlayback(track: AmbientTrackState) {
-    const ctx = this.initContext();
     const effectiveVolume = this.isMasterMuted ? 0 : track.userVolume * track.volumeScale;
 
     if (effectiveVolume > 0) {
+      const ctx = this.initContext();
       // Lazy-load this track if not yet loaded
       this.ensureTrackLoaded(track);
 
@@ -244,6 +244,7 @@ class AmbientSoundEngine {
         }
       }
     } else {
+      const ctx = this.ctx;
       // Volume is 0 or muted: fade out and stop source to save battery and CPU
       if (ctx && track.gainNode) {
         const now = ctx.currentTime;
@@ -364,10 +365,15 @@ class AmbientSoundEngine {
     if (this.masterGain && this.ctx) {
       this.masterGain.gain.setTargetAtTime(muted ? 0 : 1, this.ctx.currentTime, 0.08);
     }
-    // Re-sync all ambient tracks to reflect mute state
-    (Object.keys(this.tracks) as ('rain' | 'fire' | 'wind')[]).forEach((key) => {
-      this.syncTrackPlayback(this.tracks[key]);
-    });
+    // Only re-sync tracks if user has actively enabled any ambient track or AudioContext is already running
+    const hasActiveTracks = (Object.keys(this.tracks) as ('rain' | 'fire' | 'wind')[]).some(
+      (key) => this.tracks[key].userVolume > 0
+    );
+    if (hasActiveTracks || this.ctx) {
+      (Object.keys(this.tracks) as ('rain' | 'fire' | 'wind')[]).forEach((key) => {
+        this.syncTrackPlayback(this.tracks[key]);
+      });
+    }
   }
 }
 

@@ -722,6 +722,7 @@ function WikiHowStep({
               src={image}
               alt={imageAlt || ""}
               loading="lazy"
+              decoding="async"
               className={`w-full h-auto max-h-[400px] object-contain transition-all duration-500 ${
                 isDone ? 'opacity-60 grayscale' : 'opacity-100'
               }`}
