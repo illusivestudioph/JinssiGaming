@@ -118,9 +118,13 @@ export function getOptimizedImageUrl(
   const { width = 600, height, quality = 80, format = 'webp' } = options;
 
   try {
-    // 1. Supabase Storage Transformations
+    // 1. Supabase Storage Transformations: route to built-in render/image endpoint
     if (url.includes('/storage/v1/object/public/') || url.includes('/storage/v1/render/image/public/')) {
-      const urlObj = new URL(url);
+      const renderEndpointUrl = url.replace(
+        '/storage/v1/object/public/',
+        '/storage/v1/render/image/public/'
+      );
+      const urlObj = new URL(renderEndpointUrl);
       urlObj.searchParams.set('width', width.toString());
       if (height) urlObj.searchParams.set('height', height.toString());
       urlObj.searchParams.set('quality', quality.toString());

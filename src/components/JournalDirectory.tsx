@@ -123,7 +123,7 @@ export function JournalDirectory({ onSelectArticle }: JournalDirectoryProps) {
                 {/* Article Cover Image */}
                 <div className="h-52 sm:h-60 relative overflow-hidden bg-cream-200 rounded-t-xl">
                   <img
-                    src={getOptimizedImageUrl(article.coverImage, { width: 600, quality: 80, format: 'webp' })}
+                    src={getOptimizedImageUrl(article.coverImage, { width: 800, quality: 80, format: 'webp' })}
                     alt={article.coverAlt}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 filter saturate-90 group-hover:saturate-100"
                     loading="lazy"

@@ -56,7 +56,7 @@ export function HomeJournalSection({
             <div>
               <div className="h-52 relative overflow-hidden bg-cream-200 rounded-t-[1.1rem]">
                 <img
-                  src={getOptimizedImageUrl(article.coverImage, { width: 600, quality: 80, format: 'webp' })}
+                  src={getOptimizedImageUrl(article.coverImage, { width: 800, quality: 80, format: 'webp' })}
                   alt={article.coverAlt}
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 filter saturate-90 group-hover:saturate-100"
                   loading="lazy"

@@ -1,8 +1,14 @@
 import { useSiteContent } from '@/context/SiteContentContext';
 import { MagneticText } from './MagneticText';
+import { getOptimizedImageUrl } from '@/utils/imageOptimization';
 
 export function Hero() {
   const { heroImage } = useSiteContent();
+  const optimizedHeroImage = getOptimizedImageUrl(heroImage, {
+    width: 1400,
+    quality: 80,
+    format: 'webp',
+  });
 
   return (
     <section className="w-full flex flex-col items-center">
@@ -11,7 +17,7 @@ export function Hero() {
         <div 
           className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat pointer-events-none"
           style={{ 
-            backgroundImage: `url(${heroImage})`,
+            backgroundImage: `url(${optimizedHeroImage})`,
           }}
         />
         {/* Soft subtle feathered fade at the bottom to melt into the page background */}

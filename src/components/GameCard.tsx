@@ -40,7 +40,7 @@ export function GameCard({ game, onClick, completedCount = 0 }: GameCardProps) {
         {/* Cover Photo Header: exactly matching h-52 of Bookshelf and Journal cards */}
         <div className="h-52 relative overflow-hidden bg-cream-200 rounded-t-[1.1rem]">
           <img
-            src={getOptimizedImageUrl(game.coverImage, { width: 600, quality: 80, format: 'webp' })}
+            src={getOptimizedImageUrl(game.coverImage, { width: 800, quality: 80, format: 'webp' })}
             alt={game.coverAlt}
             loading="lazy"
             decoding="async"

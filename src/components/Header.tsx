@@ -3,6 +3,7 @@ import { useSiteContent } from "@/context/SiteContentContext";
 import { useMusic } from "@/context/MusicContext";
 import { AmbientMixerModal } from "@/components/AmbientMixerModal";
 import { MagneticText } from "@/components/MagneticText";
+import { getOptimizedImageUrl } from '@/utils/imageOptimization';
 import { Lock, Menu, X, Music, Pause, Volume2, VolumeX, Sliders } from 'lucide-react';
 
 export type View = 'home' | 'walkthroughs' | 'journal' | 'stories' | 'about' | 'privacy' | 'terms' | 'contact' | 'admin';
@@ -60,7 +61,14 @@ export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View)
           
           {/* LOGO WITH SECRET TRIGGER */}
           <div className="site-logo-link flex items-center gap-3 cursor-pointer select-none group transition-all duration-300" onClick={handleLogoClick}>
-            <img src={logoImage} alt="Site Logo" className="site-logo-img h-10 w-10 object-contain transition-all duration-300" />
+            <img
+              src={getOptimizedImageUrl(logoImage, { width: 160, quality: 80, format: 'webp' })}
+              alt="Site Logo"
+              decoding="async"
+              width={40}
+              height={40}
+              className="site-logo-img h-10 w-10 object-contain transition-all duration-300"
+            />
             <MagneticText
               as="span"
               text="Jinssi"
