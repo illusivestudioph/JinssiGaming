@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useSiteContent } from "@/context/SiteContentContext";
 import { useMusic } from "@/context/MusicContext";
 import { AmbientMixerModal } from "@/components/AmbientMixerModal";
+import { MagneticText } from "@/components/MagneticText";
 import { Lock, Menu, X, Music, Pause, Volume2, VolumeX, Sliders } from 'lucide-react';
 
 export type View = 'home' | 'walkthroughs' | 'journal' | 'stories' | 'about' | 'privacy' | 'terms' | 'contact' | 'admin';
@@ -60,7 +61,14 @@ export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View)
           {/* LOGO WITH SECRET TRIGGER */}
           <div className="site-logo-link flex items-center gap-3 cursor-pointer select-none group transition-all duration-300" onClick={handleLogoClick}>
             <img src={logoImage} alt="Site Logo" className="site-logo-img h-10 w-10 object-contain transition-all duration-300" />
-            <span className="site-logo-text font-display font-bold text-xl sm:text-2xl text-ink-900 transition-all duration-300">Jinssi</span>
+            <MagneticText
+              as="span"
+              text="Jinssi"
+              className="site-logo-text font-display font-bold text-xl sm:text-2xl text-ink-900 transition-all duration-300"
+              strength={0.35}
+              radius={85}
+              maxDisplacement={12}
+            />
           </div>
 
           <div className="flex items-center gap-3 sm:gap-4">

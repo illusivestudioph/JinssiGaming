@@ -1,4 +1,5 @@
 import { useSiteContent } from '@/context/SiteContentContext';
+import { MagneticText } from './MagneticText';
 
 export function Hero() {
   const { heroImage } = useSiteContent();
@@ -24,9 +25,14 @@ export function Hero() {
 
       {/* 2. Welcoming Intro Content: Cleanly positioned below the banner without artificial wrapper constraints */}
       <div className="hero-copy relative z-10 flex flex-col items-center justify-center px-4 sm:px-8 pt-6 sm:pt-8 pb-1 text-center animate-fade-in w-full">
-        <h1 className="hero-title">
-          Your cozy sanctuary for organizing games &amp; quiet stories.
-        </h1>
+        <MagneticText
+          as="h1"
+          text="Your cozy sanctuary for organizing games & quiet stories."
+          className="hero-title"
+          strength={0.4}
+          radius={130}
+          maxDisplacement={20}
+        />
         <p className="hero-description mt-3">
           Step-by-step visual walkthroughs for peaceful organizing games, soothing classic stories to read, and calming lo-fi soundscapes to help you unwind.
         </p>
