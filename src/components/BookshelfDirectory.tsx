@@ -22,8 +22,7 @@ import {
   Trash2,
   Loader2,
   ChevronLeft,
-  ChevronRight,
-  Sparkles
+  ChevronRight
 } from 'lucide-react';
 
 interface BookshelfDirectoryProps {

@@ -14,7 +14,7 @@ import {
   Check, 
   X, 
   Search,
-  Sparkles,
+  Zap,
   Link as LinkIcon,
   Tag,
   DollarSign,
@@ -619,7 +619,7 @@ export function StoreManager({
 
       {/* Gumroad Quick Tip */}
       <div className="bg-peach-50/70 border border-peach-200 rounded-xl p-3.5 flex items-start gap-2.5 text-xs text-tan-700">
-        <Sparkles className="w-4 h-4 text-peach-500 flex-shrink-0 mt-0.5" />
+        <Coffee className="w-4 h-4 text-peach-500 flex-shrink-0 mt-0.5" />
         <div>
           <span className="font-bold text-ink-900">How Gumroad Links Work:</span> When you add or edit a product, paste your direct Gumroad product link. Visitors clicking "Get on Gumroad" on your Store page will either open the Gumroad checkout popup or redirect to your checkout.
         </div>
@@ -663,7 +663,7 @@ export function StoreManager({
               </>
             ) : (
               <>
-                <Sparkles size={14} />
+                <Zap size={14} />
                 <span>Auto-Grab & Import</span>
               </>
             )}

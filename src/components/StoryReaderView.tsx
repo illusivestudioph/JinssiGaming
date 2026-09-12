@@ -21,7 +21,6 @@ import {
   Library,
   Download,
   RefreshCw,
-  Sparkles,
   Music,
   Pause,
 } from 'lucide-react';
@@ -629,7 +628,7 @@ export function StoryReaderView({
                 {gutenbergId && !story.isLiveGutenberg && (
                   <div className={`p-3 mb-3 rounded-xl border ${currentThemeStyle.border} ${currentThemeStyle.cardBg} text-left`}>
                     <div className="flex items-center gap-2 mb-1">
-                      <Sparkles className="w-3.5 h-3.5 text-peach-500" />
+                      <BookOpen className="w-3.5 h-3.5 text-peach-500" />
                       <span className="text-xs font-bold">
                         Unabridged Gutenberg Text
                       </span>

@@ -4,7 +4,6 @@ import { storeCategories, type StoreProduct } from '@/data/store';
 import { 
   ShoppingBag, 
   Search, 
-  Sparkles, 
   Check, 
   Copy, 
   ExternalLink, 
@@ -13,7 +12,8 @@ import {
   HelpCircle,
   ChevronDown,
   Tag,
-  Coffee
+  Coffee,
+  Heart
 } from 'lucide-react';
 import { AdSenseUnit } from '@/components/AdSenseUnit';
 
@@ -111,7 +111,7 @@ export function StorePage() {
         </div>
         <div className="flex-1">
           <h4 className="font-bold text-ink-900 text-sm flex items-center justify-center sm:justify-start gap-1.5">
-            <Sparkles className="w-4 h-4 text-peach-500" /> Instant Digital Delivery via Gumroad, Ko-fi & Payhip
+            <Heart className="w-4 h-4 text-peach-500 fill-peach-500/20" /> Instant Digital Delivery via Gumroad, Ko-fi & Payhip
           </h4>
           <p className="text-xs text-tan-600 mt-0.5 font-medium leading-relaxed">
             Secure, encrypted checkout. Files are delivered immediately to your email with free lifetime updates. Choose your preferred shop on every product card below!

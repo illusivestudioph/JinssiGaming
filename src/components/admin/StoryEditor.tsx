@@ -15,7 +15,6 @@ import {
   Upload,
   ArrowUp,
   ArrowDown,
-  Sparkles,
   FileText,
   Clock,
   BookMarked,
