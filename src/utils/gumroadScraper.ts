@@ -26,8 +26,14 @@ function decodeHtmlEntities(str: string): string {
 
 function inferCategory(text: string): string {
   const lower = text.toLowerCase();
-  if (lower.includes('coloring') || lower.includes('grimoire') || lower.includes('printable') || lower.includes('pdf planner') || lower.includes('stationery')) {
-    return 'Printables';
+  if (lower.includes('coloring') || lower.includes('grimoire') || lower.includes('color page') || lower.includes('coloring page')) {
+    return 'Coloring Books';
+  }
+  if (lower.includes('planner') || lower.includes('daily planner') || lower.includes('weekly planner') || lower.includes('monthly planner')) {
+    return 'Planners';
+  }
+  if (lower.includes('checklist') || lower.includes('check list') || lower.includes('completionist') || lower.includes('tracker')) {
+    return 'Checklists';
   }
   if (lower.includes('notion') || lower.includes('dashboard') || lower.includes('template')) {
     return 'Notion Templates';
@@ -35,11 +41,8 @@ function inferCategory(text: string): string {
   if (lower.includes('wallpaper') || lower.includes('pixel') || lower.includes('art') || lower.includes('icon pack')) {
     return 'Wallpapers & Art';
   }
-  if (lower.includes('guide') || lower.includes('walkthrough') || lower.includes('checklist') || lower.includes('field guide')) {
+  if (lower.includes('guide') || lower.includes('walkthrough')) {
     return 'Guides & Planners';
-  }
-  if (lower.includes('sound') || lower.includes('audio') || lower.includes('music') || lower.includes('bgm') || lower.includes('lofi')) {
-    return 'Audio & Assets';
   }
   return 'Printables';
 }

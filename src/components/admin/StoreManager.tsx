@@ -21,7 +21,8 @@ import {
   Loader2,
   Wand2,
   CheckCircle2,
-  AlertCircle
+  AlertCircle,
+  Coffee
 } from 'lucide-react';
 
 interface StoreManagerProps {
@@ -80,15 +81,17 @@ export function StoreManager({
       const newProduct: StoreProduct = {
         id: `product-${Date.now()}`,
         title: details.title || 'New Cozy Product',
-        description: details.description || 'Digital download on Gumroad',
-        price: details.price || '$4.99',
+        description: details.description || 'Digital download',
+        price: details.price || '$5',
         originalPrice: details.originalPrice || '',
         gumroadUrl: url,
+        kofiUrl: '',
+        payhipUrl: '',
         coverImage: details.coverImage || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop&q=80',
         coverAlt: details.title,
-        category: details.category || 'Printables',
+        category: details.category || 'Coloring Books',
         badge: details.badge || 'New',
-        features: details.features?.length ? details.features : ['Instant digital download', 'Free lifetime updates'],
+        features: details.features?.length ? details.features : ['Instant digital download', 'Print-ready high-res PDF'],
         rating: 5,
       };
 
@@ -109,14 +112,16 @@ export function StoreManager({
       id: `product-${Date.now()}`,
       title: 'New Cozy Product',
       description: 'Describe what makes this digital download special...',
-      price: '$4.99',
+      price: '$5',
       originalPrice: '',
-      gumroadUrl: 'https://gumroad.com',
+      gumroadUrl: '',
+      kofiUrl: '',
+      payhipUrl: '',
       coverImage: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop&q=80',
       coverAlt: '',
-      category: 'Notion Templates',
+      category: 'Coloring Books',
       badge: 'New',
-      features: ['Instant digital download', 'Free lifetime updates'],
+      features: ['Instant digital download', 'Print-ready high-res PDF'],
       rating: 5,
     };
     setEditingProduct(newProduct);
@@ -322,6 +327,71 @@ export function StoreManager({
                 <span>{grabError}</span>
               </div>
             )}
+
+            {/* Additional Online Store Links (Ko-fi & Payhip) */}
+            <div className="pt-3 border-t border-peach-200/80 grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Ko-fi Shop Link */}
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-bold text-ink-800 flex items-center gap-1.5">
+                    <Coffee className="w-3.5 h-3.5 text-[#FF5E5B]" />
+                    <span>Ko-fi Shop Link (Optional)</span>
+                  </label>
+                  {editingProduct.kofiUrl && (
+                    <a
+                      href={editingProduct.kofiUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[11px] font-bold text-[#FF5E5B] hover:underline inline-flex items-center gap-0.5"
+                      title="Test Ko-fi link"
+                    >
+                      <span>Test</span>
+                      <ExternalLink className="w-2.5 h-2.5" />
+                    </a>
+                  )}
+                </div>
+                <input
+                  type="url"
+                  value={editingProduct.kofiUrl || ''}
+                  onChange={(e) =>
+                    setEditingProduct({ ...editingProduct, kofiUrl: e.target.value })
+                  }
+                  placeholder="https://ko-fi.com/s/..."
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-tan-300 bg-white text-ink-900 text-xs focus:outline-none focus:border-peach-400"
+                />
+              </div>
+
+              {/* Payhip Link */}
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-bold text-ink-800 flex items-center gap-1.5">
+                    <ExternalLink className="w-3.5 h-3.5 text-[#3B82F6]" />
+                    <span>Payhip Link (Optional)</span>
+                  </label>
+                  {editingProduct.payhipUrl && (
+                    <a
+                      href={editingProduct.payhipUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[11px] font-bold text-[#3B82F6] hover:underline inline-flex items-center gap-0.5"
+                      title="Test Payhip link"
+                    >
+                      <span>Test</span>
+                      <ExternalLink className="w-2.5 h-2.5" />
+                    </a>
+                  )}
+                </div>
+                <input
+                  type="url"
+                  value={editingProduct.payhipUrl || ''}
+                  onChange={(e) =>
+                    setEditingProduct({ ...editingProduct, payhipUrl: e.target.value })
+                  }
+                  placeholder="https://payhip.com/b/..."
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-tan-300 bg-white text-ink-900 text-xs focus:outline-none focus:border-peach-400"
+                />
+              </div>
+            </div>
           </div>
 
           {/* Product Title & Category */}
@@ -668,19 +738,43 @@ export function StoreManager({
                     {product.title}
                   </h4>
 
-                  <div className="flex items-center gap-2 mt-1">
-                    <span className="text-xs text-tan-500 truncate max-w-[280px] sm:max-w-md font-mono">
-                      {product.gumroadUrl}
-                    </span>
+                  <div className="flex flex-wrap items-center gap-2 mt-1.5">
                     {product.gumroadUrl && (
                       <a
                         href={product.gumroadUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-peach-600 hover:text-peach-700 inline-flex items-center gap-0.5 text-[11px] font-bold"
+                        className="inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-0.5 rounded-lg bg-pink-50 text-pink-700 border border-pink-200 hover:bg-pink-100 transition-colors"
                         title="Test Gumroad URL in new tab"
                       >
-                        <ExternalLink size={12} />
+                        <ShoppingBag size={11} />
+                        <span>Gumroad</span>
+                        <ExternalLink size={10} />
+                      </a>
+                    )}
+                    {product.kofiUrl && (
+                      <a
+                        href={product.kofiUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-0.5 rounded-lg bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100 transition-colors"
+                        title="Test Ko-fi URL in new tab"
+                      >
+                        <Coffee size={11} />
+                        <span>Ko-fi</span>
+                        <ExternalLink size={10} />
+                      </a>
+                    )}
+                    {product.payhipUrl && (
+                      <a
+                        href={product.payhipUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-0.5 rounded-lg bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 transition-colors"
+                        title="Test Payhip URL in new tab"
+                      >
+                        <ExternalLink size={11} />
+                        <span>Payhip</span>
                       </a>
                     )}
                   </div>

@@ -12,7 +12,8 @@ import {
   ShieldCheck, 
   HelpCircle,
   ChevronDown,
-  Tag
+  Tag,
+  Coffee
 } from 'lucide-react';
 import { AdSenseUnit } from '@/components/AdSenseUnit';
 
@@ -51,7 +52,7 @@ export function StorePage() {
   }, [products, selectedCategory, searchQuery]);
 
   const handleCopyLink = (product: StoreProduct) => {
-    const url = product.gumroadUrl || window.location.href;
+    const url = product.gumroadUrl || product.kofiUrl || product.payhipUrl || window.location.href;
     navigator.clipboard.writeText(url);
     setCopiedId(product.id);
     setTimeout(() => setCopiedId(null), 2000);
@@ -59,24 +60,29 @@ export function StorePage() {
 
   const faqs = [
     {
-      question: 'How do digital downloads work on Gumroad?',
+      question: 'How do digital downloads work across Gumroad, Ko-fi, and Payhip?',
       answer:
-        'Once you complete checkout on Gumroad (even for $0 free items), Gumroad instantly displays your download link on-screen and sends a confirmation email with lifetime access to your files and future updates.',
+        'Whether you purchase on Gumroad, Ko-fi, or Payhip, each platform immediately delivers your digital files on-screen upon checkout and automatically emails your secure download links with lifetime access to all future updates.',
     },
     {
       question: 'What payment methods are supported?',
       answer:
-        'Gumroad supports major credit cards, debit cards, PayPal, Apple Pay, and Google Pay with bank-grade encryption.',
+        'All three stores (Gumroad, Ko-fi, and Payhip) support major credit cards, debit cards, PayPal, Apple Pay, and Google Pay with bank-grade encryption.',
+    },
+    {
+      question: 'What file formats do your coloring books, planners, and checklists come in?',
+      answer:
+        'Coloring books and checklists come in high-resolution, print-ready PDF and PNG formats ready for tablets or printing. Planners are offered as printable PDFs and digital templates.',
     },
     {
       question: 'How do Notion templates work?',
       answer:
-        'You will receive a duplicate link in your Gumroad receipt. Simply click "Duplicate" in the top-right corner of Notion to copy the workspace directly into your own free Notion account.',
+        'You will receive a duplicate link in your receipt. Simply click "Duplicate" in the top-right corner of Notion to copy the workspace directly into your own free Notion account.',
     },
     {
-      question: 'Can I suggest a game guide, planner, or wallpaper theme?',
+      question: 'Can I suggest a coloring book theme, planner, or game checklist?',
       answer:
-        'Yes! We love suggestions from the cozy gaming community. Feel free to contact us via the Contact page or send an email to mjhanesultancruz1514@gmail.com.',
+        'Yes! We love suggestions from the cozy gaming community. Feel free to reach out via our Contact page or send an email to mjhanesultancruz1514@gmail.com.',
     },
   ];
 
@@ -87,14 +93,14 @@ export function StorePage() {
         <div>
           <div className="library-badge inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold mb-3 shadow-cozy-sm">
             <ShoppingBag className="w-3.5 h-3.5 text-peach-500" />
-            <span>Digital Goodies & Planners</span>
+            <span>Coloring Books • Planners • Checklists</span>
           </div>
         </div>
         <h1 className="font-display text-3xl sm:text-4xl font-extrabold text-ink-900 tracking-tight mb-3">
-          Cozy Store
+          Cozy Digital Store
         </h1>
         <p className="text-base text-ink-700 leading-relaxed font-sans">
-          Handcrafted Notion workspaces, printable cozy checklists, digital art wallpapers, and game guides created to bring a little extra comfort to your gaming time.
+          Handcrafted printable coloring books, daily & weekly cozy planners, completionist checklists, and digital templates. Buy through your favorite shop: Gumroad, Ko-fi, or Payhip!
         </p>
       </div>
 
@@ -105,10 +111,10 @@ export function StorePage() {
         </div>
         <div className="flex-1">
           <h4 className="font-bold text-ink-900 text-sm flex items-center justify-center sm:justify-start gap-1.5">
-            <Sparkles className="w-4 h-4 text-peach-500" /> Instant Digital Delivery via Gumroad
+            <Sparkles className="w-4 h-4 text-peach-500" /> Instant Digital Delivery via Gumroad, Ko-fi & Payhip
           </h4>
           <p className="text-xs text-tan-600 mt-0.5 font-medium leading-relaxed">
-            Secure, encrypted checkout. Files are delivered immediately to your email with free lifetime updates. Pay with Card, PayPal, Apple Pay, or Google Pay.
+            Secure, encrypted checkout. Files are delivered immediately to your email with free lifetime updates. Choose your preferred shop on every product card below!
           </p>
         </div>
         <div className="flex items-center gap-2 flex-shrink-0 text-xs font-bold text-tan-500 bg-white px-3 py-1.5 rounded-xl border border-tan-200">
@@ -233,8 +239,8 @@ export function StorePage() {
                 )}
               </div>
 
-              {/* Bottom Card Bar: Price + Buy on Gumroad button */}
-              <div className="pt-4 border-t-2 border-tan-100 flex flex-wrap items-center justify-between gap-3 mt-auto">
+              {/* Bottom Card Bar: Price + Multi-Store Buy buttons */}
+              <div className="pt-4 border-t-2 border-tan-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 mt-auto">
                 <div className="flex items-baseline gap-2">
                   <span className="font-display font-extrabold text-2xl text-ink-900">
                     {product.price}
@@ -246,12 +252,12 @@ export function StorePage() {
                   )}
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   <button
                     type="button"
                     onClick={() => handleCopyLink(product)}
                     className="p-2.5 rounded-xl border border-tan-200 bg-white hover:bg-cream-100 text-tan-600 hover:text-ink-900 transition-colors shadow-cozy-xs"
-                    title="Copy Gumroad link to clipboard"
+                    title="Copy store link to clipboard"
                     aria-label={`Copy link for ${product.title}`}
                   >
                     {copiedId === product.id ? (
@@ -261,16 +267,53 @@ export function StorePage() {
                     )}
                   </button>
 
-                  <a
-                    href={product.gumroadUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="gumroad-button site-button bg-peach-500 hover:bg-peach-600 text-white font-bold text-xs sm:text-sm px-4 sm:px-5 py-2.5 rounded-xl shadow-cozy-sm inline-flex items-center gap-2 transition-transform hover:scale-105"
-                  >
-                    <ShoppingBag className="w-4 h-4" />
-                    <span>Get on Gumroad</span>
-                    <ExternalLink className="w-3.5 h-3.5 opacity-80" />
-                  </a>
+                  {/* Store Link Buttons */}
+                  {product.gumroadUrl && (
+                    <a
+                      href={product.gumroadUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="site-button bg-peach-500 hover:bg-peach-600 text-white font-bold text-xs px-3.5 py-2.5 rounded-xl shadow-cozy-sm inline-flex items-center gap-1.5 transition-transform hover:scale-105"
+                      title="Buy on Gumroad"
+                    >
+                      <ShoppingBag className="w-3.5 h-3.5" />
+                      <span>{(!product.kofiUrl && !product.payhipUrl) ? 'Get on Gumroad' : 'Gumroad'}</span>
+                      <ExternalLink className="w-3 h-3 opacity-75" />
+                    </a>
+                  )}
+
+                  {product.kofiUrl && (
+                    <a
+                      href={product.kofiUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="site-button bg-[#FF5E5B] hover:bg-[#ee4c49] text-white font-bold text-xs px-3.5 py-2.5 rounded-xl shadow-cozy-sm inline-flex items-center gap-1.5 transition-transform hover:scale-105"
+                      title="Buy on Ko-fi"
+                    >
+                      <Coffee className="w-3.5 h-3.5" />
+                      <span>{(!product.gumroadUrl && !product.payhipUrl) ? 'Get on Ko-fi' : 'Ko-fi'}</span>
+                      <ExternalLink className="w-3 h-3 opacity-75" />
+                    </a>
+                  )}
+
+                  {product.payhipUrl && (
+                    <a
+                      href={product.payhipUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="site-button bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-3.5 py-2.5 rounded-xl shadow-cozy-sm inline-flex items-center gap-1.5 transition-transform hover:scale-105"
+                      title="Buy on Payhip"
+                    >
+                      <ExternalLink className="w-3.5 h-3.5" />
+                      <span>{(!product.gumroadUrl && !product.kofiUrl) ? 'Get on Payhip' : 'Payhip'}</span>
+                    </a>
+                  )}
+
+                  {!product.gumroadUrl && !product.kofiUrl && !product.payhipUrl && (
+                    <span className="text-xs text-tan-500 font-semibold px-3 py-2 bg-cream-100 rounded-xl">
+                      Coming Soon
+                    </span>
+                  )}
                 </div>
               </div>
             </article>
