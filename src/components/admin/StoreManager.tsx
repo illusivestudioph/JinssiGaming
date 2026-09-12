@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { StoreProduct } from '@/data/store';
 import { storeCategories } from '@/data/store';
+import { fetchGumroadProductDetails } from '@/utils/gumroadScraper';
 import { 
   ShoppingBag, 
   Plus, 
@@ -16,7 +17,11 @@ import {
   Sparkles,
   Link as LinkIcon,
   Tag,
-  DollarSign
+  DollarSign,
+  Loader2,
+  Wand2,
+  CheckCircle2,
+  AlertCircle
 } from 'lucide-react';
 
 interface StoreManagerProps {
@@ -47,8 +52,57 @@ export function StoreManager({
   const [searchQuery, setSearchQuery] = useState('');
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
 
+  // Auto-grab state
+  const [isGrabbing, setIsGrabbing] = useState(false);
+  const [grabSuccess, setGrabSuccess] = useState<string | null>(null);
+  const [grabError, setGrabError] = useState<string | null>(null);
+
+  // Quick Add state in list view
+  const [quickUrl, setQuickUrl] = useState('');
+  const [quickGrabbing, setQuickGrabbing] = useState(false);
+  const [quickError, setQuickError] = useState<string | null>(null);
+
   // Form state
   const [featuresText, setFeaturesText] = useState('');
+
+  const handleQuickImport = async () => {
+    const url = quickUrl.trim();
+    if (!url || (!url.includes('gumroad.com') && !url.includes('gum.co'))) {
+      setQuickError('Please paste a valid Gumroad product link.');
+      return;
+    }
+
+    setQuickGrabbing(true);
+    setQuickError(null);
+
+    try {
+      const details = await fetchGumroadProductDetails(url);
+      const newProduct: StoreProduct = {
+        id: `product-${Date.now()}`,
+        title: details.title || 'New Cozy Product',
+        description: details.description || 'Digital download on Gumroad',
+        price: details.price || '$4.99',
+        originalPrice: details.originalPrice || '',
+        gumroadUrl: url,
+        coverImage: details.coverImage || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop&q=80',
+        coverAlt: details.title,
+        category: details.category || 'Printables',
+        badge: details.badge || 'New',
+        features: details.features?.length ? details.features : ['Instant digital download', 'Free lifetime updates'],
+        rating: 5,
+      };
+
+      setEditingProduct(newProduct);
+      setFeaturesText(newProduct.features?.join('\n') || '');
+      setIsNew(true);
+      setQuickUrl('');
+      setGrabSuccess(`Grabbed: "${details.title || 'Gumroad Product'}"! Review details and click Create Product.`);
+    } catch (err: any) {
+      setQuickError(err?.message || 'Could not fetch Gumroad link details. Please check the URL.');
+    } finally {
+      setQuickGrabbing(false);
+    }
+  };
 
   const handleStartNew = () => {
     const newProduct: StoreProduct = {
@@ -67,12 +121,58 @@ export function StoreManager({
     };
     setEditingProduct(newProduct);
     setFeaturesText(newProduct.features?.join('\n') || '');
+    setGrabError(null);
+    setGrabSuccess(null);
     setIsNew(true);
+  };
+
+  const handleAutoGrab = async (targetUrl?: string) => {
+    const raw = targetUrl || editingProduct?.gumroadUrl || '';
+    const url = raw.trim();
+    if (!url || (!url.includes('gumroad.com') && !url.includes('gum.co'))) {
+      setGrabError('Please paste a valid Gumroad link (e.g. https://yourname.gumroad.com/l/your-product).');
+      return;
+    }
+
+    setIsGrabbing(true);
+    setGrabError(null);
+    setGrabSuccess(null);
+
+    try {
+      const details = await fetchGumroadProductDetails(url);
+      setEditingProduct((prev) => {
+        if (!prev) return null;
+        return {
+          ...prev,
+          title: details.title || prev.title,
+          price: details.price || prev.price,
+          coverImage: details.coverImage || prev.coverImage,
+          description: details.description || prev.description,
+          category: details.category || prev.category,
+          badge: details.badge || prev.badge,
+          features: details.features?.length ? details.features : prev.features,
+        };
+      });
+
+      if (details.features?.length) {
+        setFeaturesText(details.features.join('\n'));
+      }
+
+      setGrabSuccess(`Grabbed details for: "${details.title || 'Gumroad Product'}"!`);
+      setTimeout(() => setGrabSuccess(null), 5000);
+    } catch (err: any) {
+      console.error('Failed to grab Gumroad product details:', err);
+      setGrabError(err?.message || 'Could not fetch Gumroad product details. You can still enter details manually.');
+    } finally {
+      setIsGrabbing(false);
+    }
   };
 
   const handleStartEdit = (product: StoreProduct) => {
     setEditingProduct({ ...product });
     setFeaturesText(product.features?.join('\n') || '');
+    setGrabError(null);
+    setGrabSuccess(null);
     setIsNew(false);
   };
 
@@ -139,7 +239,7 @@ export function StoreManager({
 
         <form onSubmit={handleSaveForm} className="notepad-card p-6 sm:p-8 space-y-6">
           {/* Gumroad URL Callout Box */}
-          <div className="bg-peach-50 border-2 border-peach-200 rounded-2xl p-5 shadow-cozy-xs space-y-2">
+          <div className="bg-peach-50 border-2 border-peach-200 rounded-2xl p-5 shadow-cozy-xs space-y-3">
             <div className="flex items-center justify-between gap-2">
               <label className="text-xs font-extrabold text-peach-800 uppercase tracking-wider flex items-center gap-1.5">
                 <LinkIcon className="w-4 h-4 text-peach-600" />
@@ -157,23 +257,64 @@ export function StoreManager({
                 </a>
               )}
             </div>
-            <p className="text-xs text-tan-700 font-medium">
-              Paste your Gumroad product URL (e.g.{' '}
-              <code className="bg-white/80 px-1 py-0.5 rounded text-peach-700 font-mono text-[11px]">
-                https://yourname.gumroad.com/l/your-product
-              </code>
-              ). Visitors clicking "Get on Gumroad" will be directed to this link.
+
+            <p className="text-xs text-tan-700 font-medium leading-relaxed">
+              Paste your Gumroad product URL below. Click <strong>⚡ Auto-Grab Details</strong> to automatically pull in the title, price, description, cover photo, and checklist directly from your Gumroad page!
             </p>
-            <input
-              type="url"
-              required
-              value={editingProduct.gumroadUrl}
-              onChange={(e) =>
-                setEditingProduct({ ...editingProduct, gumroadUrl: e.target.value })
-              }
-              placeholder="https://yourname.gumroad.com/l/..."
-              className="w-full px-4 py-3 rounded-xl border-2 border-peach-300 bg-white text-ink-900 font-medium text-sm focus:outline-none focus:border-peach-500 shadow-sm"
-            />
+
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+              <input
+                type="url"
+                required
+                value={editingProduct.gumroadUrl}
+                onChange={(e) =>
+                  setEditingProduct({ ...editingProduct, gumroadUrl: e.target.value })
+                }
+                onPaste={(e) => {
+                  const pasted = e.clipboardData.getData('text');
+                  if (pasted && (pasted.includes('gumroad.com') || pasted.includes('gum.co'))) {
+                    if (!editingProduct.title || editingProduct.title === 'New Cozy Product') {
+                      setTimeout(() => handleAutoGrab(pasted), 100);
+                    }
+                  }
+                }}
+                placeholder="https://yourname.gumroad.com/l/..."
+                className="flex-1 px-4 py-3 rounded-xl border-2 border-peach-300 bg-white text-ink-900 font-medium text-sm focus:outline-none focus:border-peach-500 shadow-sm"
+              />
+              <button
+                type="button"
+                onClick={() => handleAutoGrab()}
+                disabled={isGrabbing || !editingProduct.gumroadUrl.trim()}
+                className="site-button bg-peach-500 hover:bg-peach-600 disabled:opacity-50 text-white font-bold text-xs px-4 py-3 rounded-xl shadow-cozy-sm flex items-center justify-center gap-2 whitespace-nowrap transition-all"
+                title="Automatically fetch title, price, description, cover photo, and bulleted features directly from your Gumroad link"
+              >
+                {isGrabbing ? (
+                  <>
+                    <Loader2 size={16} className="animate-spin" />
+                    <span>Grabbing Details...</span>
+                  </>
+                ) : (
+                  <>
+                    <Wand2 size={16} />
+                    <span>⚡ Auto-Grab Details</span>
+                  </>
+                )}
+              </button>
+            </div>
+
+            {/* Feedback Messages */}
+            {grabSuccess && (
+              <div className="flex items-center gap-2 text-xs font-bold text-sage-700 bg-sage-50 border border-sage-200 px-3.5 py-2.5 rounded-xl animate-fade-in">
+                <CheckCircle2 size={16} className="text-sage-600 flex-shrink-0" />
+                <span>{grabSuccess}</span>
+              </div>
+            )}
+            {grabError && (
+              <div className="flex items-center gap-2 text-xs font-bold text-red-700 bg-red-50 border border-red-200 px-3.5 py-2.5 rounded-xl animate-fade-in">
+                <AlertCircle size={16} className="text-red-500 flex-shrink-0" />
+                <span>{grabError}</span>
+              </div>
+            )}
           </div>
 
           {/* Product Title & Category */}
@@ -405,6 +546,58 @@ export function StoreManager({
         <div>
           <span className="font-bold text-ink-900">How Gumroad Links Work:</span> When you add or edit a product, paste your direct Gumroad product link. Visitors clicking "Get on Gumroad" on your Store page will either open the Gumroad checkout popup or redirect to your checkout.
         </div>
+      </div>
+
+      {/* Quick Add by Gumroad Link */}
+      <div className="bg-cream-50 border-2 border-tan-200 rounded-2xl p-4 sm:p-5 shadow-cozy-sm space-y-2">
+        <div className="flex items-center gap-2">
+          <Wand2 className="w-4 h-4 text-peach-500" />
+          <span className="text-xs font-extrabold text-ink-900 uppercase tracking-wider">
+            ⚡ Quick Add from Gumroad Link
+          </span>
+        </div>
+        <p className="text-xs text-tan-600 font-medium">
+          Paste any Gumroad link below and we'll automatically pull in the title, price, description, cover picture, and checklist for you!
+        </p>
+        <div className="flex flex-col sm:flex-row gap-2">
+          <input
+            type="url"
+            value={quickUrl}
+            onChange={(e) => setQuickUrl(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                handleQuickImport();
+              }
+            }}
+            placeholder="e.g. https://sultancruz5.gumroad.com/l/pxowg"
+            className="flex-1 px-4 py-2.5 rounded-xl border border-tan-300 bg-white text-ink-900 text-xs focus:outline-none focus:border-peach-400"
+          />
+          <button
+            type="button"
+            disabled={quickGrabbing || !quickUrl.trim()}
+            onClick={handleQuickImport}
+            className="site-button bg-peach-500 hover:bg-peach-600 disabled:opacity-50 text-white font-bold text-xs px-5 py-2.5 rounded-xl shadow-cozy-sm flex items-center justify-center gap-2 whitespace-nowrap"
+          >
+            {quickGrabbing ? (
+              <>
+                <Loader2 size={14} className="animate-spin" />
+                <span>Grabbing Details...</span>
+              </>
+            ) : (
+              <>
+                <Sparkles size={14} />
+                <span>Auto-Grab & Import</span>
+              </>
+            )}
+          </button>
+        </div>
+        {quickError && (
+          <div className="flex items-center gap-2 text-xs font-bold text-red-600 bg-red-50 p-2.5 rounded-xl border border-red-200">
+            <AlertCircle size={14} className="flex-shrink-0" />
+            <span>{quickError}</span>
+          </div>
+        )}
       </div>
 
       {/* Search Bar */}
