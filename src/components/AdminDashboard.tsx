@@ -1049,6 +1049,8 @@ export function AdminDashboard() {
               subtitle: 'A gentle subtitle for your readers',
               category: 'Review',
               author: 'Jinssi',
+              authorRole: 'Writer',
+              summary: 'A short cozy summary for this article...',
               date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
               readTimeMinutes: 4,
               cozyScore: 5,
@@ -1060,7 +1062,10 @@ export function AdminDashboard() {
                 {
                   heading: 'Introduction',
                   content: ['Write your thoughts and observations here...'],
-                  callout: 'Cozy tip: Take your time and enjoy the quiet moments.',
+                  callout: {
+                    title: 'Cozy Tip',
+                    text: 'Take your time and enjoy the quiet moments.',
+                  },
                 }
               ],
             };
@@ -1099,7 +1104,7 @@ export function AdminDashboard() {
                   coverImage: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=800&q=80',
                   coverAlt: 'Book cover illustration',
                   status: 'Ongoing',
-                  genre: 'Slice of Life',
+                  genre: 'Cozy Fantasy',
                   tags: ['Cozy', 'Relaxing'],
                   totalChapters: 1,
                   chapters: [

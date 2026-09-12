@@ -1,6 +1,7 @@
 import { useSiteContent } from '@/context/SiteContentContext';
 import { MagneticText } from './MagneticText';
 import { getOptimizedImageUrl } from '@/utils/imageOptimization';
+import { CuteDogEat } from './CuteDogEat';
 
 export function Hero() {
   const { heroImage } = useSiteContent();
@@ -39,6 +40,9 @@ export function Hero() {
         <p className="hero-description mt-4 max-w-2xl mx-auto text-balance">
           Step-by-step visual walkthroughs for peaceful organizing games, soothing classic stories to read, and calming lo-fi soundscapes to help you unwind.
         </p>
+
+        {/* Cute Dog Eating Animation */}
+        <CuteDogEat />
       </div>
     </section>
   );
