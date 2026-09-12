@@ -73,7 +73,7 @@ export function CuteDogEat() {
         ))}
 
         {/* Animation Display */}
-        <div className="relative w-44 h-40 sm:w-56 sm:h-48 md:w-64 md:h-52 flex items-center justify-center">
+        <div className="relative w-64 h-56 sm:w-80 sm:h-72 md:w-[380px] md:h-[330px] lg:w-[440px] lg:h-[380px] flex items-center justify-center">
           {!hasError ? (
             <DotLottieReact
               src="/Cute%20dog%20eat.lottie"
@@ -93,11 +93,11 @@ export function CuteDogEat() {
         </div>
 
         {/* Soft grounding shadow */}
-        <div className="w-28 sm:w-36 h-2.5 bg-tan-900/10 dark:bg-black/20 rounded-[100%] blur-[2px] -mt-1 pointer-events-none" />
+        <div className="w-44 sm:w-60 md:w-72 lg:w-80 h-3.5 sm:h-4 bg-tan-900/10 dark:bg-black/20 rounded-[100%] blur-[3px] -mt-2 pointer-events-none" />
 
         {/* Snack Break Badge */}
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] sm:text-xs font-semibold text-ink-700 bg-cream-50/90 border border-tan-200 shadow-cozy-xs mt-2 transition-colors duration-200 group-hover:border-peach-300 group-hover:bg-cream-100">
-          <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold text-ink-700 bg-cream-50/90 border border-tan-200 shadow-cozy-xs mt-3 transition-all duration-200 group-hover:border-peach-300 group-hover:bg-cream-100">
+          <span className="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
           <span>{isPaused ? 'Snack time paused (click to eat)' : 'Snack break'}</span>
         </div>
       </div>
