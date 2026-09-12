@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useMemo, useRef, useState, type R
 import { games as initialGames, type Game, type WalkthroughSection } from '@/data/games';
 import { articles as initialArticles, type Article } from '@/data/articles';
 import { stories as initialStories, type Story } from '@/data/stories';
+import { initialProducts, type StoreProduct } from '@/data/store';
 import { supabase } from '@/lib/supabase';
 
 export interface WalletOption {
@@ -25,6 +26,7 @@ export interface SavedContent {
   games: Game[];
   articles: Article[];
   stories: Story[];
+  products: StoreProduct[];
   heroImage: string;
   logoImage: string;
   ctaLinks: CtaLink[];
@@ -35,6 +37,7 @@ export interface SiteContentContextValue {
   games: Game[];
   articles: Article[];
   stories: Story[];
+  products: StoreProduct[];
   heroImage: string;
   logoImage: string;
   ctaLinks: CtaLink[];
@@ -56,6 +59,10 @@ export interface SiteContentContextValue {
   addStory: (story: Story) => void;
   updateStory: (story: Story) => void;
   removeStory: (storyId: string) => void;
+  addProduct: (product: StoreProduct) => void;
+  updateProduct: (product: StoreProduct) => void;
+  removeProduct: (productId: string) => void;
+  reorderProduct: (productId: string, direction: 'up' | 'down') => void;
 }
 
 const SiteContentContext = createContext<SiteContentContextValue | null>(null);
@@ -66,6 +73,7 @@ const defaultContent: SavedContent = {
   games: initialGames,
   articles: initialArticles,
   stories: initialStories,
+  products: initialProducts,
   heroImage: '/banner.webp',
   logoImage: '/image.webp',
   ctaLinks: [
@@ -163,10 +171,15 @@ function normalizeContent(parsed: Partial<SavedContent> | null | undefined): Sav
     });
   }
 
+  const normalizedProducts: StoreProduct[] = Array.isArray(parsed?.products) && parsed.products.length > 0
+    ? parsed.products
+    : initialProducts;
+
   return {
     games: Array.isArray(parsed?.games) && parsed.games.length > 0 ? parsed.games : initialGames,
     articles: normalizedArticles,
     stories: normalizedStories.length > 0 ? normalizedStories : initialStories,
+    products: normalizedProducts,
     heroImage: parsed?.heroImage === '/banner.jpeg'
       ? defaultContent.heroImage
       : typeof parsed?.heroImage === 'string' ? parsed.heroImage : defaultContent.heroImage,
@@ -283,12 +296,15 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
             const missingGames = remoteNormalized.games.filter((rg) => !localGameIds.has(rg.id));
             const localStoryIds = new Set(contentRef.current.stories.map((s) => s.id));
             const missingStories = remoteNormalized.stories.filter((rs) => !localStoryIds.has(rs.id));
+            const localProductIds = new Set((contentRef.current.products || []).map((p) => p.id));
+            const missingProducts = (remoteNormalized.products || []).filter((rp) => !localProductIds.has(rp.id));
 
-            if (missingGames.length > 0 || missingStories.length > 0) {
+            if (missingGames.length > 0 || missingStories.length > 0 || missingProducts.length > 0) {
               const merged: SavedContent = {
                 ...contentRef.current,
                 games: [...contentRef.current.games, ...missingGames],
                 stories: [...contentRef.current.stories, ...missingStories],
+                products: [...(contentRef.current.products || []), ...missingProducts],
                 updated_at: new Date().toISOString(),
               };
               contentRef.current = merged;
@@ -421,6 +437,7 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
     games: content.games,
     articles: content.articles,
     stories: content.stories,
+    products: content.products || initialProducts,
     heroImage: content.heroImage,
     logoImage: content.logoImage,
     ctaLinks: content.ctaLinks,
@@ -478,6 +495,26 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
       stories: c.stories.filter((s) => s.id !== storyId),
       updated_at: new Date().toISOString(),
     })),
+    addProduct: (product) => setContent((c) => ({ ...c, products: [product, ...(c.products || [])], updated_at: new Date().toISOString() })),
+    updateProduct: (product) => setContent((c) => ({
+      ...c,
+      products: (c.products || []).map((item) => (item.id === product.id ? product : item)),
+      updated_at: new Date().toISOString(),
+    })),
+    removeProduct: (productId) => setContent((c) => ({
+      ...c,
+      products: (c.products || []).filter((p) => p.id !== productId),
+      updated_at: new Date().toISOString(),
+    })),
+    reorderProduct: (productId, direction) => setContent((c) => {
+      const list = [...(c.products || [])];
+      const idx = list.findIndex((p) => p.id === productId);
+      if (idx === -1) return c;
+      const swapIdx = direction === 'up' ? idx - 1 : idx + 1;
+      if (swapIdx < 0 || swapIdx >= list.length) return c;
+      [list[idx], list[swapIdx]] = [list[swapIdx], list[idx]];
+      return { ...c, products: list, updated_at: new Date().toISOString() };
+    }),
   }), [content, syncStatus, lastSyncedAt]);
 
   return <SiteContentContext.Provider value={value}>{children}</SiteContentContext.Provider>;

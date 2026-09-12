@@ -5,6 +5,7 @@ import type { Article } from '@/data/articles';
 import { ArticleManager } from './admin/ArticleManager';
 import { ArticleEditor } from './admin/ArticleEditor';
 import { StoryEditor } from './admin/StoryEditor';
+import { StoreManager } from './admin/StoreManager';
 import type { Story } from '@/data/stories';
 import { supabase } from '@/lib/supabase';
 import { convertImageToWebp } from '@/utils/imageOptimization';
@@ -27,7 +28,8 @@ import {
   RotateCcw,
   BookOpen,
   BookMarked,
-  ExternalLink
+  ExternalLink,
+  ShoppingBag
 } from 'lucide-react';
 
 const DRAFT_STORAGE_KEY = 'jinssi-admin-editing-game-draft';
@@ -55,10 +57,15 @@ export function AdminDashboard() {
     stories,
     addStory,
     updateStory,
-    removeStory
+    removeStory,
+    products,
+    addProduct,
+    updateProduct,
+    removeProduct,
+    reorderProduct
   } = useSiteContent();
 
-  const [activeTab, setActiveTab] = useState<'assets' | 'games' | 'articles' | 'stories'>('assets');
+  const [activeTab, setActiveTab] = useState<'assets' | 'games' | 'articles' | 'stories' | 'store'>('assets');
   const [editingGame, setEditingGame] = useState<Game | null>(null);
   const [editingArticle, setEditingArticle] = useState<Article | null>(null);
   const [editingStory, setEditingStory] = useState<Story | null>(null);
@@ -727,6 +734,7 @@ export function AdminDashboard() {
         <button onClick={() => setActiveTab('games')} className={`font-bold pb-2 ${activeTab === 'games' ? 'text-peach-500 border-b-2 border-peach-500' : 'text-tan-500 hover:text-ink-900'}`}>Manage Games ({games.length})</button>
         <button onClick={() => setActiveTab('articles')} className={`font-bold pb-2 ${activeTab === 'articles' ? 'text-peach-500 border-b-2 border-peach-500' : 'text-tan-500 hover:text-ink-900'}`}>Cozy Journal ({articles.length})</button>
         <button onClick={() => setActiveTab('stories')} className={`font-bold pb-2 ${activeTab === 'stories' ? 'text-peach-500 border-b-2 border-peach-500' : 'text-tan-500 hover:text-ink-900'}`}>Cozy Bookshelf ({stories.length})</button>
+        <button onClick={() => setActiveTab('store')} className={`font-bold pb-2 ${activeTab === 'store' ? 'text-peach-500 border-b-2 border-peach-500' : 'text-tan-500 hover:text-ink-900'}`}>Store ({products.length})</button>
       </div>
 
       {activeTab === 'assets' && (
@@ -1201,6 +1209,18 @@ export function AdminDashboard() {
             })}
           </div>
         </div>
+      )}
+
+      {activeTab === 'store' && (
+        <StoreManager
+          products={products}
+          onAddProduct={addProduct}
+          onUpdateProduct={updateProduct}
+          onRemoveProduct={removeProduct}
+          onReorderProduct={reorderProduct}
+          onUploadImage={handleImageUpload}
+          uploadingKey={uploadingKey}
+        />
       )}
     </div>
   );

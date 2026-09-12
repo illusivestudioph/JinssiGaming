@@ -3,7 +3,7 @@ import { useSiteContent, type CtaLink, type WalletOption } from '@/context/SiteC
 import { supabase } from '@/lib/supabase';
 import { Coffee, X, Copy, Check } from 'lucide-react';
 
-export function CtaFooter({ onNavigate }: { onNavigate: (view: 'about' | 'privacy' | 'terms' | 'contact') => void }) {
+export function CtaFooter({ onNavigate }: { onNavigate: (view: 'about' | 'privacy' | 'terms' | 'contact' | 'store') => void }) {
   const { ctaLinks, logoImage } = useSiteContent();
   const [activeModalLink, setActiveModalLink] = useState<CtaLink | null>(null);
   const [selectedWallet, setSelectedWallet] = useState<WalletOption | null>(null);
@@ -282,6 +282,7 @@ export function CtaFooter({ onNavigate }: { onNavigate: (view: 'about' | 'privac
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-sm font-semibold text-tan-400">
             <p>© 2026 Jinssi Gaming. All rights reserved.</p>
             <div className="flex flex-wrap items-center justify-center gap-3">
+              <button type="button" onClick={() => onNavigate('store')} className="hover:text-peach-500 transition-colors">Store</button>
               <button type="button" onClick={() => onNavigate('privacy')} className="hover:text-peach-500 transition-colors">Privacy</button>
               <button type="button" onClick={() => onNavigate('terms')} className="hover:text-peach-500 transition-colors">Terms</button>
               <button type="button" onClick={() => onNavigate('contact')} className="hover:text-peach-500 transition-colors">Contact</button>

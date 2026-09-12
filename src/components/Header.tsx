@@ -6,7 +6,7 @@ import { MagneticText } from "@/components/MagneticText";
 import { getOptimizedImageUrl } from '@/utils/imageOptimization';
 import { Lock, Menu, X, Music, Pause, Volume2, VolumeX, Sliders } from 'lucide-react';
 
-export type View = 'home' | 'walkthroughs' | 'journal' | 'stories' | 'about' | 'privacy' | 'terms' | 'contact' | 'admin';
+export type View = 'home' | 'walkthroughs' | 'journal' | 'stories' | 'store' | 'about' | 'privacy' | 'terms' | 'contact' | 'admin';
 
 export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View) => void }) {
   const { logoImage } = useSiteContent();
@@ -85,6 +85,7 @@ export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View)
               <button aria-current={view === 'walkthroughs' ? 'page' : undefined} onClick={() => handleNavigate('walkthroughs')} className={`site-nav-link ${view === 'walkthroughs' ? 'text-peach-500 is-active' : 'text-tan-600'}`}>Walkthroughs</button>
               <button aria-current={view === 'journal' ? 'page' : undefined} onClick={() => handleNavigate('journal')} className={`site-nav-link ${view === 'journal' ? 'text-peach-500 is-active' : 'text-tan-600'}`}>Journal</button>
               <button aria-current={view === 'stories' ? 'page' : undefined} onClick={() => handleNavigate('stories')} className={`site-nav-link ${view === 'stories' ? 'text-peach-500 is-active' : 'text-tan-600'}`}>Stories</button>
+              <button aria-current={view === 'store' ? 'page' : undefined} onClick={() => handleNavigate('store')} className={`site-nav-link ${view === 'store' ? 'text-peach-500 is-active' : 'text-tan-600'}`}>Store</button>
               <button aria-current={view === 'about' ? 'page' : undefined} onClick={() => handleNavigate('about')} className={`site-nav-link ${view === 'about' ? 'text-peach-500 is-active' : 'text-tan-600'}`}>About</button>
               {view === 'admin' && <span className="font-bold text-earth-500 ml-4">Admin Mode</span>}
             </nav>
@@ -171,6 +172,7 @@ export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View)
               <button aria-current={view === 'walkthroughs' ? 'page' : undefined} onClick={() => handleNavigate('walkthroughs')} className={`site-nav-link text-left ${view === 'walkthroughs' ? 'text-peach-500' : 'text-tan-600'}`}>Walkthroughs</button>
               <button aria-current={view === 'journal' ? 'page' : undefined} onClick={() => handleNavigate('journal')} className={`site-nav-link text-left ${view === 'journal' ? 'text-peach-500' : 'text-tan-600'}`}>Journal</button>
               <button aria-current={view === 'stories' ? 'page' : undefined} onClick={() => handleNavigate('stories')} className={`site-nav-link text-left ${view === 'stories' ? 'text-peach-500' : 'text-tan-600'}`}>Stories</button>
+              <button aria-current={view === 'store' ? 'page' : undefined} onClick={() => handleNavigate('store')} className={`site-nav-link text-left ${view === 'store' ? 'text-peach-500' : 'text-tan-600'}`}>Store</button>
               <button aria-current={view === 'about' ? 'page' : undefined} onClick={() => handleNavigate('about')} className={`site-nav-link text-left ${view === 'about' ? 'text-peach-500' : 'text-tan-600'}`}>About</button>
               
               {/* Mobile volume slider */}

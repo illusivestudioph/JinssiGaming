@@ -14,6 +14,7 @@ import { HomeBookshelfSection } from '@/components/HomeBookshelfSection';
 import { HomeJournalSection } from '@/components/HomeJournalSection';
 import { CtaFooter } from '@/components/CtaFooter';
 import { AboutPage } from '@/components/AboutPage';
+import { StorePage } from '@/components/StorePage';
 import { PrivacyPolicyPage } from '@/components/PrivacyPolicyPage';
 import { TermsPage } from '@/components/TermsPage';
 import { ContactPage } from '@/components/ContactPage';
@@ -54,7 +55,7 @@ function AppContent() {
     const routeView = getRouteView();
     if (routeView) return routeView;
     const savedView = sessionStorage.getItem('jinssi-view');
-    return savedView === 'walkthroughs' || savedView === 'journal' || savedView === 'stories' || savedView === 'about' || savedView === 'privacy' || savedView === 'terms' || savedView === 'contact' || savedView === 'admin'
+    return savedView === 'walkthroughs' || savedView === 'journal' || savedView === 'stories' || savedView === 'store' || savedView === 'about' || savedView === 'privacy' || savedView === 'terms' || savedView === 'contact' || savedView === 'admin'
       ? savedView
       : 'home';
   });
@@ -384,6 +385,10 @@ function AppContent() {
       return <AboutPage />;
     }
 
+    if (view === 'store') {
+      return <StorePage />;
+    }
+
     if (view === 'privacy') return <PrivacyPolicyPage />;
     if (view === 'terms') return <TermsPage />;
     if (view === 'contact') return <ContactPage />;
@@ -407,6 +412,7 @@ function getPathForView(view: View) {
   if (view === 'home') return '/';
   if (view === 'journal') return '/journal';
   if (view === 'stories') return '/stories';
+  if (view === 'store') return '/store';
   if (view === 'privacy') return '/privacy-policy';
   if (view === 'terms') return '/terms-of-use';
   return `/${view}`;
@@ -418,6 +424,7 @@ function getRouteView(): View | null {
   if (path === '/') return 'home';
   if (path === '/journal' || path.startsWith('/journal/')) return 'journal';
   if (path === '/stories' || path.startsWith('/stories/')) return 'stories';
+  if (path === '/store' || path.startsWith('/store/')) return 'store';
   if (path === '/privacy-policy') return 'privacy';
   if (path === '/terms-of-use') return 'terms';
   if (path === '/contact') return 'contact';
