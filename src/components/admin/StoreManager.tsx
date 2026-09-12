@@ -413,28 +413,55 @@ export function StoreManager({
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-tan-600 uppercase tracking-wider mb-1.5">
-                Category
+              <label className="block text-xs font-bold text-tan-600 uppercase tracking-wider mb-1.5 flex items-center justify-between">
+                <span>Category</span>
+                <span className="text-[11px] text-peach-600 font-semibold lowercase">Select from menu or click a pill</span>
               </label>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  required
-                  value={editingProduct.category}
-                  onChange={(e) =>
-                    setEditingProduct({ ...editingProduct, category: e.target.value })
-                  }
-                  placeholder="Category..."
-                  list="category-options"
-                  className="flex-1 px-4 py-2.5 rounded-xl border-2 border-tan-200 bg-cream-50 text-ink-900 font-medium focus:outline-none focus:border-peach-400"
-                />
-                <datalist id="category-options">
-                  {storeCategories
-                    .filter((c) => c !== 'All')
-                    .map((cat) => (
-                      <option key={cat} value={cat} />
-                    ))}
-                </datalist>
+              <select
+                value={editingProduct.category}
+                onChange={(e) =>
+                  setEditingProduct({ ...editingProduct, category: e.target.value })
+                }
+                className="w-full px-4 py-2.5 rounded-xl border-2 border-tan-200 bg-cream-50 text-ink-900 font-bold text-sm focus:outline-none focus:border-peach-400 shadow-cozy-xs cursor-pointer"
+              >
+                {storeCategories
+                  .filter((c) => c !== 'All')
+                  .map((cat) => (
+                    <option key={cat} value={cat}>
+                      {cat}
+                    </option>
+                  ))}
+                {!storeCategories.filter((c) => c !== 'All').includes(editingProduct.category as any) &&
+                  editingProduct.category && (
+                    <option value={editingProduct.category}>
+                      {editingProduct.category} (Custom)
+                    </option>
+                  )}
+              </select>
+
+              {/* Quick Pills for 1-click category picking */}
+              <div className="flex flex-wrap gap-1.5 mt-2">
+                {storeCategories
+                  .filter((c) => c !== 'All')
+                  .map((cat) => {
+                    const isSelected = editingProduct.category === cat;
+                    return (
+                      <button
+                        key={cat}
+                        type="button"
+                        onClick={() =>
+                          setEditingProduct({ ...editingProduct, category: cat })
+                        }
+                        className={`text-[11px] font-bold px-2.5 py-1 rounded-lg transition-all ${
+                          isSelected
+                            ? 'bg-peach-500 text-white shadow-cozy-xs scale-105'
+                            : 'bg-white text-tan-600 hover:bg-cream-100 hover:text-ink-900 border border-tan-200'
+                        }`}
+                      >
+                        {cat}
+                      </button>
+                    );
+                  })}
               </div>
             </div>
           </div>
