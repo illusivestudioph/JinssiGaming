@@ -273,9 +273,16 @@ export function StoreManager({
                 onPaste={(e) => {
                   const pasted = e.clipboardData.getData('text');
                   if (pasted && (pasted.includes('gumroad.com') || pasted.includes('gum.co'))) {
-                    if (!editingProduct.title || editingProduct.title === 'New Cozy Product') {
-                      setTimeout(() => handleAutoGrab(pasted), 100);
-                    }
+                    setTimeout(() => handleAutoGrab(pasted), 50);
+                  }
+                }}
+                onBlur={() => {
+                  if (
+                    editingProduct.gumroadUrl &&
+                    (editingProduct.gumroadUrl.includes('gumroad.com') || editingProduct.gumroadUrl.includes('gum.co')) &&
+                    (!editingProduct.title || editingProduct.title === 'New Cozy Product')
+                  ) {
+                    void handleAutoGrab(editingProduct.gumroadUrl);
                   }
                 }}
                 placeholder="https://yourname.gumroad.com/l/..."

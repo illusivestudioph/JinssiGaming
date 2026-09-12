@@ -98,8 +98,24 @@ export async function fetchGumroadProductDetails(rawUrl: string): Promise<Scrape
     }
   }
 
-  // Strategy 3: Try direct fetch (in case CORS is permitted)
+  // Strategy 3: Try Microlink Metadata API (dedicated high-reliability CORS OpenGraph API)
+  let microlinkData: any = null;
   if (!html) {
+    try {
+      const mRes = await fetch(`https://api.microlink.io/?url=${encodeURIComponent(url)}`);
+      if (mRes.ok) {
+        const mJson = await mRes.json();
+        if (mJson?.status === 'success' && mJson?.data) {
+          microlinkData = mJson.data;
+        }
+      }
+    } catch {
+      // Continue to next strategy
+    }
+  }
+
+  // Strategy 4: Try direct fetch (in case CORS is permitted)
+  if (!html && !microlinkData) {
     try {
       const res = await fetch(url);
       if (res.ok) {
@@ -110,8 +126,8 @@ export async function fetchGumroadProductDetails(rawUrl: string): Promise<Scrape
     }
   }
 
-  if (!html) {
-    throw new Error('Unable to retrieve Gumroad product page. Please verify your link.');
+  if (!html && !microlinkData) {
+    throw new Error('Unable to connect to Gumroad product page. Please check the URL.');
   }
 
   let title = '';
@@ -169,7 +185,7 @@ export async function fetchGumroadProductDetails(rawUrl: string): Promise<Scrape
   }
 
   // Fallback to OpenGraph / Meta tags parsing if fields are missing
-  if (!title || !coverImage || !description) {
+  if (html && (!title || !coverImage || !description)) {
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, 'text/html');
 
@@ -200,6 +216,13 @@ export async function fetchGumroadProductDetails(rawUrl: string): Promise<Scrape
         price = `${symbol}${num}`;
       }
     }
+  }
+
+  // Fallback to Microlink metadata
+  if (microlinkData) {
+    if (!title && microlinkData.title) title = microlinkData.title;
+    if (!coverImage && microlinkData.image?.url) coverImage = microlinkData.image.url;
+    if (!description && microlinkData.description) description = microlinkData.description;
   }
 
   // If no features found from <li>, try splitting description lines with bullets (•, -, *)
