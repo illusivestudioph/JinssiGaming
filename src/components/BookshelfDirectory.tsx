@@ -196,7 +196,7 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
       {/* Top Banner */}
       <div className="text-center max-w-2xl mx-auto mb-8">
         <div className="library-badge inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-peach-100 text-peach-700 text-xs font-bold mb-3 shadow-cozy-sm">
-          <Headphones className="w-4 h-4 text-peach-600" />
+          <StreamlineHeadphones className="w-4 h-4 text-peach-600" />
           <span>Audiobook & Unabridged eBook Sanctuary</span>
         </div>
         <h1 className="font-display text-3xl sm:text-4xl font-extrabold text-ink-900 tracking-tight mb-3">
