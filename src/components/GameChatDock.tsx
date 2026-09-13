@@ -40,9 +40,12 @@ export function GameChatDock() {
 
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!user) {
+      triggerAuthPrompt('Sign in with Gmail to join the chat and message travelers.');
+      return;
+    }
     if (!inputText.trim()) return;
 
-    // If user is guest, they can chat in World Chat or prompt to login
     setIsSending(true);
     try {
       await sendMessage(inputText);
@@ -198,26 +201,52 @@ export function GameChatDock() {
           {/* DM Partner Selector if in DM Mode without Active Partner */}
           {channel === 'dm' && !activeDmPartner && (
             <div className="p-4 border-b bg-[#FCF8EE] border-[#EBDCC9]">
-              <span className="text-xs font-bold text-[#3A2E22] block mb-2">
-                Select a Friend to Message
-              </span>
-              <div className="flex gap-2 overflow-x-auto pb-1">
-                {friends.length === 0 ? (
-                  <span className="text-xs text-tan-500">No friends added yet. Click &ldquo;Add Friend&rdquo; on any user!</span>
-                ) : (
-                  friends.map((f) => (
-                    <button
-                      key={f.id}
-                      type="button"
-                      onClick={() => setActiveDmPartner(f)}
-                      className="p-2 rounded-xl bg-white border border-tan-200 hover:border-peach-400 flex flex-col items-center gap-1 shrink-0 cursor-pointer text-xs"
-                    >
-                      <CozyAvatar config={f.avatarConfig} size={36} />
-                      <span className="font-bold truncate max-w-[70px]">@{f.username}</span>
-                    </button>
-                  ))
-                )}
-              </div>
+              {!user ? (
+                <div className="text-center py-2">
+                  <span className="text-xs font-bold text-[#3A2E22] block mb-1">
+                    Direct Messaging is Members Only
+                  </span>
+                  <p className="text-[11px] text-tan-500 mb-2">
+                    Sign in with Google to send private messages and build your buddy list.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      triggerAuthPrompt('Sign in with Gmail to direct message friends.')
+                    }
+                    className="px-3.5 py-1.5 rounded-xl text-xs font-bold text-white shadow-xs cursor-pointer inline-flex items-center gap-1.5 transition-transform hover:scale-102 active:scale-98"
+                    style={{ backgroundColor: 'var(--theme-accent, #fd9a4d)' }}
+                  >
+                    <StreamlineUsers className="w-3.5 h-3.5" />
+                    <span>Sign In to DM</span>
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <span className="text-xs font-bold text-[#3A2E22] block mb-2">
+                    Select a Friend to Message
+                  </span>
+                  <div className="flex gap-2 overflow-x-auto pb-1">
+                    {friends.length === 0 ? (
+                      <span className="text-xs text-tan-500">
+                        No friends added yet. Click &ldquo;Add Friend&rdquo; on any user!
+                      </span>
+                    ) : (
+                      friends.map((f) => (
+                        <button
+                          key={f.id}
+                          type="button"
+                          onClick={() => setActiveDmPartner(f)}
+                          className="p-2 rounded-xl bg-white border border-tan-200 hover:border-peach-400 flex flex-col items-center gap-1 shrink-0 cursor-pointer text-xs"
+                        >
+                          <CozyAvatar config={f.avatarConfig} size={36} />
+                          <span className="font-bold truncate max-w-[70px]">@{f.username}</span>
+                        </button>
+                      ))
+                    )}
+                  </div>
+                </>
+              )}
             </div>
           )}
 
@@ -304,41 +333,63 @@ export function GameChatDock() {
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Bottom Chat Input Form */}
-          <form
-            onSubmit={handleSend}
-            className="p-3 border-t bg-[#FCF8EE] border-[#EBDCC9] flex flex-col gap-1.5"
-          >
-            <div className="flex items-center gap-2">
-              <input
-                type="text"
-                value={inputText}
-                onChange={(e) => setInputText(e.target.value)}
-                placeholder={
-                  channel === 'world'
-                    ? 'Message World Chat...'
-                    : activeDmPartner
-                    ? `Message @${activeDmPartner.username}...`
-                    : 'Select a friend to message...'
-                }
-                disabled={channel === 'dm' && !activeDmPartner}
-                className="flex-1 px-3 py-2 rounded-xl text-xs bg-white border border-tan-300 focus:border-peach-500 focus:outline-none disabled:opacity-50"
-              />
+          {/* Bottom Chat Input Form / Guest Sign-In Notice */}
+          {!user ? (
+            <div className="p-3.5 border-t bg-[#FCF8EE] border-[#EBDCC9] flex flex-col items-center justify-center text-center gap-2">
+              <div className="text-xs text-[#3A2E22] font-semibold">
+                Only registered members can chat and message.
+              </div>
               <button
-                type="submit"
-                disabled={!inputText.trim() || isSending || (channel === 'dm' && !activeDmPartner)}
-                className="px-3.5 py-2 rounded-xl text-xs font-bold text-white shadow-xs transition-transform active:scale-95 disabled:opacity-50 cursor-pointer"
+                type="button"
+                onClick={() =>
+                  triggerAuthPrompt('Sign in with Gmail to join the chat and message travelers.')
+                }
+                className="px-4 py-2 rounded-xl text-xs font-bold text-white shadow-xs transition-transform hover:scale-102 active:scale-98 cursor-pointer flex items-center gap-2"
                 style={{ backgroundColor: 'var(--theme-accent, #fd9a4d)' }}
               >
-                Send
+                <StreamlineUsers className="w-3.5 h-3.5" />
+                <span>Sign In to Chat</span>
               </button>
+              <div className="text-[10px] text-tan-500 font-medium">
+                World Chat is currently in read-only mode for visitors.
+              </div>
             </div>
+          ) : (
+            <form
+              onSubmit={handleSend}
+              className="p-3 border-t bg-[#FCF8EE] border-[#EBDCC9] flex flex-col gap-1.5"
+            >
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  value={inputText}
+                  onChange={(e) => setInputText(e.target.value)}
+                  placeholder={
+                    channel === 'world'
+                      ? 'Message World Chat...'
+                      : activeDmPartner
+                      ? `Message @${activeDmPartner.username}...`
+                      : 'Select a friend to message...'
+                  }
+                  disabled={channel === 'dm' && !activeDmPartner}
+                  className="flex-1 px-3 py-2 rounded-xl text-xs bg-white border border-tan-300 focus:border-peach-500 focus:outline-none disabled:opacity-50"
+                />
+                <button
+                  type="submit"
+                  disabled={!inputText.trim() || isSending || (channel === 'dm' && !activeDmPartner)}
+                  className="px-3.5 py-2 rounded-xl text-xs font-bold text-white shadow-xs transition-transform active:scale-95 disabled:opacity-50 cursor-pointer"
+                  style={{ backgroundColor: 'var(--theme-accent, #fd9a4d)' }}
+                >
+                  Send
+                </button>
+              </div>
 
-            {/* Retention & Privacy Notice */}
-            <div className="text-[9px] text-tan-500 text-center">
-              Synced with Supabase & pruned every 7 days. Your chat history is preserved locally.
-            </div>
-          </form>
+              {/* Retention & Privacy Notice */}
+              <div className="text-[9px] text-tan-500 text-center">
+                Synced with Supabase & pruned every 7 days. Your chat history is preserved locally.
+              </div>
+            </form>
+          )}
         </div>
       )}
     </div>

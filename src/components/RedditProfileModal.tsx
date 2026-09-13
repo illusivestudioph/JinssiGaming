@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useChat } from '@/context/ChatContext';
+import { useAuth } from '@/context/AuthContext';
 import { CozyAvatar } from '@/components/CozyAvatar';
 import {
   StreamlineClose,
@@ -14,7 +15,9 @@ import {
 } from '@/components/StreamlineIcons';
 
 export function RedditProfileModal() {
-  const { activeProfileUser, closeProfile, isFriend, addFriend, removeFriend, openDmWith } = useChat();
+  const { activeProfileUser, closeProfile, isFriend, addFriend, removeFriend, openDmWith } =
+    useChat();
+  const { user, triggerAuthPrompt } = useAuth();
   const [activeTab, setActiveTab] = useState<'overview' | 'comments' | 'trophies'>('overview');
   const [toast, setToast] = useState<string | null>(null);
 
@@ -23,6 +26,11 @@ export function RedditProfileModal() {
   const isAlreadyFriend = isFriend(activeProfileUser.id) || isFriend(activeProfileUser.username);
 
   const handleToggleFriend = () => {
+    if (!user) {
+      triggerAuthPrompt('Sign in with Gmail to add friends and view your social buddy list.');
+      return;
+    }
+
     if (isAlreadyFriend) {
       removeFriend(activeProfileUser.id);
       setToast('Removed from Friends');
@@ -41,6 +49,11 @@ export function RedditProfileModal() {
   };
 
   const handleStartDm = () => {
+    if (!user) {
+      triggerAuthPrompt('Sign in with Gmail to send direct messages to travelers.');
+      return;
+    }
+
     openDmWith({
       id: activeProfileUser.id,
       username: activeProfileUser.username,
