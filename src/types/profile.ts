@@ -1,6 +1,9 @@
+export type FaceShape = 'oval' | 'round' | 'square' | 'heart' | 'diamond';
+
 export interface AdventurerConfig {
   seed: string;
   gender?: 'male' | 'female' | 'neutral';
+  faceShape?: FaceShape;
   skinColor: string;
   hair: string;
   hairColor: string;
@@ -46,6 +49,7 @@ export interface UserProfile {
 export const DEFAULT_AVATAR_CONFIG: AdventurerConfig = {
   seed: 'CozyPlayer',
   gender: 'neutral',
+  faceShape: 'oval',
   skinColor: 'f2d3b1',
   hair: 'short01',
   hairColor: '4a312c',

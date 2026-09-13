@@ -1,13 +1,21 @@
 import React, { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { CozyAvatar } from '@/components/CozyAvatar';
-import { AdventurerConfig, getAdventurerAvatarUrl } from '@/types/profile';
+import { AdventurerConfig, FaceShape, getAdventurerAvatarUrl } from '@/types/profile';
 import {
   StreamlinePalette,
   StreamlineDice,
   StreamlineClose,
   StreamlineCheck,
   StreamlineStars,
+  StreamlineScissors,
+  StreamlineFaceSmile,
+  StreamlineMustache,
+  StreamlineSun,
+  StreamlineMale,
+  StreamlineFemale,
+  StreamlineUsers,
+  StreamlineFaceShape,
 } from '@/components/StreamlineIcons';
 
 // Comprehensive catalog of authentic Adventurer hairstyles with visual tags
@@ -18,7 +26,7 @@ const HAIRSTYLES: { id: string; label: string; category: 'male' | 'female' | 'un
   { id: 'short03', label: 'Side Swept Wave', category: 'male', tag: 'Short / Male' },
   { id: 'short04', label: 'Clean Undercut', category: 'male', tag: 'Short / Male' },
   { id: 'short05', label: 'Spiky Anime Shag', category: 'male', tag: 'Short / Male' },
-  { id: 'short06', label: '90s Curtain Bangs', category: 'unisex', tag: 'Short / Unisex' },
+  { id: 'short06', label: 'Curtain Bangs', category: 'unisex', tag: 'Short / Unisex' },
   { id: 'short07', label: 'Tapered Quiff', category: 'male', tag: 'Short / Male' },
   { id: 'short08', label: 'High & Tight Fade', category: 'male', tag: 'Short / Male' },
   { id: 'short09', label: 'Curly Crew Cut', category: 'male', tag: 'Short / Male' },
@@ -66,6 +74,40 @@ const SKIN_TONES: { id: string; label: string; hex: string }[] = [
   { id: 'd08b5b', label: 'Golden Olive', hex: '#D08B5B' },
   { id: 'ae5d29', label: 'Caramel Honey', hex: '#AE5D29' },
   { id: '614335', label: 'Deep Cocoa', hex: '#614335' },
+];
+
+// Face Shape Silhouettes
+const FACE_SHAPES: { id: FaceShape; label: string; desc: string; svgD: string }[] = [
+  {
+    id: 'oval',
+    label: 'Oval Silhouette',
+    desc: 'Balanced & Natural',
+    svgD: 'M16 6 C24 6 27 13 27 21 C27 30 22 38 16 38 C10 38 5 30 5 21 C5 13 8 6 16 6 Z',
+  },
+  {
+    id: 'square',
+    label: 'Square / Chiseled',
+    desc: 'Strong Angular Jaw',
+    svgD: 'M8 8 C16 7 24 7 24 8 C26 17 26 27 22 34 C19 37 13 37 10 34 C6 27 6 17 8 8 Z',
+  },
+  {
+    id: 'round',
+    label: 'Round Silhouette',
+    desc: 'Soft Fuller Cheeks',
+    svgD: 'M16 6 C25 6 28 14 28 22 C28 30 24 38 16 38 C8 38 4 30 4 22 C4 14 7 6 16 6 Z',
+  },
+  {
+    id: 'heart',
+    label: 'Heart / V-Line',
+    desc: 'Tapered Slender Chin',
+    svgD: 'M16 7 C25 6 28 14 27 21 C26 29 20 37 16 39 C12 37 6 29 5 21 C4 14 7 6 16 7 Z',
+  },
+  {
+    id: 'diamond',
+    label: 'Diamond Sculpted',
+    desc: 'High Cheekbones & Jaw',
+    svgD: 'M16 6 C23 12 28 18 28 23 C28 28 20 36 16 39 C12 36 4 28 4 23 C4 18 9 12 16 6 Z',
+  },
 ];
 
 // Eyebrow structures that shape facial expression and brow contours
@@ -144,6 +186,7 @@ export function AvatarBuilderModal() {
   const [draftConfig, setDraftConfig] = useState<AdventurerConfig>(() => ({
     ...profile.avatarConfig,
     gender: profile.avatarConfig?.gender || 'neutral',
+    faceShape: profile.avatarConfig?.faceShape || 'oval',
     eyebrows: profile.avatarConfig?.eyebrows || 'variant02',
     earrings: profile.avatarConfig?.earrings || 'none',
   }));
@@ -167,20 +210,24 @@ export function AvatarBuilderModal() {
       let nextHair = prev.hair;
       let nextEyebrows = prev.eyebrows || 'variant02';
       let nextFeatures = prev.features;
+      let nextFaceShape = prev.faceShape || 'oval';
 
       if (gender === 'male') {
         setHairCategoryFilter('male');
         const currentIsFemale = HAIRSTYLES.find((h) => h.id === prev.hair)?.category === 'female';
         if (currentIsFemale) nextHair = 'short01';
         nextEyebrows = 'variant01';
+        nextFaceShape = 'square';
       } else if (gender === 'female') {
         setHairCategoryFilter('female');
         const currentIsMale = HAIRSTYLES.find((h) => h.id === prev.hair)?.category === 'male';
         if (currentIsMale) nextHair = 'long01';
         nextEyebrows = 'variant02';
+        nextFaceShape = 'heart';
         if (nextFeatures === 'mustache') nextFeatures = 'blush';
       } else {
         setHairCategoryFilter('all');
+        nextFaceShape = 'oval';
       }
 
       return {
@@ -188,6 +235,7 @@ export function AvatarBuilderModal() {
         gender,
         hair: nextHair,
         eyebrows: nextEyebrows,
+        faceShape: nextFaceShape,
         features: nextFeatures,
         useGooglePhoto: false,
       };
@@ -208,6 +256,7 @@ export function AvatarBuilderModal() {
     const randomSkin = SKIN_TONES[Math.floor(Math.random() * SKIN_TONES.length)].id;
     const randomEyes = EYES[Math.floor(Math.random() * EYES.length)].id;
     const randomMouth = MOUTHS[Math.floor(Math.random() * MOUTHS.length)].id;
+    const randomFaceShape = FACE_SHAPES[Math.floor(Math.random() * FACE_SHAPES.length)].id;
     const randomEyebrows =
       currentGender === 'male'
         ? ['variant01', 'variant03', 'variant04', 'variant08'][Math.floor(Math.random() * 4)]
@@ -229,6 +278,7 @@ export function AvatarBuilderModal() {
       hair: randomHair,
       hairColor: randomHairColor,
       skinColor: randomSkin,
+      faceShape: randomFaceShape,
       eyebrows: randomEyebrows,
       eyes: randomEyes,
       mouth: randomMouth,
@@ -343,6 +393,11 @@ export function AvatarBuilderModal() {
                 >
                   Illustrated Persona
                 </span>
+                {draftConfig.faceShape && (
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-stone-100 text-stone-700 border border-stone-300 capitalize">
+                    {draftConfig.faceShape} Jaw
+                  </span>
+                )}
                 {draftConfig.features === 'mustache' && (
                   <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-100 text-amber-800 border border-amber-300">
                     Mustache
@@ -365,31 +420,33 @@ export function AvatarBuilderModal() {
             </div>
           </div>
 
-          {/* Gender Preset Selector */}
+          {/* Gender Preset Selector with Streamline Icons */}
           <div className="flex flex-col items-end gap-1.5 w-full sm:w-auto">
             <span className="text-[10px] font-bold uppercase tracking-wider text-tan-600 hidden sm:block">
               Gender & Presentation
             </span>
             <div className="flex items-center gap-1 bg-white/80 p-1 rounded-xl border border-[#EADCCB] shadow-2xs w-full sm:w-auto justify-center">
               {[
-                { id: 'male', label: '👨 Male', hint: 'Short cuts & masculine brows' },
-                { id: 'female', label: '👩 Female', hint: 'Long styles & soft accents' },
-                { id: 'neutral', label: '🧑 All', hint: 'Complete catalog' },
+                { id: 'male', label: 'Male', icon: StreamlineMale, hint: 'Short cuts, chiseled jaw & masculine brows' },
+                { id: 'female', label: 'Female', icon: StreamlineFemale, hint: 'Long styles, soft jaw & delicate accents' },
+                { id: 'neutral', label: 'All', icon: StreamlineUsers, hint: 'Complete catalog' },
               ].map((g) => {
                 const isSelected = (draftConfig.gender || 'neutral') === g.id;
+                const IconComponent = g.icon;
                 return (
                   <button
                     key={g.id}
                     type="button"
                     onClick={() => handleSelectGender(g.id as 'male' | 'female' | 'neutral')}
-                    className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
                       isSelected
                         ? 'bg-[#FD9A4D] text-white shadow-xs font-black'
                         : 'text-[#6A5747] hover:bg-[#FFF7EE]'
                     }`}
                     title={g.hint}
                   >
-                    {g.label}
+                    <IconComponent className="w-3.5 h-3.5" />
+                    <span>{g.label}</span>
                   </button>
                 );
               })}
@@ -397,7 +454,7 @@ export function AvatarBuilderModal() {
           </div>
         </div>
 
-        {/* Customization Navigation Tabs (5 Equal Columns to Fit Panel Perfectly) */}
+        {/* Customization Navigation Tabs with Streamline Icons (Fits Panel Seamlessly) */}
         <div
           className="grid grid-cols-5 border-b w-full"
           style={{
@@ -406,19 +463,20 @@ export function AvatarBuilderModal() {
           }}
         >
           {[
-            { id: 'hair', icon: '✂️', label: 'Hair' },
-            { id: 'face', icon: '🙂', label: 'Face' },
-            { id: 'accessories', icon: '👓', label: 'Accents' },
-            { id: 'skin', icon: '🎨', label: 'Skin' },
-            { id: 'backdrop', icon: '🌅', label: 'Theme' },
+            { id: 'hair', label: 'Hair', icon: StreamlineScissors },
+            { id: 'face', label: 'Face', icon: StreamlineFaceSmile },
+            { id: 'accessories', label: 'Accents', icon: StreamlineMustache },
+            { id: 'skin', label: 'Skin', icon: StreamlinePalette },
+            { id: 'backdrop', label: 'Theme', icon: StreamlineSun },
           ].map((tab) => {
             const isActive = activeTab === tab.id;
+            const IconComp = tab.icon;
             return (
               <button
                 key={tab.id}
                 type="button"
                 onClick={() => setActiveTab(tab.id as CustomizerTab)}
-                className={`py-2.5 sm:py-3 px-1 border-b-2 transition-all flex flex-col sm:flex-row items-center justify-center gap-1 cursor-pointer text-center ${
+                className={`py-2.5 sm:py-3 px-1 border-b-2 transition-all flex flex-col sm:flex-row items-center justify-center gap-1.5 cursor-pointer text-center ${
                   isActive ? 'font-black bg-white/40' : 'border-transparent hover:bg-black/5'
                 }`}
                 style={{
@@ -426,7 +484,7 @@ export function AvatarBuilderModal() {
                   color: isActive ? 'var(--theme-accent, #fd9a4d)' : 'var(--text-muted, #8f6b48)',
                 }}
               >
-                <span className="text-sm">{tab.icon}</span>
+                <IconComp className="w-4 h-4" />
                 <span className="text-[11px] sm:text-xs tracking-tight truncate">{tab.label}</span>
               </button>
             );
@@ -451,7 +509,7 @@ export function AvatarBuilderModal() {
                     <button
                       type="button"
                       onClick={() => setHairCategoryFilter('all')}
-                      className={`px-2 py-0.5 rounded-md cursor-pointer transition-colors ${
+                      className={`px-2.5 py-1 rounded-md cursor-pointer transition-colors ${
                         hairCategoryFilter === 'all'
                           ? 'bg-[#FD9A4D] text-white'
                           : 'bg-white text-tan-600 border border-tan-200'
@@ -462,24 +520,26 @@ export function AvatarBuilderModal() {
                     <button
                       type="button"
                       onClick={() => setHairCategoryFilter('male')}
-                      className={`px-2 py-0.5 rounded-md cursor-pointer transition-colors ${
+                      className={`px-2.5 py-1 rounded-md cursor-pointer transition-colors flex items-center gap-1 ${
                         hairCategoryFilter === 'male'
                           ? 'bg-[#FD9A4D] text-white'
                           : 'bg-white text-tan-600 border border-tan-200'
                       }`}
                     >
-                      👨 Male / Short
+                      <StreamlineMale className="w-3 h-3" />
+                      <span>Male / Short</span>
                     </button>
                     <button
                       type="button"
                       onClick={() => setHairCategoryFilter('female')}
-                      className={`px-2 py-0.5 rounded-md cursor-pointer transition-colors ${
+                      className={`px-2.5 py-1 rounded-md cursor-pointer transition-colors flex items-center gap-1 ${
                         hairCategoryFilter === 'female'
                           ? 'bg-[#FD9A4D] text-white'
                           : 'bg-white text-tan-600 border border-tan-200'
                       }`}
                     >
-                      👩 Female / Long
+                      <StreamlineFemale className="w-3 h-3" />
+                      <span>Female / Long</span>
                     </button>
                   </div>
                 </div>
@@ -512,7 +572,6 @@ export function AvatarBuilderModal() {
                             : 'bg-white border-[#EADCCB] hover:border-[#FD9A4D] hover:bg-[#FFFDFB]'
                         }`}
                       >
-                        {/* Appearance Thumbnail Icon */}
                         <div className="w-11 h-11 rounded-xl overflow-hidden shrink-0 border border-[#EADCCB] bg-[#FFD7B5] shadow-xs flex items-center justify-center">
                           <img
                             src={hairPreviewUrl}
@@ -568,17 +627,55 @@ export function AvatarBuilderModal() {
             </div>
           )}
 
-          {/* TAB 2: EXPRESSION & BROW STRUCTURE */}
+          {/* TAB 2: FACE SHAPE, BROWS & EXPRESSIONS */}
           {activeTab === 'face' && (
-            <div className="space-y-5">
-              {/* Face Silhouette Clarification */}
-              <div className="p-3 rounded-2xl bg-amber-50/70 border border-amber-200/80 text-[11px] text-[#634832] flex items-start gap-2.5">
-                <StreamlineStars className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-                <div className="leading-relaxed">
-                  <span className="font-bold text-amber-950">About Face Silhouette:</span> In the authentic
-                  Adventurer storybook collection, character faces share Lisa Wischofsky&apos;s signature cozy anime contour.
-                  You can sculpt masculine vs. feminine traits using the <strong>Brow Structures</strong>,{' '}
-                  <strong>Mustache</strong>, and <strong>Haircuts</strong> below!
+            <div className="space-y-6">
+              {/* FACE SHAPE SELECTOR */}
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <StreamlineFaceShape className="w-4 h-4 text-[#FD9A4D]" />
+                  <label className="text-xs font-bold uppercase tracking-wider text-[#6A5747]">
+                    Face Silhouette & Jawline
+                  </label>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+                  {FACE_SHAPES.map((fs) => {
+                    const isSelected = (draftConfig.faceShape || 'oval') === fs.id;
+                    return (
+                      <button
+                        key={fs.id}
+                        type="button"
+                        onClick={() => setDraftConfig((prev) => ({ ...prev, faceShape: fs.id }))}
+                        className={`p-2.5 rounded-2xl border-2 flex items-center gap-2.5 text-left transition-all cursor-pointer ${
+                          isSelected
+                            ? 'bg-[#FFF5EB] border-[#FD9A4D] ring-2 ring-[#FD9A4D]/35 shadow-xs'
+                            : 'bg-white border-[#EADCCB] hover:border-[#FD9A4D] hover:bg-[#FFFDFB]'
+                        }`}
+                      >
+                        {/* Vector Silhouette Preview */}
+                        <div className="w-10 h-10 rounded-xl bg-tan-100/60 border border-tan-200/80 flex items-center justify-center shrink-0">
+                          <svg viewBox="0 0 32 44" className="w-6 h-6" fill="none">
+                            <path
+                              d={fs.svgD}
+                              stroke={isSelected ? '#FD9A4D' : '#8A7565'}
+                              strokeWidth="2.4"
+                              fill={isSelected ? '#FD9A4D20' : '#8A756515'}
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className={`font-bold text-xs truncate ${isSelected ? 'text-[#C95A0B]' : 'text-[#3A2E22]'}`}>
+                            {fs.label}
+                          </div>
+                          <div className="text-[10px] text-[#8A7565] truncate mt-0.5">
+                            {fs.desc}
+                          </div>
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 

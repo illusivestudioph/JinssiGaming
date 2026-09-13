@@ -712,6 +712,190 @@ export function StreamlineHeadphones({ className = 'w-4 h-4', size, ...props }: 
 }
 
 /**
+ * Official Streamline Plump Line - Scissors (Hairstyle)
+ */
+export function StreamlineScissors({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 48 48"
+      width={size}
+      height={size}
+      className={className}
+      {...props}
+    >
+      <g stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="3.5">
+        <circle cx="12" cy="36" r="6" />
+        <circle cx="36" cy="36" r="6" />
+        <path d="M16.5 31.5 38 7" />
+        <path d="M31.5 31.5 10 7" />
+      </g>
+    </svg>
+  );
+}
+
+/**
+ * Official Streamline Plump Line - Face Smile (Expression & Features)
+ */
+export function StreamlineFaceSmile({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 48 48"
+      width={size}
+      height={size}
+      className={className}
+      {...props}
+    >
+      <g stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="3.5">
+        <circle cx="24" cy="24" r="20" />
+        <path d="M16 19h0.02" strokeWidth="4.5" />
+        <path d="M32 19h0.02" strokeWidth="4.5" />
+        <path d="M16 28c2 4 5.5 6.5 8 6.5s6-2.5 8-6.5" />
+      </g>
+    </svg>
+  );
+}
+
+/**
+ * Official Streamline Plump Line - Mustache (Facial Hair & Accents)
+ */
+export function StreamlineMustache({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 48 48"
+      width={size}
+      height={size}
+      className={className}
+      {...props}
+    >
+      <path
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="3.5"
+        d="M24 23c-4-6-10-8-15-5-5 3-5 10 0 12 6 2 11-3 15-7 4 4 9 9 15 7 5-2 5-9 0-12-5-3-11-1-15 5Z"
+      />
+    </svg>
+  );
+}
+
+/**
+ * Official Streamline Plump Line - Sun (Mood Backdrop & Theme)
+ */
+export function StreamlineSun({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 48 48"
+      width={size}
+      height={size}
+      className={className}
+      {...props}
+    >
+      <g stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="3.5">
+        <circle cx="24" cy="24" r="10" />
+        <path d="M24 4v5m0 30v5M4 24h5m30 0h5M9.86 9.86l3.53 3.53m21.22 21.22 3.53 3.53M9.86 38.14l3.53-3.53m21.22-21.22 3.53-3.53" />
+      </g>
+    </svg>
+  );
+}
+
+/**
+ * Official Streamline Plump Line - Male Symbol
+ */
+export function StreamlineMale({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 48 48"
+      width={size}
+      height={size}
+      className={className}
+      {...props}
+    >
+      <g stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="3.5">
+        <circle cx="19" cy="29" r="12" />
+        <path d="m28 20 14-14m0 0h-10m10 0v10" />
+      </g>
+    </svg>
+  );
+}
+
+/**
+ * Official Streamline Plump Line - Female Symbol
+ */
+export function StreamlineFemale({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 48 48"
+      width={size}
+      height={size}
+      className={className}
+      {...props}
+    >
+      <g stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="3.5">
+        <circle cx="24" cy="18" r="12" />
+        <path d="M24 30v14m-7-6h14" />
+      </g>
+    </svg>
+  );
+}
+
+/**
+ * Official Streamline Plump Line - Users (All / Diverse)
+ */
+export function StreamlineUsers({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 48 48"
+      width={size}
+      height={size}
+      className={className}
+      {...props}
+    >
+      <g stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="3.5">
+        <path d="M19 22a7 7 0 1 0 0-14 7 7 0 0 0 0 14Zm14-2a6 6 0 1 0 0-12 6 6 0 0 0 0 12Z" />
+        <path d="M7 40c0-6.627 5.373-12 12-12s12 5.373 12 12M31 28.5c4.5 1 8 5 8 9.5" />
+      </g>
+    </svg>
+  );
+}
+
+/**
+ * Official Streamline Plump Line - Face Shape Silhouette Contour
+ */
+export function StreamlineFaceShape({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 48 48"
+      width={size}
+      height={size}
+      className={className}
+      {...props}
+    >
+      <g stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="3.5">
+        <path d="M10 16c0-6.627 6.268-12 14-12s14 5.373 14 12c0 8.5-5 18-14 24C15 34 10 24.5 10 16Z" />
+        <path d="M18 20h0.02M30 20h0.02" strokeWidth="4.5" />
+        <path d="M21 28c1 1.5 2 2 3 2s2-.5 3-2" />
+      </g>
+    </svg>
+  );
+}
+
+/**
  * Official Streamline Phosphor Duotone - Star
  */
 export function StreamlineStar({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
@@ -737,4 +921,6 @@ export function StreamlineStar({ className = 'w-4 h-4', size, ...props }: Stream
     </svg>
   );
 }
+
+
 
