@@ -102,6 +102,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           useGooglePhoto: Boolean(googleAvatar && prev.avatarConfig.useGooglePhoto),
         },
         joinedAt: u.created_at || prev.joinedAt,
+        bannerColor: meta.banner_color || prev.bannerColor || (isCreator ? 'peach' : 'peach'),
+        bannerText: meta.banner_text !== undefined ? meta.banner_text : (prev.bannerText || (isCreator ? 'Welcome to Jinssi Gaming! 🌸' : 'Enjoying cozy stories & games 🍵')),
       };
 
       try {
@@ -296,6 +298,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             bio: nextProfile.bio,
             badge: nextProfile.badge,
             avatar_config: nextProfile.avatarConfig,
+            banner_color: nextProfile.bannerColor,
+            banner_text: nextProfile.bannerText,
           },
         });
       } catch (err) {

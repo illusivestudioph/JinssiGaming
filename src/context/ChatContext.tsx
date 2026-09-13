@@ -199,13 +199,15 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     // Load saved banner settings if this is Jinssi or user has saved banner
     let savedBannerColor = data.bannerColor;
     let savedBannerText = data.bannerText;
-    if (!savedBannerColor || !savedBannerText) {
+    if (!savedBannerColor || savedBannerText === undefined) {
       try {
-        const stored = localStorage.getItem(`jinssi_profile_banner_${cleanUsername}`);
+        const lowerKey = `jinssi_profile_banner_${cleanUsername.toLowerCase()}`;
+        const rawKey = `jinssi_profile_banner_${cleanUsername}`;
+        const stored = localStorage.getItem(lowerKey) || localStorage.getItem(rawKey);
         if (stored) {
           const parsed = JSON.parse(stored);
-          if (parsed.color) savedBannerColor = parsed.color;
-          if (parsed.text) savedBannerText = parsed.text;
+          if (parsed.color && !savedBannerColor) savedBannerColor = parsed.color;
+          if (parsed.text !== undefined && savedBannerText === undefined) savedBannerText = parsed.text;
         }
       } catch {
         // ignore
@@ -227,8 +229,8 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       isCreator: isTargetCreator,
       role: isTargetCreator ? 'developer' : 'member',
       joinedAt: data.joinedAt || new Date().toISOString(),
-      bannerColor: savedBannerColor || (isTargetCreator ? 'peach' : 'vanilla'),
-      bannerText: savedBannerText || (isTargetCreator ? 'Welcome to Jinssi Gaming! 🌸' : 'Enjoying cozy stories & games 🍵'),
+      bannerColor: savedBannerColor || (isTargetCreator ? 'peach' : 'peach'),
+      bannerText: savedBannerText !== undefined && savedBannerText !== null ? savedBannerText : (isTargetCreator ? 'Welcome to Jinssi Gaming! 🌸' : 'Enjoying cozy stories & games 🍵'),
       bannerTheme: data.bannerTheme || (isTargetCreator ? 'sakura' : 'cafe'),
     });
   };

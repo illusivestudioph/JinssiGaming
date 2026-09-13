@@ -14,6 +14,7 @@ import {
   StreamlineUsers,
   StreamlinePalette,
   StreamlineStar,
+  StreamlineLogOut,
 } from '@/components/StreamlineIcons';
 
 interface BannerColorOption {
@@ -70,9 +71,9 @@ const BANNER_PALETTES: BannerColorOption[] = [
 ];
 
 export function RedditProfileModal() {
-  const { activeProfileUser, closeProfile, isFriend, addFriend, removeFriend, openDmWith } =
+  const { activeProfileUser, closeProfile, isFriend, addFriend, removeFriend, openDmWith, openProfile } =
     useChat();
-  const { user, profile, triggerAuthPrompt } = useAuth();
+  const { user, profile, triggerAuthPrompt, signOut, setShowAvatarBuilder, updateProfile } = useAuth();
   const [activeTab, setActiveTab] = useState<'overview' | 'comments' | 'trophies'>('overview');
   const [toast, setToast] = useState<string | null>(null);
 
@@ -94,23 +95,35 @@ export function RedditProfileModal() {
     let savedText = activeProfileUser.bannerText;
 
     try {
-      const stored = localStorage.getItem(`jinssi_profile_banner_${activeProfileUser.username}`);
+      const lowerKey = `jinssi_profile_banner_${activeProfileUser.username.toLowerCase()}`;
+      const rawKey = `jinssi_profile_banner_${activeProfileUser.username}`;
+      const stored = localStorage.getItem(lowerKey) || localStorage.getItem(rawKey);
       if (stored) {
         const parsed = JSON.parse(stored);
         if (parsed.color) savedColor = parsed.color;
-        if (parsed.text) savedText = parsed.text;
+        if (parsed.text !== undefined && parsed.text !== null) savedText = parsed.text;
       }
     } catch {
       // ignore
     }
 
-    setCurrentBannerColor(savedColor || (activeProfileUser.isCreator ? 'peach' : 'matcha'));
+    if (isViewingSelf && profile.bannerColor) {
+      savedColor = profile.bannerColor;
+    }
+    if (isViewingSelf && profile.bannerText !== undefined && profile.bannerText !== null) {
+      savedText = profile.bannerText;
+    }
+
+    setCurrentBannerColor(savedColor || (activeProfileUser.isCreator ? 'peach' : 'peach'));
     setCurrentBannerText(
-      savedText ||
-      (activeProfileUser.isCreator ? 'Welcome to Jinssi Gaming! 🌸' : 'Enjoying cozy stories & games 🍵')
+      savedText !== undefined && savedText !== null
+        ? savedText
+        : activeProfileUser.isCreator
+        ? 'Welcome to Jinssi Gaming! 🌸'
+        : 'Enjoying cozy stories & games 🍵'
     );
     setIsEditingBanner(false);
-  }, [activeProfileUser]);
+  }, [activeProfileUser, isViewingSelf, profile.bannerColor, profile.bannerText]);
 
   if (!activeProfileUser) return null;
 
@@ -161,15 +174,34 @@ export function RedditProfileModal() {
     closeProfile();
   };
 
-  const handleSaveBanner = () => {
+  const handleSaveBanner = async () => {
+    if (!activeProfileUser) return;
+    const bannerData = { color: currentBannerColor, text: currentBannerText };
+    const lowerKey = `jinssi_profile_banner_${activeProfileUser.username.toLowerCase()}`;
+    const rawKey = `jinssi_profile_banner_${activeProfileUser.username}`;
+
     try {
-      localStorage.setItem(
-        `jinssi_profile_banner_${activeProfileUser.username}`,
-        JSON.stringify({ color: currentBannerColor, text: currentBannerText })
-      );
+      localStorage.setItem(lowerKey, JSON.stringify(bannerData));
+      localStorage.setItem(rawKey, JSON.stringify(bannerData));
     } catch {
       // ignore
     }
+
+    // Immediately update activeProfileUser in ChatContext
+    openProfile({
+      ...activeProfileUser,
+      bannerColor: currentBannerColor,
+      bannerText: currentBannerText,
+    });
+
+    // If viewing own profile, persist into AuthContext (local storage + Supabase user metadata)
+    if (isViewingSelf) {
+      await updateProfile({
+        bannerColor: currentBannerColor,
+        bannerText: currentBannerText,
+      });
+    }
+
     setIsEditingBanner(false);
     setToast('Banner saved!');
     setTimeout(() => setToast(null), 2500);
@@ -340,13 +372,30 @@ export function RedditProfileModal() {
           }}
         >
           <div className="flex items-end gap-3.5">
-            <div className="relative shrink-0">
+            <div className="relative shrink-0 group">
               <CozyAvatar
-                config={activeProfileUser.avatarConfig}
+                config={isViewingSelf ? profile.avatarConfig : activeProfileUser.avatarConfig}
                 size={88}
                 className="shadow-xl rounded-full border-4 border-white"
               />
-              {activeProfileUser.isCreator && (
+              {isViewingSelf ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    closeProfile();
+                    setShowAvatarBuilder(true);
+                  }}
+                  className="absolute -bottom-1 -right-1 px-2.5 py-1 text-[11px] font-bold rounded-full shadow-md flex items-center gap-1 transition-transform active:scale-95 cursor-pointer border-2 border-white hover:scale-105"
+                  style={{
+                    backgroundColor: 'var(--theme-accent, #fd9a4d)',
+                    color: '#ffffff',
+                  }}
+                  title="Open Avatar Character Studio"
+                >
+                  <StreamlinePencil className="w-3.5 h-3.5" />
+                  <span>Edit</span>
+                </button>
+              ) : activeProfileUser.isCreator ? (
                 <div
                   className="absolute -bottom-1 -right-1 p-1 rounded-full shadow-md border-2 border-white"
                   style={{ backgroundColor: 'var(--theme-accent, #fd9a4d)', color: '#fff' }}
@@ -354,7 +403,7 @@ export function RedditProfileModal() {
                 >
                   <StreamlineStars className="w-3.5 h-3.5" />
                 </div>
-              )}
+              ) : null}
             </div>
 
             <div className="mb-1">
@@ -380,8 +429,39 @@ export function RedditProfileModal() {
             </div>
           </div>
 
-          {/* Action Buttons: Add Friend / DM (Hidden when viewing own profile) */}
-          {!isViewingSelf && (
+          {/* Action Buttons: If viewing self -> Edit Avatar & Sign Out; Else -> Add Friend & DM */}
+          {isViewingSelf ? (
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              <button
+                type="button"
+                onClick={() => {
+                  closeProfile();
+                  setShowAvatarBuilder(true);
+                }}
+                className="flex-1 sm:flex-initial px-3.5 py-1.5 rounded-xl text-xs font-bold text-white shadow-xs flex items-center justify-center gap-1.5 transition-all active:scale-95 cursor-pointer"
+                style={{ backgroundColor: 'var(--theme-accent, #fd9a4d)' }}
+                title="Open Avatar Character Studio"
+              >
+                <StreamlinePencil className="w-3.5 h-3.5" />
+                <span>Edit Avatar</span>
+              </button>
+
+              {user && (
+                <button
+                  type="button"
+                  onClick={async () => {
+                    await signOut();
+                    closeProfile();
+                  }}
+                  className="flex-1 sm:flex-initial px-3.5 py-1.5 rounded-xl text-xs font-bold border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-600 transition-all active:scale-95 cursor-pointer flex items-center justify-center gap-1.5 shadow-xs"
+                  title="Sign out of your account"
+                >
+                  <StreamlineLogOut className="w-3.5 h-3.5" />
+                  <span>Sign Out</span>
+                </button>
+              )}
+            </div>
+          ) : (
             <div className="flex items-center gap-2 w-full sm:w-auto">
               <button
                 type="button"
@@ -577,11 +657,27 @@ export function RedditProfileModal() {
             color: 'var(--text-muted, #8f6b48)',
           }}
         >
-          <span className="font-mono text-[11px]">Jinssi Gaming Member</span>
+          {isViewingSelf && user ? (
+            <button
+              type="button"
+              onClick={async () => {
+                await signOut();
+                closeProfile();
+              }}
+              className="px-3.5 py-1.5 rounded-xl border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer shadow-xs active:scale-95"
+              title="Sign out of your account"
+            >
+              <StreamlineLogOut className="w-3.5 h-3.5" />
+              <span>Sign Out</span>
+            </button>
+          ) : (
+            <span className="font-mono text-[11px]">Jinssi Gaming Member</span>
+          )}
+
           <button
             type="button"
             onClick={closeProfile}
-            className="px-4 py-1.5 rounded-xl font-bold bg-white border border-tan-300 hover:border-peach-400 transition-colors cursor-pointer"
+            className="px-4 py-1.5 rounded-xl font-bold bg-white border border-tan-300 hover:border-peach-400 transition-colors cursor-pointer text-[#3A2E22] shadow-xs"
           >
             Close
           </button>
