@@ -1,27 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import {
-  X,
-  BookOpen,
-  LogOut,
-  Check,
-  Edit3,
-  Calendar,
-  Compass,
-  Gamepad2,
-  Coffee,
-  Moon,
-} from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { CozyAvatar } from '@/components/CozyAvatar';
 import { CommunityBadge } from '@/types/profile';
-import { StreamlineUser, StreamlineStars } from '@/components/StreamlineIcons';
+import {
+  StreamlineUser,
+  StreamlineStars,
+  StreamlineCompass,
+  StreamlineBook,
+  StreamlineGamepad,
+  StreamlineCoffee,
+  StreamlineMoon,
+  StreamlinePencil,
+  StreamlineCalendar,
+  StreamlineClose,
+  StreamlineCheck,
+  StreamlineLogOut,
+} from '@/components/StreamlineIcons';
 
 const BADGE_CONFIGS: { name: CommunityBadge; icon: React.ComponentType<{ className?: string }> }[] = [
-  { name: 'Cozy Explorer', icon: Compass },
-  { name: 'Bookworm', icon: BookOpen },
-  { name: 'Retro Gamer', icon: Gamepad2 },
-  { name: 'Cafe Regular', icon: Coffee },
-  { name: 'Midnight Scholar', icon: Moon },
+  { name: 'Cozy Explorer', icon: StreamlineCompass },
+  { name: 'Bookworm', icon: StreamlineBook },
+  { name: 'Retro Gamer', icon: StreamlineGamepad },
+  { name: 'Cafe Regular', icon: StreamlineCoffee },
+  { name: 'Midnight Scholar', icon: StreamlineMoon },
   { name: 'Tea Brewer', icon: StreamlineStars },
 ];
 
@@ -76,9 +77,9 @@ export function UserProfileModal() {
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fade-in select-none">
       <div className="relative w-full max-w-md bg-[#FFFDF9] border-2 border-[#5E5148] rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
         {/* Header Ribbon */}
-        <div className="px-6 py-4 bg-gradient-to-r from-[#FFF5EC] via-[#FFFBF5] to-[#F3F9F0] border-b border-[#E8D9C8] flex items-center justify-between">
+        <div className="px-6 py-4 bg-gradient-to-r from-[#FFF5EC] via-[#FFFBF5] to-[#F3F9F0] border-b-2 border-[#E8D9C8] flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-2xl bg-[#FFE4CE] border border-[#FD9A4D]/40 flex items-center justify-center text-[#E07A2B] shadow-xs">
+            <div className="w-9 h-9 rounded-2xl bg-[#FFE4CE] border-2 border-[#FD9A4D]/40 flex items-center justify-center text-[#E07A2B] shadow-xs">
               <StreamlineUser className="w-5 h-5 text-[#E07A2B]" />
             </div>
             <h3 className="font-display font-bold text-lg text-[#3A2E22]">
@@ -88,16 +89,17 @@ export function UserProfileModal() {
           <button
             type="button"
             onClick={() => setShowProfileModal(false)}
-            className="p-2 rounded-full hover:bg-[#F2E4D4] text-[#7A6858] hover:text-[#3A2E22] transition-colors"
+            className="p-2 rounded-full hover:bg-[#F2E4D4] text-[#7A6858] hover:text-[#3A2E22] transition-colors cursor-pointer"
+            title="Close modal"
           >
-            <X className="w-5 h-5" />
+            <StreamlineClose className="w-4 h-4 text-[#7A6858]" />
           </button>
         </div>
 
         {/* Toast Alert */}
         {toast && (
           <div className="bg-emerald-600 text-white text-xs font-bold px-4 py-2 text-center animate-fade-in flex items-center justify-center gap-1.5 shadow-sm">
-            <Check className="w-3.5 h-3.5" />
+            <StreamlineCheck className="w-4 h-4" />
             <span>{toast}</span>
           </div>
         )}
@@ -111,10 +113,10 @@ export function UserProfileModal() {
               <button
                 type="button"
                 onClick={handleOpenAvatarStudio}
-                className="absolute -bottom-1 -right-1 px-3 py-1 bg-[#FD9A4D] hover:bg-[#E88735] text-white text-[11px] font-bold rounded-full shadow-md flex items-center gap-1.5 transition-transform active:scale-95 cursor-pointer"
+                className="absolute -bottom-1 -right-1 px-3 py-1 bg-[#FD9A4D] hover:bg-[#E88735] text-white text-[11px] font-bold rounded-full shadow-md flex items-center gap-1.5 transition-transform active:scale-95 cursor-pointer border border-white"
                 title="Open Avatar Character Studio"
               >
-                <Edit3 className="w-3 h-3" />
+                <StreamlinePencil className="w-3.5 h-3.5" />
                 <span>Edit</span>
               </button>
             </div>
@@ -129,8 +131,8 @@ export function UserProfileModal() {
             </div>
 
             {/* Member Joined Date */}
-            <div className="flex items-center gap-1.5 text-[11px] text-[#7A6858] mt-2 font-mono">
-              <Calendar className="w-3 h-3" />
+            <div className="flex items-center gap-1.5 text-[11px] text-[#7A6858] mt-2 font-mono font-medium">
+              <StreamlineCalendar className="w-3.5 h-3.5 text-[#FD9A4D]" />
               <span>Joined {joinedFormatted}</span>
             </div>
           </div>
@@ -141,7 +143,7 @@ export function UserProfileModal() {
               <p className="text-xs font-bold text-[#3A2E22] mb-1">
                 You are currently browsing as a Guest 🌱
               </p>
-              <p className="text-[11px] text-[#7A6858] mb-3 leading-relaxed">
+              <p className="text-[11px] text-[#7A6858] mb-3 leading-relaxed font-medium">
                 Sign in with Gmail whenever you want to comment on games or contribute books to the shelf!
               </p>
               <button
@@ -187,7 +189,7 @@ export function UserProfileModal() {
                   onChange={(e) => setUsernameInput(e.target.value)}
                   maxLength={20}
                   placeholder="Your cozy name"
-                  className="w-full pl-7 pr-3 py-2 text-xs font-bold rounded-xl bg-white border-2 border-[#EADCCB] text-[#3A2E22] focus:border-[#FD9A4D] outline-none shadow-xs"
+                  className="w-full pl-7 pr-3 py-2 text-xs font-bold rounded-xl bg-white border-2 border-[#EADCCB] text-[#3A2E22] focus:border-[#FD9A4D] focus:ring-2 focus:ring-[#FD9A4D]/20 focus:outline-none shadow-xs transition-all"
                 />
               </div>
               <p className="text-[10px] text-[#7A6858] mt-1 font-medium">Letters, numbers, and underscores only</p>
@@ -204,7 +206,7 @@ export function UserProfileModal() {
                 maxLength={90}
                 rows={2}
                 placeholder="What games or books are you enjoying?"
-                className="w-full p-2.5 text-xs rounded-xl bg-white border-2 border-[#EADCCB] text-[#3A2E22] focus:border-[#FD9A4D] outline-none resize-none shadow-xs font-medium"
+                className="w-full p-2.5 text-xs rounded-xl bg-white border-2 border-[#EADCCB] text-[#3A2E22] focus:border-[#FD9A4D] focus:ring-2 focus:ring-[#FD9A4D]/20 focus:outline-none resize-none shadow-xs font-medium transition-all"
               />
             </div>
 
@@ -221,7 +223,7 @@ export function UserProfileModal() {
                       key={name}
                       type="button"
                       onClick={() => setSelectedBadge(name)}
-                      className={`p-2.5 rounded-xl text-left text-[11px] font-bold border-2 transition-all flex items-center gap-2 truncate cursor-pointer ${
+                      className={`p-2.5 rounded-xl text-left text-[11px] font-bold border-2 transition-all flex items-center gap-2.5 truncate cursor-pointer ${
                         isSelected
                           ? 'bg-[#FD9A4D] text-white border-[#E07A2B] shadow-xs'
                           : 'bg-white border-[#EADCCB] hover:border-[#FD9A4D] text-[#3A2E22] hover:bg-[#FFFDFB]'
@@ -239,17 +241,17 @@ export function UserProfileModal() {
               type="submit"
               className="w-full py-3 rounded-xl bg-[#FD9A4D] hover:bg-[#E88735] text-white font-bold text-xs shadow-xs transition-all active:scale-98 flex items-center justify-center gap-1.5 cursor-pointer"
             >
-              <Check className="w-4 h-4" />
+              <StreamlineCheck className="w-4 h-4" />
               <span>Save Profile Changes</span>
             </button>
           </form>
 
           {/* Signed-in Account Details & Sign Out */}
           {user && (
-            <div className="pt-4 border-t border-[#E8D9C8] flex items-center justify-between">
+            <div className="pt-4 border-t-2 border-[#E8D9C8] flex items-center justify-between">
               <div className="min-w-0">
                 <span className="text-[10px] uppercase font-bold text-[#7A6858] block">Signed in as</span>
-                <span className="text-xs font-mono text-[#3A2E22] truncate block">
+                <span className="text-xs font-mono text-[#3A2E22] truncate block font-medium">
                   {user.email}
                 </span>
               </div>
@@ -258,7 +260,7 @@ export function UserProfileModal() {
                 onClick={signOut}
                 className="px-3 py-1.5 rounded-xl border-2 border-rose-200 hover:bg-rose-50 text-rose-600 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
               >
-                <LogOut className="w-3.5 h-3.5" />
+                <StreamlineLogOut className="w-3.5 h-3.5" />
                 <span>Sign Out</span>
               </button>
             </div>

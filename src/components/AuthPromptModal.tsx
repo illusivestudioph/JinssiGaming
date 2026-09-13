@@ -1,7 +1,6 @@
 import React from 'react';
-import { X } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
-import { StreamlineStars } from '@/components/StreamlineIcons';
+import { StreamlineStars, StreamlineClose } from '@/components/StreamlineIcons';
 
 export function AuthPromptModal() {
   const { showAuthPrompt, authPromptReason, closeAuthPrompt, signInWithGoogle } = useAuth();
@@ -17,7 +16,7 @@ export function AuthPromptModal() {
           onClick={closeAuthPrompt}
           className="absolute top-4 right-4 p-2 rounded-full hover:bg-[#F2E4D4] text-[#7A6858] hover:text-[#3A2E22] transition-colors cursor-pointer"
         >
-          <X className="w-4 h-4" />
+          <StreamlineClose className="w-4 h-4" />
         </button>
 
         {/* Icon */}

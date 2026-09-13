@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
-import { X, Check, RefreshCw } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { CozyAvatar } from '@/components/CozyAvatar';
 import { AdventurerConfig, getAdventurerAvatarUrl } from '@/types/profile';
-import { StreamlinePalette, StreamlineDice } from '@/components/StreamlineIcons';
+import {
+  StreamlinePalette,
+  StreamlineDice,
+  StreamlineClose,
+  StreamlineCheck,
+} from '@/components/StreamlineIcons';
 
 const HAIRSTYLES: { id: string; label: string; category: string }[] = [
   { id: 'short01', label: 'Sleek Part', category: 'Short' },
@@ -150,7 +154,7 @@ export function AvatarBuilderModal() {
             onClick={handleClose}
             className="p-2 rounded-full hover:bg-[#F2E4D4] text-[#7A6858] hover:text-[#3A2E22] transition-colors"
           >
-            <X className="w-5 h-5" />
+            <StreamlineClose className="w-5 h-5" />
           </button>
         </div>
 
@@ -172,7 +176,7 @@ export function AvatarBuilderModal() {
                 className="absolute -bottom-1 -right-1 p-2 bg-[#FD9A4D] hover:bg-[#E88735] text-white rounded-full shadow-md transition-all active:rotate-180"
                 title="Roll Random Character"
               >
-                <RefreshCw className="w-3.5 h-3.5" />
+                <StreamlineDice className="w-3.5 h-3.5" />
               </button>
             </div>
             <div>
@@ -489,7 +493,7 @@ export function AvatarBuilderModal() {
                     />
                     <span className="text-xs">Use my Google Account Photo instead of an illustration</span>
                     {draftConfig.useGooglePhoto && (
-                      <Check className="w-4 h-4 text-[#FD9A4D] ml-auto font-bold" />
+                      <StreamlineCheck className="w-4 h-4 text-[#FD9A4D] ml-auto font-bold" />
                     )}
                   </button>
                 </div>
@@ -512,7 +516,7 @@ export function AvatarBuilderModal() {
             onClick={handleSave}
             className="px-5 py-2 rounded-xl bg-[#FD9A4D] hover:bg-[#E88735] text-white text-xs font-bold shadow-xs flex items-center gap-1.5 transition-colors active:scale-95"
           >
-            <Check className="w-4 h-4" />
+            <StreamlineCheck className="w-4 h-4" />
             <span>Save Avatar</span>
           </button>
         </div>
