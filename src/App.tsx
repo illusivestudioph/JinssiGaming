@@ -26,6 +26,10 @@ import { ArrowRight, Search, Gamepad2 } from 'lucide-react';
 // 1. Context Provider
 import { SiteContentProvider, useSiteContent } from '@/context/SiteContentContext'; 
 import { MusicProvider } from '@/context/MusicContext';
+import { AuthProvider } from '@/context/AuthContext';
+import { UserProfileModal } from '@/components/UserProfileModal';
+import { AvatarBuilderModal } from '@/components/AvatarBuilderModal';
+import { AuthPromptModal } from '@/components/AuthPromptModal';
 // 2. Import the Admin Dashboard
 import { AdminDashboard } from '@/components/AdminDashboard';
 // 3. Import the new Hero Banner
@@ -35,7 +39,12 @@ function App() {
   return (
     <SiteContentProvider>
       <MusicProvider>
-        <AppContent />
+        <AuthProvider>
+          <AppContent />
+          <UserProfileModal />
+          <AvatarBuilderModal />
+          <AuthPromptModal />
+        </AuthProvider>
       </MusicProvider>
     </SiteContentProvider>
   );

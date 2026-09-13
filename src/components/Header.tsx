@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { useSiteContent } from "@/context/SiteContentContext";
 import { useMusic } from "@/context/MusicContext";
+import { useAuth } from "@/context/AuthContext";
+import { CozyAvatar } from "@/components/CozyAvatar";
 import { AmbientMixerModal } from "@/components/AmbientMixerModal";
 import { MagneticText } from "@/components/MagneticText";
 import { getOptimizedImageUrl } from '@/utils/imageOptimization';
@@ -11,6 +13,7 @@ export type View = 'home' | 'walkthroughs' | 'journal' | 'stories' | 'store' | '
 export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View) => void }) {
   const { logoImage } = useSiteContent();
   const { playing, muted, togglePlayback, toggleMute, userVolume, setVolume, hasActiveAmbience, playDropdownSfx } = useMusic();
+  const { user, profile, setShowProfileModal } = useAuth();
   const [showMixer, setShowMixer] = useState(false);
   
   // Secret Trigger State
@@ -148,6 +151,24 @@ export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View)
               )}
             </div>
 
+            {/* Cozy Member Profile Chip */}
+            <button
+              type="button"
+              onClick={() => setShowProfileModal(true)}
+              className="flex items-center gap-2 bg-cream-50/90 hover:bg-cream-100 border border-tan-300/80 hover:border-peach-400 rounded-full pl-1.5 pr-3 py-1 shadow-cozy-sm transition-all text-xs font-bold text-ink-900 group select-none"
+              title="Open Profile & Avatar Builder"
+              aria-label="Open member profile"
+            >
+              <CozyAvatar config={profile.avatarConfig} size={26} showBorder={false} />
+              <span className="hidden sm:inline max-w-[90px] truncate text-ink-800 group-hover:text-peach-600">
+                {user ? `@${profile.username}` : 'Guest 🌱'}
+              </span>
+              <span
+                className={`w-2 h-2 rounded-full ${user ? 'bg-emerald-500 ring-2 ring-emerald-200' : 'bg-amber-400'}`}
+                title={user ? 'Signed in with Google' : 'Browsing as Guest'}
+              />
+            </button>
+
             <button
               type="button"
               className="rounded-xl border-2 border-tan-200 bg-cream-50 p-2 text-tan-600 shadow-cozy-sm transition-colors hover:border-peach-300 hover:text-peach-500 md:hidden"
@@ -168,6 +189,26 @@ export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View)
         {mobileMenuOpen && (
           <nav id="mobile-navigation" className="border-t-2 border-tan-200 px-4 py-3 md:hidden">
             <div className="flex flex-col gap-1">
+              {/* Mobile Profile Link */}
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  setShowProfileModal(true);
+                }}
+                className="site-nav-link text-left flex items-center gap-2.5 text-peach-600 font-bold bg-peach-50/60 p-2 rounded-xl mb-1 border border-peach-200"
+              >
+                <CozyAvatar config={profile.avatarConfig} size={28} showBorder={false} />
+                <div>
+                  <span className="block text-xs text-ink-900">
+                    {user ? `@${profile.username}` : 'Guest Profile'}
+                  </span>
+                  <span className="block text-[10px] text-tan-500 font-normal">
+                    {user ? profile.badge : 'Tap to customize avatar or sign in'}
+                  </span>
+                </div>
+              </button>
+
               <button aria-current={view === 'home' ? 'page' : undefined} onClick={() => handleNavigate('home')} className={`site-nav-link text-left ${view === 'home' ? 'text-peach-500' : 'text-tan-600'}`}>Home</button>
               <button aria-current={view === 'walkthroughs' ? 'page' : undefined} onClick={() => handleNavigate('walkthroughs')} className={`site-nav-link text-left ${view === 'walkthroughs' ? 'text-peach-500' : 'text-tan-600'}`}>Walkthroughs</button>
               <button aria-current={view === 'journal' ? 'page' : undefined} onClick={() => handleNavigate('journal')} className={`site-nav-link text-left ${view === 'journal' ? 'text-peach-500' : 'text-tan-600'}`}>Journal</button>
