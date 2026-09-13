@@ -15,7 +15,7 @@ export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View)
   const { logoImage } = useSiteContent();
   const { playing, muted, togglePlayback, toggleMute, userVolume, setVolume, hasActiveAmbience, playDropdownSfx } = useMusic();
   const { user, profile, setShowProfileModal } = useAuth();
-  const { setIsOpen: setIsChatOpen } = useChat();
+  const { setIsOpen: setIsChatOpen, openProfile } = useChat();
   const [showMixer, setShowMixer] = useState(false);
   
   // Secret Trigger State
