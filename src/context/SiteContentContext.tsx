@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { games as initialGames, type Game, type WalkthroughSection } from '@/data/games';
 import { articles as initialArticles, type Article } from '@/data/articles';
-import { stories as initialStories, type Story } from '@/data/stories';
+import { stories as initialStories, CHILDREN_OF_MU_STORY, type Story } from '@/data/stories';
 import { initialProducts, type StoreProduct } from '@/data/store';
 import { supabase } from '@/lib/supabase';
 
@@ -171,6 +171,12 @@ function normalizeContent(parsed: Partial<SavedContent> | null | undefined): Sav
     });
   }
 
+  // Ensure CHILDREN_OF_MU_STORY is present and pinned at position #1
+  const withoutMu = normalizedStories.filter(
+    (s) => s.id !== CHILDREN_OF_MU_STORY.id && s.slug !== CHILDREN_OF_MU_STORY.slug
+  );
+  const finalStories = [CHILDREN_OF_MU_STORY, ...withoutMu];
+
   const normalizedProducts: StoreProduct[] = Array.isArray(parsed?.products) && parsed.products.length > 0
     ? parsed.products
     : initialProducts;
@@ -178,7 +184,7 @@ function normalizeContent(parsed: Partial<SavedContent> | null | undefined): Sav
   return {
     games: Array.isArray(parsed?.games) && parsed.games.length > 0 ? parsed.games : initialGames,
     articles: normalizedArticles,
-    stories: normalizedStories.length > 0 ? normalizedStories : initialStories,
+    stories: finalStories,
     products: normalizedProducts,
     heroImage: parsed?.heroImage === '/banner.jpeg'
       ? defaultContent.heroImage

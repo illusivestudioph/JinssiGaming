@@ -1,4 +1,4 @@
-import type { Story, StoryChapter, StoryGenre } from '../data/stories';
+import { CHILDREN_OF_MU_STORY, type Story, type StoryChapter, type StoryGenre } from '../data/stories';
 
 export interface GutenbergPerson {
   name: string;
@@ -19,7 +19,39 @@ export interface GutenbergBook {
   cover_image?: string;
   summary?: string;
   reading_ease_score?: string;
+  isPinned?: boolean;
+  isPdfEbook?: boolean;
+  pdfUrl?: string;
 }
+
+export const PINNED_CHILDREN_OF_MU_BOOK: GutenbergBook = {
+  id: 77375,
+  title: 'The Children of Mu',
+  authors: [{ name: 'Churchward, James', birth_year: 1851, death_year: 1936 }],
+  subjects: [
+    'Lost Continent of Mu -- Pacific Ocean',
+    'Prehistoric Civilizations & Migrations',
+    'Ancient Symbols & Sacred Naacal Tablets',
+    'Archaeology & Antiquity',
+  ],
+  bookshelves: ['Public Domain Archive', 'Pinned eBooks', 'Adventure & History'],
+  languages: ['en'],
+  formats: {
+    'application/pdf':
+      'https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/ebooks/2015.77375.The-Children-Of-Mu.pdf',
+    'image/jpeg':
+      'https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/covers/the-children-of-mu-cover.jpg',
+  },
+  download_count: 148500,
+  cover_image:
+    'https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/covers/the-children-of-mu-cover.jpg',
+  summary:
+    'The complete 290-page 1931 unabridged original edition investigating humanity’s lost motherland in the Pacific.',
+  isPinned: true,
+  isPdfEbook: true,
+  pdfUrl:
+    'https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/ebooks/2015.77375.The-Children-Of-Mu.pdf',
+};
 
 export interface GutendexResponse {
   count: number;
@@ -61,6 +93,7 @@ export interface GutenbergBookshelfItem {
 
 // Rich offline index of 60+ renowned public domain books with high-res covers and verified metadata
 export const FALLBACK_GUTENBERG_CATALOG: GutenbergBook[] = [
+  PINNED_CHILDREN_OF_MU_BOOK,
   {
     id: 113,
     title: 'The Secret Garden',
@@ -788,11 +821,31 @@ export async function searchGutenbergBooks(
   page: number = 1
 ): Promise<GutenbergBook[]> {
   const trimmed = query.trim();
-  const searchParam = trimmed ? `q=${encodeURIComponent(trimmed)}&` : '';
-  const url = `${RAPIDAPI_GUTENBERG_BASE}/books?${searchParam}page=${page}`;
+  const withPinned = (list: GutenbergBook[]) => {
+    if (page !== 1) return list;
+    const exists = list.some((b) => b.id === PINNED_CHILDREN_OF_MU_BOOK.id);
+    if (exists) return list;
+    if (!trimmed) {
+      return [PINNED_CHILDREN_OF_MU_BOOK, ...list];
+    }
+    const q = trimmed.toLowerCase();
+    const matchesPinned =
+      'the children of mu'.includes(q) ||
+      'churchward'.includes(q) ||
+      'mu'.includes(q) ||
+      'ebook'.includes(q) ||
+      'lost continent'.includes(q);
+    if (matchesPinned) {
+      return [PINNED_CHILDREN_OF_MU_BOOK, ...list];
+    }
+    return list;
+  };
 
-  // 1. Query RapidAPI Project Gutenberg API (returns real books, covers, and format links)
+  // 1. Primary: RapidAPI search
   try {
+    const searchParam = trimmed ? `q=${encodeURIComponent(trimmed)}&` : '';
+    const url = `${RAPIDAPI_GUTENBERG_BASE}/books?${searchParam}languages=en&page=${page}`;
+
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 6000);
 
@@ -809,7 +862,7 @@ export async function searchGutenbergBooks(
     if (rapidRes.ok) {
       const data = (await rapidRes.json()) as GutendexResponse;
       if (data.results && data.results.length > 0) {
-        return data.results;
+        return withPinned(data.results);
       }
     }
   } catch {
@@ -833,7 +886,7 @@ export async function searchGutenbergBooks(
     if (response.ok) {
       const data = (await response.json()) as GutendexResponse;
       if (data.results && data.results.length > 0) {
-        return data.results;
+        return withPinned(data.results);
       }
     }
   } catch {
@@ -842,22 +895,26 @@ export async function searchGutenbergBooks(
 
   // 3. Fallback to verified local catalog index
   if (!trimmed) {
-    return FALLBACK_GUTENBERG_CATALOG.slice(0, 24);
+    return withPinned(FALLBACK_GUTENBERG_CATALOG.slice(0, 24));
   }
   const qLower = trimmed.toLowerCase();
-  return FALLBACK_GUTENBERG_CATALOG.filter((b) => {
+  const filtered = FALLBACK_GUTENBERG_CATALOG.filter((b) => {
     const titleMatch = b.title.toLowerCase().includes(qLower);
     const authorMatch = b.authors.some((a) => a.name.toLowerCase().includes(qLower));
     const subjectMatch = b.subjects.some((s) => s.toLowerCase().includes(qLower));
     const bookshelfMatch = b.bookshelves.some((bk) => bk.toLowerCase().includes(qLower));
     return titleMatch || authorMatch || subjectMatch || bookshelfMatch;
   });
+  return withPinned(filtered);
 }
 
 /**
  * Convert a Gutenberg book into a Jinssi Story object so it can be previewed before full unabridged text is loaded.
  */
 export function convertGutenbergToStory(book: GutenbergBook): Story {
+  if (book.id === 77375 || book.isPdfEbook || book.title.toLowerCase().includes('children of mu')) {
+    return CHILDREN_OF_MU_STORY;
+  }
   const authorName = book.authors[0]?.name
     ? book.authors[0].name.split(',').reverse().join(' ').trim()
     : 'Classic Author';
@@ -1315,6 +1372,10 @@ export async function fetchAndParseGutenbergBook(
   book: GutenbergBook,
   onProgress?: (msg: string) => void
 ): Promise<Story> {
+  if (book.id === 77375 || book.isPdfEbook || book.title.toLowerCase().includes('children of mu')) {
+    return CHILDREN_OF_MU_STORY;
+  }
+
   const cacheKey = `jinssi-gb-book-${book.id}`;
 
   // 1. Check local browser cache for previously parsed authentic text

@@ -23,6 +23,9 @@ import {
   RefreshCw,
   Music,
   Pause,
+  ExternalLink,
+  FileText,
+  Star,
 } from 'lucide-react';
 import { getGutenbergId, fetchGutenbergById } from '@/services/gutenberg';
 import { useMusic } from '@/context/MusicContext';
@@ -194,6 +197,7 @@ export function StoryReaderView({
   const [copied, setCopied] = useState(false);
   const [bookmarkSaved, setBookmarkSaved] = useState(false);
   const [readingProgress, setReadingProgress] = useState(0);
+  const [ebookViewMode, setEbookViewMode] = useState<'pdf' | 'notes'>('pdf');
 
   const topRef = useRef<HTMLDivElement>(null);
 
@@ -837,7 +841,102 @@ export function StoryReaderView({
       )}
 
       {/* Main Chapter Content Container */}
-      <main className="max-w-2xl sm:max-w-3xl mx-auto px-5 sm:px-8 py-8 sm:py-16">
+      <main
+        className={
+          story.pdfUrl
+            ? 'max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12'
+            : 'max-w-2xl sm:max-w-3xl mx-auto px-5 sm:px-8 py-8 sm:py-16'
+        }
+      >
+        {/* PDF eBook Showcase & Reader Viewer */}
+        {story.pdfUrl && (
+          <div className="mb-10 animate-fade-in">
+            {/* eBook Top Bar & Mode Switcher */}
+            <div
+              className={`p-5 sm:p-6 rounded-2xl border ${currentThemeStyle.border} ${currentThemeStyle.cardBg} shadow-cozy-md mb-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-5`}
+            >
+              <div>
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-amber-500 to-peach-500 text-white text-xs font-extrabold mb-2 shadow-cozy-xs">
+                  <Star className="w-3.5 h-3.5 fill-white text-white" />
+                  <span>Pinned eBook #1 • 290-Page Original Scanned Edition</span>
+                </div>
+                <h2 className="font-display font-bold text-xl sm:text-2xl text-ink-900">
+                  {story.title}
+                </h2>
+                <p className="text-xs sm:text-sm text-ink-700 font-sans mt-1">
+                  By <strong className="text-ink-900">{story.author}</strong> ({story.authorRole}). Unabridged 1931 classic edition.
+                </p>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2.5 self-stretch md:self-auto">
+                <div className="inline-flex p-1 rounded-xl bg-cream-200/80 border border-tan-300 text-xs font-bold shadow-cozy-xs">
+                  <button
+                    type="button"
+                    onClick={() => setEbookViewMode('pdf')}
+                    className={`px-3.5 py-1.5 rounded-lg transition-all flex items-center gap-1.5 ${
+                      ebookViewMode === 'pdf'
+                        ? 'bg-peach-500 text-white shadow-xs'
+                        : 'text-ink-700 hover:text-ink-900'
+                    }`}
+                  >
+                    <BookOpen className="w-3.5 h-3.5" />
+                    <span>Interactive PDF Reader</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setEbookViewMode('notes')}
+                    className={`px-3.5 py-1.5 rounded-lg transition-all flex items-center gap-1.5 ${
+                      ebookViewMode === 'notes'
+                        ? 'bg-peach-500 text-white shadow-xs'
+                        : 'text-ink-700 hover:text-ink-900'
+                    }`}
+                  >
+                    <FileText className="w-3.5 h-3.5" />
+                    <span>Chapter Notes & Overview</span>
+                  </button>
+                </div>
+
+                <a
+                  href={story.pdfUrl}
+                  download="2015.77375.The-Children-Of-Mu.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="site-button bg-peach-500 hover:bg-peach-600 text-white text-xs font-bold px-3.5 py-2 rounded-xl flex items-center gap-1.5 shadow-cozy-sm"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  <span>Download PDF (21.6 MB)</span>
+                </a>
+              </div>
+            </div>
+
+            {/* Embedded PDF Viewer */}
+            {ebookViewMode === 'pdf' && (
+              <div className="rounded-2xl border-2 border-tan-300 shadow-cozy-lg overflow-hidden bg-cream-100 my-6">
+                <div className="bg-cream-200/90 px-4 py-2.5 border-b border-tan-300 flex items-center justify-between gap-3 text-xs">
+                  <span className="font-bold text-ink-800 flex items-center gap-2">
+                    <BookOpen className="w-4 h-4 text-peach-500" />
+                    Facsimile Document Viewer (290 Pages • Complete Unabridged Text)
+                  </span>
+                  <a
+                    href={story.pdfUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs font-bold text-peach-600 hover:text-peach-700 inline-flex items-center gap-1 hover:underline"
+                  >
+                    <span>Open in Separate Tab</span>
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
+                </div>
+                <iframe
+                  src={`${story.pdfUrl}#toolbar=1&navpanes=1&view=FitH`}
+                  className="w-full h-[85vh] min-h-[650px] border-0 bg-white"
+                  title={`${story.title} PDF Document Viewer`}
+                />
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Chapter Header */}
         <div className={`mb-10 sm:mb-14 pb-8 border-b ${currentThemeStyle.border} text-center`}>
           <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold border ${currentThemeStyle.border} mb-4 opacity-75`}>

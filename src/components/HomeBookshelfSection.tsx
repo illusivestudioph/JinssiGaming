@@ -6,7 +6,7 @@ import {
   fetchAndParseGutenbergBook,
   type GutenbergBook,
 } from '@/services/gutenberg';
-import { BookOpen, Clock, ArrowRight, BookMarked, Coffee, Loader2 } from 'lucide-react';
+import { BookOpen, Clock, ArrowRight, BookMarked, Coffee, Loader2, Star } from 'lucide-react';
 
 interface HomeBookshelfSectionProps {
   onSelectStory: (story: Story, chapterNumber?: number) => void;
@@ -20,11 +20,11 @@ export function HomeBookshelfSection({
   const [loadingBookId, setLoadingBookId] = useState<number | null>(null);
   const [statusText, setStatusText] = useState('');
 
-  // 3 Premier public domain classics with real covers
-  const spotlightIds = [1661, 1342, 113];
-  const featuredBooks: GutenbergBook[] = FALLBACK_GUTENBERG_CATALOG.filter((b) =>
-    spotlightIds.includes(b.id)
-  );
+  // 3 Premier public domain classics with real covers (The Children of Mu pinned #1)
+  const spotlightIds = [77375, 1661, 1342];
+  const featuredBooks: GutenbergBook[] = spotlightIds
+    .map((id) => FALLBACK_GUTENBERG_CATALOG.find((b) => b.id === id))
+    .filter((b): b is GutenbergBook => Boolean(b));
 
   const handleReadBook = async (book: GutenbergBook) => {
     setLoadingBookId(book.id);
@@ -86,39 +86,65 @@ export function HomeBookshelfSection({
             `https://www.gutenberg.org/cache/epub/${book.id}/pg${book.id}.cover.medium.jpg`;
           const isLoadingThis = loadingBookId === book.id;
 
+          const isPinned = Boolean(book.isPinned || book.id === 77375);
+
           return (
             <article
               key={book.id}
               onClick={() => !isLoadingThis && handleReadBook(book)}
-              className="notepad-card group cursor-pointer flex flex-col justify-between hover:-translate-y-1 transition-all duration-300 shadow-cozy-md h-full rounded-2xl"
+              className={`notepad-card group cursor-pointer flex flex-col justify-between hover:-translate-y-1 transition-all duration-300 shadow-cozy-md h-full rounded-2xl ${
+                isPinned ? 'ring-2 ring-amber-400/90 shadow-amber-500/10' : ''
+              }`}
             >
               <div>
                 <div className="book-cover-container h-52 relative overflow-hidden bg-cream-200 flex items-center justify-center rounded-t-[1.1rem]">
+                  {isPinned ? (
+                    <div className="absolute top-2.5 left-2.5 z-10 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-gradient-to-r from-amber-500 to-peach-500 text-white text-[10px] font-extrabold uppercase tracking-wider shadow-cozy-sm">
+                      <Star className="w-3 h-3 fill-white text-white" />
+                      <span>Pinned eBook #1</span>
+                    </div>
+                  ) : null}
+
                   <img
                     src={coverImage}
-                    alt={`Actual Project Gutenberg cover for ${book.title}`}
+                    alt={`Actual cover for ${book.title}`}
                     className="w-full h-full object-contain p-2 transition-transform duration-500 group-hover:scale-105"
                     loading="lazy"
                   />
                   <div className="public-domain-tag absolute top-2.5 right-2.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-cozy-sm">
-                    Public Domain
+                    {isPinned ? '290-Page PDF' : 'Public Domain'}
                   </div>
                 </div>
 
                 <div className="p-5">
                   <div className="flex items-center gap-3 text-xs text-tan-500 font-sans mb-2">
-                    <span className="flex items-center gap-1">
-                      <BookOpen className="w-3.5 h-3.5" />
-                      Complete Unabridged
-                    </span>
-                    <span>•</span>
-                    <span className="flex items-center gap-1">
-                      <Clock className="w-3.5 h-3.5" />
-                      {book.download_count?.toLocaleString()} reads
-                    </span>
+                    {isPinned ? (
+                      <>
+                        <span className="flex items-center gap-1 font-extrabold text-amber-700">
+                          <BookOpen className="w-3.5 h-3.5 text-amber-500" />
+                          Complete 290-Page eBook
+                        </span>
+                        <span>•</span>
+                        <span className="font-semibold text-peach-700">1931 Unabridged</span>
+                      </>
+                    ) : (
+                      <>
+                        <span className="flex items-center gap-1">
+                          <BookOpen className="w-3.5 h-3.5" />
+                          Complete Unabridged
+                        </span>
+                        <span>•</span>
+                        <span className="flex items-center gap-1">
+                          <Clock className="w-3.5 h-3.5" />
+                          {book.download_count?.toLocaleString()} reads
+                        </span>
+                      </>
+                    )}
                   </div>
 
-                  <h3 className="font-display font-bold text-lg sm:text-xl text-ink-900 group-hover:text-peach-600 transition-colors line-clamp-1 mb-1.5 leading-snug">
+                  <h3 className={`font-display font-bold text-lg sm:text-xl text-ink-900 group-hover:text-peach-600 transition-colors line-clamp-1 mb-1.5 leading-snug ${
+                    isPinned ? 'text-amber-950 font-extrabold' : ''
+                  }`}>
                     {book.title}
                   </h3>
 
@@ -127,7 +153,9 @@ export function HomeBookshelfSection({
                   </p>
 
                   <p className="text-xs sm:text-sm text-ink-700 font-sans line-clamp-2 leading-relaxed mb-4">
-                    {book.subjects.slice(0, 3).join(' • ')}
+                    {isPinned
+                      ? 'The lost continent of Mu in the Pacific, sacred Naacal stone tablets, and primeval civilizations.'
+                      : book.subjects.slice(0, 3).join(' • ')}
                   </p>
                 </div>
               </div>
@@ -135,7 +163,7 @@ export function HomeBookshelfSection({
               <div className="px-5 pb-5 pt-2 border-t border-tan-200/60 flex items-center justify-between text-xs font-bold text-peach-600">
                 <span className="flex items-center gap-1 text-tan-500 font-normal">
                   <Coffee className="w-3.5 h-3.5 text-peach-500" />
-                  Gutenberg Archive
+                  {isPinned ? 'Pinned Public Shelf' : 'Gutenberg Archive'}
                 </span>
                 <div className="flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
                   {isLoadingThis ? (
@@ -145,7 +173,9 @@ export function HomeBookshelfSection({
                     </span>
                   ) : (
                     <>
-                      <span>Read Unabridged</span>
+                      <span className={isPinned ? 'text-amber-700 font-extrabold' : ''}>
+                        {isPinned ? 'Read PDF eBook' : 'Read Unabridged'}
+                      </span>
                       <ArrowRight className="w-3.5 h-3.5" />
                     </>
                   )}

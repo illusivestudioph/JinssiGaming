@@ -5,6 +5,7 @@ import {
   convertGutenbergToStory,
   fetchAndParseGutenbergBook,
   COZY_GUTENBERG_PRESETS,
+  PINNED_CHILDREN_OF_MU_BOOK,
   type GutenbergBook,
 } from '@/services/gutenberg';
 import { 
@@ -22,7 +23,8 @@ import {
   Trash2,
   Loader2,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Star
 } from 'lucide-react';
 
 interface BookshelfDirectoryProps {
@@ -166,10 +168,25 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
     setPage(1);
   };
 
-  const handleSearchChange = (val: string) => {
-    setSearchQuery(val);
-    setPage(1);
-  };
+  // Ensure Pinned Children of Mu is always #1 when on page 1
+  const displayBooks = useMemo(() => {
+    if (page !== 1) return books;
+    const withoutPinned = books.filter((b) => b.id !== PINNED_CHILDREN_OF_MU_BOOK.id);
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) {
+      return [PINNED_CHILDREN_OF_MU_BOOK, ...withoutPinned];
+    }
+    const matches =
+      'the children of mu'.includes(q) ||
+      'churchward'.includes(q) ||
+      'mu'.includes(q) ||
+      'ebook'.includes(q) ||
+      'lost continent'.includes(q);
+    if (matches) {
+      return [PINNED_CHILDREN_OF_MU_BOOK, ...withoutPinned];
+    }
+    return books;
+  }, [books, page, searchQuery]);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 animate-fade-in">
@@ -413,7 +430,7 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
           ) : (
             <div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pt-3">
-                {books.slice(0, 12).map((book) => {
+                {displayBooks.slice(0, 12).map((book) => {
                   const authorName = book.authors[0]?.name
                     ? book.authors[0].name.split(',').reverse().join(' ').trim()
                     : 'Classic Author';
@@ -426,18 +443,29 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
 
                   const bookmarked = isBookmarked(book.id);
                   const isCurrentLoading = loadingBookId === book.id;
+                  const isPinned = Boolean(book.isPinned || book.id === PINNED_CHILDREN_OF_MU_BOOK.id);
 
                   return (
                     <div
                       key={book.id}
-                      className="notepad-card group flex flex-col justify-between hover:-translate-y-1 transition-all duration-300 shadow-cozy-md"
+                      className={`notepad-card group flex flex-col justify-between hover:-translate-y-1 transition-all duration-300 shadow-cozy-md ${
+                        isPinned ? 'ring-2 ring-amber-400/90 shadow-amber-500/10' : ''
+                      }`}
                     >
                       <div>
                         {/* Cover Image Container */}
                         <div className="book-cover-container h-56 relative overflow-hidden bg-cream-200 flex items-center justify-center p-2 rounded-t-[1.1rem]">
+                          {/* Pinned eBook #1 Badge */}
+                          {isPinned && (
+                            <div className="absolute top-3 left-3 z-10 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-gradient-to-r from-amber-500 to-peach-500 text-white font-extrabold text-[11px] shadow-cozy-sm tracking-wide">
+                              <Star className="w-3.5 h-3.5 fill-white text-white" />
+                              <span>PINNED EBOOK #1</span>
+                            </div>
+                          )}
+
                           <img
                             src={coverImage}
-                            alt={`Actual Project Gutenberg cover for ${book.title}`}
+                            alt={`Actual cover for ${book.title}`}
                             className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
                             loading="lazy"
                           />
@@ -449,7 +477,7 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
                               handleToggleBookmark(book);
                             }}
                             title={bookmarked ? 'Saved to bookmarks' : 'Add to bookmarks'}
-                            className={`absolute top-3 right-3 p-2 rounded-xl backdrop-blur-xs shadow-cozy-sm transition-all ${
+                            className={`absolute top-3 right-3 z-10 p-2 rounded-xl backdrop-blur-xs shadow-cozy-sm transition-all ${
                               bookmarked
                                 ? 'bg-peach-500 text-white scale-105'
                                 : 'bg-white/90 text-tan-500 hover:text-peach-600 hover:bg-white'
@@ -462,16 +490,31 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
                         {/* Details */}
                         <div className="p-5">
                           <div className="flex items-center gap-2 text-[11px] text-tan-500 font-sans mb-1.5">
-                            <span className="flex items-center gap-1 font-semibold">
-                              <BookOpen className="w-3.5 h-3.5 text-peach-500" />
-                              Unabridged
-                            </span>
-                            <span>•</span>
-                            <span>{(book.download_count || 50000).toLocaleString()} reads</span>
+                            {isPinned ? (
+                              <>
+                                <span className="flex items-center gap-1 font-extrabold text-amber-700">
+                                  <BookOpen className="w-3.5 h-3.5 text-amber-500" />
+                                  290-Page PDF eBook
+                                </span>
+                                <span>•</span>
+                                <span className="font-semibold text-peach-700">Unabridged 1931 Original</span>
+                              </>
+                            ) : (
+                              <>
+                                <span className="flex items-center gap-1 font-semibold">
+                                  <BookOpen className="w-3.5 h-3.5 text-peach-500" />
+                                  Unabridged
+                                </span>
+                                <span>•</span>
+                                <span>{(book.download_count || 50000).toLocaleString()} reads</span>
+                              </>
+                            )}
                           </div>
 
                           <h3
-                            className="font-display font-bold text-base text-ink-900 group-hover:text-peach-600 transition-colors line-clamp-1 mb-1"
+                            className={`font-display font-bold text-base text-ink-900 group-hover:text-peach-600 transition-colors line-clamp-1 mb-1 ${
+                              isPinned ? 'text-amber-950 font-extrabold' : ''
+                            }`}
                             title={book.title}
                           >
                             {book.title}
@@ -482,7 +525,9 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
                           </p>
 
                           <p className="text-xs text-ink-700 font-sans line-clamp-3 leading-relaxed mb-4">
-                            {book.subjects && book.subjects.length > 0
+                            {isPinned
+                              ? 'James Churchward’s legendary 1931 unabridged classic exploring the lost Pacific continent of Mu, sacred Naacal stone tablets, and prehistoric global civilizations.'
+                              : book.subjects && book.subjects.length > 0
                               ? book.subjects.slice(0, 3).map((s) => s.split('--')[0].trim()).join(' • ')
                               : 'Classic public domain literature preserved by Project Gutenberg.'}
                           </p>
@@ -495,7 +540,11 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
                           type="button"
                           disabled={isCurrentLoading}
                           onClick={() => handleReadBook(book)}
-                          className="w-full site-button bg-peach-500 hover:bg-peach-600 disabled:opacity-75 text-white text-xs font-bold py-2.5 rounded-xl flex items-center justify-center gap-2 shadow-cozy-sm transition-all"
+                          className={`w-full site-button disabled:opacity-75 text-white text-xs font-bold py-2.5 rounded-xl flex items-center justify-center gap-2 shadow-cozy-sm transition-all ${
+                            isPinned
+                              ? 'bg-gradient-to-r from-amber-500 to-peach-500 hover:from-amber-600 hover:to-peach-600 shadow-amber-500/25'
+                              : 'bg-peach-500 hover:bg-peach-600'
+                          }`}
                         >
                           {isCurrentLoading ? (
                             <>
@@ -505,7 +554,7 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
                           ) : (
                             <>
                               <BookOpen className="w-4 h-4" />
-                              <span>Read Unabridged</span>
+                              <span>{isPinned ? 'Read PDF eBook' : 'Read Unabridged'}</span>
                               <ArrowRight className="w-3.5 h-3.5" />
                             </>
                           )}
