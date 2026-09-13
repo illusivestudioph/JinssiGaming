@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { AdventurerConfig, FaceShape, getAdventurerAvatarUrl } from '@/types/profile';
 
 interface CozyAvatarProps {
@@ -6,6 +6,43 @@ interface CozyAvatarProps {
   size?: number | string;
   className?: string;
   showBorder?: boolean;
+}
+
+// In-memory cache for fetched raw SVGs and transformed morphed SVGs
+const rawSvgCache = new Map<string, string>();
+const transformedSvgCache = new Map<string, string>();
+
+/**
+ * Directly morphs the character's head outline and skin contour inside the SVG
+ * according to the selected face shape (Round, Square, Heart/V-Line, Diamond, Oval)
+ */
+function morphAvatarHeadSvg(svgText: string, shape: FaceShape): string {
+  if (shape === 'oval') return svgText;
+
+  const firstGIndex = svgText.indexOf('<g transform="translate(-161 -83)">');
+  if (firstGIndex === -1) return svgText;
+
+  const pathIndex = svgText.indexOf('<path');
+  if (pathIndex === -1 || pathIndex >= firstGIndex) return svgText;
+
+  const beforeHead = svgText.slice(0, pathIndex);
+  const headPaths = svgText.slice(pathIndex, firstGIndex);
+  const afterHead = svgText.slice(firstGIndex);
+
+  const transforms: Record<FaceShape, string> = {
+    oval: headPaths,
+    // Round: Cute chubby cheeks, wider jaw arc
+    round: `<g transform="translate(380, 410) scale(1.12, 0.94) translate(-380, -410)">${headPaths}</g>`,
+    // Heart: Delicate, tapered anime V-line jaw and pointed chin
+    heart: `<g transform="translate(380, 360) scale(0.91, 1.06) translate(-380, -360)">${headPaths}</g>`,
+    // Square: Strong, broader masculine/chiseled jaw presence
+    square: `<g transform="translate(380, 440) scale(1.14, 1.04) translate(-380, -440)">${headPaths}</g>`,
+    // Diamond: High cheekbones with sculpted chin definition
+    diamond: `<g transform="translate(380, 400) scale(1.08, 1.05) translate(-380, -400)">${headPaths}</g>`,
+  };
+
+  const transformedHead = transforms[shape] || headPaths;
+  return beforeHead + transformedHead + afterHead;
 }
 
 export function CozyAvatar({
@@ -16,63 +53,74 @@ export function CozyAvatar({
 }: CozyAvatarProps) {
   const avatarUrl = getAdventurerAvatarUrl(config);
   const shape: FaceShape = config?.faceShape || 'oval';
+  const isGooglePhoto = Boolean(config?.useGooglePhoto && config?.googleAvatarUrl);
 
-  // Physical Facial Proportions & Morph Transformation
-  // (Directly morphs face width, jawline taper, and cheek fullness without drawing artificial lines)
-  const faceTransformStyle = {
-    oval: {
-      transform: 'scale(1)',
-      transformOrigin: 'center 45%',
-    },
-    round: {
-      // Widens cheeks & softens jaw for an authentic rounded face
-      transform: 'scaleX(1.18) scaleY(0.92)',
-      transformOrigin: 'center 45%',
-    },
-    square: {
-      // 3D perspective tilt expands the jawline and squares off lower face
-      transform: 'perspective(280px) rotateX(-18deg) scaleX(1.12) scaleY(1.06)',
-      transformOrigin: 'center 38%',
-    },
-    heart: {
-      // Tapers lower jaw into a pointed anime V-line chin while keeping eyes/forehead open
-      transform: 'perspective(280px) rotateX(16deg) scaleX(0.96) scaleY(1.06) translateY(-2%)',
-      transformOrigin: 'center 50%',
-    },
-    diamond: {
-      // High sculpted cheekbones with tapered chin
-      transform: 'perspective(320px) rotateX(8deg) scaleX(1.12) scaleY(1.04)',
-      transformOrigin: 'center 45%',
-    },
-  }[shape];
+  const cacheKey = `${avatarUrl}_${shape}`;
+  const [displaySrc, setDisplaySrc] = useState<string>(() => {
+    if (isGooglePhoto || shape === 'oval') return avatarUrl;
+    return transformedSvgCache.get(cacheKey) || avatarUrl;
+  });
 
-  // Silhouette framing border radius for container
-  const shapeRadiusClass = {
-    oval: 'rounded-full',
-    round: 'rounded-full ring-2 ring-amber-700/15',
-    square: 'rounded-[26px] ring-2 ring-amber-800/25',
-    heart: 'rounded-t-full rounded-b-[38%] ring-2 ring-rose-700/20',
-    diamond: 'rounded-[36%_36%_46%_46%] ring-2 ring-indigo-900/15',
-  }[shape];
+  useEffect(() => {
+    if (isGooglePhoto || shape === 'oval') {
+      setDisplaySrc(avatarUrl);
+      return;
+    }
 
-  // Remove any conflicting hardcoded rounded-* from caller's className so shapeRadiusClass takes effect
-  const cleanedClassName = className.replace(/rounded-(full|2xl|xl|lg|md|sm)/g, '').trim();
+    const cached = transformedSvgCache.get(cacheKey);
+    if (cached) {
+      setDisplaySrc(cached);
+      return;
+    }
+
+    let active = true;
+
+    // Fetch and morph SVG
+    const processSvg = (rawSvg: string) => {
+      const morphedSvg = morphAvatarHeadSvg(rawSvg, shape);
+      const dataUri = `data:image/svg+xml;utf8,${encodeURIComponent(morphedSvg)}`;
+      transformedSvgCache.set(cacheKey, dataUri);
+      if (active) {
+        setDisplaySrc(dataUri);
+      }
+    };
+
+    const cachedRaw = rawSvgCache.get(avatarUrl);
+    if (cachedRaw) {
+      processSvg(cachedRaw);
+    } else {
+      fetch(avatarUrl)
+        .then((res) => res.text())
+        .then((text) => {
+          rawSvgCache.set(avatarUrl, text);
+          processSvg(text);
+        })
+        .catch(() => {
+          if (active) {
+            setDisplaySrc(avatarUrl);
+          }
+        });
+    }
+
+    return () => {
+      active = false;
+    };
+  }, [avatarUrl, shape, cacheKey, isGooglePhoto]);
 
   return (
     <div
-      className={`relative overflow-hidden shrink-0 flex items-center justify-center select-none shadow-xs transition-all bg-[#FDE8D3] ${shapeRadiusClass} ${
+      className={`relative overflow-hidden shrink-0 flex items-center justify-center select-none shadow-xs transition-all bg-[#FDE8D3] rounded-full ${
         showBorder ? 'border-2 border-[#F5C6A0] dark:border-stone-700' : ''
-      } ${cleanedClassName}`}
+      } ${className}`}
       style={{
         width: size,
         height: size,
       }}
     >
       <img
-        src={avatarUrl}
+        src={displaySrc}
         alt="Cozy Adventurer Avatar"
         className="w-full h-full object-cover select-none transition-transform duration-200"
-        style={faceTransformStyle}
         loading="lazy"
         decoding="async"
         referrerPolicy="no-referrer"
