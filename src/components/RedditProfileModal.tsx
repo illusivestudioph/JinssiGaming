@@ -3,6 +3,7 @@ import { useChat } from '@/context/ChatContext';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/lib/supabase';
 import { CozyAvatar } from '@/components/CozyAvatar';
+import { CommunityBadge } from '@/types/profile';
 import {
   StreamlineClose,
   StreamlineCheck,
@@ -16,7 +17,27 @@ import {
   StreamlinePalette,
   StreamlineStar,
   StreamlineLogOut,
+  StreamlineCompassDuo,
+  StreamlineBookDuo,
+  StreamlineGameboyDuo,
+  StreamlineCoffeeDuo,
+  StreamlineMoonDuo,
+  StreamlineLeafDuo,
 } from '@/components/StreamlineIcons';
+
+const BADGE_OPTIONS: {
+  name: CommunityBadge;
+  icon: React.ComponentType<{ className?: string }>;
+  creatorOnly?: boolean;
+}[] = [
+  { name: 'Creator & Developer', icon: StreamlineStars, creatorOnly: true },
+  { name: 'Cozy Explorer', icon: StreamlineCompassDuo },
+  { name: 'Bookworm', icon: StreamlineBookDuo },
+  { name: 'Retro Gamer', icon: StreamlineGameboyDuo },
+  { name: 'Cafe Regular', icon: StreamlineCoffeeDuo },
+  { name: 'Midnight Scholar', icon: StreamlineMoonDuo },
+  { name: 'Tea Brewer', icon: StreamlineLeafDuo },
+];
 
 interface ProfileComment {
   id: string;
@@ -97,6 +118,10 @@ export function RedditProfileModal() {
     signOut,
     setShowAvatarBuilder,
     updateProfile,
+    signInWithGoogle,
+    devSignInAsCreator,
+    rememberMe,
+    setRememberMe,
     setShowProfileModal,
     setAvatarBuilderReturnTo,
   } = useAuth();
@@ -113,6 +138,59 @@ export function RedditProfileModal() {
   const [isEditingBanner, setIsEditingBanner] = useState(false);
   const [currentBannerColor, setCurrentBannerColor] = useState<string>('peach');
   const [currentBannerText, setCurrentBannerText] = useState<string>('');
+
+  // In-place Profile Editing state (Unified within the exact same card layout)
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [usernameInput, setUsernameInput] = useState('');
+  const [bioInput, setBioInput] = useState('');
+  const [selectedBadge, setSelectedBadge] = useState<CommunityBadge>('Cozy Explorer');
+
+  // Synchronize profile edit fields when active profile loads or changes
+  useEffect(() => {
+    if (activeProfileUser) {
+      setUsernameInput(isViewingSelf ? profile.username : activeProfileUser.username);
+      setBioInput(isViewingSelf ? profile.bio : activeProfileUser.bio);
+      setSelectedBadge((isViewingSelf ? profile.badge : activeProfileUser.badge) as CommunityBadge);
+      if (activeProfileUser.startInEditMode && isViewingSelf) {
+        setIsEditingProfile(true);
+      } else {
+        setIsEditingProfile(false);
+      }
+    }
+  }, [
+    activeProfileUser?.username,
+    activeProfileUser?.startInEditMode,
+    isViewingSelf,
+    profile.username,
+    profile.bio,
+    profile.badge,
+  ]);
+
+  const handleSaveProfile = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    const cleanName = usernameInput.trim().replace(/[^a-zA-Z0-9_-]/g, '') || profile.username || 'CozyPlayer';
+    const cleanBio = bioInput.trim() || 'Cozy explorer & reader 🍵';
+
+    await updateProfile({
+      username: cleanName,
+      bio: cleanBio,
+      badge: selectedBadge,
+    });
+
+    if (activeProfileUser) {
+      openProfile({
+        ...activeProfileUser,
+        username: cleanName,
+        bio: cleanBio,
+        badge: selectedBadge,
+        startInEditMode: false,
+      });
+    }
+
+    setIsEditingProfile(false);
+    setToast('Profile updated successfully! ✨');
+    setTimeout(() => setToast(null), 2500);
+  };
 
   // Sync banner state whenever active profile changes
   useEffect(() => {
@@ -501,7 +579,7 @@ export function RedditProfileModal() {
                   className="font-display font-bold text-lg leading-tight"
                   style={{ color: 'var(--text-main, #3a2e22)' }}
                 >
-                  u/{activeProfileUser.username}
+                  u/{isEditingProfile ? (usernameInput || activeProfileUser.username) : activeProfileUser.username}
                 </h3>
                 {activeProfileUser.isCreator && (
                   <span className="text-[10px] px-2 py-0.5 rounded-full bg-peach-100 text-peach-700 font-extrabold border border-peach-300">
@@ -513,7 +591,7 @@ export function RedditProfileModal() {
                 className="text-xs font-semibold mt-0.5"
                 style={{ color: 'var(--text-muted, #8f6b48)' }}
               >
-                {activeProfileUser.badge}
+                {isEditingProfile ? selectedBadge : activeProfileUser.badge}
               </p>
             </div>
           </div>
@@ -539,14 +617,17 @@ export function RedditProfileModal() {
               <button
                 type="button"
                 onClick={() => {
-                  closeProfile();
-                  setShowProfileModal(true);
+                  setIsEditingProfile((prev) => !prev);
                 }}
-                className="flex-1 sm:flex-initial px-3.5 py-1.5 rounded-xl text-xs font-bold border border-[#EADCCB] bg-white hover:bg-[#FFFDFB] text-[#3A2E22] shadow-xs flex items-center justify-center gap-1.5 transition-all active:scale-95 cursor-pointer"
+                className={`flex-1 sm:flex-initial px-3.5 py-1.5 rounded-xl text-xs font-bold border shadow-xs flex items-center justify-center gap-1.5 transition-all active:scale-95 cursor-pointer ${
+                  isEditingProfile
+                    ? 'bg-peach-100 border-peach-400 text-peach-800'
+                    : 'border-[#EADCCB] bg-white hover:bg-[#FFFDFB] text-[#3A2E22]'
+                }`}
                 title="Edit Username, Bio Tagline & Community Badge"
               >
                 <StreamlinePencil className="w-3.5 h-3.5 text-[#FD9A4D]" />
-                <span>Edit Profile</span>
+                <span>{isEditingProfile ? 'Cancel Edit' : 'Edit Profile'}</span>
               </button>
             </div>
           ) : (
@@ -616,148 +697,308 @@ export function RedditProfileModal() {
           </div>
         )}
 
-        {/* Navigation Tabs */}
-        <div
-          className="grid grid-cols-3 border-b text-xs font-bold text-center"
-          style={{
-            backgroundColor: 'var(--card-done-bg, #fcf8ee)',
-            borderColor: 'var(--card-line, #ebdcc9)',
-          }}
-        >
-          {[
-            { id: 'overview', label: 'Overview' },
-            { id: 'comments', label: 'Comments' },
-            { id: 'trophies', label: 'Trophy Case' },
-          ].map((t) => {
-            const isSelected = activeTab === t.id;
-            return (
-              <button
-                key={t.id}
-                type="button"
-                onClick={() => setActiveTab(t.id as 'overview' | 'comments' | 'trophies')}
-                className={`py-2.5 border-b-2 transition-all cursor-pointer ${
-                  isSelected
-                    ? 'font-black bg-white/40'
-                    : 'border-transparent text-tan-600 hover:bg-black/5'
-                }`}
-                style={{
-                  borderColor: isSelected ? 'var(--theme-accent, #fd9a4d)' : 'transparent',
-                  color: isSelected ? 'var(--theme-accent, #fd9a4d)' : 'var(--text-muted, #8f6b48)',
-                }}
-              >
-                {t.label}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Tab Body */}
-        <div
-          className="p-6 overflow-y-auto space-y-4 flex-1 text-xs"
-          style={{ backgroundColor: 'var(--card-bg, #fefcf7)' }}
-        >
-          {activeTab === 'overview' && (
-            <div className="space-y-4">
-              <div className="p-4 rounded-2xl bg-white border border-[#EADCCB] shadow-2xs">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-tan-500 block mb-1">
-                  About
+        {isEditingProfile ? (
+          /* IN-PLACE EDIT PROFILE VIEW ON THE EXACT SAME CARD LAYOUT */
+          <form
+            onSubmit={handleSaveProfile}
+            className="p-6 overflow-y-auto space-y-4 flex-1 text-xs"
+            style={{ backgroundColor: 'var(--card-bg, #fefcf7)' }}
+          >
+            {/* Header Info Ribbon */}
+            <div className="flex items-center justify-between pb-2 border-b border-[#EADCCB]">
+              <div className="flex items-center gap-2">
+                <StreamlinePencil className="w-3.5 h-3.5 text-[#FD9A4D]" />
+                <span className="text-xs font-bold uppercase tracking-wider text-[#6A5747]">
+                  Edit Traveler Persona
                 </span>
-                <p className="text-xs text-[#3A2E22] leading-relaxed font-medium">
-                  {activeProfileUser.bio}
-                </p>
               </div>
+              <span className="text-[10px] text-tan-500 font-medium">
+                Updates your card & comments live
+              </span>
+            </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <div className="p-3.5 rounded-2xl bg-white border border-[#EADCCB]">
-                  <span className="text-[10px] font-bold text-tan-500 block">Favorite Activity</span>
-                  <div className="font-bold text-[#3A2E22] mt-0.5 flex items-center gap-1.5">
-                    <StreamlineGamepad className="w-3.5 h-3.5 text-[#FD9A4D]" />
-                    <span>Retro Gaming</span>
-                  </div>
-                </div>
+            {/* 1. Username / Display Name */}
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-[#6A5747] mb-1.5">
+                Username / Display Name
+              </label>
+              <div className="relative">
+                <span className="absolute left-3.5 top-2.5 text-xs font-mono font-bold text-tan-400">@</span>
+                <input
+                  type="text"
+                  value={usernameInput}
+                  onChange={(e) => setUsernameInput(e.target.value)}
+                  maxLength={20}
+                  placeholder="Your traveler name"
+                  className="w-full pl-8 pr-3 py-2.5 text-xs font-bold rounded-xl border-2 shadow-2xs transition-all outline-none bg-white border-[#EADCCB] focus:border-[#FD9A4D] text-[#3A2E22]"
+                />
+              </div>
+              <p className="text-[10px] mt-1 text-tan-500 font-medium">Letters, numbers, and underscores only</p>
+            </div>
 
-                <div className="p-3.5 rounded-2xl bg-white border border-[#EADCCB]">
-                  <span className="text-[10px] font-bold text-tan-500 block">Reading Status</span>
-                  <div className="font-bold text-[#3A2E22] mt-0.5 flex items-center gap-1.5">
-                    <StreamlineBook className="w-3.5 h-3.5 text-[#FD9A4D]" />
-                    <span>Story Explorer</span>
-                  </div>
-                </div>
+            {/* 2. Cozy Bio / Tagline */}
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-[#6A5747] mb-1.5">
+                Cozy Bio / Tagline
+              </label>
+              <textarea
+                value={bioInput}
+                onChange={(e) => setBioInput(e.target.value)}
+                maxLength={90}
+                rows={2}
+                placeholder="What games or stories are you enjoying?"
+                className="w-full p-2.5 text-xs rounded-xl border-2 resize-none shadow-2xs font-medium transition-all outline-none bg-white border-[#EADCCB] focus:border-[#FD9A4D] text-[#3A2E22]"
+              />
+              <div className="flex justify-between text-[10px] text-tan-500 font-medium mt-0.5">
+                <span>Shown on your public card</span>
+                <span>{bioInput.length}/90</span>
               </div>
             </div>
-          )}
 
-          {activeTab === 'comments' && (
-            <div className="space-y-3">
-              {isLoadingComments ? (
-                <div className="p-8 text-center text-xs text-tan-500 font-medium">
-                  Loading comments...
-                </div>
-              ) : userComments.length > 0 ? (
-                userComments.map((c) => {
-                  const targetTitle = c.game_id
-                    ? c.game_id.replace(/^article-/, '').replace(/-/g, ' ')
-                    : 'community discussion';
+            {/* 3. Community Badge */}
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-[#6A5747] mb-2">
+                Community Badge
+              </label>
+              <div className="grid grid-cols-2 gap-2">
+                {BADGE_OPTIONS.filter((b) => !b.creatorOnly || profile.isCreator).map(({ name, icon: Icon }) => {
+                  const isSelected = selectedBadge === name;
                   return (
-                    <div key={c.id} className="p-3.5 rounded-2xl bg-white border border-[#EADCCB] shadow-2xs">
-                      <div className="flex items-center justify-between text-[10px] font-semibold text-tan-500 mb-1">
-                        <span className="capitalize text-peach-700 font-bold">
-                          on {targetTitle}
-                        </span>
-                        <span>
-                          {new Date(c.created_at).toLocaleDateString('en-US', {
-                            month: 'short',
-                            day: 'numeric',
-                            year: 'numeric',
-                          })}
-                        </span>
+                    <button
+                      key={name}
+                      type="button"
+                      onClick={() => setSelectedBadge(name)}
+                      className={`p-2.5 rounded-xl text-left text-xs font-bold border-2 transition-all flex items-center gap-2.5 cursor-pointer select-none ${
+                        isSelected
+                          ? 'bg-[#FFF5EB] border-[#FD9A4D] ring-2 ring-[#FD9A4D]/35 shadow-xs'
+                          : 'bg-white border-[#EADCCB] hover:border-[#FD9A4D] hover:bg-[#FFFDFB]'
+                      }`}
+                    >
+                      <div
+                        className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-all ${
+                          isSelected ? 'bg-[#FD9A4D] text-white' : 'bg-[#FFF8F0] text-[#FD9A4D]'
+                        }`}
+                      >
+                        <Icon className="w-4 h-4" />
                       </div>
-                      <p className="text-xs text-[#3A2E22] font-medium leading-relaxed">
-                        &ldquo;{c.text}&rdquo;
+                      <span className={`truncate text-xs font-bold ${isSelected ? 'text-[#C95A0B]' : 'text-[#3A2E22]'}`}>
+                        {name}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Guest Notice & Sign In Option */}
+            {!user && (
+              <div className="p-3 rounded-2xl bg-amber-50/70 border border-amber-200 text-xs">
+                <p className="font-bold text-amber-900 mb-1">Browsing as Guest 🌱</p>
+                <p className="text-[11px] text-amber-800 mb-2 leading-relaxed">
+                  Sign in with Google to sync your profile, character, and comments permanently!
+                </p>
+                <button
+                  type="button"
+                  onClick={() => signInWithGoogle(rememberMe)}
+                  className="w-full py-2 px-3 rounded-xl bg-white border border-amber-300 hover:border-amber-400 font-bold text-xs text-[#3A2E22] flex items-center justify-center gap-2 shadow-xs cursor-pointer active:scale-98"
+                >
+                  <span>Sign in with Google</span>
+                </button>
+              </div>
+            )}
+
+            {/* Save & Cancel Action Buttons */}
+            <div className="pt-2 flex items-center gap-2">
+              <button
+                type="submit"
+                className="flex-1 py-2.5 px-4 rounded-xl font-bold text-xs shadow-md transition-all active:scale-98 flex items-center justify-center gap-2 cursor-pointer bg-emerald-600 hover:bg-emerald-700 text-white"
+              >
+                <StreamlineCheck className="w-4 h-4" />
+                <span>Save Profile Changes</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setUsernameInput(profile.username);
+                  setBioInput(profile.bio);
+                  setSelectedBadge(profile.badge as CommunityBadge);
+                  setIsEditingProfile(false);
+                }}
+                className="py-2.5 px-4 rounded-xl font-bold text-xs border border-[#EADCCB] bg-white hover:bg-stone-50 text-[#3A2E22] transition-all cursor-pointer"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        ) : (
+          <>
+            {/* Stats Strip: Community Role & Member Joined Date (Replaces Reddit Karma & Cake Day) */}
+            <div
+              className="px-6 py-2.5 border-b flex items-center justify-between text-xs font-semibold"
+              style={{
+                backgroundColor: 'var(--card-bg, #fefcf7)',
+                borderColor: 'var(--card-line, #ebdcc9)',
+                color: 'var(--text-muted, #8f6b48)',
+              }}
+            >
+              <div className="flex items-center gap-1.5">
+                <StreamlineStars className="w-3.5 h-3.5 text-amber-500" />
+                <span className="font-bold" style={{ color: 'var(--text-main, #3a2e22)' }}>
+                  {activeProfileUser.isCreator ? 'Lead Developer & Creator' : 'Community Explorer'}
+                </span>
+              </div>
+
+              <div className="flex items-center gap-1.5 font-mono text-[11px]">
+                <StreamlineCalendar className="w-3.5 h-3.5 text-tan-500" />
+                <span>Joined: {joinedDateFormatted}</span>
+              </div>
+            </div>
+
+            {/* Navigation Tabs */}
+            <div
+              className="grid grid-cols-3 border-b text-xs font-bold text-center"
+              style={{
+                backgroundColor: 'var(--card-done-bg, #fcf8ee)',
+                borderColor: 'var(--card-line, #ebdcc9)',
+              }}
+            >
+              {[
+                { id: 'overview', label: 'Overview' },
+                { id: 'comments', label: 'Comments' },
+                { id: 'trophies', label: 'Trophy Case' },
+              ].map((t) => {
+                const isSelected = activeTab === t.id;
+                return (
+                  <button
+                    key={t.id}
+                    type="button"
+                    onClick={() => setActiveTab(t.id as 'overview' | 'comments' | 'trophies')}
+                    className={`py-2.5 border-b-2 transition-all cursor-pointer ${
+                      isSelected
+                        ? 'font-black bg-white/40'
+                        : 'border-transparent text-tan-600 hover:bg-black/5'
+                    }`}
+                    style={{
+                      borderColor: isSelected ? 'var(--theme-accent, #fd9a4d)' : 'transparent',
+                      color: isSelected ? 'var(--theme-accent, #fd9a4d)' : 'var(--text-muted, #8f6b48)',
+                    }}
+                  >
+                    {t.label}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Tab Body */}
+            <div
+              className="p-6 overflow-y-auto space-y-4 flex-1 text-xs"
+              style={{ backgroundColor: 'var(--card-bg, #fefcf7)' }}
+            >
+              {activeTab === 'overview' && (
+                <div className="space-y-4">
+                  <div className="p-4 rounded-2xl bg-white border border-[#EADCCB] shadow-2xs">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-tan-500 block mb-1">
+                      About
+                    </span>
+                    <p className="text-xs text-[#3A2E22] leading-relaxed font-medium">
+                      {activeProfileUser.bio}
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="p-3.5 rounded-2xl bg-white border border-[#EADCCB]">
+                      <span className="text-[10px] font-bold text-tan-500 block">Favorite Activity</span>
+                      <div className="font-bold text-[#3A2E22] mt-0.5 flex items-center gap-1.5">
+                        <StreamlineGamepad className="w-3.5 h-3.5 text-[#FD9A4D]" />
+                        <span>Retro Gaming</span>
+                      </div>
+                    </div>
+
+                    <div className="p-3.5 rounded-2xl bg-white border border-[#EADCCB]">
+                      <span className="text-[10px] font-bold text-tan-500 block">Reading Status</span>
+                      <div className="font-bold text-[#3A2E22] mt-0.5 flex items-center gap-1.5">
+                        <StreamlineBook className="w-3.5 h-3.5 text-[#FD9A4D]" />
+                        <span>Story Explorer</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'comments' && (
+                <div className="space-y-3">
+                  {isLoadingComments ? (
+                    <div className="p-8 text-center text-xs text-tan-500 font-medium">
+                      Loading comments...
+                    </div>
+                  ) : userComments.length > 0 ? (
+                    userComments.map((c) => {
+                      const targetTitle = c.game_id
+                        ? c.game_id.replace(/^article-/, '').replace(/-/g, ' ')
+                        : 'community discussion';
+                      return (
+                        <div key={c.id} className="p-3.5 rounded-2xl bg-white border border-[#EADCCB] shadow-2xs">
+                          <div className="flex items-center justify-between text-[10px] font-semibold text-tan-500 mb-1">
+                            <span className="capitalize text-peach-700 font-bold">
+                              on {targetTitle}
+                            </span>
+                            <span>
+                              {new Date(c.created_at).toLocaleDateString('en-US', {
+                                month: 'short',
+                                day: 'numeric',
+                                year: 'numeric',
+                              })}
+                            </span>
+                          </div>
+                          <p className="text-xs text-[#3A2E22] font-medium leading-relaxed">
+                            &ldquo;{c.text}&rdquo;
+                          </p>
+                        </div>
+                      );
+                    })
+                  ) : (
+                    <div className="p-8 text-center rounded-2xl bg-white/70 border border-dashed border-[#EADCCB]">
+                      <StreamlinePencil className="w-7 h-7 text-tan-400 mx-auto mb-2 opacity-60" />
+                      <div className="font-bold text-xs text-[#3A2E22] mb-1">
+                        {isViewingSelf ? "You haven't posted any comments yet" : 'No comments yet'}
+                      </div>
+                      <p className="text-[11px] text-tan-500 max-w-xs mx-auto leading-relaxed">
+                        {isViewingSelf
+                          ? 'When you comment on game walkthroughs or cozy articles, your comments will appear here!'
+                          : `@${activeProfileUser.username} hasn't posted any comments on games or articles yet.`}
                       </p>
                     </div>
-                  );
-                })
-              ) : (
-                <div className="p-8 text-center rounded-2xl bg-white/70 border border-dashed border-[#EADCCB]">
-                  <StreamlinePencil className="w-7 h-7 text-tan-400 mx-auto mb-2 opacity-60" />
-                  <div className="font-bold text-xs text-[#3A2E22] mb-1">
-                    {isViewingSelf ? "You haven't posted any comments yet" : 'No comments yet'}
+                  )}
+                </div>
+              )}
+
+              {activeTab === 'trophies' && (
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  {activeProfileUser.isCreator && (
+                    <div className="p-3 rounded-2xl bg-gradient-to-br from-amber-50 to-orange-50 border border-orange-300 text-center">
+                      <StreamlineStars className="w-6 h-6 text-orange-600 mx-auto mb-1" />
+                      <div className="font-bold text-xs text-orange-950">Site Creator</div>
+                      <div className="text-[10px] text-orange-800">Lead Developer</div>
+                    </div>
+                  )}
+
+                  <div className="p-3 rounded-2xl bg-white border border-[#EADCCB] text-center">
+                    <StreamlineCoffee className="w-6 h-6 text-[#FD9A4D] mx-auto mb-1" />
+                    <div className="font-bold text-xs text-[#3A2E22]">Cafe Regular</div>
+                    <div className="text-[10px] text-tan-600">Active Explorer</div>
                   </div>
-                  <p className="text-[11px] text-tan-500 max-w-xs mx-auto leading-relaxed">
-                    {isViewingSelf
-                      ? 'When you comment on game walkthroughs or cozy articles, your comments will appear here!'
-                      : `@${activeProfileUser.username} hasn't posted any comments on games or articles yet.`}
-                  </p>
+
+                  <div className="p-3 rounded-2xl bg-white border border-[#EADCCB] text-center">
+                    <StreamlineBook className="w-6 h-6 text-[#FD9A4D] mx-auto mb-1" />
+                    <div className="font-bold text-xs text-[#3A2E22]">Story Scholar</div>
+                    <div className="text-[10px] text-tan-600">Reader Club</div>
+                  </div>
                 </div>
               )}
             </div>
-          )}
-
-          {activeTab === 'trophies' && (
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-              {activeProfileUser.isCreator && (
-                <div className="p-3 rounded-2xl bg-gradient-to-br from-amber-50 to-orange-50 border border-orange-300 text-center">
-                  <StreamlineStars className="w-6 h-6 text-orange-600 mx-auto mb-1" />
-                  <div className="font-bold text-xs text-orange-950">Site Creator</div>
-                  <div className="text-[10px] text-orange-800">Lead Developer</div>
-                </div>
-              )}
-
-              <div className="p-3 rounded-2xl bg-white border border-[#EADCCB] text-center">
-                <StreamlineCoffee className="w-6 h-6 text-[#FD9A4D] mx-auto mb-1" />
-                <div className="font-bold text-xs text-[#3A2E22]">Cafe Regular</div>
-                <div className="text-[10px] text-tan-600">Active Explorer</div>
-              </div>
-
-              <div className="p-3 rounded-2xl bg-white border border-[#EADCCB] text-center">
-                <StreamlineBook className="w-6 h-6 text-[#FD9A4D] mx-auto mb-1" />
-                <div className="font-bold text-xs text-[#3A2E22]">Story Scholar</div>
-                <div className="text-[10px] text-tan-600">Reader Club</div>
-              </div>
-            </div>
-          )}
-        </div>
+          </>
+        )}
 
         {/* Footer Ribbon */}
         <div

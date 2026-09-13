@@ -38,4 +38,5 @@ export interface RedditUserProfileData {
   bannerColor?: string;
   bannerText?: string;
   bannerTheme?: string;
+  startInEditMode?: boolean;
 }

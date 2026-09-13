@@ -214,45 +214,38 @@ export function AvatarBuilderModal() {
 
   const handleClose = () => {
     setShowAvatarBuilder(false);
-    if (avatarBuilderReturnTo === 'edit_profile') {
-      setShowProfileModal(true);
-    } else {
-      // Reopen public profile card
-      openProfile({
-        id: user ? user.id : profile.id,
-        username: profile.username,
-        bio: profile.bio,
-        badge: profile.badge,
-        avatarConfig: profile.avatarConfig,
-        isCreator: profile.isCreator,
-        role: profile.role,
-        joinedAt: profile.joinedAt,
-        bannerColor: profile.bannerColor,
-        bannerText: profile.bannerText,
-      });
-    }
+    openProfile({
+      id: user ? user.id : profile.id,
+      username: profile.username,
+      bio: profile.bio,
+      badge: profile.badge,
+      avatarConfig: profile.avatarConfig,
+      isCreator: profile.isCreator,
+      role: profile.role,
+      joinedAt: profile.joinedAt,
+      bannerColor: profile.bannerColor,
+      bannerText: profile.bannerText,
+      startInEditMode: avatarBuilderReturnTo === 'edit_profile',
+    });
   };
 
   const handleSave = async () => {
     await updateProfile({ avatarConfig: draftConfig });
     setShowAvatarBuilder(false);
-    if (avatarBuilderReturnTo === 'edit_profile') {
-      setShowProfileModal(true);
-    } else {
-      // Return to public profile card with the newly updated avatar!
-      openProfile({
-        id: user ? user.id : profile.id,
-        username: profile.username,
-        bio: profile.bio,
-        badge: profile.badge,
-        avatarConfig: draftConfig,
-        isCreator: profile.isCreator,
-        role: profile.role,
-        joinedAt: profile.joinedAt,
-        bannerColor: profile.bannerColor,
-        bannerText: profile.bannerText,
-      });
-    }
+    // Return to unified profile card with the newly updated avatar!
+    openProfile({
+      id: user ? user.id : profile.id,
+      username: profile.username,
+      bio: profile.bio,
+      badge: profile.badge,
+      avatarConfig: draftConfig,
+      isCreator: profile.isCreator,
+      role: profile.role,
+      joinedAt: profile.joinedAt,
+      bannerColor: profile.bannerColor,
+      bannerText: profile.bannerText,
+      startInEditMode: avatarBuilderReturnTo === 'edit_profile',
+    });
   };
 
   // Gender preset selection switches presentation and filters hairstyles

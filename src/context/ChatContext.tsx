@@ -274,6 +274,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       bannerColor: savedBannerColor || (isTargetCreator ? 'peach' : 'peach'),
       bannerText: savedBannerText !== undefined && savedBannerText !== null ? savedBannerText : (isTargetCreator ? 'Welcome to Jinssi Gaming! 🌸' : 'Enjoying cozy stories & games 🍵'),
       bannerTheme: data.bannerTheme || (isTargetCreator ? 'sakura' : 'cafe'),
+      startInEditMode: Boolean(data.startInEditMode),
     });
   };
 
