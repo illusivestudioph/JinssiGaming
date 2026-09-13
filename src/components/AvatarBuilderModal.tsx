@@ -77,55 +77,46 @@ const SKIN_TONES: { id: string; label: string; hex: string }[] = [
   { id: '614335', label: 'Deep Cocoa', hex: '#614335' },
 ];
 
-// Face Shape Silhouettes based on cartoon character archetype references
-const FACE_SHAPES: { id: FaceShape; label: string; desc: string; svgD: string }[] = [
+// Authentic character face silhouettes with refined contour lines
+const FACE_SHAPES: {
+  id: FaceShape;
+  label: string;
+  desc: string;
+  tag: string;
+  outlineD: string;
+  accentD: string;
+}[] = [
   {
     id: 'oval',
     label: 'Oval Classic',
     desc: 'Balanced & Natural',
-    svgD: 'M16 6 C24 6 27 13 27 21 C27 30 22 38 16 38 C10 38 5 30 5 21 C5 13 8 6 16 6 Z',
+    tag: 'Classic Oval',
+    outlineD: 'M16 4 C23 4 27 11 27 21 C27 31 22 38 16 38 C10 38 5 31 5 21 C5 11 9 4 16 4 Z',
+    accentD: 'M11 24 C13 30 15 33 16 33 C17 33 19 30 21 24',
   },
   {
     id: 'round',
-    label: 'Round Chubby',
-    desc: 'Full Chubby Cheeks',
-    svgD: 'M16 7 C26 7 28 15 28 23 C28 31 24 38 16 38 C8 38 4 31 4 23 C4 15 6 7 16 7 Z',
+    label: 'Round / Soft',
+    desc: 'Full Cheeks & Soft Jaw',
+    tag: 'Round Soft',
+    outlineD: 'M16 5 C25 5 28 13 28 22 C28 32 23 38 16 38 C9 38 4 32 4 22 C4 13 7 5 16 5 Z',
+    accentD: 'M10 24 C12 31 14 34 16 34 C18 34 20 31 22 24',
   },
   {
     id: 'square',
-    label: 'Square Chiseled',
-    desc: 'Broad Angular Jaw',
-    svgD: 'M7 9 C16 8 25 8 25 9 C26 18 26 27 22 35 C19 38 13 38 10 35 C6 27 6 18 7 9 Z',
+    label: 'Square / Chiseled',
+    desc: 'Strong Angular Jawline',
+    tag: 'Chiseled Jaw',
+    outlineD: 'M8 6 C13 5 19 5 24 6 C26 14 26 23 25 30 L22 36 L10 36 L7 30 C6 23 6 14 8 6 Z',
+    accentD: 'M8 25 L11 31 L21 31 L24 25',
   },
   {
     id: 'heart',
     label: 'Heart / V-Line',
     desc: 'Tapered Slender Chin',
-    svgD: 'M16 7 C25 6 28 14 27 21 C26 29 20 37 16 39 C12 37 6 29 5 21 C4 14 7 6 16 7 Z',
-  },
-  {
-    id: 'peanut',
-    label: 'Peanut / Indented',
-    desc: 'Narrow Temples & Full Jaw',
-    svgD: 'M16 6 C23 6 25 12 23 18 C21 23 27 28 27 33 C27 38 21 39 16 39 C11 39 5 38 5 33 C5 28 11 23 9 18 C7 12 9 6 16 6 Z',
-  },
-  {
-    id: 'pear',
-    label: 'Pear / Bell Jaw',
-    desc: 'Tapered Forehead & Wide Jowls',
-    svgD: 'M16 6 C21 6 23 13 22 19 C21 24 28 29 28 34 C28 39 21 40 16 40 C11 40 4 39 4 34 C4 29 11 24 10 19 C9 13 11 6 16 6 Z',
-  },
-  {
-    id: 'oblong',
-    label: 'Oblong Tall',
-    desc: 'Elongated Tall Chin',
-    svgD: 'M16 4 C23 4 25 11 25 21 C25 31 23 41 16 41 C9 41 7 31 7 21 C7 11 9 4 16 4 Z',
-  },
-  {
-    id: 'diamond',
-    label: 'Diamond Sculpted',
-    desc: 'High Cheekbones & Jaw',
-    svgD: 'M16 6 C23 12 28 18 28 23 C28 28 20 36 16 39 C12 36 4 28 4 23 C4 18 9 12 16 6 Z',
+    tag: 'V-Line Chin',
+    outlineD: 'M16 5 C25 4 27 12 26 20 C25 29 19 37 16 39 C13 37 7 29 6 20 C5 12 7 4 16 5 Z',
+    accentD: 'M10 23 L16 33 L22 23',
   },
 ];
 
@@ -454,8 +445,8 @@ export function AvatarBuilderModal() {
                   Illustrated Persona
                 </span>
                 {draftConfig.faceShape && (
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-stone-100 text-stone-700 border border-stone-300 capitalize">
-                    {draftConfig.faceShape} Jaw
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-stone-100 text-stone-700 border border-stone-300">
+                    {FACE_SHAPES.find((f) => f.id === draftConfig.faceShape)?.tag || 'Classic Oval'}
                   </span>
                 )}
                 {draftConfig.features === 'mustache' && (
@@ -698,7 +689,7 @@ export function AvatarBuilderModal() {
                     Face Silhouette & Jawline
                   </label>
                 </div>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+                <div className="grid grid-cols-2 gap-2.5">
                   {FACE_SHAPES.map((fs) => {
                     const isSelected = (draftConfig.faceShape || 'oval') === fs.id;
                     return (
@@ -720,21 +711,23 @@ export function AvatarBuilderModal() {
                               : 'border-[#EADCCB] bg-[#FFF8F0]'
                           }`}
                         >
-                          <svg viewBox="0 0 32 44" className="w-6 h-8" fill="none">
+                          <svg viewBox="0 0 32 42" className="w-6 h-8" fill="none">
+                            {/* Head Silhouette */}
                             <path
-                              d={fs.svgD}
+                              d={fs.outlineD}
                               fill={`#${draftConfig.skinColor || 'F2D3B1'}`}
                               stroke={isSelected ? '#C95A0B' : '#6A5747'}
-                              strokeWidth="1.75"
+                              strokeWidth="2"
                               strokeLinejoin="round"
                             />
-                            <ellipse cx="12" cy="18" rx="1.2" ry="1.2" fill={isSelected ? '#C95A0B' : '#8A7565'} />
-                            <ellipse cx="20" cy="18" rx="1.2" ry="1.2" fill={isSelected ? '#C95A0B' : '#8A7565'} />
+                            {/* Refined Jawline / Cheek Contour (No cartoon eyes or smile) */}
                             <path
-                              d="M14 26 C15 27.5 17 27.5 18 26"
+                              d={fs.accentD}
                               stroke={isSelected ? '#C95A0B' : '#8A7565'}
-                              strokeWidth="1.2"
+                              strokeWidth="1.75"
                               strokeLinecap="round"
+                              strokeLinejoin="round"
+                              opacity="0.85"
                             />
                           </svg>
                         </div>

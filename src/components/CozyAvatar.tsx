@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { AdventurerConfig, FaceShape, getAdventurerAvatarUrl } from '@/types/profile';
 
 interface CozyAvatarProps {
@@ -8,49 +8,19 @@ interface CozyAvatarProps {
   showBorder?: boolean;
 }
 
-// In-memory cache for fetched raw SVGs and transformed morphed SVGs
-const rawSvgCache = new Map<string, string>();
-const transformedSvgCache = new Map<string, string>();
-
 /**
- * Directly morphs the character's head outline and jawline inside the SVG
- * according to the selected face shape (Round, Square, Heart/V-Line, Diamond, Oval)
- * identically for all avatars (male and female).
+ * Authentic character face shape styling:
+ * - Oval: Natural, balanced proportions (1:1)
+ * - Round: Fuller, softer chubby cheeks and wider jaw
+ * - Square: Stronger, broader masculine / chiseled jaw presence
+ * - Heart: Slender, tapered anime V-line jaw and pointed chin
  */
-function morphAvatarHeadSvg(svgText: string, shape: FaceShape): string {
-  if (shape === 'oval') return svgText;
-
-  const firstGIndex = svgText.indexOf('<g transform="translate(-161 -83)">');
-  if (firstGIndex === -1) return svgText;
-
-  const pathIndex = svgText.indexOf('<path');
-  if (pathIndex === -1 || pathIndex >= firstGIndex) return svgText;
-
-  const beforeHead = svgText.slice(0, pathIndex);
-  const headPaths = svgText.slice(pathIndex, firstGIndex);
-  const afterHead = svgText.slice(firstGIndex);
-
-  const transforms: Record<FaceShape, string> = {
-    oval: headPaths,
-    // Round: Cute chubby cheeks, wider rounded jaw
-    round: `<g transform="translate(381, 440) scale(1.22, 0.90) translate(-381, -440)">${headPaths}</g>`,
-    // Square: Strong chiseled masculine block jaw
-    square: `<g transform="translate(381, 460) scale(1.28, 1.06) translate(-381, -460)">${headPaths}</g>`,
-    // Heart: Anime V-line chin, tapered jaw
-    heart: `<g transform="translate(381, 380) scale(0.84, 1.10) translate(-381, -380)">${headPaths}</g>`,
-    // Diamond: High sculpted cheekbones
-    diamond: `<g transform="translate(381, 400) scale(1.18, 1.08) translate(-381, -400)">${headPaths}</g>`,
-    // Peanut / Hourglass: Indented temples, wide squarish jowls
-    peanut: `<g transform="translate(381, 460) scale(1.24, 1.04) translate(-381, -460) skewX(-3)">${headPaths}</g>`,
-    // Pear / Bell: Heavy low cheeks and broad lower chin
-    pear: `<g transform="translate(381, 500) scale(1.30, 1.10) translate(-381, -500)">${headPaths}</g>`,
-    // Oblong / Tall: Long vertical head and chin
-    oblong: `<g transform="translate(381, 380) scale(0.88, 1.22) translate(-381, -380)">${headPaths}</g>`,
-  };
-
-  const transformedHead = transforms[shape] || headPaths;
-  return beforeHead + transformedHead + afterHead;
-}
+const FACE_SHAPE_STYLES: Record<FaceShape, React.CSSProperties> = {
+  oval: { transform: 'scale(1, 1)' },
+  round: { transform: 'scale(1.10, 0.94) translateY(1.5%)' },
+  square: { transform: 'scale(1.12, 1.03) translateY(1%)' },
+  heart: { transform: 'scale(0.92, 1.05) translateY(-1%)' },
+};
 
 export function CozyAvatar({
   config,
@@ -60,59 +30,6 @@ export function CozyAvatar({
 }: CozyAvatarProps) {
   const avatarUrl = getAdventurerAvatarUrl(config);
   const shape: FaceShape = config?.faceShape || 'oval';
-  const isGooglePhoto = Boolean(config?.useGooglePhoto && config?.googleAvatarUrl);
-
-  const cacheKey = `${avatarUrl}_${shape}`;
-  const [displaySrc, setDisplaySrc] = useState<string>(() => {
-    if (isGooglePhoto || shape === 'oval') return avatarUrl;
-    return transformedSvgCache.get(cacheKey) || avatarUrl;
-  });
-
-  useEffect(() => {
-    if (isGooglePhoto || shape === 'oval') {
-      setDisplaySrc(avatarUrl);
-      return;
-    }
-
-    const cached = transformedSvgCache.get(cacheKey);
-    if (cached) {
-      setDisplaySrc(cached);
-      return;
-    }
-
-    let active = true;
-
-    // Fetch and morph SVG
-    const processSvg = (rawSvg: string) => {
-      const morphedSvg = morphAvatarHeadSvg(rawSvg, shape);
-      const dataUri = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(morphedSvg)}`;
-      transformedSvgCache.set(cacheKey, dataUri);
-      if (active) {
-        setDisplaySrc(dataUri);
-      }
-    };
-
-    const cachedRaw = rawSvgCache.get(avatarUrl);
-    if (cachedRaw) {
-      processSvg(cachedRaw);
-    } else {
-      fetch(avatarUrl)
-        .then((res) => res.text())
-        .then((text) => {
-          rawSvgCache.set(avatarUrl, text);
-          processSvg(text);
-        })
-        .catch(() => {
-          if (active) {
-            setDisplaySrc(avatarUrl);
-          }
-        });
-    }
-
-    return () => {
-      active = false;
-    };
-  }, [avatarUrl, shape, cacheKey, isGooglePhoto]);
 
   return (
     <div
@@ -125,9 +42,10 @@ export function CozyAvatar({
       }}
     >
       <img
-        src={displaySrc}
+        src={avatarUrl}
         alt="Cozy Adventurer Avatar"
         className="w-full h-full object-cover select-none transition-transform duration-200"
+        style={FACE_SHAPE_STYLES[shape] || FACE_SHAPE_STYLES.oval}
         loading="lazy"
         decoding="async"
         referrerPolicy="no-referrer"
