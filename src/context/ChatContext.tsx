@@ -1,5 +1,7 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from '@/context/AuthContext';
+import { supabase } from '@/lib/supabase';
+import { RealtimeChannel } from '@supabase/supabase-js';
 import { ChatMessage, ChatChannel, Friend, RedditUserProfileData } from '@/types/chat';
 import {
   getLocalMessages,
@@ -42,10 +44,50 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   const [friends, setFriends] = useState<Friend[]>(() => getStoredFriends());
   const [unreadCount, setUnreadCount] = useState(0);
   const [activeProfileUser, setActiveProfileUser] = useState<RedditUserProfileData | null>(null);
+  const realtimeChannelRef = useRef<RealtimeChannel | null>(null);
 
   // Initialize and run weekly cleanup on boot
   useEffect(() => {
     void cleanOldSupabaseMessages();
+  }, []);
+
+  // Supabase Realtime Broadcast WebSocket Subscription (Pushes messages to other users instantly)
+  useEffect(() => {
+    const ch = supabase.channel('jinssi_chat_room', {
+      config: { broadcast: { self: false } },
+    });
+
+    ch.on('broadcast', { event: 'chat_message' }, ({ payload }: { payload: ChatMessage }) => {
+      if (!payload || !payload.id) return;
+
+      // 1. Save incoming message to local archive
+      saveMessageLocally(payload);
+
+      // 2. Append to active message feed if not already present
+      setMessages((prev) => {
+        if (prev.some((m) => m.id === payload.id)) return prev;
+        return [...prev, payload];
+      });
+
+      // 3. Increment unread indicator if chat is closed
+      setIsOpen((open) => {
+        if (!open) {
+          setUnreadCount((c) => c + 1);
+        }
+        return open;
+      });
+    }).subscribe((status) => {
+      if (status === 'SUBSCRIBED') {
+        console.log('Connected to Cozy Realtime Chat WebSocket.');
+      }
+    });
+
+    realtimeChannelRef.current = ch;
+
+    return () => {
+      void supabase.removeChannel(ch);
+      realtimeChannelRef.current = null;
+    };
   }, []);
 
   // Poll / Refresh messages
@@ -80,10 +122,19 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       createdAt: new Date().toISOString(),
     };
 
-    // Optimistically add to messages
+    // 1. Optimistically add to current user's local message feed
     setMessages((prev) => [...prev, newMsg]);
 
-    // Send to Supabase and persist locally
+    // 2. Broadcast via Supabase Realtime WebSocket to all other connected users instantly
+    if (realtimeChannelRef.current) {
+      void realtimeChannelRef.current.send({
+        type: 'broadcast',
+        event: 'chat_message',
+        payload: newMsg,
+      });
+    }
+
+    // 3. Send to Supabase database table and persist in local browser archive
     await sendChatMessage(newMsg);
   };
 

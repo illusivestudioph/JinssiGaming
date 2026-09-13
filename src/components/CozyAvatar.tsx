@@ -17,20 +17,52 @@ export function CozyAvatar({
   const avatarUrl = getAdventurerAvatarUrl(config);
   const shape: FaceShape = config?.faceShape || 'oval';
 
-  // Face shape silhouette framing
+  // Physical Facial Proportions & Morph Transformation
+  // (Directly morphs face width, jawline taper, and cheek fullness without drawing artificial lines)
+  const faceTransformStyle = {
+    oval: {
+      transform: 'scale(1)',
+      transformOrigin: 'center 45%',
+    },
+    round: {
+      // Widens cheeks & softens jaw for an authentic rounded face
+      transform: 'scaleX(1.18) scaleY(0.92)',
+      transformOrigin: 'center 45%',
+    },
+    square: {
+      // 3D perspective tilt expands the jawline and squares off lower face
+      transform: 'perspective(280px) rotateX(-18deg) scaleX(1.12) scaleY(1.06)',
+      transformOrigin: 'center 38%',
+    },
+    heart: {
+      // Tapers lower jaw into a pointed anime V-line chin while keeping eyes/forehead open
+      transform: 'perspective(280px) rotateX(16deg) scaleX(0.96) scaleY(1.06) translateY(-2%)',
+      transformOrigin: 'center 50%',
+    },
+    diamond: {
+      // High sculpted cheekbones with tapered chin
+      transform: 'perspective(320px) rotateX(8deg) scaleX(1.12) scaleY(1.04)',
+      transformOrigin: 'center 45%',
+    },
+  }[shape];
+
+  // Silhouette framing border radius for container
   const shapeRadiusClass = {
     oval: 'rounded-full',
-    round: 'rounded-full ring-2 ring-amber-700/20',
-    square: 'rounded-2xl ring-2 ring-amber-800/30 shadow-md',
-    heart: 'rounded-t-full rounded-b-xl ring-2 ring-rose-700/25',
-    diamond: 'rounded-[32%_32%_45%_45%] ring-2 ring-indigo-900/20',
+    round: 'rounded-full ring-2 ring-amber-700/15',
+    square: 'rounded-[26px] ring-2 ring-amber-800/25',
+    heart: 'rounded-t-full rounded-b-[38%] ring-2 ring-rose-700/20',
+    diamond: 'rounded-[36%_36%_46%_46%] ring-2 ring-indigo-900/15',
   }[shape];
+
+  // Remove any conflicting hardcoded rounded-* from caller's className so shapeRadiusClass takes effect
+  const cleanedClassName = className.replace(/rounded-(full|2xl|xl|lg|md|sm)/g, '').trim();
 
   return (
     <div
       className={`relative overflow-hidden shrink-0 flex items-center justify-center select-none shadow-xs transition-all bg-[#FDE8D3] ${shapeRadiusClass} ${
         showBorder ? 'border-2 border-[#F5C6A0] dark:border-stone-700' : ''
-      } ${className}`}
+      } ${cleanedClassName}`}
       style={{
         width: size,
         height: size,
@@ -39,128 +71,12 @@ export function CozyAvatar({
       <img
         src={avatarUrl}
         alt="Cozy Adventurer Avatar"
-        className={`w-full h-full object-cover select-none transition-transform duration-200 ${
-          shape === 'square'
-            ? 'scale-110'
-            : shape === 'round'
-            ? 'scale-105'
-            : shape === 'heart'
-            ? 'scale-108 -translate-y-0.5'
-            : shape === 'diamond'
-            ? 'scale-106'
-            : 'scale-100'
-        }`}
+        className="w-full h-full object-cover select-none transition-transform duration-200"
+        style={faceTransformStyle}
         loading="lazy"
         decoding="async"
         referrerPolicy="no-referrer"
       />
-
-      {/* Prominent Jawline & Chin Sculpting Overlays */}
-      {shape === 'square' && (
-        <svg
-          className="absolute inset-0 w-full h-full pointer-events-none"
-          viewBox="0 0 100 100"
-          fill="none"
-        >
-          {/* Angular Square Jawline & Chin Shadow */}
-          <path
-            d="M20 56 L24 74 L40 86 H60 L76 74 L80 56"
-            stroke="#4A2E18"
-            strokeWidth="3.2"
-            strokeOpacity="0.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-          <path
-            d="M40 86 H60"
-            stroke="#2B1A0E"
-            strokeWidth="4"
-            strokeOpacity="0.75"
-            strokeLinecap="round"
-          />
-          <path
-            d="M44 78 Q50 82 56 78"
-            stroke="#4A2E18"
-            strokeWidth="2.8"
-            strokeOpacity="0.6"
-            strokeLinecap="round"
-          />
-        </svg>
-      )}
-
-      {shape === 'round' && (
-        <svg
-          className="absolute inset-0 w-full h-full pointer-events-none"
-          viewBox="0 0 100 100"
-          fill="none"
-        >
-          {/* Smooth Rounded Cheeks & Jaw Arc */}
-          <path
-            d="M18 52 Q22 84 50 86 Q78 84 82 52"
-            stroke="#4A2E18"
-            strokeWidth="3.2"
-            strokeOpacity="0.45"
-            strokeLinecap="round"
-          />
-          <path
-            d="M45 80 Q50 84 55 80"
-            stroke="#2B1A0E"
-            strokeWidth="3.5"
-            strokeOpacity="0.5"
-            strokeLinecap="round"
-          />
-        </svg>
-      )}
-
-      {shape === 'heart' && (
-        <svg
-          className="absolute inset-0 w-full h-full pointer-events-none"
-          viewBox="0 0 100 100"
-          fill="none"
-        >
-          {/* Tapered V-Line Anime Chin Accent */}
-          <path
-            d="M22 52 Q34 76 50 88 Q66 76 78 52"
-            stroke="#4A2E18"
-            strokeWidth="3.2"
-            strokeOpacity="0.5"
-            strokeLinecap="round"
-          />
-          <path
-            d="M47 88 L50 90 L53 88"
-            stroke="#2B1A0E"
-            strokeWidth="4"
-            strokeOpacity="0.7"
-            strokeLinecap="round"
-          />
-          <circle cx="50" cy="84" r="2" fill="#2B1A0E" fillOpacity="0.6" />
-        </svg>
-      )}
-
-      {shape === 'diamond' && (
-        <svg
-          className="absolute inset-0 w-full h-full pointer-events-none"
-          viewBox="0 0 100 100"
-          fill="none"
-        >
-          {/* Sculpted High Cheekbones & Chiseled Taper */}
-          <path
-            d="M16 46 L24 60 L50 88 L76 60 L84 46"
-            stroke="#4A2E18"
-            strokeWidth="3"
-            strokeOpacity="0.45"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-          <path
-            d="M45 84 L50 88 L55 84"
-            stroke="#2B1A0E"
-            strokeWidth="3.5"
-            strokeOpacity="0.65"
-            strokeLinecap="round"
-          />
-        </svg>
-      )}
     </div>
   );
 }

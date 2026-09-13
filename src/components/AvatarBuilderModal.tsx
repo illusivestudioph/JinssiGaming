@@ -362,7 +362,7 @@ export function AvatarBuilderModal() {
               <CozyAvatar
                 config={draftConfig}
                 size={92}
-                className="transform transition-transform group-hover:scale-105 shadow-md rounded-full border-2 border-white"
+                className="transform transition-transform group-hover:scale-105 shadow-md border-2 border-white"
               />
               <button
                 type="button"
@@ -652,18 +652,13 @@ export function AvatarBuilderModal() {
                             : 'bg-white border-[#EADCCB] hover:border-[#FD9A4D] hover:bg-[#FFFDFB]'
                         }`}
                       >
-                        {/* Vector Silhouette Preview */}
-                        <div className="w-10 h-10 rounded-xl bg-tan-100/60 border border-tan-200/80 flex items-center justify-center shrink-0">
-                          <svg viewBox="0 0 32 44" className="w-6 h-6" fill="none">
-                            <path
-                              d={fs.svgD}
-                              stroke={isSelected ? '#FD9A4D' : '#8A7565'}
-                              strokeWidth="2.4"
-                              fill={isSelected ? '#FD9A4D20' : '#8A756515'}
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            />
-                          </svg>
+                        {/* Live Reshaped Face Thumbnail */}
+                        <div className="w-11 h-11 rounded-xl overflow-hidden shrink-0 border border-[#EADCCB] bg-[#FFD7B5] shadow-xs flex items-center justify-center">
+                          <CozyAvatar
+                            config={{ ...draftConfig, faceShape: fs.id }}
+                            size={44}
+                            showBorder={false}
+                          />
                         </div>
                         <div className="min-w-0 flex-1">
                           <div className={`font-bold text-xs truncate ${isSelected ? 'text-[#C95A0B]' : 'text-[#3A2E22]'}`}>
