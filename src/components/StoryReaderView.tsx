@@ -30,6 +30,7 @@ import {
 import { getGutenbergId, fetchGutenbergById } from '@/services/gutenberg';
 import { useMusic } from '@/context/MusicContext';
 import { AmbientMixerModal } from '@/components/AmbientMixerModal';
+import { CozyPdfEbookReader } from '@/components/CozyPdfEbookReader';
 
 interface StoryReaderViewProps {
   story: Story;
@@ -909,36 +910,24 @@ export function StoryReaderView({
               </div>
             </div>
 
-            {/* Embedded PDF Viewer */}
+            {/* Custom Canvas-Rendered Cozy PDF eBook Reader (Zero Generic Browser Bars) */}
             {ebookViewMode === 'pdf' && (
-              <div className="rounded-2xl border-2 border-tan-300 shadow-cozy-lg overflow-hidden bg-cream-100 my-6">
-                <div className="bg-cream-200/90 px-4 py-2.5 border-b border-tan-300 flex items-center justify-between gap-3 text-xs">
-                  <span className="font-bold text-ink-800 flex items-center gap-2">
-                    <BookOpen className="w-4 h-4 text-peach-500" />
-                    Facsimile Document Viewer (290 Pages • Complete Unabridged Text)
-                  </span>
-                  <a
-                    href={story.pdfUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-xs font-bold text-peach-600 hover:text-peach-700 inline-flex items-center gap-1 hover:underline"
-                  >
-                    <span>Open in Separate Tab</span>
-                    <ExternalLink className="w-3.5 h-3.5" />
-                  </a>
-                </div>
-                <iframe
-                  src={`${story.pdfUrl}#toolbar=1&navpanes=1&view=FitH`}
-                  className="w-full h-[85vh] min-h-[650px] border-0 bg-white"
-                  title={`${story.title} PDF Document Viewer`}
+              <div className="my-6">
+                <CozyPdfEbookReader
+                  pdfUrl={story.pdfUrl}
+                  title={story.title}
+                  author={story.author}
                 />
               </div>
             )}
           </div>
         )}
 
-        {/* Chapter Header */}
-        <div className={`mb-10 sm:mb-14 pb-8 border-b ${currentThemeStyle.border} text-center`}>
+        {/* Chapter Prose Body (Rendered when NOT in PDF mode, or for stories without PDF) */}
+        {(!story.pdfUrl || ebookViewMode === 'notes') && (
+          <>
+            {/* Chapter Header */}
+            <div className={`mb-10 sm:mb-14 pb-8 border-b ${currentThemeStyle.border} text-center`}>
           <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold border ${currentThemeStyle.border} mb-4 opacity-75`}>
             <span>{story.genre}</span>
             <span>•</span>
@@ -1110,6 +1099,8 @@ export function StoryReaderView({
             </button>
           )}
         </div>
+          </>
+        )}
       </main>
 
       {/* Unabridged Gutenberg Load Success Toast */}
