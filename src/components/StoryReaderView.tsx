@@ -564,10 +564,10 @@ export function StoryReaderView({
             <button
               type="button"
               onClick={() => setIsAudiobookOpen((prev) => !prev)}
-              className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-bold border transition-all cursor-pointer ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-extrabold transition-all cursor-pointer shadow-xs ${
                 isAudiobookOpen
-                  ? 'bg-amber-500 text-ink-950 border-amber-400 shadow-cozy-xs'
-                  : 'border-amber-400/40 bg-amber-500/10 text-amber-800 dark:text-amber-200 hover:bg-amber-500/20'
+                  ? 'bg-amber-500 text-stone-950 ring-2 ring-amber-400/50'
+                  : 'bg-gradient-to-r from-amber-600 to-peach-600 hover:from-amber-700 hover:to-peach-700 text-white'
               }`}
               title={isAudiobookOpen ? 'Close Audiobook Player' : 'Listen with Audiobook Narrator'}
             >
@@ -998,9 +998,9 @@ export function StoryReaderView({
             <button
               type="button"
               onClick={() => setIsAudiobookOpen(true)}
-              className="site-button bg-amber-500/15 hover:bg-amber-500/25 border border-amber-400/40 text-amber-800 dark:text-amber-200 text-xs font-bold px-3.5 py-2 rounded-xl inline-flex items-center gap-2 transition-all cursor-pointer shadow-xs"
+              className="site-button bg-gradient-to-r from-amber-600 to-peach-600 hover:from-amber-700 hover:to-peach-700 text-white text-xs font-extrabold px-4 py-2.5 rounded-xl inline-flex items-center gap-2 shadow-cozy-sm transition-transform active:scale-95 cursor-pointer ring-1 ring-amber-500/30"
             >
-              <Headphones className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+              <Headphones className="w-4 h-4 text-white" />
               <span>Listen to this Chapter (Audiobook)</span>
             </button>
           </div>
@@ -1017,22 +1017,32 @@ export function StoryReaderView({
               <div
                 key={idx}
                 id={`reader-line-${idx}`}
-                className={`relative group/line transition-all duration-300 rounded-2xl p-3 sm:p-4 -mx-3 sm:-mx-4 ${
+                className={`relative group/line transition-all duration-300 rounded-2xl p-3.5 sm:p-5 -mx-3 sm:-mx-4 ${
                   isSpeakingThis
-                    ? 'bg-gradient-to-r from-amber-500/15 via-peach-500/10 to-transparent ring-2 ring-amber-500 shadow-cozy-md'
+                    ? (theme === 'dark'
+                        ? 'bg-amber-950/40 border-2 border-amber-400 ring-2 ring-amber-400/30 shadow-lg'
+                        : 'bg-amber-100/80 border-2 border-amber-600 ring-2 ring-amber-500/30 shadow-md')
                     : isMarked
-                    ? 'bg-amber-500/15 dark:bg-amber-400/15 ring-2 ring-amber-400/80 shadow-cozy-sm'
-                    : 'hover:bg-black/[0.02] dark:hover:bg-white/[0.02]'
+                    ? (theme === 'dark'
+                        ? 'bg-amber-950/30 border-2 border-amber-400/60 shadow-xs'
+                        : 'bg-amber-100/60 border-2 border-amber-500/60 shadow-xs')
+                    : 'hover:bg-black/[0.02]'
                 }`}
               >
                 {/* Audiobook Active Narration indicator */}
                 {isSpeakingThis && (
-                  <div className="flex items-center justify-between pb-2 mb-2 border-b border-amber-400/40 text-xs font-bold text-amber-700 dark:text-amber-300">
-                    <span className="inline-flex items-center gap-1.5">
-                      <Headphones className="w-3.5 h-3.5 text-amber-500 animate-bounce" />
-                      <span>Audiobook Narrator reading this paragraph...</span>
+                  <div className={`flex items-center justify-between pb-2.5 mb-2.5 border-b ${
+                    theme === 'dark' ? 'border-amber-400/40 text-amber-300' : 'border-amber-600/40 text-amber-900'
+                  } text-xs font-bold`}>
+                    <span className="inline-flex items-center gap-2">
+                      <Headphones className={`w-4 h-4 ${theme === 'dark' ? 'text-amber-400' : 'text-amber-700'} animate-bounce`} />
+                      <span className="font-extrabold tracking-wide">Audiobook Narrator Reading Aloud...</span>
                     </span>
-                    <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-md bg-amber-500/20 border border-amber-500/30">
+                    <span className={`text-[10px] uppercase font-extrabold tracking-wider px-2.5 py-0.5 rounded-md ${
+                      theme === 'dark'
+                        ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
+                        : 'bg-amber-500 text-stone-950 font-black shadow-xs'
+                    }`}>
                       Paragraph {idx + 1} of {currentChapter.content.length}
                     </span>
                   </div>
@@ -1040,7 +1050,9 @@ export function StoryReaderView({
 
                 {/* Visual Line Marker Badge on the exact paragraph where they stopped */}
                 {isMarked && !isSpeakingThis && (
-                  <div className="flex items-center justify-between pb-2 mb-2 border-b border-amber-400/30 text-xs font-bold text-amber-700 dark:text-amber-300">
+                  <div className={`flex items-center justify-between pb-2 mb-2 border-b ${
+                    theme === 'dark' ? 'border-amber-400/30 text-amber-300' : 'border-amber-500/40 text-amber-900'
+                  } text-xs font-bold`}>
                     <span className="inline-flex items-center gap-1.5">
                       <Bookmark className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
                       <span>Reading Marker — You stopped here</span>
@@ -1059,9 +1071,9 @@ export function StoryReaderView({
                   <p
                     className={`flex-1 ${isFirst ? `${currentFontStyle.lead} opacity-95` : 'opacity-90'} ${
                       isSpeakingThis
-                        ? 'font-medium text-ink-950 dark:text-cream-50'
+                        ? (theme === 'dark' ? 'font-medium text-white' : 'font-bold text-[#1C1612]')
                         : isMarked
-                        ? 'font-medium'
+                        ? (theme === 'dark' ? 'font-medium text-white' : 'font-semibold text-[#1C1612]')
                         : ''
                     }`}
                   >
@@ -1080,8 +1092,8 @@ export function StoryReaderView({
                       aria-label="Listen from this paragraph"
                       className={`p-1.5 rounded-lg transition-all cursor-pointer ${
                         isSpeakingThis
-                          ? 'text-amber-600 bg-amber-100 dark:bg-amber-950/60 shadow-xs'
-                          : 'text-stone-400 opacity-0 group-hover/line:opacity-100 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-stone-800'
+                          ? 'text-amber-800 dark:text-amber-300 bg-amber-200/80 dark:bg-amber-950/80 shadow-xs'
+                          : 'text-stone-500 opacity-0 group-hover/line:opacity-100 hover:text-amber-700 hover:bg-amber-100/60 dark:hover:bg-stone-800'
                       }`}
                     >
                       <Headphones className="w-4 h-4" />
@@ -1095,8 +1107,8 @@ export function StoryReaderView({
                       aria-label={isMarked ? 'Remove reading marker' : 'Mark exact reading line'}
                       className={`p-1.5 rounded-lg transition-all cursor-pointer ${
                         isMarked
-                          ? 'text-amber-500 opacity-100 bg-amber-100 dark:bg-amber-950/60 shadow-xs'
-                          : 'text-stone-400 opacity-0 group-hover/line:opacity-100 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-stone-800 focus:opacity-100'
+                          ? 'text-amber-600 opacity-100 bg-amber-100 dark:bg-amber-950/60 shadow-xs'
+                          : 'text-stone-500 opacity-0 group-hover/line:opacity-100 hover:text-amber-700 hover:bg-amber-100/60 dark:hover:bg-stone-800 focus:opacity-100'
                       }`}
                     >
                       <Bookmark className={`w-4 h-4 ${isMarked ? 'fill-current text-amber-500' : ''}`} />

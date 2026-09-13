@@ -38,7 +38,7 @@ export const PINNED_CHILDREN_OF_MU_BOOK: GutenbergBook = {
   languages: ['en'],
   formats: {
     'application/pdf':
-      'https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/ebooks/2015.77375.The-Children-Of-Mu.pdf',
+      'https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/ebooks/childrenofmu0000chur.pdf',
     'image/jpeg':
       'https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/covers/the-children-of-mu-cover.jpg',
   },
@@ -46,11 +46,11 @@ export const PINNED_CHILDREN_OF_MU_BOOK: GutenbergBook = {
   cover_image:
     'https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/covers/the-children-of-mu-cover.jpg',
   summary:
-    'The complete 290-page 1931 unabridged original edition investigating humanity’s lost motherland in the Pacific.',
+    'The complete 300-page 1931 unabridged original edition with embedded text investigating humanity’s lost motherland in the Pacific.',
   isPinned: true,
   isPdfEbook: true,
   pdfUrl:
-    'https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/ebooks/2015.77375.The-Children-Of-Mu.pdf',
+    'https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/ebooks/childrenofmu0000chur.pdf',
 };
 
 export interface GutendexResponse {

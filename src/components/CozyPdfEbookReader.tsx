@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import * as pdfjsLib from 'pdfjs-dist';
 import {
   ChevronLeft,
@@ -20,6 +20,8 @@ import {
   Moon,
   Coffee,
 } from 'lucide-react';
+import { CHILDREN_OF_MU_FULL_CHAPTERS } from '@/data/childrenOfMuFullText';
+import { AudiobookPlayer } from '@/components/AudiobookPlayer';
 
 // Configure PDF.js worker using matching CDN build
 if (typeof window !== 'undefined' && !pdfjsLib.GlobalWorkerOptions.workerSrc) {
@@ -35,21 +37,22 @@ interface ChapterBookmark {
 }
 
 const CHILDREN_OF_MU_CHAPTERS: ChapterBookmark[] = [
-  { chapterNumber: 1, title: 'I: Geographic Location of Mu and Her People', page: 15 },
-  { chapterNumber: 2, title: 'II: The First Colonies of the Motherland', page: 35 },
-  { chapterNumber: 3, title: 'III: The Eastern Settlement — North America', page: 54 },
-  { chapterNumber: 4, title: 'IV: The Cliff Dwellers and Ancient Pueblos', page: 74 },
-  { chapterNumber: 5, title: 'V: The Western Settlement — The Great Uighur Empire', page: 92 },
-  { chapterNumber: 6, title: 'VI: The Central Empire of India and the Nagas', page: 118 },
-  { chapterNumber: 7, title: 'VII: Egypt and the Ancient Mayas of the Nile', page: 140 },
-  { chapterNumber: 8, title: 'VIII: The Phoenicians and Maritime Explorers', page: 168 },
-  { chapterNumber: 9, title: 'IX: The 2,500 Sacred Tablets of Mexico', page: 188 },
-  { chapterNumber: 10, title: 'X: The Cannibals and Survivors of the Southern Seas', page: 210 },
-  { chapterNumber: 11, title: 'XI: The Origin of Savagery and Lost Wisdom', page: 228 },
-  { chapterNumber: 12, title: 'XII: The Religion of Mu and The Sacred Symbols', page: 244 },
-  { chapterNumber: 13, title: 'XIII: Geological Evidence of the Great Submersion', page: 260 },
-  { chapterNumber: 14, title: 'XIV: Ancient Inscriptions and Megalithic Relics', page: 274 },
-  { chapterNumber: 15, title: 'XV: The Legacy of the Motherland of Man', page: 285 },
+  { chapterNumber: 1, title: 'I: The Origin of Man', page: 23 },
+  { chapterNumber: 2, title: 'II: The Eastern Lines', page: 28 },
+  { chapterNumber: 3, title: 'III: Ancient North America', page: 37 },
+  { chapterNumber: 4, title: 'IV: Stone Tablets from the Valley of Mexico', page: 52 },
+  { chapterNumber: 5, title: 'V: South America', page: 94 },
+  { chapterNumber: 6, title: 'VI: Atlantis', page: 119 },
+  { chapterNumber: 7, title: 'VII: Western Europe', page: 140 },
+  { chapterNumber: 8, title: 'VIII: The Greeks', page: 151 },
+  { chapterNumber: 9, title: 'IX: Egypt', page: 171 },
+  { chapterNumber: 10, title: 'X: The Western Lines', page: 191 },
+  { chapterNumber: 11, title: 'XI: India', page: 202 },
+  { chapterNumber: 12, title: 'XII: Southern India', page: 234 },
+  { chapterNumber: 13, title: 'XIII: The Great Uighur Empire', page: 237 },
+  { chapterNumber: 14, title: 'XIV: Babylonia', page: 251 },
+  { chapterNumber: 15, title: 'XV: Miscellaneous', page: 264 },
+  { chapterNumber: 16, title: 'XVI: Intimate Hours with the Rishi', page: 275 },
 ];
 
 interface CozyPdfEbookReaderProps {
@@ -229,7 +232,22 @@ export function CozyPdfEbookReader({
 
   // Audiobook TTS narration for PDF pages
   const [isAudiobookPlaying, setIsAudiobookPlaying] = useState<boolean>(false);
+  const [isAudiobookOpen, setIsAudiobookOpen] = useState<boolean>(false);
+  const [audiobookParagraphIndex, setAudiobookParagraphIndex] = useState<number>(0);
   const pdfUtteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
+
+  const activeChapter = useMemo(() => {
+    return (
+      [...CHILDREN_OF_MU_FULL_CHAPTERS]
+        .reverse()
+        .find((ch) => currentPage >= ch.startPage) || CHILDREN_OF_MU_FULL_CHAPTERS[0]
+    );
+  }, [currentPage]);
+
+  // Sync speech index on chapter change
+  useEffect(() => {
+    setAudiobookParagraphIndex(0);
+  }, [activeChapter.chapterNumber]);
 
   const stopAudiobook = useCallback(() => {
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
@@ -276,16 +294,33 @@ export function CozyPdfEbookReader({
         .replace(/\s+/g, ' ')
         .trim();
 
-      if (!extractedText || extractedText.length < 5) {
-        const notice = new SpeechSynthesisUtterance(
-          `Page ${currentPage} contains scanned historical artwork or diagrams without embedded computer text. Please advance to the next page to continue listening.`
+      let textToSpeak = extractedText;
+
+      // Scanned PDF fallback: Use authentic transcribed unabridged text from CHILDREN_OF_MU_FULL_CHAPTERS
+      if (!textToSpeak || textToSpeak.length < 15) {
+        const nextChapter = CHILDREN_OF_MU_FULL_CHAPTERS.find(
+          (ch) => ch.chapterNumber === activeChapter.chapterNumber + 1
         );
-        window.speechSynthesis.speak(notice);
-        return;
+        const endPage = nextChapter ? nextChapter.startPage : 290;
+        const pageSpan = Math.max(1, endPage - activeChapter.startPage);
+        const pageOffset = Math.max(0, currentPage - activeChapter.startPage);
+        const fraction = pageOffset / pageSpan;
+        const paraIndex = Math.min(
+          activeChapter.content.length - 1,
+          Math.floor(fraction * activeChapter.content.length)
+        );
+
+        // Read 2-3 paragraph block corresponding to this page
+        const paragraphsSlice = activeChapter.content.slice(paraIndex, paraIndex + 3);
+        textToSpeak = paragraphsSlice.join(' ');
+      }
+
+      if (!textToSpeak) {
+        textToSpeak = `Chapter ${activeChapter.chapterNumber}: ${activeChapter.title}. Please turn pages to explore the authentic facsimile edition.`;
       }
 
       window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(extractedText);
+      const utterance = new SpeechSynthesisUtterance(textToSpeak);
       pdfUtteranceRef.current = utterance;
       utterance.rate = 1.0;
 
@@ -294,7 +329,7 @@ export function CozyPdfEbookReader({
         setIsAudiobookPlaying(false);
         // Automatically advance to next page if available
         if (currentPage < totalPages) {
-          setCurrentPage((prev) => prev + 1);
+          goToPage(currentPage + 1);
         }
       };
       utterance.onerror = () => setIsAudiobookPlaying(false);
@@ -304,7 +339,7 @@ export function CozyPdfEbookReader({
       console.warn('PDF text extraction error:', err);
       setIsAudiobookPlaying(false);
     }
-  }, [isAudiobookPlaying, pdfDoc, currentPage, totalPages, stopAudiobook]);
+  }, [isAudiobookPlaying, pdfDoc, currentPage, totalPages, activeChapter, stopAudiobook]);
 
   // Clean up speech on unmount
   useEffect(() => {
@@ -767,24 +802,73 @@ export function CozyPdfEbookReader({
             <span className="hidden lg:inline">{twoPageMode ? '2-Page Spread' : 'Single Page'}</span>
           </button>
 
-          {/* Audiobook Page Read-Aloud Button */}
+          {/* Audiobook Mode Player Button */}
+          <button
+            type="button"
+            onClick={() => setIsAudiobookOpen((prev) => !prev)}
+            className={`p-1.5 rounded-xl border transition-colors flex items-center gap-1.5 text-[11px] font-bold cursor-pointer ${
+              isAudiobookOpen
+                ? 'bg-amber-500 text-stone-950 border-amber-400 shadow-cozy-xs'
+                : 'bg-black/40 hover:bg-black/60 border-[#5A473B] text-amber-300'
+            }`}
+            title={isAudiobookOpen ? 'Close Audiobook Player' : 'Open Audiobook Player for this chapter'}
+          >
+            <Headphones className="w-3.5 h-3.5" />
+            <span className="hidden md:inline">
+              Audiobook ({activeChapter.title.split(':')[0]})
+            </span>
+          </button>
+
+          {/* Quick Page Read-Aloud Button */}
           <button
             type="button"
             onClick={handleListenToPage}
             className={`p-1.5 rounded-xl border transition-colors flex items-center gap-1.5 text-[11px] font-bold cursor-pointer ${
               isAudiobookPlaying
-                ? 'bg-amber-500 text-ink-950 border-amber-400 shadow-cozy-xs animate-pulse'
-                : 'bg-black/30 hover:bg-black/50 border-[#5A473B] text-amber-300'
+                ? 'bg-amber-500 text-stone-950 border-amber-400 shadow-cozy-xs animate-pulse'
+                : 'bg-black/40 hover:bg-black/60 border-[#5A473B] text-amber-300'
             }`}
             title={isAudiobookPlaying ? 'Stop Reading Aloud' : 'Listen to this page with Audiobook voice'}
           >
             <Headphones className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">
-              {isAudiobookPlaying ? 'Reading Page...' : 'Listen to Page'}
+              {isAudiobookPlaying ? 'Reading Page...' : 'Read Page Aloud'}
             </span>
           </button>
         </div>
       </footer>
+
+      {/* Docked Audiobook Player inside PDF Reader */}
+      <AudiobookPlayer
+        paragraphs={activeChapter.content}
+        activeParagraphIndex={audiobookParagraphIndex}
+        onParagraphChange={setAudiobookParagraphIndex}
+        bookTitle={title}
+        bookAuthor={author}
+        chapterTitle={activeChapter.title}
+        isOpen={isAudiobookOpen}
+        onClose={() => setIsAudiobookOpen(false)}
+        hasNextChapter={activeChapter.chapterNumber < CHILDREN_OF_MU_FULL_CHAPTERS.length}
+        hasPrevChapter={activeChapter.chapterNumber > 1}
+        onNextChapter={() => {
+          const next = CHILDREN_OF_MU_FULL_CHAPTERS.find(
+            (c) => c.chapterNumber === activeChapter.chapterNumber + 1
+          );
+          if (next) {
+            goToPage(next.startPage);
+            setAudiobookParagraphIndex(0);
+          }
+        }}
+        onPrevChapter={() => {
+          const prev = CHILDREN_OF_MU_FULL_CHAPTERS.find(
+            (c) => c.chapterNumber === activeChapter.chapterNumber - 1
+          );
+          if (prev) {
+            goToPage(prev.startPage);
+            setAudiobookParagraphIndex(0);
+          }
+        }}
+      />
     </div>
   );
 }
