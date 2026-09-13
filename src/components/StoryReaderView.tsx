@@ -19,7 +19,7 @@ import {
   Moon,
   CheckCircle2,
   Library,
-  Download,
+  Headphones,
   RefreshCw,
   Music,
   Pause,
@@ -31,6 +31,7 @@ import { getGutenbergId, fetchGutenbergById } from '@/services/gutenberg';
 import { useMusic } from '@/context/MusicContext';
 import { AmbientMixerModal } from '@/components/AmbientMixerModal';
 import { CozyPdfEbookReader } from '@/components/CozyPdfEbookReader';
+import { AudiobookPlayer } from '@/components/AudiobookPlayer';
 
 interface StoryReaderViewProps {
   story: Story;
@@ -200,6 +201,10 @@ export function StoryReaderView({
   const [readingProgress, setReadingProgress] = useState(0);
   const [ebookViewMode, setEbookViewMode] = useState<'pdf' | 'notes'>('pdf');
 
+  // Audiobook narration state
+  const [isAudiobookOpen, setIsAudiobookOpen] = useState(false);
+  const [activeAudiobookIndex, setActiveAudiobookIndex] = useState(0);
+
   const topRef = useRef<HTMLDivElement>(null);
 
   // Active chapter
@@ -218,6 +223,21 @@ export function StoryReaderView({
     currentChapterIndex < story.chapters.length - 1
       ? story.chapters[currentChapterIndex + 1]
       : null;
+
+  // Reset speech paragraph when chapter changes
+  useEffect(() => {
+    setActiveAudiobookIndex(0);
+  }, [currentChapter?.chapterNumber]);
+
+  // Auto-scroll active speech paragraph into view
+  useEffect(() => {
+    if (isAudiobookOpen && activeAudiobookIndex >= 0) {
+      const el = document.getElementById(`reader-line-${activeAudiobookIndex}`);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+  }, [isAudiobookOpen, activeAudiobookIndex]);
 
   // Persist settings
   const handleThemeChange = (newTheme: ReadingTheme) => {
@@ -540,6 +560,21 @@ export function StoryReaderView({
               </button>
             </div>
 
+            {/* Audiobook Listen Button */}
+            <button
+              type="button"
+              onClick={() => setIsAudiobookOpen((prev) => !prev)}
+              className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-bold border transition-all cursor-pointer ${
+                isAudiobookOpen
+                  ? 'bg-amber-500 text-ink-950 border-amber-400 shadow-cozy-xs'
+                  : 'border-amber-400/40 bg-amber-500/10 text-amber-800 dark:text-amber-200 hover:bg-amber-500/20'
+              }`}
+              title={isAudiobookOpen ? 'Close Audiobook Player' : 'Listen with Audiobook Narrator'}
+            >
+              <Headphones className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Audiobook</span>
+            </button>
+
             {/* Table of Contents button */}
             <button
               onClick={() => {
@@ -654,7 +689,7 @@ export function StoryReaderView({
                         </>
                       ) : (
                         <>
-                          <Download className="w-3 h-3" />
+                          <RefreshCw className="w-3 h-3" />
                           <span>Pull All Original Chapters</span>
                         </>
                       )}
@@ -897,16 +932,15 @@ export function StoryReaderView({
                   </button>
                 </div>
 
-                <a
-                  href={story.pdfUrl}
-                  download="2015.77375.The-Children-Of-Mu.pdf"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="site-button bg-peach-500 hover:bg-peach-600 text-white text-xs font-bold px-3.5 py-2 rounded-xl flex items-center gap-1.5 shadow-cozy-sm"
+                <button
+                  type="button"
+                  onClick={() => setIsAudiobookOpen(true)}
+                  className="site-button bg-gradient-to-r from-amber-500 to-peach-500 hover:from-amber-600 hover:to-peach-600 text-white text-xs font-bold px-3.5 py-2 rounded-xl flex items-center gap-1.5 shadow-cozy-sm cursor-pointer"
+                  title="Listen to Audiobook narration"
                 >
-                  <Download className="w-3.5 h-3.5" />
-                  <span>Download PDF (21.6 MB)</span>
-                </a>
+                  <Headphones className="w-3.5 h-3.5" />
+                  <span>Audiobook Mode</span>
+                </button>
               </div>
             </div>
 
@@ -959,6 +993,17 @@ export function StoryReaderView({
               {currentChapter.publishedDate}
             </span>
           </div>
+
+          <div className="mt-4 flex justify-center">
+            <button
+              type="button"
+              onClick={() => setIsAudiobookOpen(true)}
+              className="site-button bg-amber-500/15 hover:bg-amber-500/25 border border-amber-400/40 text-amber-800 dark:text-amber-200 text-xs font-bold px-3.5 py-2 rounded-xl inline-flex items-center gap-2 transition-all cursor-pointer shadow-xs"
+            >
+              <Headphones className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+              <span>Listen to this Chapter (Audiobook)</span>
+            </button>
+          </div>
         </div>
 
         {/* Chapter Prose Body */}
@@ -966,19 +1011,35 @@ export function StoryReaderView({
           {currentChapter.content.map((paragraph, idx) => {
             const isFirst = idx === 0;
             const isMarked = markedLineIndex === idx;
+            const isSpeakingThis = isAudiobookOpen && activeAudiobookIndex === idx;
 
             return (
               <div
                 key={idx}
                 id={`reader-line-${idx}`}
                 className={`relative group/line transition-all duration-300 rounded-2xl p-3 sm:p-4 -mx-3 sm:-mx-4 ${
-                  isMarked
+                  isSpeakingThis
+                    ? 'bg-gradient-to-r from-amber-500/15 via-peach-500/10 to-transparent ring-2 ring-amber-500 shadow-cozy-md'
+                    : isMarked
                     ? 'bg-amber-500/15 dark:bg-amber-400/15 ring-2 ring-amber-400/80 shadow-cozy-sm'
                     : 'hover:bg-black/[0.02] dark:hover:bg-white/[0.02]'
                 }`}
               >
+                {/* Audiobook Active Narration indicator */}
+                {isSpeakingThis && (
+                  <div className="flex items-center justify-between pb-2 mb-2 border-b border-amber-400/40 text-xs font-bold text-amber-700 dark:text-amber-300">
+                    <span className="inline-flex items-center gap-1.5">
+                      <Headphones className="w-3.5 h-3.5 text-amber-500 animate-bounce" />
+                      <span>Audiobook Narrator reading this paragraph...</span>
+                    </span>
+                    <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-md bg-amber-500/20 border border-amber-500/30">
+                      Paragraph {idx + 1} of {currentChapter.content.length}
+                    </span>
+                  </div>
+                )}
+
                 {/* Visual Line Marker Badge on the exact paragraph where they stopped */}
-                {isMarked && (
+                {isMarked && !isSpeakingThis && (
                   <div className="flex items-center justify-between pb-2 mb-2 border-b border-amber-400/30 text-xs font-bold text-amber-700 dark:text-amber-300">
                     <span className="inline-flex items-center gap-1.5">
                       <Bookmark className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
@@ -997,25 +1058,50 @@ export function StoryReaderView({
                 <div className="flex items-start justify-between gap-3">
                   <p
                     className={`flex-1 ${isFirst ? `${currentFontStyle.lead} opacity-95` : 'opacity-90'} ${
-                      isMarked ? 'font-medium' : ''
+                      isSpeakingThis
+                        ? 'font-medium text-ink-950 dark:text-cream-50'
+                        : isMarked
+                        ? 'font-medium'
+                        : ''
                     }`}
                   >
                     {paragraph}
                   </p>
 
-                  <button
-                    type="button"
-                    onClick={() => handleToggleLineMarker(idx)}
-                    title={isMarked ? 'Remove line marker' : 'Mark this exact spot (save where you stopped)'}
-                    aria-label={isMarked ? 'Remove reading marker' : 'Mark exact reading line'}
-                    className={`p-1.5 rounded-lg transition-all shrink-0 mt-0.5 cursor-pointer ${
-                      isMarked
-                        ? 'text-amber-500 opacity-100 bg-amber-100 dark:bg-amber-950/60 shadow-xs'
-                        : 'text-stone-400 opacity-0 group-hover/line:opacity-100 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-stone-800 focus:opacity-100'
-                    }`}
-                  >
-                    <Bookmark className={`w-4 h-4 ${isMarked ? 'fill-current text-amber-500' : ''}`} />
-                  </button>
+                  <div className="flex items-center gap-1 shrink-0 mt-0.5">
+                    {/* Listen from here button */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setActiveAudiobookIndex(idx);
+                        setIsAudiobookOpen(true);
+                      }}
+                      title="Listen to audiobook starting from this paragraph"
+                      aria-label="Listen from this paragraph"
+                      className={`p-1.5 rounded-lg transition-all cursor-pointer ${
+                        isSpeakingThis
+                          ? 'text-amber-600 bg-amber-100 dark:bg-amber-950/60 shadow-xs'
+                          : 'text-stone-400 opacity-0 group-hover/line:opacity-100 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-stone-800'
+                      }`}
+                    >
+                      <Headphones className="w-4 h-4" />
+                    </button>
+
+                    {/* Bookmark spot */}
+                    <button
+                      type="button"
+                      onClick={() => handleToggleLineMarker(idx)}
+                      title={isMarked ? 'Remove line marker' : 'Mark this exact spot (save where you stopped)'}
+                      aria-label={isMarked ? 'Remove reading marker' : 'Mark exact reading line'}
+                      className={`p-1.5 rounded-lg transition-all cursor-pointer ${
+                        isMarked
+                          ? 'text-amber-500 opacity-100 bg-amber-100 dark:bg-amber-950/60 shadow-xs'
+                          : 'text-stone-400 opacity-0 group-hover/line:opacity-100 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-stone-800 focus:opacity-100'
+                      }`}
+                    >
+                      <Bookmark className={`w-4 h-4 ${isMarked ? 'fill-current text-amber-500' : ''}`} />
+                    </button>
+                  </div>
                 </div>
               </div>
             );
@@ -1117,6 +1203,39 @@ export function StoryReaderView({
       )}
       {/* Sound Lounge Modal */}
       <AmbientMixerModal isOpen={showMixer} onClose={() => setShowMixer(false)} />
+
+      {/* Docked / Floating Audiobook Player */}
+      {currentChapter && (
+        <AudiobookPlayer
+          paragraphs={currentChapter.content}
+          activeParagraphIndex={activeAudiobookIndex}
+          onParagraphChange={setActiveAudiobookIndex}
+          bookTitle={story.title}
+          bookAuthor={story.author}
+          chapterTitle={`Ch. ${currentChapter.chapterNumber}: ${currentChapter.title}`}
+          coverImage={story.coverImage}
+          isOpen={isAudiobookOpen}
+          onClose={() => setIsAudiobookOpen(false)}
+          hasNextChapter={Boolean(nextChapter)}
+          hasPrevChapter={Boolean(prevChapter)}
+          onNextChapter={
+            nextChapter
+              ? () => {
+                  onSelectChapter(nextChapter.chapterNumber);
+                  setActiveAudiobookIndex(0);
+                }
+              : undefined
+          }
+          onPrevChapter={
+            prevChapter
+              ? () => {
+                  onSelectChapter(prevChapter.chapterNumber);
+                  setActiveAudiobookIndex(0);
+                }
+              : undefined
+          }
+        />
+      )}
     </div>
   );
 }

@@ -6,7 +6,7 @@ import {
   fetchAndParseGutenbergBook,
   type GutenbergBook,
 } from '@/services/gutenberg';
-import { BookOpen, Clock, ArrowRight, BookMarked, Coffee, Loader2, Star } from 'lucide-react';
+import { BookOpen, Clock, ArrowRight, BookMarked, Coffee, Loader2, Star, Headphones } from 'lucide-react';
 
 interface HomeBookshelfSectionProps {
   onSelectStory: (story: Story, chapterNumber?: number) => void;
@@ -47,14 +47,14 @@ export function HomeBookshelfSection({
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
         <div>
           <div className="library-badge inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold mb-2 shadow-cozy-sm">
-            <BookMarked className="w-3.5 h-3.5 text-peach-600" />
-            <span>Public Domain Archive & Free Library</span>
+            <Headphones className="w-3.5 h-3.5 text-peach-600" />
+            <span>Free Audiobook & Literature Sanctuary</span>
           </div>
           <h2 className="font-display text-2xl sm:text-3xl font-extrabold text-ink-900 tracking-tight text-balance">
-            Project Gutenberg Public Shelf
+            Audiobook & eBook Bookshelf
           </h2>
           <p className="text-sm text-ink-700 font-sans mt-1">
-            Read complete, unabridged editions directly from Project Gutenberg archives with authentic book covers.
+            Listen to and read complete unabridged editions with synchronized speech narration, cozy ambient fireplace and rain sounds.
           </p>
         </div>
 
@@ -121,22 +121,22 @@ export function HomeBookshelfSection({
                     {isPinned ? (
                       <>
                         <span className="flex items-center gap-1 font-extrabold text-amber-700">
-                          <BookOpen className="w-3.5 h-3.5 text-amber-500" />
-                          Complete 290-Page eBook
+                          <Headphones className="w-3.5 h-3.5 text-amber-500" />
+                          Audiobook & PDF
                         </span>
                         <span>•</span>
                         <span className="font-semibold text-peach-700">1931 Unabridged</span>
                       </>
                     ) : (
                       <>
-                        <span className="flex items-center gap-1">
-                          <BookOpen className="w-3.5 h-3.5" />
-                          Complete Unabridged
+                        <span className="flex items-center gap-1 text-peach-600 font-semibold">
+                          <Headphones className="w-3.5 h-3.5" />
+                          Audiobook
                         </span>
                         <span>•</span>
                         <span className="flex items-center gap-1">
                           <Clock className="w-3.5 h-3.5" />
-                          {book.download_count?.toLocaleString()} reads
+                          {book.download_count?.toLocaleString()} readers
                         </span>
                       </>
                     )}
@@ -174,7 +174,7 @@ export function HomeBookshelfSection({
                   ) : (
                     <>
                       <span className={isPinned ? 'text-amber-700 font-extrabold' : ''}>
-                        {isPinned ? 'Read PDF eBook' : 'Read Unabridged'}
+                        {isPinned ? '🎧 Read & Listen (PDF)' : '🎧 Read & Listen'}
                       </span>
                       <ArrowRight className="w-3.5 h-3.5" />
                     </>

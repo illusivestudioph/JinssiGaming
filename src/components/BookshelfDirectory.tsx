@@ -24,7 +24,8 @@ import {
   Loader2,
   ChevronLeft,
   ChevronRight,
-  Star
+  Star,
+  Headphones
 } from 'lucide-react';
 
 interface BookshelfDirectoryProps {
@@ -193,14 +194,14 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
       {/* Top Banner */}
       <div className="text-center max-w-2xl mx-auto mb-8">
         <div className="library-badge inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-peach-100 text-peach-700 text-xs font-bold mb-3 shadow-cozy-sm">
-          <Library className="w-4 h-4 text-peach-600" />
-          <span>Project Gutenberg Public Library</span>
+          <Headphones className="w-4 h-4 text-peach-600" />
+          <span>Audiobook & Unabridged eBook Sanctuary</span>
         </div>
         <h1 className="font-display text-3xl sm:text-4xl font-extrabold text-ink-900 tracking-tight mb-3">
-          Free Classics & Unabridged Literature
+          Free Audiobook & Classic Library
         </h1>
         <p className="text-base text-ink-700 leading-relaxed font-sans">
-          Browse and read over 70,000 authentic public domain works. Every book is unabridged with verified Project Gutenberg covers and genuine chapters.
+          Listen to and read over 70,000 authentic unabridged classics. Enjoy synchronized read-along narration, cozy ambient fireplace and rain sounds, and vintage facsimile editions.
         </p>
       </div>
 
@@ -493,20 +494,20 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
                             {isPinned ? (
                               <>
                                 <span className="flex items-center gap-1 font-extrabold text-amber-700">
-                                  <BookOpen className="w-3.5 h-3.5 text-amber-500" />
-                                  290-Page PDF eBook
+                                  <Headphones className="w-3.5 h-3.5 text-amber-500" />
+                                  Audiobook & PDF
                                 </span>
                                 <span>•</span>
                                 <span className="font-semibold text-peach-700">Unabridged 1931 Original</span>
                               </>
                             ) : (
                               <>
-                                <span className="flex items-center gap-1 font-semibold">
-                                  <BookOpen className="w-3.5 h-3.5 text-peach-500" />
-                                  Unabridged
+                                <span className="flex items-center gap-1 font-semibold text-peach-600">
+                                  <Headphones className="w-3.5 h-3.5" />
+                                  Audiobook Ready
                                 </span>
                                 <span>•</span>
-                                <span>{(book.download_count || 50000).toLocaleString()} reads</span>
+                                <span>{(book.download_count || 50000).toLocaleString()} readers</span>
                               </>
                             )}
                           </div>
@@ -553,8 +554,8 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
                             </>
                           ) : (
                             <>
-                              <BookOpen className="w-4 h-4" />
-                              <span>{isPinned ? 'Read PDF eBook' : 'Read Unabridged'}</span>
+                              <Headphones className="w-4 h-4" />
+                              <span>{isPinned ? '🎧 Read & Listen (PDF)' : '🎧 Read & Listen'}</span>
                               <ArrowRight className="w-3.5 h-3.5" />
                             </>
                           )}

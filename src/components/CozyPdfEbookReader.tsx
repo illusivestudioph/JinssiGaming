@@ -11,7 +11,7 @@ import {
   Bookmark,
   BookmarkCheck,
   List,
-  Download,
+  Headphones,
   ExternalLink,
   Loader2,
   Columns,
@@ -227,21 +227,93 @@ export function CozyPdfEbookReader({
     }
   }, [pdfDoc, currentPage, scale, twoPageMode, renderPageToCanvas, totalPages]);
 
+  // Audiobook TTS narration for PDF pages
+  const [isAudiobookPlaying, setIsAudiobookPlaying] = useState<boolean>(false);
+  const pdfUtteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
+
+  const stopAudiobook = useCallback(() => {
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
+    setIsAudiobookPlaying(false);
+  }, []);
+
   // Navigation handlers
   const goToPage = (num: number) => {
+    stopAudiobook();
     const target = Math.max(1, Math.min(totalPages, num));
     setCurrentPage(target);
   };
 
   const handlePrevPage = () => {
+    stopAudiobook();
     const step = twoPageMode ? 2 : 1;
     goToPage(currentPage - step);
   };
 
   const handleNextPage = () => {
+    stopAudiobook();
     const step = twoPageMode ? 2 : 1;
     goToPage(currentPage + step);
   };
+
+  const handleListenToPage = useCallback(async () => {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+
+    if (isAudiobookPlaying) {
+      stopAudiobook();
+      return;
+    }
+
+    if (!pdfDoc) return;
+
+    try {
+      const page = await pdfDoc.getPage(currentPage);
+      const textContent = await page.getTextContent();
+      const extractedText = textContent.items
+        .map((item: any) => item.str || '')
+        .join(' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+
+      if (!extractedText || extractedText.length < 5) {
+        const notice = new SpeechSynthesisUtterance(
+          `Page ${currentPage} contains scanned historical artwork or diagrams without embedded computer text. Please advance to the next page to continue listening.`
+        );
+        window.speechSynthesis.speak(notice);
+        return;
+      }
+
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(extractedText);
+      pdfUtteranceRef.current = utterance;
+      utterance.rate = 1.0;
+
+      utterance.onstart = () => setIsAudiobookPlaying(true);
+      utterance.onend = () => {
+        setIsAudiobookPlaying(false);
+        // Automatically advance to next page if available
+        if (currentPage < totalPages) {
+          setCurrentPage((prev) => prev + 1);
+        }
+      };
+      utterance.onerror = () => setIsAudiobookPlaying(false);
+
+      window.speechSynthesis.speak(utterance);
+    } catch (err) {
+      console.warn('PDF text extraction error:', err);
+      setIsAudiobookPlaying(false);
+    }
+  }, [isAudiobookPlaying, pdfDoc, currentPage, totalPages, stopAudiobook]);
+
+  // Clean up speech on unmount
+  useEffect(() => {
+    return () => {
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, []);
 
   const handleZoom = (delta: number) => {
     setScale((prev) => {
@@ -519,7 +591,7 @@ export function CozyPdfEbookReader({
               rel="noopener noreferrer"
               className="site-button bg-peach-500 hover:bg-peach-600 text-white text-xs font-bold px-4 py-2 rounded-xl inline-flex items-center gap-2"
             >
-              <span>Download / Open PDF directly</span>
+              <span>Open PDF in new window</span>
               <ExternalLink className="w-3.5 h-3.5" />
             </a>
           </div>
@@ -695,16 +767,22 @@ export function CozyPdfEbookReader({
             <span className="hidden lg:inline">{twoPageMode ? '2-Page Spread' : 'Single Page'}</span>
           </button>
 
-          {/* Direct PDF Download Link */}
-          <a
-            href={pdfUrl}
-            download="2015.77375.The-Children-Of-Mu.pdf"
-            className="p-1.5 rounded-xl bg-black/30 hover:bg-black/50 border border-[#5A473B] text-cream-200 transition-colors flex items-center gap-1 text-[11px] font-bold"
-            title="Download Original 290-Page PDF (21.6 MB)"
+          {/* Audiobook Page Read-Aloud Button */}
+          <button
+            type="button"
+            onClick={handleListenToPage}
+            className={`p-1.5 rounded-xl border transition-colors flex items-center gap-1.5 text-[11px] font-bold cursor-pointer ${
+              isAudiobookPlaying
+                ? 'bg-amber-500 text-ink-950 border-amber-400 shadow-cozy-xs animate-pulse'
+                : 'bg-black/30 hover:bg-black/50 border-[#5A473B] text-amber-300'
+            }`}
+            title={isAudiobookPlaying ? 'Stop Reading Aloud' : 'Listen to this page with Audiobook voice'}
           >
-            <Download className="w-3.5 h-3.5" />
-            <span className="hidden xl:inline">PDF (21MB)</span>
-          </a>
+            <Headphones className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">
+              {isAudiobookPlaying ? 'Reading Page...' : 'Listen to Page'}
+            </span>
+          </button>
         </div>
       </footer>
     </div>
