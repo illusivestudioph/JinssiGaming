@@ -13,52 +13,37 @@ const rawSvgCache = new Map<string, string>();
 const transformedSvgCache = new Map<string, string>();
 
 /**
- * Directly morphs the character's head outline, jawline, and framing hair
- * inside the SVG according to the selected face shape (Round, Square, Heart/V-Line, Diamond, Oval).
- * Handles both short (male) and long/medium (female) hairstyles so face shapes are unmistakably visible.
+ * Directly morphs the character's head outline and jawline inside the SVG
+ * according to the selected face shape (Round, Square, Heart/V-Line, Diamond, Oval)
+ * identically for all avatars (male and female).
  */
 function morphAvatarHeadSvg(svgText: string, shape: FaceShape): string {
   if (shape === 'oval') return svgText;
 
-  const parts = svgText.split('<g transform="translate(-161 -83)">');
-  if (parts.length < 2) return svgText;
+  const firstGIndex = svgText.indexOf('<g transform="translate(-161 -83)">');
+  if (firstGIndex === -1) return svgText;
 
-  // 1. Morph Head and Skin Silhouette (Part 0)
-  const headPart = parts[0];
-  const pathIndex = headPart.indexOf('<path');
-  if (pathIndex === -1) return svgText;
+  const pathIndex = svgText.indexOf('<path');
+  if (pathIndex === -1 || pathIndex >= firstGIndex) return svgText;
 
-  const beforeHead = headPart.slice(0, pathIndex);
-  const headPaths = headPart.slice(pathIndex);
+  const beforeHead = svgText.slice(0, pathIndex);
+  const headPaths = svgText.slice(pathIndex, firstGIndex);
+  const afterHead = svgText.slice(firstGIndex);
 
-  const headTransforms: Record<FaceShape, string> = {
+  const transforms: Record<FaceShape, string> = {
     oval: headPaths,
-    // Round: Cute fuller chubby cheeks, wider jawline arc
-    round: `<g transform="translate(380, 420) scale(1.24, 0.94) translate(-380, -420)">${headPaths}</g>`,
-    // Heart: Delicate tapered anime V-line jaw with pointed chin
-    heart: `<g transform="translate(380, 360) scale(0.85, 1.12) translate(-380, -360)">${headPaths}</g>`,
-    // Square: Strong chiseled masculine/defined jaw presence
-    square: `<g transform="translate(380, 450) scale(1.26, 1.05) translate(-380, -450)">${headPaths}</g>`,
-    // Diamond: High cheekbones with sculpted angular taper
-    diamond: `<g transform="translate(380, 400) scale(1.16, 1.08) translate(-380, -400)">${headPaths}</g>`,
+    // Round: Cute chubby cheeks, wider jaw arc
+    round: `<g transform="translate(380, 410) scale(1.12, 0.94) translate(-380, -410)">${headPaths}</g>`,
+    // Heart: Delicate, tapered anime V-line jaw and pointed chin
+    heart: `<g transform="translate(380, 360) scale(0.91, 1.06) translate(-380, -360)">${headPaths}</g>`,
+    // Square: Strong, broader masculine/chiseled jaw presence
+    square: `<g transform="translate(380, 440) scale(1.14, 1.04) translate(-380, -440)">${headPaths}</g>`,
+    // Diamond: High cheekbones with sculpted chin definition
+    diamond: `<g transform="translate(380, 400) scale(1.08, 1.05) translate(-380, -400)">${headPaths}</g>`,
   };
 
-  parts[0] = beforeHead + (headTransforms[shape] || headPaths);
-
-  // 2. Harmonize Framing Hair (Part 6) so female and long hairstyles complement the shaped jawline
-  if (parts.length >= 7 && parts[6]) {
-    const hairPart = parts[6];
-    const hairTransforms: Record<FaceShape, string> = {
-      oval: hairPart,
-      round: `<g transform="translate(380, 420) scale(1.15, 0.96) translate(-380, -420)">${hairPart}</g>`,
-      heart: `<g transform="translate(380, 380) scale(0.90, 1.06) translate(-380, -380)">${hairPart}</g>`,
-      square: `<g transform="translate(380, 430) scale(1.16, 1.03) translate(-380, -430)">${hairPart}</g>`,
-      diamond: `<g transform="translate(380, 400) scale(1.09, 1.05) translate(-380, -400)">${hairPart}</g>`,
-    };
-    parts[6] = hairTransforms[shape] || hairPart;
-  }
-
-  return parts.join('<g transform="translate(-161 -83)">');
+  const transformedHead = transforms[shape] || headPaths;
+  return beforeHead + transformedHead + afterHead;
 }
 
 export function CozyAvatar({

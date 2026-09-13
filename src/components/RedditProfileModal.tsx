@@ -76,23 +76,41 @@ export function RedditProfileModal() {
   const [activeTab, setActiveTab] = useState<'overview' | 'comments' | 'trophies'>('overview');
   const [toast, setToast] = useState<string | null>(null);
 
-  // Banner customization state
+  // Check whether the user is viewing their own profile (or creator viewing creator)
   const isViewingSelf = Boolean(
-    (user && activeProfileUser?.id === user.id) ||
+    (user && activeProfileUser && (activeProfileUser.id === user.id || activeProfileUser.id === profile.id)) ||
     (activeProfileUser?.isCreator && profile.isCreator) ||
-    (activeProfileUser?.username.toLowerCase() === profile.username.toLowerCase())
+    (activeProfileUser && profile.username && activeProfileUser.username.toLowerCase() === profile.username.toLowerCase())
   );
 
   const [isEditingBanner, setIsEditingBanner] = useState(false);
-  const [currentBannerColor, setCurrentBannerColor] = useState<string>(() => {
-    return activeProfileUser?.bannerColor || (activeProfileUser?.isCreator ? 'peach' : 'honey');
-  });
-  const [currentBannerText, setCurrentBannerText] = useState<string>(() => {
-    return (
-      activeProfileUser?.bannerText ||
-      (activeProfileUser?.isCreator ? 'Welcome to Jinssi Gaming! 🌸' : 'Enjoying cozy stories & games 🍵')
+  const [currentBannerColor, setCurrentBannerColor] = useState<string>('peach');
+  const [currentBannerText, setCurrentBannerText] = useState<string>('');
+
+  // Sync banner state whenever active profile changes
+  useEffect(() => {
+    if (!activeProfileUser) return;
+    let savedColor = activeProfileUser.bannerColor;
+    let savedText = activeProfileUser.bannerText;
+
+    try {
+      const stored = localStorage.getItem(`jinssi_profile_banner_${activeProfileUser.username}`);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed.color) savedColor = parsed.color;
+        if (parsed.text) savedText = parsed.text;
+      }
+    } catch {
+      // ignore
+    }
+
+    setCurrentBannerColor(savedColor || (activeProfileUser.isCreator ? 'peach' : 'matcha'));
+    setCurrentBannerText(
+      savedText ||
+      (activeProfileUser.isCreator ? 'Welcome to Jinssi Gaming! 🌸' : 'Enjoying cozy stories & games 🍵')
     );
-  });
+    setIsEditingBanner(false);
+  }, [activeProfileUser]);
 
   if (!activeProfileUser) return null;
 
@@ -103,6 +121,8 @@ export function RedditProfileModal() {
       triggerAuthPrompt('Sign in with Gmail to add friends and view your social buddy list.');
       return;
     }
+
+    if (isViewingSelf) return;
 
     if (isAlreadyFriend) {
       removeFriend(activeProfileUser.id);
@@ -126,6 +146,8 @@ export function RedditProfileModal() {
       triggerAuthPrompt('Sign in with Gmail to send direct messages to travelers.');
       return;
     }
+
+    if (isViewingSelf) return;
 
     openDmWith({
       id: activeProfileUser.id,
@@ -176,9 +198,9 @@ export function RedditProfileModal() {
           borderColor: 'var(--card-border, #5e5148)',
         }}
       >
-        {/* Cover Banner Header with Dynamic Color & Custom Text */}
+        {/* Cover Banner Header with Dynamic Color & Absolute Centered Custom Text */}
         <div
-          className="relative min-h-[140px] sm:min-h-[155px] w-full flex flex-col justify-between p-4 border-b overflow-hidden transition-all duration-300"
+          className="relative h-36 sm:h-40 w-full p-4 border-b overflow-hidden transition-all duration-300 flex flex-col justify-between"
           style={{
             background: selectedPalette.gradient,
             borderColor: 'var(--card-line, #ebdcc9)',
@@ -220,12 +242,17 @@ export function RedditProfileModal() {
             </div>
           </div>
 
-          {/* Banner Text Message / Headline Display */}
-          <div className="relative z-10 mt-auto pt-2 pb-1">
-            <p className="text-white font-display font-black text-sm sm:text-base drop-shadow-md tracking-wide flex items-center gap-1.5">
-              <StreamlineStar className="w-4 h-4 text-amber-300 fill-amber-300 shrink-0" />
-              <span className="line-clamp-1">{currentBannerText}</span>
-            </p>
+          {/* Absolute Centered Banner Text / Headline Message */}
+          <div className="absolute inset-0 z-10 flex items-center justify-center px-8 pointer-events-none">
+            {currentBannerText && (
+              <div className="max-w-md text-center">
+                <p className="text-white font-display font-black text-base sm:text-lg drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] tracking-wide flex items-center justify-center gap-2">
+                  <StreamlineStar className="w-4 h-4 text-amber-300 fill-amber-300 shrink-0 drop-shadow-xs" />
+                  <span className="line-clamp-2">{currentBannerText}</span>
+                  <StreamlineStar className="w-4 h-4 text-amber-300 fill-amber-300 shrink-0 drop-shadow-xs" />
+                </p>
+              </div>
+            )}
           </div>
         </div>
 
@@ -353,40 +380,42 @@ export function RedditProfileModal() {
             </div>
           </div>
 
-          {/* Action Buttons: Add Friend / DM */}
-          <div className="flex items-center gap-2 w-full sm:w-auto">
-            <button
-              type="button"
-              onClick={handleToggleFriend}
-              className={`flex-1 sm:flex-initial px-3.5 py-1.5 rounded-xl text-xs font-bold border-2 transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-xs ${
-                isAlreadyFriend
-                  ? 'bg-emerald-50 border-emerald-400 text-emerald-800'
-                  : 'bg-white border-[#EADCCB] hover:border-[#FD9A4D] text-[#3A2E22]'
-              }`}
-            >
-              {isAlreadyFriend ? (
-                <>
-                  <StreamlineCheck className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>Friends</span>
-                </>
-              ) : (
-                <>
-                  <StreamlineUsers className="w-3.5 h-3.5 text-[#FD9A4D]" />
-                  <span>Add Friend</span>
-                </>
-              )}
-            </button>
+          {/* Action Buttons: Add Friend / DM (Hidden when viewing own profile) */}
+          {!isViewingSelf && (
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              <button
+                type="button"
+                onClick={handleToggleFriend}
+                className={`flex-1 sm:flex-initial px-3.5 py-1.5 rounded-xl text-xs font-bold border-2 transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-xs ${
+                  isAlreadyFriend
+                    ? 'bg-emerald-50 border-emerald-400 text-emerald-800'
+                    : 'bg-white border-[#EADCCB] hover:border-[#FD9A4D] text-[#3A2E22]'
+                }`}
+              >
+                {isAlreadyFriend ? (
+                  <>
+                    <StreamlineCheck className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>Friends</span>
+                  </>
+                ) : (
+                  <>
+                    <StreamlineUsers className="w-3.5 h-3.5 text-[#FD9A4D]" />
+                    <span>Add Friend</span>
+                  </>
+                )}
+              </button>
 
-            <button
-              type="button"
-              onClick={handleStartDm}
-              className="flex-1 sm:flex-initial px-4 py-1.5 rounded-xl text-xs font-bold text-white shadow-xs flex items-center justify-center gap-1.5 transition-all active:scale-95 cursor-pointer"
-              style={{ backgroundColor: 'var(--theme-accent, #fd9a4d)' }}
-            >
-              <StreamlinePencil className="w-3.5 h-3.5" />
-              <span>Direct Message</span>
-            </button>
-          </div>
+              <button
+                type="button"
+                onClick={handleStartDm}
+                className="flex-1 sm:flex-initial px-4 py-1.5 rounded-xl text-xs font-bold text-white shadow-xs flex items-center justify-center gap-1.5 transition-all active:scale-95 cursor-pointer"
+                style={{ backgroundColor: 'var(--theme-accent, #fd9a4d)' }}
+              >
+                <StreamlinePencil className="w-3.5 h-3.5" />
+                <span>Direct Message</span>
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Stats Strip: Community Role & Member Joined Date (Replaces Reddit Karma & Cake Day) */}
