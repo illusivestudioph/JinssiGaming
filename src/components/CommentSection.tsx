@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
-import { MessageSquare, User, Send, Heart, Reply, Sparkles } from 'lucide-react';
+import { StreamlineHeart } from '@/components/StreamlineIcons';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/context/AuthContext';
+import { useChat } from '@/context/ChatContext';
 import { CozyAvatar } from '@/components/CozyAvatar';
 
 interface Comment {
@@ -325,6 +326,7 @@ function CommentCard({
   onReplyTextChange: (value: string) => void;
   onSubmitReply: () => void;
 }) {
+  const { openProfile } = useChat();
   const isCreator = comment.user_name.toLowerCase().replace(/[@\s]/g, '') === 'jinssi' || comment.user_name.toLowerCase().includes('developer');
   const archetype = isCreator ? 'cat' : getArchetypeFromName(comment.user_name);
 
@@ -332,19 +334,42 @@ function CommentCard({
     <div className="flex flex-col gap-3">
       <article className={`notepad-card p-4 sm:p-5 ${isCreator ? 'ring-1 ring-peach-300 bg-peach-50/20' : ''}`}>
         <div className="flex gap-3 sm:gap-4">
-          <CozyAvatar
-            config={{ archetype, accessory: isCreator ? 'flower' : 'sprout', bgColor: isCreator ? 'cherry' : 'peach' }}
-            size={38}
-            className="shadow-xs"
-          />
+          <button
+            type="button"
+            onClick={() =>
+              openProfile({
+                username: comment.user_name.replace('@', ''),
+                isCreator,
+                badge: isCreator ? 'Creator & Developer' : 'Cozy Explorer',
+              })
+            }
+            className="cursor-pointer transition-transform active:scale-95 shrink-0"
+            title={`View u/${comment.user_name}'s Profile`}
+          >
+            <CozyAvatar
+              config={{ archetype, accessory: isCreator ? 'flower' : 'sprout', bgColor: isCreator ? 'cherry' : 'peach' }}
+              size={38}
+              className="shadow-xs"
+            />
+          </button>
           <div className="min-w-0 flex-1">
             <div className="mb-1 flex items-center flex-wrap gap-2">
-              <span className="font-bold text-ink-900 text-xs sm:text-sm">
+              <button
+                type="button"
+                onClick={() =>
+                  openProfile({
+                    username: comment.user_name.replace('@', ''),
+                    isCreator,
+                    badge: isCreator ? 'Creator & Developer' : 'Cozy Explorer',
+                  })
+                }
+                className="font-bold text-ink-900 text-xs sm:text-sm hover:text-peach-600 transition-colors cursor-pointer"
+              >
                 {comment.user_name.startsWith('@') ? comment.user_name : `@${comment.user_name}`}
-              </span>
+              </button>
               {isCreator && (
                 <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-gradient-to-r from-peach-500 to-amber-500 text-white text-[10px] font-black tracking-wider shadow-xs">
-                  🌸 Creator & Dev
+                  Developer
                 </span>
               )}
               <span className="text-[10px] sm:text-xs font-semibold text-tan-400">
@@ -356,19 +381,18 @@ function CommentCard({
               <button
                 type="button"
                 onClick={onHeart}
-                className={`flex items-center gap-1 transition-colors ${
+                className={`flex items-center gap-1.5 transition-colors cursor-pointer ${
                   isLiked ? 'text-rose-500 font-bold' : 'hover:text-rose-500'
                 }`}
               >
-                <Heart size={14} fill={isLiked ? 'currentColor' : 'none'} />
+                <StreamlineHeart className="w-3.5 h-3.5" />
                 <span>{reactionCount > 0 ? reactionCount : 'Heart'}</span>
               </button>
               <button
                 type="button"
                 onClick={onReply}
-                className="flex items-center gap-1 hover:text-peach-500 transition-colors"
+                className="flex items-center gap-1 hover:text-peach-500 transition-colors cursor-pointer"
               >
-                <Reply size={14} />
                 <span>Reply</span>
               </button>
             </div>

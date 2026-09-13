@@ -17,13 +17,13 @@ export function CozyAvatar({
   const avatarUrl = getAdventurerAvatarUrl(config);
   const shape: FaceShape = config?.faceShape || 'oval';
 
-  // Face shape silhouette curve styling
+  // Face shape silhouette framing
   const shapeRadiusClass = {
     oval: 'rounded-full',
-    round: 'rounded-[47%]',
-    square: 'rounded-[38%]',
-    heart: 'rounded-[44%_44%_50%_50%]',
-    diamond: 'rounded-[40%_40%_48%_48%]',
+    round: 'rounded-full ring-2 ring-amber-700/20',
+    square: 'rounded-2xl ring-2 ring-amber-800/30 shadow-md',
+    heart: 'rounded-t-full rounded-b-xl ring-2 ring-rose-700/25',
+    diamond: 'rounded-[32%_32%_45%_45%] ring-2 ring-indigo-900/20',
   }[shape];
 
   return (
@@ -40,32 +40,73 @@ export function CozyAvatar({
         src={avatarUrl}
         alt="Cozy Adventurer Avatar"
         className={`w-full h-full object-cover select-none transition-transform duration-200 ${
-          shape === 'square' ? 'scale-105' : shape === 'round' ? 'scale-102' : ''
+          shape === 'square'
+            ? 'scale-110'
+            : shape === 'round'
+            ? 'scale-105'
+            : shape === 'heart'
+            ? 'scale-108 -translate-y-0.5'
+            : shape === 'diamond'
+            ? 'scale-106'
+            : 'scale-100'
         }`}
         loading="lazy"
         decoding="async"
         referrerPolicy="no-referrer"
       />
 
-      {/* Subtle Face Shape Chin & Jawline Contour Overlay */}
+      {/* Prominent Jawline & Chin Sculpting Overlays */}
       {shape === 'square' && (
         <svg
           className="absolute inset-0 w-full h-full pointer-events-none"
           viewBox="0 0 100 100"
           fill="none"
         >
+          {/* Angular Square Jawline & Chin Shadow */}
           <path
-            d="M26 62 Q36 78 50 82 Q64 78 74 62"
-            stroke="#8B5A2B"
-            strokeWidth="2"
-            strokeOpacity="0.35"
+            d="M20 56 L24 74 L40 86 H60 L76 74 L80 56"
+            stroke="#4A2E18"
+            strokeWidth="3.2"
+            strokeOpacity="0.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M40 86 H60"
+            stroke="#2B1A0E"
+            strokeWidth="4"
+            strokeOpacity="0.75"
             strokeLinecap="round"
           />
           <path
-            d="M42 81 H58"
-            stroke="#6B4226"
-            strokeWidth="2.5"
+            d="M44 78 Q50 82 56 78"
+            stroke="#4A2E18"
+            strokeWidth="2.8"
+            strokeOpacity="0.6"
+            strokeLinecap="round"
+          />
+        </svg>
+      )}
+
+      {shape === 'round' && (
+        <svg
+          className="absolute inset-0 w-full h-full pointer-events-none"
+          viewBox="0 0 100 100"
+          fill="none"
+        >
+          {/* Smooth Rounded Cheeks & Jaw Arc */}
+          <path
+            d="M18 52 Q22 84 50 86 Q78 84 82 52"
+            stroke="#4A2E18"
+            strokeWidth="3.2"
             strokeOpacity="0.45"
+            strokeLinecap="round"
+          />
+          <path
+            d="M45 80 Q50 84 55 80"
+            stroke="#2B1A0E"
+            strokeWidth="3.5"
+            strokeOpacity="0.5"
             strokeLinecap="round"
           />
         </svg>
@@ -77,13 +118,22 @@ export function CozyAvatar({
           viewBox="0 0 100 100"
           fill="none"
         >
+          {/* Tapered V-Line Anime Chin Accent */}
           <path
-            d="M30 60 Q40 82 50 84 Q60 82 70 60"
-            stroke="#8B5A2B"
-            strokeWidth="1.8"
-            strokeOpacity="0.3"
+            d="M22 52 Q34 76 50 88 Q66 76 78 52"
+            stroke="#4A2E18"
+            strokeWidth="3.2"
+            strokeOpacity="0.5"
             strokeLinecap="round"
           />
+          <path
+            d="M47 88 L50 90 L53 88"
+            stroke="#2B1A0E"
+            strokeWidth="4"
+            strokeOpacity="0.7"
+            strokeLinecap="round"
+          />
+          <circle cx="50" cy="84" r="2" fill="#2B1A0E" fillOpacity="0.6" />
         </svg>
       )}
 
@@ -93,18 +143,20 @@ export function CozyAvatar({
           viewBox="0 0 100 100"
           fill="none"
         >
+          {/* Sculpted High Cheekbones & Chiseled Taper */}
           <path
-            d="M20 48 Q28 54 32 58 M80 48 Q72 54 68 58"
-            stroke="#8B5A2B"
-            strokeWidth="1.6"
-            strokeOpacity="0.3"
+            d="M16 46 L24 60 L50 88 L76 60 L84 46"
+            stroke="#4A2E18"
+            strokeWidth="3"
+            strokeOpacity="0.45"
             strokeLinecap="round"
+            strokeLinejoin="round"
           />
           <path
-            d="M34 68 Q50 84 66 68"
-            stroke="#8B5A2B"
-            strokeWidth="1.8"
-            strokeOpacity="0.3"
+            d="M45 84 L50 88 L55 84"
+            stroke="#2B1A0E"
+            strokeWidth="3.5"
+            strokeOpacity="0.65"
             strokeLinecap="round"
           />
         </svg>

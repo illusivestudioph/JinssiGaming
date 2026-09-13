@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useSiteContent } from "@/context/SiteContentContext";
 import { useMusic } from "@/context/MusicContext";
 import { useAuth } from "@/context/AuthContext";
+import { useChat } from "@/context/ChatContext";
 import { CozyAvatar } from "@/components/CozyAvatar";
 import { AmbientMixerModal } from "@/components/AmbientMixerModal";
 import { MagneticText } from "@/components/MagneticText";
@@ -14,6 +15,7 @@ export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View)
   const { logoImage } = useSiteContent();
   const { playing, muted, togglePlayback, toggleMute, userVolume, setVolume, hasActiveAmbience, playDropdownSfx } = useMusic();
   const { user, profile, setShowProfileModal } = useAuth();
+  const { setIsOpen: setIsChatOpen } = useChat();
   const [showMixer, setShowMixer] = useState(false);
   
   // Secret Trigger State
@@ -151,17 +153,29 @@ export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View)
               )}
             </div>
 
+            {/* Game Chat Button */}
+            <button
+              type="button"
+              onClick={() => setIsChatOpen(true)}
+              className="flex items-center gap-1.5 bg-cream-50/90 hover:bg-cream-100 border border-tan-300/80 hover:border-peach-400 rounded-full px-2.5 py-1 shadow-cozy-sm transition-all text-xs font-bold text-ink-800 hover:text-peach-600 select-none cursor-pointer"
+              title="Open Cozy Game Chat (World & DMs)"
+              aria-label="Open chat"
+            >
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="hidden md:inline">Chat</span>
+            </button>
+
             {/* Cozy Member Profile Chip */}
             <button
               type="button"
               onClick={() => setShowProfileModal(true)}
-              className="flex items-center gap-2 bg-cream-50/90 hover:bg-cream-100 border border-tan-300/80 hover:border-peach-400 rounded-full pl-1.5 pr-3 py-1 shadow-cozy-sm transition-all text-xs font-bold text-ink-900 group select-none"
+              className="flex items-center gap-2 bg-cream-50/90 hover:bg-cream-100 border border-tan-300/80 hover:border-peach-400 rounded-full pl-1.5 pr-3 py-1 shadow-cozy-sm transition-all text-xs font-bold text-ink-900 group select-none cursor-pointer"
               title="Open Profile & Avatar Builder"
               aria-label="Open member profile"
             >
               <CozyAvatar config={profile.avatarConfig} size={26} showBorder={false} />
               <span className="hidden sm:inline max-w-[90px] truncate text-ink-800 group-hover:text-peach-600">
-                {user ? `@${profile.username}` : 'Guest 🌱'}
+                {user ? `@${profile.username}` : 'Guest'}
               </span>
               {profile.isCreator && (
                 <span

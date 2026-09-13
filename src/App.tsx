@@ -36,15 +36,23 @@ import { AdminDashboard } from '@/components/AdminDashboard';
 // 3. Import the new Hero Banner
 import { Hero } from '@/components/Hero';
 
+import { ChatProvider } from '@/context/ChatContext';
+import { GameChatDock } from '@/components/GameChatDock';
+import { RedditProfileModal } from '@/components/RedditProfileModal';
+
 function App() {
   return (
     <SiteContentProvider>
       <MusicProvider>
         <AuthProvider>
-          <AppContent />
-          <UserProfileModal />
-          <AvatarBuilderModal />
-          <AuthPromptModal />
+          <ChatProvider>
+            <AppContent />
+            <UserProfileModal />
+            <AvatarBuilderModal />
+            <AuthPromptModal />
+            <GameChatDock />
+            <RedditProfileModal />
+          </ChatProvider>
         </AuthProvider>
       </MusicProvider>
     </SiteContentProvider>
