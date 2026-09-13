@@ -1523,8 +1523,26 @@ export function StreamlineWand({ className = 'w-4 h-4', size, ...props }: Stream
   );
 }
 
+export function StreamlineMessageSquare({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
+    </svg>
+  );
+}
+
+export function StreamlineSend({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
+    </svg>
+  );
+}
+
 // Seamless drop-in compatibility aliases replacing generic Lucide icons with authentic Streamline icons
 export {
+  StreamlineMessageSquare as MessageSquare,
+  StreamlineSend as Send,
   StreamlineChevronDown as ChevronDown,
   StreamlineChevronUp as ChevronUp,
   StreamlineChevronLeft as ChevronLeft,

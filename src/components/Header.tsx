@@ -7,7 +7,16 @@ import { CozyAvatar } from "@/components/CozyAvatar";
 import { AmbientMixerModal } from "@/components/AmbientMixerModal";
 import { MagneticText } from "@/components/MagneticText";
 import { getOptimizedImageUrl } from '@/utils/imageOptimization';
-import { StreamlineLock, StreamlineMenu, StreamlineClose, StreamlineSliders } from '@/components/StreamlineIcons';
+import {
+  StreamlineLock,
+  StreamlineMenu,
+  StreamlineClose,
+  StreamlineSliders,
+  StreamlineMusic,
+  StreamlinePause,
+  StreamlineVolume,
+  StreamlineVolumeMute,
+} from '@/components/StreamlineIcons';
 
 export type View = 'home' | 'walkthroughs' | 'journal' | 'stories' | 'store' | 'about' | 'privacy' | 'terms' | 'contact' | 'admin';
 
@@ -111,7 +120,7 @@ export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View)
                       : 'bg-cream-200 text-tan-600'
                   }`}
                 >
-                  {playing ? <Pause className="w-3 h-3" /> : <Music className="w-3 h-3" />}
+                  {playing ? <StreamlinePause className="w-3 h-3" /> : <StreamlineMusic className="w-3 h-3" />}
                 </span>
                 <span className="hidden sm:inline font-sans text-xs">
                   {playing ? (muted ? 'Muted' : 'Music On') : 'BGM'}
@@ -130,7 +139,7 @@ export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View)
                 title="Open Ambient Sound Lounge (Rain, Fireplace, Wind)"
                 aria-label="Open ambient sound mixer"
               >
-                <Sliders className="w-3.5 h-3.5" />
+                <StreamlineSliders className="w-3.5 h-3.5" />
                 {hasActiveAmbience && (
                   <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-peach-500 ring-1 ring-white" />
                 )}
@@ -145,9 +154,9 @@ export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View)
                   aria-label={muted ? 'Unmute music' : 'Mute music'}
                 >
                   {muted ? (
-                    <VolumeX className="w-3.5 h-3.5 text-tan-400" />
+                    <StreamlineVolumeMute className="w-3.5 h-3.5 text-tan-400" />
                   ) : (
-                    <Volume2 className="w-3.5 h-3.5 text-earth-600" />
+                    <StreamlineVolume className="w-3.5 h-3.5 text-earth-600" />
                   )}
                 </button>
               )}

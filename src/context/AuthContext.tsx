@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { User } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
-import { UserProfile, DEFAULT_PROFILE, isCreatorEmail, CommunityBadge } from '@/types/profile';
+import { UserProfile, DEFAULT_PROFILE, isCreatorEmail, CREATOR_EMAIL, CommunityBadge } from '@/types/profile';
 import {
   setRememberMePreference,
   hasRememberMeCookie,

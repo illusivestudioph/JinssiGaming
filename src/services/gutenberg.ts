@@ -841,10 +841,12 @@ export async function searchGutenbergBooks(
     return list;
   };
 
+  const searchParamRapid = trimmed ? `q=${encodeURIComponent(trimmed)}&` : '';
+  const searchParamGutendex = trimmed ? `search=${encodeURIComponent(trimmed)}&` : '';
+
   // 1. Primary: RapidAPI search
   try {
-    const searchParam = trimmed ? `q=${encodeURIComponent(trimmed)}&` : '';
-    const url = `${RAPIDAPI_GUTENBERG_BASE}/books?${searchParam}languages=en&page=${page}`;
+    const url = `${RAPIDAPI_GUTENBERG_BASE}/books?${searchParamRapid}languages=en&page=${page}`;
 
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 6000);
@@ -871,7 +873,7 @@ export async function searchGutenbergBooks(
 
   // 2. Fallback to Gutendex open API
   try {
-    const gutendexUrl = `https://gutendex.com/books/?${searchParam}languages=en&page=${page}`;
+    const gutendexUrl = `https://gutendex.com/books/?${searchParamGutendex}languages=en&page=${page}`;
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 4000);
 

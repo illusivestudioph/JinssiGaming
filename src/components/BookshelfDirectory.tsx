@@ -51,6 +51,11 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
   const [page, setPage] = useState(1);
   const [lastRead, setLastRead] = useState<SavedProgress | null>(null);
 
+  const handleSearchChange = (val: string) => {
+    setSearchQuery(val);
+    setPage(1);
+  };
+
   // Download & Unabridged parser state
   const [loadingBookId, setLoadingBookId] = useState<number | null>(null);
   const [loadingStatusText, setLoadingStatusText] = useState<string>('');

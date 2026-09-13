@@ -26,7 +26,7 @@ interface ChatContextType {
   removeFriend: (id: string) => void;
   isFriend: (usernameOrId: string) => boolean;
   sendMessage: (text: string) => Promise<void>;
-  openDmWith: (partner: Friend) => void;
+  openDmWith: (partner: Omit<Friend, 'addedAt'> | Friend) => void;
   activeProfileUser: RedditUserProfileData | null;
   openProfile: (userData: Partial<RedditUserProfileData>) => void;
   closeProfile: () => void;
@@ -216,8 +216,12 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     );
   };
 
-  const openDmWith = (partner: Friend) => {
-    setActiveDmPartner(partner);
+  const openDmWith = (partner: Omit<Friend, 'addedAt'> | Friend) => {
+    const fullPartner: Friend = {
+      ...partner,
+      addedAt: (partner as Friend).addedAt || new Date().toISOString(),
+    };
+    setActiveDmPartner(fullPartner);
     setChannel('dm');
     setIsOpen(true);
     // Note: Developer and users do NOT need to be friends to send or reply to DMs!

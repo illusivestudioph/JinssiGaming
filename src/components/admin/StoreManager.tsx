@@ -211,7 +211,7 @@ export function StoreManager({
     return (
       p.title.toLowerCase().includes(q) ||
       p.category.toLowerCase().includes(q) ||
-      p.gumroadUrl.toLowerCase().includes(q) ||
+      (p.gumroadUrl && p.gumroadUrl.toLowerCase().includes(q)) ||
       (p.badge && p.badge.toLowerCase().includes(q))
     );
   });
@@ -296,7 +296,7 @@ export function StoreManager({
               <button
                 type="button"
                 onClick={() => handleAutoGrab()}
-                disabled={isGrabbing || !editingProduct.gumroadUrl.trim()}
+                disabled={isGrabbing || !editingProduct.gumroadUrl?.trim()}
                 className="site-button bg-peach-500 hover:bg-peach-600 disabled:opacity-50 text-white font-bold text-xs px-4 py-3 rounded-xl shadow-cozy-sm flex items-center justify-center gap-2 whitespace-nowrap transition-all"
                 title="Automatically fetch title, price, description, cover photo, and bulleted features directly from your Gumroad link"
               >

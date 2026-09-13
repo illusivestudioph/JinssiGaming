@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { StreamlineHeart } from '@/components/StreamlineIcons';
+import { StreamlineHeart, MessageSquare, Send, Sparkles } from '@/components/StreamlineIcons';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/context/AuthContext';
 import { useChat } from '@/context/ChatContext';
@@ -347,7 +347,7 @@ function CommentCard({
             title={`View u/${comment.user_name}'s Profile`}
           >
             <CozyAvatar
-              config={{ archetype, accessory: isCreator ? 'flower' : 'sprout', bgColor: isCreator ? 'cherry' : 'peach' }}
+              config={{ seed: comment.user_name }}
               size={38}
               className="shadow-xs"
             />
