@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useChat } from '@/context/ChatContext';
 import { useAuth } from '@/context/AuthContext';
+import { supabase } from '@/lib/supabase';
 import { CozyAvatar } from '@/components/CozyAvatar';
 import {
   StreamlineClose,
@@ -16,6 +17,14 @@ import {
   StreamlineStar,
   StreamlineLogOut,
 } from '@/components/StreamlineIcons';
+
+interface ProfileComment {
+  id: string;
+  game_id?: string;
+  user_name: string;
+  text: string;
+  created_at: string;
+}
 
 interface BannerColorOption {
   id: string;
@@ -149,6 +158,44 @@ export function RedditProfileModal() {
     );
     setIsEditingBanner(false);
   }, [activeProfileUser?.username, isViewingSelf]);
+
+  // Live real comments query for active profile user
+  const [userComments, setUserComments] = useState<ProfileComment[]>([]);
+  const [isLoadingComments, setIsLoadingComments] = useState(false);
+
+  useEffect(() => {
+    if (activeTab !== 'comments' || !activeProfileUser?.username) return;
+
+    let active = true;
+    setIsLoadingComments(true);
+
+    const fetchUserComments = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('comments')
+          .select('id, game_id, user_name, text, created_at')
+          .eq('user_name', activeProfileUser.username)
+          .order('created_at', { ascending: false })
+          .limit(15);
+
+        if (!error && data && active) {
+          setUserComments(data as ProfileComment[]);
+        } else if (active) {
+          setUserComments([]);
+        }
+      } catch {
+        if (active) setUserComments([]);
+      } finally {
+        if (active) setIsLoadingComments(false);
+      }
+    };
+
+    void fetchUserComments();
+
+    return () => {
+      active = false;
+    };
+  }, [activeTab, activeProfileUser?.username]);
 
   if (!activeProfileUser) return null;
 
@@ -642,25 +689,48 @@ export function RedditProfileModal() {
 
           {activeTab === 'comments' && (
             <div className="space-y-3">
-              <div className="p-3.5 rounded-2xl bg-white border border-[#EADCCB] shadow-2xs">
-                <div className="flex items-center justify-between text-[10px] font-semibold text-tan-500 mb-1">
-                  <span>commented on cozy collection</span>
-                  <span>recent</span>
+              {isLoadingComments ? (
+                <div className="p-8 text-center text-xs text-tan-500 font-medium">
+                  Loading comments...
                 </div>
-                <p className="text-xs text-[#3A2E22] font-medium leading-relaxed">
-                  &ldquo;Love this cozy vibe and the calm music player while reading!&rdquo;
-                </p>
-              </div>
-
-              <div className="p-3.5 rounded-2xl bg-white border border-[#EADCCB] shadow-2xs">
-                <div className="flex items-center justify-between text-[10px] font-semibold text-tan-500 mb-1">
-                  <span>commented on retro story</span>
-                  <span>1w ago</span>
+              ) : userComments.length > 0 ? (
+                userComments.map((c) => {
+                  const targetTitle = c.game_id
+                    ? c.game_id.replace(/^article-/, '').replace(/-/g, ' ')
+                    : 'community discussion';
+                  return (
+                    <div key={c.id} className="p-3.5 rounded-2xl bg-white border border-[#EADCCB] shadow-2xs">
+                      <div className="flex items-center justify-between text-[10px] font-semibold text-tan-500 mb-1">
+                        <span className="capitalize text-peach-700 font-bold">
+                          on {targetTitle}
+                        </span>
+                        <span>
+                          {new Date(c.created_at).toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric',
+                          })}
+                        </span>
+                      </div>
+                      <p className="text-xs text-[#3A2E22] font-medium leading-relaxed">
+                        &ldquo;{c.text}&rdquo;
+                      </p>
+                    </div>
+                  );
+                })
+              ) : (
+                <div className="p-8 text-center rounded-2xl bg-white/70 border border-dashed border-[#EADCCB]">
+                  <StreamlinePencil className="w-7 h-7 text-tan-400 mx-auto mb-2 opacity-60" />
+                  <div className="font-bold text-xs text-[#3A2E22] mb-1">
+                    {isViewingSelf ? "You haven't posted any comments yet" : 'No comments yet'}
+                  </div>
+                  <p className="text-[11px] text-tan-500 max-w-xs mx-auto leading-relaxed">
+                    {isViewingSelf
+                      ? 'When you comment on game walkthroughs or cozy articles, your comments will appear here!'
+                      : `@${activeProfileUser.username} hasn't posted any comments on games or articles yet.`}
+                  </p>
                 </div>
-                <p className="text-xs text-[#3A2E22] font-medium leading-relaxed">
-                  &ldquo;The artwork and storybook layout feel so heartwarming.&rdquo;
-                </p>
-              </div>
+              )}
             </div>
           )}
 
