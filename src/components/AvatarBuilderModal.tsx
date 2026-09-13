@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { CozyAvatar } from '@/components/CozyAvatar';
-import { AdventurerConfig } from '@/types/profile';
+import { AdventurerConfig, getAdventurerAvatarUrl } from '@/types/profile';
 import {
   StreamlinePalette,
   StreamlineDice,
@@ -10,7 +10,7 @@ import {
   StreamlineStars,
 } from '@/components/StreamlineIcons';
 
-// Comprehensive catalog of authentic Adventurer hairstyles
+// Comprehensive catalog of authentic Adventurer hairstyles with visual tags
 const HAIRSTYLES: { id: string; label: string; category: 'male' | 'female' | 'unisex'; tag: string }[] = [
   // Short / Male Haircuts
   { id: 'short01', label: 'Classic Side Part', category: 'male', tag: 'Short / Male' },
@@ -134,7 +134,7 @@ const BACKGROUND_COLORS: { id: string; label: string; hex: string }[] = [
   { id: '2b231e', label: 'Midnight Cafe', hex: '#2B231E' },
 ];
 
-type CustomizerTab = 'hair' | 'face' | 'skin' | 'accessories' | 'backdrop';
+type CustomizerTab = 'hair' | 'face' | 'accessories' | 'skin' | 'backdrop';
 
 export function AvatarBuilderModal() {
   const { profile, updateProfile, showAvatarBuilder, setShowAvatarBuilder, setShowProfileModal } = useAuth();
@@ -170,10 +170,9 @@ export function AvatarBuilderModal() {
 
       if (gender === 'male') {
         setHairCategoryFilter('male');
-        // If current hair is long/female, swap to popular male cut
         const currentIsFemale = HAIRSTYLES.find((h) => h.id === prev.hair)?.category === 'female';
         if (currentIsFemale) nextHair = 'short01';
-        nextEyebrows = 'variant01'; // Stronger masculine brow
+        nextEyebrows = 'variant01';
       } else if (gender === 'female') {
         setHairCategoryFilter('female');
         const currentIsMale = HAIRSTYLES.find((h) => h.id === prev.hair)?.category === 'male';
@@ -196,7 +195,6 @@ export function AvatarBuilderModal() {
   };
 
   const handleRandomize = () => {
-    // Pick pool based on active gender preset
     const currentGender = draftConfig.gender || 'neutral';
     const hairPool =
       currentGender === 'male'
@@ -399,20 +397,20 @@ export function AvatarBuilderModal() {
           </div>
         </div>
 
-        {/* Customization Navigation Tabs */}
+        {/* Customization Navigation Tabs (5 Equal Columns to Fit Panel Perfectly) */}
         <div
-          className="flex border-b px-4 sm:px-6 gap-1 overflow-x-auto text-xs font-bold scrollbar-none"
+          className="grid grid-cols-5 border-b w-full"
           style={{
             backgroundColor: 'var(--card-done-bg, #fcf8ee)',
             borderColor: 'var(--card-line, #ebdcc9)',
           }}
         >
           {[
-            { id: 'hair', label: '✂️ Hair & Color' },
-            { id: 'face', label: '🙂 Expression & Brows' },
-            { id: 'accessories', label: '👓 Mustache & Accents' },
-            { id: 'skin', label: '🎨 Skin & Eyes' },
-            { id: 'backdrop', label: '🌅 Backdrop' },
+            { id: 'hair', icon: '✂️', label: 'Hair' },
+            { id: 'face', icon: '🙂', label: 'Face' },
+            { id: 'accessories', icon: '👓', label: 'Accents' },
+            { id: 'skin', icon: '🎨', label: 'Skin' },
+            { id: 'backdrop', icon: '🌅', label: 'Theme' },
           ].map((tab) => {
             const isActive = activeTab === tab.id;
             return (
@@ -420,15 +418,16 @@ export function AvatarBuilderModal() {
                 key={tab.id}
                 type="button"
                 onClick={() => setActiveTab(tab.id as CustomizerTab)}
-                className={`py-2.5 px-3 border-b-2 transition-all whitespace-nowrap cursor-pointer text-xs ${
-                  isActive ? 'font-extrabold' : 'border-transparent'
+                className={`py-2.5 sm:py-3 px-1 border-b-2 transition-all flex flex-col sm:flex-row items-center justify-center gap-1 cursor-pointer text-center ${
+                  isActive ? 'font-black bg-white/40' : 'border-transparent hover:bg-black/5'
                 }`}
                 style={{
                   borderColor: isActive ? 'var(--theme-accent, #fd9a4d)' : 'transparent',
                   color: isActive ? 'var(--theme-accent, #fd9a4d)' : 'var(--text-muted, #8f6b48)',
                 }}
               >
-                {tab.label}
+                <span className="text-sm">{tab.icon}</span>
+                <span className="text-[11px] sm:text-xs tracking-tight truncate">{tab.label}</span>
               </button>
             );
           })}
@@ -436,15 +435,15 @@ export function AvatarBuilderModal() {
 
         {/* Scrollable Tab Panels */}
         <div
-          className="p-5 sm:p-6 overflow-y-auto space-y-6 flex-1"
+          className="p-4 sm:p-6 overflow-y-auto space-y-6 flex-1"
           style={{ backgroundColor: 'var(--card-bg, #fefcf7)' }}
         >
           {/* TAB 1: HAIRSTYLE & COLOR */}
           {activeTab === 'hair' && (
             <div className="space-y-5">
-              {/* Hairstyle Filter & List */}
+              {/* Hairstyle Filter & Visual Cards */}
               <div>
-                <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center justify-between mb-2.5">
                   <label className="text-xs font-bold uppercase tracking-wider text-[#6A5747]">
                     Hairstyle ({filteredHairstyles.length} cuts)
                   </label>
@@ -452,7 +451,7 @@ export function AvatarBuilderModal() {
                     <button
                       type="button"
                       onClick={() => setHairCategoryFilter('all')}
-                      className={`px-2 py-0.5 rounded-md cursor-pointer ${
+                      className={`px-2 py-0.5 rounded-md cursor-pointer transition-colors ${
                         hairCategoryFilter === 'all'
                           ? 'bg-[#FD9A4D] text-white'
                           : 'bg-white text-tan-600 border border-tan-200'
@@ -463,7 +462,7 @@ export function AvatarBuilderModal() {
                     <button
                       type="button"
                       onClick={() => setHairCategoryFilter('male')}
-                      className={`px-2 py-0.5 rounded-md cursor-pointer ${
+                      className={`px-2 py-0.5 rounded-md cursor-pointer transition-colors ${
                         hairCategoryFilter === 'male'
                           ? 'bg-[#FD9A4D] text-white'
                           : 'bg-white text-tan-600 border border-tan-200'
@@ -474,7 +473,7 @@ export function AvatarBuilderModal() {
                     <button
                       type="button"
                       onClick={() => setHairCategoryFilter('female')}
-                      className={`px-2 py-0.5 rounded-md cursor-pointer ${
+                      className={`px-2 py-0.5 rounded-md cursor-pointer transition-colors ${
                         hairCategoryFilter === 'female'
                           ? 'bg-[#FD9A4D] text-white'
                           : 'bg-white text-tan-600 border border-tan-200'
@@ -485,24 +484,52 @@ export function AvatarBuilderModal() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-56 overflow-y-auto pr-1">
+                {/* Visual Hairstyle Cards with Instant Overlay / Thumbnail Icons */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 max-h-64 overflow-y-auto pr-1">
                   {filteredHairstyles.map((h) => {
                     const isSelected = (draftConfig.hair === h.id) || (h.id === 'none' && draftConfig.hair === 'bald');
+                    const hairPreviewUrl = getAdventurerAvatarUrl({
+                      seed: 'preview-cut',
+                      skinColor: draftConfig.skinColor || 'f2d3b1',
+                      hair: h.id,
+                      hairColor: draftConfig.hairColor || '4a312c',
+                      eyebrows: 'variant02',
+                      eyes: 'variant01',
+                      mouth: 'variant01',
+                      glasses: 'none',
+                      features: 'none',
+                      backgroundColor: 'ffd7b5',
+                    });
+
                     return (
                       <button
                         key={h.id}
                         type="button"
                         onClick={() => setDraftConfig((prev) => ({ ...prev, hair: h.id, useGooglePhoto: false }))}
-                        className={`p-2.5 rounded-xl border-2 flex flex-col text-left text-xs transition-all cursor-pointer ${
+                        className={`p-2 rounded-2xl border-2 flex items-center gap-2.5 text-left transition-all cursor-pointer ${
                           isSelected
-                            ? 'bg-[#FD9A4D] text-white font-bold border-[#E07A2B] shadow-xs'
-                            : 'bg-white border-[#EADCCB] hover:border-[#FD9A4D] text-[#3A2E22] font-semibold hover:bg-[#FFFDFB]'
+                            ? 'bg-[#FFF5EB] border-[#FD9A4D] ring-2 ring-[#FD9A4D]/35 shadow-xs'
+                            : 'bg-white border-[#EADCCB] hover:border-[#FD9A4D] hover:bg-[#FFFDFB]'
                         }`}
                       >
-                        <span className="truncate w-full font-bold">{h.label}</span>
-                        <span className={`text-[10px] mt-0.5 ${isSelected ? 'text-white/80' : 'text-[#8A7565]'}`}>
-                          {h.tag}
-                        </span>
+                        {/* Appearance Thumbnail Icon */}
+                        <div className="w-11 h-11 rounded-xl overflow-hidden shrink-0 border border-[#EADCCB] bg-[#FFD7B5] shadow-xs flex items-center justify-center">
+                          <img
+                            src={hairPreviewUrl}
+                            alt={h.label}
+                            className="w-full h-full object-cover select-none pointer-events-none"
+                            loading="lazy"
+                            decoding="async"
+                          />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className={`font-bold text-xs truncate ${isSelected ? 'text-[#C95A0B]' : 'text-[#3A2E22]'}`}>
+                            {h.label}
+                          </div>
+                          <div className="text-[10px] text-[#8A7565] truncate mt-0.5">
+                            {h.tag}
+                          </div>
+                        </div>
                       </button>
                     );
                   })}
@@ -555,7 +582,7 @@ export function AvatarBuilderModal() {
                 </div>
               </div>
 
-              {/* Eyebrow & Brow Structure */}
+              {/* Eyebrow & Brow Structure with Visual Thumbnails */}
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-[#6A5747] mb-2">
                   Brow Structure & Demeanor
@@ -563,20 +590,45 @@ export function AvatarBuilderModal() {
                 <div className="grid grid-cols-2 gap-2">
                   {EYEBROWS.map((b) => {
                     const isSelected = (draftConfig.eyebrows || 'variant02') === b.id;
+                    const browPreviewUrl = getAdventurerAvatarUrl({
+                      seed: 'preview-brow',
+                      skinColor: draftConfig.skinColor || 'f2d3b1',
+                      hair: draftConfig.hair || 'short01',
+                      hairColor: draftConfig.hairColor || '4a312c',
+                      eyebrows: b.id,
+                      eyes: 'variant01',
+                      mouth: 'variant01',
+                      glasses: 'none',
+                      features: 'none',
+                      backgroundColor: 'ffd7b5',
+                    });
+
                     return (
                       <button
                         key={b.id}
                         type="button"
                         onClick={() => setDraftConfig((prev) => ({ ...prev, eyebrows: b.id, useGooglePhoto: false }))}
-                        className={`p-2.5 rounded-xl border-2 text-left text-xs transition-all cursor-pointer ${
+                        className={`p-2 rounded-2xl border-2 flex items-center gap-2.5 text-left text-xs transition-all cursor-pointer ${
                           isSelected
-                            ? 'bg-[#FD9A4D] text-white font-bold border-[#E07A2B] shadow-xs'
-                            : 'bg-white border-[#EADCCB] hover:border-[#FD9A4D] text-[#3A2E22] font-semibold hover:bg-[#FFFDFB]'
+                            ? 'bg-[#FFF5EB] border-[#FD9A4D] ring-2 ring-[#FD9A4D]/35 shadow-xs'
+                            : 'bg-white border-[#EADCCB] hover:border-[#FD9A4D] hover:bg-[#FFFDFB]'
                         }`}
                       >
-                        <div className="truncate font-bold">{b.label}</div>
-                        <div className={`text-[10px] ${isSelected ? 'text-white/80' : 'text-[#8A7565]'}`}>
-                          {b.mood}
+                        <div className="w-10 h-10 rounded-xl overflow-hidden shrink-0 border border-[#EADCCB] bg-[#FFD7B5] shadow-xs flex items-center justify-center">
+                          <img
+                            src={browPreviewUrl}
+                            alt={b.label}
+                            className="w-full h-full object-cover select-none pointer-events-none"
+                            loading="lazy"
+                          />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className={`font-bold text-xs truncate ${isSelected ? 'text-[#C95A0B]' : 'text-[#3A2E22]'}`}>
+                            {b.label}
+                          </div>
+                          <div className="text-[10px] text-[#8A7565] truncate mt-0.5">
+                            {b.mood}
+                          </div>
                         </div>
                       </button>
                     );
@@ -584,7 +636,7 @@ export function AvatarBuilderModal() {
                 </div>
               </div>
 
-              {/* Mouth & Smile Expression */}
+              {/* Mouth & Smile Expression with Visual Thumbnails */}
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-[#6A5747] mb-2">
                   Mouth Expression & Smile
@@ -592,18 +644,39 @@ export function AvatarBuilderModal() {
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                   {MOUTHS.map((m) => {
                     const isSelected = draftConfig.mouth === m.id;
+                    const mouthPreviewUrl = getAdventurerAvatarUrl({
+                      seed: 'preview-mouth',
+                      skinColor: draftConfig.skinColor || 'f2d3b1',
+                      hair: draftConfig.hair || 'short01',
+                      hairColor: draftConfig.hairColor || '4a312c',
+                      eyebrows: draftConfig.eyebrows || 'variant02',
+                      eyes: 'variant01',
+                      mouth: m.id,
+                      glasses: 'none',
+                      features: 'none',
+                      backgroundColor: 'ffd7b5',
+                    });
+
                     return (
                       <button
                         key={m.id}
                         type="button"
                         onClick={() => setDraftConfig((prev) => ({ ...prev, mouth: m.id, useGooglePhoto: false }))}
-                        className={`p-2.5 rounded-xl border-2 text-left text-xs transition-all cursor-pointer ${
+                        className={`p-2 rounded-2xl border-2 flex items-center gap-2 text-left text-xs transition-all cursor-pointer ${
                           isSelected
-                            ? 'bg-[#FD9A4D] text-white font-bold border-[#E07A2B] shadow-xs'
-                            : 'bg-white border-[#EADCCB] hover:border-[#FD9A4D] text-[#3A2E22] font-semibold hover:bg-[#FFFDFB]'
+                            ? 'bg-[#FFF5EB] border-[#FD9A4D] ring-2 ring-[#FD9A4D]/35 shadow-xs'
+                            : 'bg-white border-[#EADCCB] hover:border-[#FD9A4D] hover:bg-[#FFFDFB]'
                         }`}
                       >
-                        <span className="truncate block font-medium">{m.label}</span>
+                        <div className="w-9 h-9 rounded-xl overflow-hidden shrink-0 border border-[#EADCCB] bg-[#FFD7B5] shadow-xs flex items-center justify-center">
+                          <img
+                            src={mouthPreviewUrl}
+                            alt={m.label}
+                            className="w-full h-full object-cover select-none pointer-events-none"
+                            loading="lazy"
+                          />
+                        </div>
+                        <span className="truncate font-semibold text-xs text-[#3A2E22]">{m.label}</span>
                       </button>
                     );
                   })}
@@ -615,7 +688,7 @@ export function AvatarBuilderModal() {
           {/* TAB 3: MUSTACHE, ACCENTS & SPECTACLES */}
           {activeTab === 'accessories' && (
             <div className="space-y-5">
-              {/* Facial Hair & Accents */}
+              {/* Facial Hair & Accents with Visual Thumbnails */}
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-[#6A5747] mb-2">
                   Facial Hair & Accents
@@ -623,20 +696,45 @@ export function AvatarBuilderModal() {
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                   {FEATURES.map((f) => {
                     const isSelected = (draftConfig.features || 'none') === f.id;
+                    const featurePreviewUrl = getAdventurerAvatarUrl({
+                      seed: 'preview-feature',
+                      skinColor: draftConfig.skinColor || 'f2d3b1',
+                      hair: draftConfig.hair || 'short01',
+                      hairColor: draftConfig.hairColor || '4a312c',
+                      eyebrows: draftConfig.eyebrows || 'variant02',
+                      eyes: 'variant01',
+                      mouth: 'variant01',
+                      glasses: 'none',
+                      features: f.id,
+                      backgroundColor: 'ffd7b5',
+                    });
+
                     return (
                       <button
                         key={f.id}
                         type="button"
                         onClick={() => setDraftConfig((prev) => ({ ...prev, features: f.id, useGooglePhoto: false }))}
-                        className={`p-2.5 rounded-xl border-2 text-left text-xs transition-all cursor-pointer ${
+                        className={`p-2 rounded-2xl border-2 flex items-center gap-2.5 text-left text-xs transition-all cursor-pointer ${
                           isSelected
-                            ? 'bg-[#FD9A4D] text-white font-bold border-[#E07A2B] shadow-xs'
-                            : 'bg-white border-[#EADCCB] hover:border-[#FD9A4D] text-[#3A2E22] font-semibold hover:bg-[#FFFDFB]'
+                            ? 'bg-[#FFF5EB] border-[#FD9A4D] ring-2 ring-[#FD9A4D]/35 shadow-xs'
+                            : 'bg-white border-[#EADCCB] hover:border-[#FD9A4D] hover:bg-[#FFFDFB]'
                         }`}
                       >
-                        <div className="truncate font-bold">{f.label}</div>
-                        <div className={`text-[10px] ${isSelected ? 'text-white/80' : 'text-[#8A7565]'}`}>
-                          {f.tag}
+                        <div className="w-10 h-10 rounded-xl overflow-hidden shrink-0 border border-[#EADCCB] bg-[#FFD7B5] shadow-xs flex items-center justify-center">
+                          <img
+                            src={featurePreviewUrl}
+                            alt={f.label}
+                            className="w-full h-full object-cover select-none pointer-events-none"
+                            loading="lazy"
+                          />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className={`font-bold text-xs truncate ${isSelected ? 'text-[#C95A0B]' : 'text-[#3A2E22]'}`}>
+                            {f.label}
+                          </div>
+                          <div className="text-[10px] text-[#8A7565] truncate mt-0.5">
+                            {f.tag}
+                          </div>
                         </div>
                       </button>
                     );
@@ -644,33 +742,7 @@ export function AvatarBuilderModal() {
                 </div>
               </div>
 
-              {/* Piercings & Earrings */}
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-[#6A5747] mb-2">
-                  Earrings & Piercings
-                </label>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                  {EARRINGS.map((er) => {
-                    const isSelected = (draftConfig.earrings || 'none') === er.id;
-                    return (
-                      <button
-                        key={er.id}
-                        type="button"
-                        onClick={() => setDraftConfig((prev) => ({ ...prev, earrings: er.id, useGooglePhoto: false }))}
-                        className={`p-2.5 rounded-xl border-2 text-left text-xs transition-all cursor-pointer ${
-                          isSelected
-                            ? 'bg-[#FD9A4D] text-white font-bold border-[#E07A2B] shadow-xs'
-                            : 'bg-white border-[#EADCCB] hover:border-[#FD9A4D] text-[#3A2E22] font-semibold hover:bg-[#FFFDFB]'
-                        }`}
-                      >
-                        <span className="truncate block font-medium">{er.label}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Spectacles */}
+              {/* Spectacles with Visual Thumbnails */}
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-[#6A5747] mb-2">
                   Spectacles & Glasses
@@ -678,18 +750,87 @@ export function AvatarBuilderModal() {
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                   {GLASSES.map((g) => {
                     const isSelected = draftConfig.glasses === g.id;
+                    const glassesPreviewUrl = getAdventurerAvatarUrl({
+                      seed: 'preview-glasses',
+                      skinColor: draftConfig.skinColor || 'f2d3b1',
+                      hair: draftConfig.hair || 'short01',
+                      hairColor: draftConfig.hairColor || '4a312c',
+                      eyebrows: draftConfig.eyebrows || 'variant02',
+                      eyes: 'variant01',
+                      mouth: 'variant01',
+                      glasses: g.id,
+                      features: 'none',
+                      backgroundColor: 'ffd7b5',
+                    });
+
                     return (
                       <button
                         key={g.id}
                         type="button"
                         onClick={() => setDraftConfig((prev) => ({ ...prev, glasses: g.id, useGooglePhoto: false }))}
-                        className={`p-2.5 rounded-xl border-2 text-left text-xs transition-all cursor-pointer ${
+                        className={`p-2 rounded-2xl border-2 flex items-center gap-2 text-left text-xs transition-all cursor-pointer ${
                           isSelected
-                            ? 'bg-[#FD9A4D] text-white font-bold border-[#E07A2B] shadow-xs'
-                            : 'bg-white border-[#EADCCB] hover:border-[#FD9A4D] text-[#3A2E22] font-semibold hover:bg-[#FFFDFB]'
+                            ? 'bg-[#FFF5EB] border-[#FD9A4D] ring-2 ring-[#FD9A4D]/35 shadow-xs'
+                            : 'bg-white border-[#EADCCB] hover:border-[#FD9A4D] hover:bg-[#FFFDFB]'
                         }`}
                       >
-                        <span className="truncate block font-medium">{g.label}</span>
+                        <div className="w-9 h-9 rounded-xl overflow-hidden shrink-0 border border-[#EADCCB] bg-[#FFD7B5] shadow-xs flex items-center justify-center">
+                          <img
+                            src={glassesPreviewUrl}
+                            alt={g.label}
+                            className="w-full h-full object-cover select-none pointer-events-none"
+                            loading="lazy"
+                          />
+                        </div>
+                        <span className="truncate font-medium text-xs text-[#3A2E22]">{g.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Piercings & Earrings with Visual Thumbnails */}
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-[#6A5747] mb-2">
+                  Earrings & Piercings
+                </label>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  {EARRINGS.map((er) => {
+                    const isSelected = (draftConfig.earrings || 'none') === er.id;
+                    const earringPreviewUrl = getAdventurerAvatarUrl({
+                      seed: 'preview-earring',
+                      skinColor: draftConfig.skinColor || 'f2d3b1',
+                      hair: 'short01',
+                      hairColor: draftConfig.hairColor || '4a312c',
+                      eyebrows: 'variant02',
+                      eyes: 'variant01',
+                      mouth: 'variant01',
+                      glasses: 'none',
+                      features: 'none',
+                      earrings: er.id,
+                      backgroundColor: 'ffd7b5',
+                    });
+
+                    return (
+                      <button
+                        key={er.id}
+                        type="button"
+                        onClick={() => setDraftConfig((prev) => ({ ...prev, earrings: er.id, useGooglePhoto: false }))}
+                        className={`p-2 rounded-2xl border-2 flex items-center gap-2 text-left text-xs transition-all cursor-pointer ${
+                          isSelected
+                            ? 'bg-[#FFF5EB] border-[#FD9A4D] ring-2 ring-[#FD9A4D]/35 shadow-xs'
+                            : 'bg-white border-[#EADCCB] hover:border-[#FD9A4D] hover:bg-[#FFFDFB]'
+                        }`}
+                      >
+                        <div className="w-9 h-9 rounded-xl overflow-hidden shrink-0 border border-[#EADCCB] bg-[#FFD7B5] shadow-xs flex items-center justify-center">
+                          <img
+                            src={earringPreviewUrl}
+                            alt={er.label}
+                            className="w-full h-full object-cover select-none pointer-events-none"
+                            loading="lazy"
+                          />
+                        </div>
+                        <span className="truncate font-medium text-xs text-[#3A2E22]">{er.label}</span>
                       </button>
                     );
                   })}
@@ -737,18 +878,39 @@ export function AvatarBuilderModal() {
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                   {EYES.map((e) => {
                     const isSelected = draftConfig.eyes === e.id;
+                    const eyePreviewUrl = getAdventurerAvatarUrl({
+                      seed: 'preview-eye',
+                      skinColor: draftConfig.skinColor || 'f2d3b1',
+                      hair: draftConfig.hair || 'short01',
+                      hairColor: draftConfig.hairColor || '4a312c',
+                      eyebrows: draftConfig.eyebrows || 'variant02',
+                      eyes: e.id,
+                      mouth: 'variant01',
+                      glasses: 'none',
+                      features: 'none',
+                      backgroundColor: 'ffd7b5',
+                    });
+
                     return (
                       <button
                         key={e.id}
                         type="button"
                         onClick={() => setDraftConfig((prev) => ({ ...prev, eyes: e.id, useGooglePhoto: false }))}
-                        className={`p-2.5 rounded-xl border-2 text-left text-xs transition-all cursor-pointer ${
+                        className={`p-2 rounded-2xl border-2 flex items-center gap-2 text-left text-xs transition-all cursor-pointer ${
                           isSelected
-                            ? 'bg-[#FD9A4D] text-white font-bold border-[#E07A2B] shadow-xs'
-                            : 'bg-white border-[#EADCCB] hover:border-[#FD9A4D] text-[#3A2E22] font-semibold hover:bg-[#FFFDFB]'
+                            ? 'bg-[#FFF5EB] border-[#FD9A4D] ring-2 ring-[#FD9A4D]/35 shadow-xs'
+                            : 'bg-white border-[#EADCCB] hover:border-[#FD9A4D] hover:bg-[#FFFDFB]'
                         }`}
                       >
-                        <span className="truncate block font-medium">{e.label}</span>
+                        <div className="w-9 h-9 rounded-xl overflow-hidden shrink-0 border border-[#EADCCB] bg-[#FFD7B5] shadow-xs flex items-center justify-center">
+                          <img
+                            src={eyePreviewUrl}
+                            alt={e.label}
+                            className="w-full h-full object-cover select-none pointer-events-none"
+                            loading="lazy"
+                          />
+                        </div>
+                        <span className="truncate font-medium text-xs text-[#3A2E22]">{e.label}</span>
                       </button>
                     );
                   })}
