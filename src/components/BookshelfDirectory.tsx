@@ -9,12 +9,10 @@ import {
   type GutenbergBook,
 } from '@/services/gutenberg';
 import { 
-  BookOpen, 
   Search, 
   Clock, 
   Coffee, 
   ArrowRight, 
-  Bookmark, 
   CheckCircle2, 
   Library,
   BookMarked,
@@ -24,9 +22,13 @@ import {
   Loader2,
   ChevronLeft,
   ChevronRight,
-  Star,
-  Headphones
 } from 'lucide-react';
+import {
+  StreamlineBookDuo,
+  StreamlineBookmark,
+  StreamlineHeadphones,
+  StreamlineStar,
+} from '@/components/StreamlineIcons';
 
 interface BookshelfDirectoryProps {
   onSelectStory: (story: Story, chapterNumber?: number) => void;
@@ -211,7 +213,7 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
           <div className="jump-back-in-card p-5 sm:p-6 rounded-2xl bg-peach-50/90 border-2 border-peach-200 shadow-cozy-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex items-start gap-4">
               <div className="w-12 h-12 rounded-2xl bg-peach-400 text-ink-900 flex items-center justify-center shrink-0 shadow-cozy-xs">
-                <Bookmark className="w-6 h-6" />
+                <StreamlineBookmark className="w-6 h-6" />
               </div>
               <div>
                 <span className="text-[11px] font-bold text-peach-700 uppercase tracking-wider block">
@@ -325,7 +327,7 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
         <div>
           {userBookmarks.length === 0 ? (
             <div className="text-center py-16 bg-cream-50 rounded-3xl border-2 border-dashed border-tan-200 max-w-lg mx-auto">
-              <Bookmark className="w-12 h-12 mx-auto text-tan-300 mb-3" />
+              <StreamlineBookmark className="w-12 h-12 mx-auto text-tan-300 mb-3" />
               <h3 className="font-display font-bold text-lg text-ink-900 mb-1">
                 Your Reading Shelf is Clean & Quiet
               </h3>
@@ -381,7 +383,7 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
                       onClick={() => onSelectStory(story, 1)}
                       className="w-full site-button bg-peach-500 hover:bg-peach-600 text-white text-xs font-bold py-2.5 rounded-xl flex items-center justify-center gap-2 shadow-cozy-sm"
                     >
-                      <BookOpen className="w-4 h-4" />
+                      <StreamlineBookDuo className="w-4 h-4" />
                       <span>Read Unabridged</span>
                     </button>
                   </div>
@@ -450,7 +452,7 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
                     <div
                       key={book.id}
                       className={`notepad-card group flex flex-col justify-between hover:-translate-y-1 transition-all duration-300 shadow-cozy-md ${
-                        isPinned ? 'ring-2 ring-amber-400/90 shadow-amber-500/10' : ''
+                        isPinned ? 'ring-2 ring-[var(--theme-accent)] shadow-cozy-md' : ''
                       }`}
                     >
                       <div>
@@ -458,8 +460,8 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
                         <div className="book-cover-container h-56 relative overflow-hidden bg-cream-200 flex items-center justify-center p-2 rounded-t-[1.1rem]">
                           {/* Pinned eBook #1 Badge */}
                           {isPinned && (
-                            <div className="absolute top-3 left-3 z-10 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-gradient-to-r from-amber-500 to-peach-500 text-white font-extrabold text-[11px] shadow-cozy-sm tracking-wide">
-                              <Star className="w-3.5 h-3.5 fill-white text-white" />
+                            <div className="absolute top-3 left-3 z-10 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-[var(--theme-accent,theme(colors.peach.500))] text-white font-extrabold text-[11px] shadow-cozy-sm tracking-wide">
+                              <StreamlineStar className="w-3.5 h-3.5 fill-white text-white" />
                               <span>PINNED EBOOK #1</span>
                             </div>
                           )}
@@ -484,7 +486,7 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
                                 : 'bg-white/90 text-tan-500 hover:text-peach-600 hover:bg-white'
                             }`}
                           >
-                            <Bookmark className="w-4 h-4" />
+                            <StreamlineBookmark className="w-4 h-4" />
                           </button>
                         </div>
 
@@ -493,17 +495,17 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
                           <div className="flex items-center gap-2 text-[11px] text-tan-500 font-sans mb-1.5">
                             {isPinned ? (
                               <>
-                                <span className="flex items-center gap-1 font-extrabold text-amber-700">
-                                  <Headphones className="w-3.5 h-3.5 text-amber-500" />
+                                <span className="flex items-center gap-1.5 font-extrabold text-[var(--theme-accent)]">
+                                  <StreamlineHeadphones className="w-3.5 h-3.5 text-[var(--theme-accent)]" />
                                   Audiobook & PDF
                                 </span>
                                 <span>•</span>
-                                <span className="font-semibold text-peach-700">Unabridged 1931 Original</span>
+                                <span className="font-semibold text-ink-700">Unabridged 1931 Original</span>
                               </>
                             ) : (
                               <>
-                                <span className="flex items-center gap-1 font-semibold text-peach-600">
-                                  <Headphones className="w-3.5 h-3.5" />
+                                <span className="flex items-center gap-1.5 font-semibold text-peach-600">
+                                  <StreamlineHeadphones className="w-3.5 h-3.5" />
                                   Audiobook Ready
                                 </span>
                                 <span>•</span>
@@ -513,9 +515,7 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
                           </div>
 
                           <h3
-                            className={`font-display font-bold text-base text-ink-900 group-hover:text-peach-600 transition-colors line-clamp-1 mb-1 ${
-                              isPinned ? 'text-amber-950 font-extrabold' : ''
-                            }`}
+                            className="font-display font-bold text-base text-ink-900 group-hover:text-peach-600 transition-colors line-clamp-1 mb-1"
                             title={book.title}
                           >
                             {book.title}
@@ -541,11 +541,7 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
                           type="button"
                           disabled={isCurrentLoading}
                           onClick={() => handleReadBook(book)}
-                          className={`w-full site-button disabled:opacity-75 text-white text-xs font-bold py-2.5 rounded-xl flex items-center justify-center gap-2 shadow-cozy-sm transition-all ${
-                            isPinned
-                              ? 'bg-gradient-to-r from-amber-500 to-peach-500 hover:from-amber-600 hover:to-peach-600 shadow-amber-500/25'
-                              : 'bg-peach-500 hover:bg-peach-600'
-                          }`}
+                          className="w-full site-button disabled:opacity-75 text-white text-xs font-bold py-2.5 rounded-xl flex items-center justify-center gap-2 shadow-cozy-sm transition-all bg-[var(--theme-accent,theme(colors.peach.500))] hover:opacity-90"
                         >
                           {isCurrentLoading ? (
                             <>
@@ -554,8 +550,8 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
                             </>
                           ) : (
                             <>
-                              <Headphones className="w-4 h-4" />
-                              <span>{isPinned ? '🎧 Read & Listen (PDF)' : '🎧 Read & Listen'}</span>
+                              <StreamlineHeadphones className="w-4 h-4" />
+                              <span>{isPinned ? 'Read & Listen (PDF)' : 'Read & Listen'}</span>
                               <ArrowRight className="w-3.5 h-3.5" />
                             </>
                           )}

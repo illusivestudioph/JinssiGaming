@@ -21,7 +21,8 @@ import { ContactPage } from '@/components/ContactPage';
 import { CookieConsent } from '@/components/CookieConsent';
 import { AdSenseUnit } from '@/components/AdSenseUnit';
 import { GameCard } from '@/components/GameCard';
-import { ArrowRight, Search, Gamepad2 } from 'lucide-react';
+import { ArrowRight, Search } from 'lucide-react';
+import { StreamlineGamepad } from '@/components/StreamlineIcons';
 
 // 1. Context Provider
 import { SiteContentProvider, useSiteContent } from '@/context/SiteContentContext'; 
@@ -511,7 +512,7 @@ function WalkthroughsPage({
       <div className="text-center max-w-2xl mx-auto mb-10">
         <div>
           <div className="library-badge inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold mb-3 shadow-cozy-sm">
-            <Gamepad2 className="w-3.5 h-3.5" />
+            <StreamlineGamepad className="w-3.5 h-3.5" />
             <span>Step-by-step guides</span>
           </div>
         </div>

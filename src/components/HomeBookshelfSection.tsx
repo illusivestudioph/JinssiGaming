@@ -6,7 +6,13 @@ import {
   fetchAndParseGutenbergBook,
   type GutenbergBook,
 } from '@/services/gutenberg';
-import { BookOpen, Clock, ArrowRight, BookMarked, Coffee, Loader2, Star, Headphones } from 'lucide-react';
+import { Clock, ArrowRight, Loader2 } from 'lucide-react';
+import {
+  StreamlineBookDuo,
+  StreamlineCoffeeDuo,
+  StreamlineHeadphones,
+  StreamlineStar,
+} from '@/components/StreamlineIcons';
 
 interface HomeBookshelfSectionProps {
   onSelectStory: (story: Story, chapterNumber?: number) => void;
@@ -47,7 +53,7 @@ export function HomeBookshelfSection({
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
         <div>
           <div className="library-badge inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold mb-2 shadow-cozy-sm">
-            <Headphones className="w-3.5 h-3.5 text-peach-600" />
+            <StreamlineHeadphones className="w-3.5 h-3.5 text-peach-600" />
             <span>Free Audiobook & Literature Sanctuary</span>
           </div>
           <h2 className="font-display text-2xl sm:text-3xl font-extrabold text-ink-900 tracking-tight text-balance">
@@ -62,7 +68,7 @@ export function HomeBookshelfSection({
           onClick={onNavigateToBookshelf}
           className="bookshelf-browse-btn inline-flex items-center gap-2 text-xs font-bold transition-all px-4 py-2 rounded-xl shadow-cozy-sm self-start sm:self-auto"
         >
-          <BookOpen className="w-4 h-4" />
+          <StreamlineBookDuo className="w-4 h-4 text-peach-600" />
           <span>Browse 70,000+ Free eBooks</span>
           <ArrowRight className="w-3.5 h-3.5" />
         </button>
@@ -93,14 +99,14 @@ export function HomeBookshelfSection({
               key={book.id}
               onClick={() => !isLoadingThis && handleReadBook(book)}
               className={`notepad-card group cursor-pointer flex flex-col justify-between hover:-translate-y-1 transition-all duration-300 shadow-cozy-md h-full rounded-2xl ${
-                isPinned ? 'ring-2 ring-amber-400/90 shadow-amber-500/10' : ''
+                isPinned ? 'ring-2 ring-[var(--theme-accent)] shadow-cozy-md' : ''
               }`}
             >
               <div>
                 <div className="book-cover-container h-52 relative overflow-hidden bg-cream-200 flex items-center justify-center rounded-t-[1.1rem]">
                   {isPinned ? (
-                    <div className="absolute top-2.5 left-2.5 z-10 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-gradient-to-r from-amber-500 to-peach-500 text-white text-[10px] font-extrabold uppercase tracking-wider shadow-cozy-sm">
-                      <Star className="w-3 h-3 fill-white text-white" />
+                    <div className="absolute top-2.5 left-2.5 z-10 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[var(--theme-accent,theme(colors.peach.500))] text-white text-[10px] font-extrabold uppercase tracking-wider shadow-cozy-sm">
+                      <StreamlineStar className="w-3 h-3 text-white fill-white" />
                       <span>Pinned eBook #1</span>
                     </div>
                   ) : null}
@@ -120,17 +126,17 @@ export function HomeBookshelfSection({
                   <div className="flex items-center gap-3 text-xs text-tan-500 font-sans mb-2">
                     {isPinned ? (
                       <>
-                        <span className="flex items-center gap-1 font-extrabold text-amber-700">
-                          <Headphones className="w-3.5 h-3.5 text-amber-500" />
+                        <span className="flex items-center gap-1.5 font-extrabold text-[var(--theme-accent)]">
+                          <StreamlineHeadphones className="w-3.5 h-3.5 text-[var(--theme-accent)]" />
                           Audiobook & PDF
                         </span>
                         <span>•</span>
-                        <span className="font-semibold text-peach-700">1931 Unabridged</span>
+                        <span className="font-semibold text-ink-700">1931 Unabridged</span>
                       </>
                     ) : (
                       <>
                         <span className="flex items-center gap-1 text-peach-600 font-semibold">
-                          <Headphones className="w-3.5 h-3.5" />
+                          <StreamlineHeadphones className="w-3.5 h-3.5" />
                           Audiobook
                         </span>
                         <span>•</span>
@@ -142,9 +148,7 @@ export function HomeBookshelfSection({
                     )}
                   </div>
 
-                  <h3 className={`font-display font-bold text-lg sm:text-xl text-ink-900 group-hover:text-peach-600 transition-colors line-clamp-1 mb-1.5 leading-snug ${
-                    isPinned ? 'text-amber-950 font-extrabold' : ''
-                  }`}>
+                  <h3 className="font-display font-bold text-lg sm:text-xl text-ink-900 group-hover:text-peach-600 transition-colors line-clamp-1 mb-1.5 leading-snug">
                     {book.title}
                   </h3>
 
@@ -161,8 +165,8 @@ export function HomeBookshelfSection({
               </div>
 
               <div className="px-5 pb-5 pt-2 border-t border-tan-200/60 flex items-center justify-between text-xs font-bold text-peach-600">
-                <span className="flex items-center gap-1 text-tan-500 font-normal">
-                  <Coffee className="w-3.5 h-3.5 text-peach-500" />
+                <span className="flex items-center gap-1.5 text-tan-500 font-normal">
+                  <StreamlineCoffeeDuo className="w-3.5 h-3.5 text-peach-500" />
                   {isPinned ? 'Pinned Public Shelf' : 'Gutenberg Archive'}
                 </span>
                 <div className="flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
@@ -173,7 +177,7 @@ export function HomeBookshelfSection({
                     </span>
                   ) : (
                     <>
-                      <span className={isPinned ? 'text-amber-700 font-extrabold' : ''}>
+                      <span className={isPinned ? 'text-[var(--theme-accent)] font-extrabold' : ''}>
                         {isPinned ? '🎧 Read & Listen (PDF)' : '🎧 Read & Listen'}
                       </span>
                       <ArrowRight className="w-3.5 h-3.5" />

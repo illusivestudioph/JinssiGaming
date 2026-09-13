@@ -1,4 +1,5 @@
-import { Heart, Gamepad2, BookOpen } from 'lucide-react';
+import { StreamlineGamepad, StreamlineBookDuo, StreamlineHeart } from '@/components/StreamlineIcons';
+
 export function AboutPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
@@ -20,7 +21,7 @@ export function AboutPage() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
         <div className="cozy-card notepad-card p-6 text-center">
           <div className="w-12 h-12 rounded-2xl bg-peach-100 flex items-center justify-center mx-auto mb-3">
-            <Gamepad2 className="w-6 h-6 text-peach-400" />
+            <StreamlineGamepad className="w-6 h-6 text-peach-600" />
           </div>
           <h3 className="font-display text-base font-600 text-ink-900 mb-1">
             Curated Games
@@ -32,7 +33,7 @@ export function AboutPage() {
 
         <div className="cozy-card notepad-card p-6 text-center">
           <div className="w-12 h-12 rounded-2xl bg-earth-100 flex items-center justify-center mx-auto mb-3">
-            <BookOpen className="w-6 h-6 text-earth-500" />
+            <StreamlineBookDuo className="w-6 h-6 text-earth-700" />
           </div>
           <h3 className="font-display text-base font-600 text-ink-900 mb-1">
             Visual Guides
@@ -44,7 +45,7 @@ export function AboutPage() {
 
         <div className="cozy-card notepad-card p-6 text-center">
           <div className="w-12 h-12 rounded-2xl bg-sage-100 flex items-center justify-center mx-auto mb-3">
-            <Heart className="w-6 h-6 text-sage-400" />
+            <StreamlineHeart className="w-6 h-6 text-sage-600" />
           </div>
           <h3 className="font-display text-base font-600 text-ink-900 mb-1">
             Made with Care

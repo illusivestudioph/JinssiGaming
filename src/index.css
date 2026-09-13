@@ -1480,19 +1480,23 @@
   animation: float-heart-up 1s ease-out forwards;
 }
 
-/* Custom scrollbar */
+/* Custom scrollbar - dynamically follows theme */
+* {
+  scrollbar-color: var(--theme-accent, #e0bf91) var(--card-done-bg, #fdf8f1);
+}
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 9px;
+  height: 9px;
 }
 ::-webkit-scrollbar-track {
-  background: #fdf8f1;
+  background: var(--card-done-bg, #fdf8f1);
 }
 ::-webkit-scrollbar-thumb {
-  background: #e0bf91;
-  border-radius: 10px;
+  background: var(--theme-accent, #e0bf91);
+  border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #d9a472;
+  background: var(--theme-accent-hover, #d9a472);
 }
 
 /* Selection color */

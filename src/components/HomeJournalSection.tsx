@@ -1,6 +1,7 @@
 import { useSiteContent } from '@/context/SiteContentContext';
 import type { Article } from '@/data/articles';
-import { BookOpen, Clock, ArrowRight, Coffee } from 'lucide-react';
+import { Clock, ArrowRight } from 'lucide-react';
+import { StreamlineCoffeeDuo, StreamlineBookDuo } from '@/components/StreamlineIcons';
 import { getOptimizedImageUrl } from '@/utils/imageOptimization';
 
 interface HomeJournalSectionProps {
@@ -24,7 +25,7 @@ export function HomeJournalSection({
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
         <div>
           <div className="library-badge inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold mb-2 shadow-cozy-sm">
-            <Coffee className="w-3.5 h-3.5 text-peach-600" />
+            <StreamlineCoffeeDuo className="w-4 h-4 text-peach-600" />
             <span>Cozy Tea Time Reads</span>
           </div>
           <h2 className="font-display text-2xl sm:text-3xl font-extrabold text-ink-900 tracking-tight text-balance">
@@ -39,7 +40,7 @@ export function HomeJournalSection({
           onClick={onNavigateToJournal}
           className="bookshelf-browse-btn inline-flex items-center gap-2 text-xs font-bold transition-all px-4 py-2 rounded-xl shadow-cozy-sm self-start sm:self-auto"
         >
-          <BookOpen className="w-4 h-4" />
+          <StreamlineBookDuo className="w-4 h-4 text-peach-600" />
           <span>Explore All Articles</span>
           <ArrowRight className="w-3.5 h-3.5" />
         </button>

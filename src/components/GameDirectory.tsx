@@ -2,7 +2,8 @@ import { useState, useMemo } from 'react';
 import { categories, type Game } from '@/data/games';
 import { useSiteContent } from '@/context/SiteContentContext';
 import { GameCard } from './GameCard';
-import { Search, SlidersHorizontal, ArrowRight, Gamepad2 } from 'lucide-react';
+import { Search, SlidersHorizontal, ArrowRight } from 'lucide-react';
+import { StreamlineGamepad } from '@/components/StreamlineIcons';
 
 interface GameDirectoryProps {
   onSelectGame: (game: Game) => void;
@@ -52,7 +53,7 @@ export function GameDirectory({
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
         <div>
           <div className="library-badge inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold mb-2 shadow-cozy-sm">
-            <Gamepad2 className="w-3.5 h-3.5 text-peach-600" />
+            <StreamlineGamepad className="w-3.5 h-3.5 text-peach-600" />
             <span>Step-by-step Guides & Tidying Games</span>
           </div>
           <h2 className="font-display text-2xl sm:text-3xl font-extrabold text-ink-900 tracking-tight text-balance">
@@ -68,7 +69,7 @@ export function GameDirectory({
             onClick={onNavigateToWalkthroughs}
             className="bookshelf-browse-btn inline-flex items-center gap-2 text-xs font-bold transition-all px-4 py-2 rounded-xl shadow-cozy-sm self-start sm:self-auto"
           >
-            <Gamepad2 className="w-4 h-4 text-peach-500" />
+            <StreamlineGamepad className="w-4 h-4 text-peach-500" />
             <span>Explore All Walkthroughs</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </button>
