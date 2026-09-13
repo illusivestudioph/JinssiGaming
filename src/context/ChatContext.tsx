@@ -92,8 +92,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
 
   // Poll / Refresh messages
   const refreshMessages = useCallback(async () => {
-    const currentPartnerId = channel === 'dm' ? activeDmPartner?.id : undefined;
-    const list = await fetchSupabaseMessages(channel, user?.id, currentPartnerId);
+    const list = await fetchSupabaseMessages(channel, user?.id, activeDmPartner);
     setMessages(list);
   }, [channel, activeDmPartner, user]);
 
@@ -109,13 +108,23 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   const sendMessage = async (text: string) => {
     if (!text.trim()) return;
 
+    const isSenderCreator = Boolean(
+      profile.isCreator ||
+      profile.email === 'mjhanesultancruz1514@gmail.com' ||
+      user?.email === 'mjhanesultancruz1514@gmail.com'
+    );
+
+    const cleanSenderName = isSenderCreator
+      ? 'Jinssi'
+      : (profile.username || 'CozyPlayer').split('@')[0];
+
     const newMsg: ChatMessage = {
       id: `msg-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`,
       channel,
       senderId: user ? user.id : 'guest-player',
-      senderName: profile.username || 'CozyPlayer',
+      senderName: cleanSenderName,
       senderAvatar: profile.avatarConfig || {},
-      senderIsCreator: Boolean(profile.isCreator),
+      senderIsCreator: isSenderCreator,
       receiverId: channel === 'dm' ? activeDmPartner?.id : undefined,
       receiverName: channel === 'dm' ? activeDmPartner?.username : undefined,
       text: text.trim(),
@@ -171,25 +180,45 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     setActiveDmPartner(partner);
     setChannel('dm');
     setIsOpen(true);
-    // Auto add to friends if not yet added
-    if (!isFriend(partner.id)) {
-      addFriend(partner);
-    }
+    // Note: Developer and users do NOT need to be friends to send or reply to DMs!
   };
 
   const openProfile = (data: Partial<RedditUserProfileData>) => {
-    const isTargetCreator =
+    const isTargetCreator = Boolean(
       data.isCreator ||
       data.username?.toLowerCase().includes('jinssi') ||
-      data.id === 'jinssi-creator';
+      data.username?.toLowerCase().includes('mjhane') ||
+      data.id === 'jinssi-creator' ||
+      data.id === 'creator-jinssi-dev-id'
+    );
+
+    const cleanUsername = isTargetCreator
+      ? 'Jinssi'
+      : (data.username || 'CozyAdventurer').split('@')[0];
+
+    // Load saved banner settings if this is Jinssi or user has saved banner
+    let savedBannerColor = data.bannerColor;
+    let savedBannerText = data.bannerText;
+    if (!savedBannerColor || !savedBannerText) {
+      try {
+        const stored = localStorage.getItem(`jinssi_profile_banner_${cleanUsername}`);
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (parsed.color) savedBannerColor = parsed.color;
+          if (parsed.text) savedBannerText = parsed.text;
+        }
+      } catch {
+        // ignore
+      }
+    }
 
     setActiveProfileUser({
-      id: data.id || `user-${data.username || 'player'}`,
-      username: data.username || 'CozyAdventurer',
+      id: data.id || `user-${cleanUsername}`,
+      username: cleanUsername,
       bio: data.bio || (isTargetCreator ? 'Creator & Lead Developer of Jinssi Gaming 🌸' : 'Cozy explorer & reader 🍵'),
       badge: data.badge || (isTargetCreator ? 'Creator & Developer' : 'Cozy Explorer'),
       avatarConfig: data.avatarConfig || {
-        seed: data.username || 'Adventurer',
+        seed: cleanUsername,
         hair: isTargetCreator ? 'short02' : 'short01',
         hairColor: '4a312c',
         skinColor: 'f2d3b1',
@@ -197,8 +226,9 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       },
       isCreator: isTargetCreator,
       role: isTargetCreator ? 'developer' : 'member',
-      joinedAt: data.joinedAt || new Date(Date.now() - 30 * 24 * 3600 * 1000).toISOString(),
-      karma: isTargetCreator ? 1514 : Math.floor(Math.random() * 400 + 42),
+      joinedAt: data.joinedAt || new Date().toISOString(),
+      bannerColor: savedBannerColor || (isTargetCreator ? 'peach' : 'vanilla'),
+      bannerText: savedBannerText || (isTargetCreator ? 'Welcome to Jinssi Gaming! 🌸' : 'Enjoying cozy stories & games 🍵'),
       bannerTheme: data.bannerTheme || (isTargetCreator ? 'sakura' : 'cafe'),
     });
   };

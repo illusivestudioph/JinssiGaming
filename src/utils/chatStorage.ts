@@ -7,9 +7,72 @@ const LOCAL_STORAGE_KEY_FRIENDS = 'jinssi_friends_list_v1';
 const CLEANUP_TIMESTAMP_KEY = 'jinssi_last_supabase_cleanup';
 
 /**
+ * Reliably checks if a DM message belongs to the conversation with a given partner.
+ * Handles creator identity aliases (jinssi-creator, auth UUIDs, developer emails) seamlessly.
+ */
+export function isDmForPartner(
+  m: ChatMessage,
+  partner: { id?: string; username?: string; isCreator?: boolean } | string | null | undefined
+): boolean {
+  if (m.channel !== 'dm' || !partner) return false;
+
+  const partnerId = typeof partner === 'string' ? partner : partner.id;
+  const partnerRawName = typeof partner === 'string' ? partner : partner.username;
+  const partnerName = partnerRawName?.toLowerCase().trim().replace(/^[@u/]+/, '');
+
+  const isPartnerDev = Boolean(
+    (typeof partner === 'object' && partner?.isCreator) ||
+    partnerId === 'jinssi-creator' ||
+    partnerId === 'creator-jinssi-dev-id' ||
+    partnerName === 'jinssi' ||
+    partnerName?.includes('mjhane')
+  );
+
+  const senderId = m.senderId;
+  const receiverId = m.receiverId;
+  const senderName = m.senderName?.toLowerCase().trim().replace(/^[@u/]+/, '');
+  const receiverName = m.receiverName?.toLowerCase().trim().replace(/^[@u/]+/, '');
+
+  const isSenderDev = Boolean(
+    m.senderIsCreator ||
+    senderId === 'jinssi-creator' ||
+    senderId === 'creator-jinssi-dev-id' ||
+    senderName === 'jinssi' ||
+    senderName?.includes('mjhane')
+  );
+
+  const isReceiverDev = Boolean(
+    receiverId === 'jinssi-creator' ||
+    receiverId === 'creator-jinssi-dev-id' ||
+    receiverName === 'jinssi' ||
+    receiverName?.includes('mjhane')
+  );
+
+  // If chatting with the developer / Jinssi:
+  if (isPartnerDev) {
+    return isSenderDev || isReceiverDev;
+  }
+
+  // Matching by user ID
+  if (partnerId && (senderId === partnerId || receiverId === partnerId)) {
+    return true;
+  }
+
+  // Matching by clean username
+  if (partnerName && (senderName === partnerName || receiverName === partnerName)) {
+    return true;
+  }
+
+  return false;
+}
+
+/**
  * Reads local messages archive from browser storage
  */
-export function getLocalMessages(channel: ChatChannel, dmPartnerId?: string): ChatMessage[] {
+export function getLocalMessages(
+  channel: ChatChannel,
+  dmPartner?: { id?: string; username?: string; isCreator?: boolean } | string | null
+): ChatMessage[] {
   try {
     const key = channel === 'world' ? LOCAL_STORAGE_KEY_WORLD : LOCAL_STORAGE_KEY_DMS;
     const raw = localStorage.getItem(key);
@@ -18,13 +81,8 @@ export function getLocalMessages(channel: ChatChannel, dmPartnerId?: string): Ch
     if (channel === 'world') {
       return parsed.filter((m) => m.channel === 'world');
     }
-    if (dmPartnerId) {
-      return parsed.filter(
-        (m) =>
-          m.channel === 'dm' &&
-          ((m.senderId === dmPartnerId && m.receiverId) ||
-            (m.receiverId === dmPartnerId && m.senderId))
-      );
+    if (dmPartner) {
+      return parsed.filter((m) => isDmForPartner(m, dmPartner));
     }
     return parsed.filter((m) => m.channel === 'dm');
   } catch (err) {
@@ -88,43 +146,49 @@ export async function cleanOldSupabaseMessages(): Promise<void> {
 /**
  * Fetches recent messages from Supabase and merges with local archive
  */
+/**
+ * Fetches recent messages from Supabase and merges with local archive
+ */
 export async function fetchSupabaseMessages(
   channel: ChatChannel,
   currentUserId?: string,
-  dmPartnerId?: string
+  dmPartner?: { id?: string; username?: string; isCreator?: boolean } | string | null
 ): Promise<ChatMessage[]> {
   // Always start with locally saved messages
-  const localList = getLocalMessages(channel, dmPartnerId);
+  const localList = getLocalMessages(channel, dmPartner);
 
   try {
-    let query = supabase
+    const query = supabase
       .from('chat_messages')
       .select('id, channel, sender_id, sender_name, sender_avatar, receiver_id, receiver_name, text, created_at')
       .eq('channel', channel)
       .order('created_at', { ascending: true })
       .limit(100);
 
-    if (channel === 'dm' && currentUserId && dmPartnerId) {
-      query = query.or(
-        `and(sender_id.eq.${currentUserId},receiver_id.eq.${dmPartnerId}),and(sender_id.eq.${dmPartnerId},receiver_id.eq.${currentUserId})`
-      );
-    }
-
     const { data, error } = await query;
 
     if (!error && data) {
-      const remoteMessages: ChatMessage[] = data.map((row) => ({
-        id: String(row.id),
-        channel: row.channel as ChatChannel,
-        senderId: String(row.sender_id),
-        senderName: String(row.sender_name),
-        senderAvatar: typeof row.sender_avatar === 'object' ? row.sender_avatar : {},
-        senderIsCreator: String(row.sender_name).toLowerCase().includes('jinssi'),
-        receiverId: row.receiver_id ? String(row.receiver_id) : undefined,
-        receiverName: row.receiver_name ? String(row.receiver_name) : undefined,
-        text: String(row.text),
-        createdAt: String(row.created_at),
-      }));
+      const remoteMessages: ChatMessage[] = data.map((row) => {
+        const rawName = String(row.sender_name || '');
+        const isCreator =
+          rawName.toLowerCase().includes('jinssi') ||
+          rawName.toLowerCase().includes('mjhane');
+
+        const cleanSenderName = isCreator ? 'Jinssi' : rawName.split('@')[0];
+
+        return {
+          id: String(row.id),
+          channel: row.channel as ChatChannel,
+          senderId: String(row.sender_id),
+          senderName: cleanSenderName,
+          senderAvatar: typeof row.sender_avatar === 'object' ? row.sender_avatar : {},
+          senderIsCreator: isCreator,
+          receiverId: row.receiver_id ? String(row.receiver_id) : undefined,
+          receiverName: row.receiver_name ? String(row.receiver_name) : undefined,
+          text: String(row.text),
+          createdAt: String(row.created_at),
+        };
+      });
 
       // Merge and save to local storage
       remoteMessages.forEach(saveMessageLocally);
@@ -132,7 +196,11 @@ export async function fetchSupabaseMessages(
       // Return combined, deduplicated messages
       const idMap = new Map<string, ChatMessage>();
       localList.forEach((m) => idMap.set(m.id, m));
-      remoteMessages.forEach((m) => idMap.set(m.id, m));
+      remoteMessages.forEach((m) => {
+        if (channel === 'world' || isDmForPartner(m, dmPartner)) {
+          idMap.set(m.id, m);
+        }
+      });
 
       return Array.from(idMap.values()).sort(
         (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()

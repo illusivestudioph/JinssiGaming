@@ -89,7 +89,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const merged: UserProfile = {
         id: u.id,
         email: u.email,
-        username: meta.custom_username || (isCreator && prev.username === 'CozyPlayer' ? 'Jinssi' : prev.username) || defaultName,
+        username: isCreator
+          ? 'Jinssi'
+          : (meta.custom_username || prev.username || defaultName).split('@')[0],
         bio: meta.bio || (isCreator && prev.bio === DEFAULT_PROFILE.bio ? defaultBio : prev.bio) || defaultBio,
         badge: (meta.badge as CommunityBadge) || (isCreator && prev.badge === 'Cozy Explorer' ? defaultBadge : prev.badge) || defaultBadge,
         isCreator,

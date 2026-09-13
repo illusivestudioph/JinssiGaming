@@ -12,14 +12,87 @@ import {
   StreamlineCoffee,
   StreamlinePencil,
   StreamlineUsers,
+  StreamlinePalette,
+  StreamlineStar,
 } from '@/components/StreamlineIcons';
+
+interface BannerColorOption {
+  id: string;
+  name: string;
+  gradient: string;
+  dotColor: string;
+  borderColor: string;
+}
+
+const BANNER_PALETTES: BannerColorOption[] = [
+  {
+    id: 'peach',
+    name: 'Cozy Peach',
+    gradient: 'linear-gradient(135deg, #FD9A4D 0%, #FCB274 50%, #E07A2B 100%)',
+    dotColor: '#ffffff',
+    borderColor: '#FCB274',
+  },
+  {
+    id: 'matcha',
+    name: 'Matcha Herb',
+    gradient: 'linear-gradient(135deg, #649058 0%, #87A96B 50%, #4D7043 100%)',
+    dotColor: '#ffffff',
+    borderColor: '#87A96B',
+  },
+  {
+    id: 'lavender',
+    name: 'Twilight Berry',
+    gradient: 'linear-gradient(135deg, #8E7DBE 0%, #B3A4D6 50%, #6E5C9E 100%)',
+    dotColor: '#ffffff',
+    borderColor: '#B3A4D6',
+  },
+  {
+    id: 'espresso',
+    name: 'Warm Mocha',
+    gradient: 'linear-gradient(135deg, #5E4134 0%, #7E5846 50%, #432E24 100%)',
+    dotColor: '#ffffff',
+    borderColor: '#7E5846',
+  },
+  {
+    id: 'honey',
+    name: 'Golden Honey',
+    gradient: 'linear-gradient(135deg, #E6A23C 0%, #F5C06A 50%, #C48220 100%)',
+    dotColor: '#ffffff',
+    borderColor: '#F5C06A',
+  },
+  {
+    id: 'sakura',
+    name: 'Sakura Petal',
+    gradient: 'linear-gradient(135deg, #E87A90 0%, #F4A7B9 50%, #C2566E 100%)',
+    dotColor: '#ffffff',
+    borderColor: '#F4A7B9',
+  },
+];
 
 export function RedditProfileModal() {
   const { activeProfileUser, closeProfile, isFriend, addFriend, removeFriend, openDmWith } =
     useChat();
-  const { user, triggerAuthPrompt } = useAuth();
+  const { user, profile, triggerAuthPrompt } = useAuth();
   const [activeTab, setActiveTab] = useState<'overview' | 'comments' | 'trophies'>('overview');
   const [toast, setToast] = useState<string | null>(null);
+
+  // Banner customization state
+  const isViewingSelf = Boolean(
+    (user && activeProfileUser?.id === user.id) ||
+    (activeProfileUser?.isCreator && profile.isCreator) ||
+    (activeProfileUser?.username.toLowerCase() === profile.username.toLowerCase())
+  );
+
+  const [isEditingBanner, setIsEditingBanner] = useState(false);
+  const [currentBannerColor, setCurrentBannerColor] = useState<string>(() => {
+    return activeProfileUser?.bannerColor || (activeProfileUser?.isCreator ? 'peach' : 'honey');
+  });
+  const [currentBannerText, setCurrentBannerText] = useState<string>(() => {
+    return (
+      activeProfileUser?.bannerText ||
+      (activeProfileUser?.isCreator ? 'Welcome to Jinssi Gaming! 🌸' : 'Enjoying cozy stories & games 🍵')
+    );
+  });
 
   if (!activeProfileUser) return null;
 
@@ -66,14 +139,36 @@ export function RedditProfileModal() {
     closeProfile();
   };
 
-  const cakeDayFormatted = new Date(activeProfileUser.joinedAt).toLocaleDateString('en-US', {
+  const handleSaveBanner = () => {
+    try {
+      localStorage.setItem(
+        `jinssi_profile_banner_${activeProfileUser.username}`,
+        JSON.stringify({ color: currentBannerColor, text: currentBannerText })
+      );
+    } catch {
+      // ignore
+    }
+    setIsEditingBanner(false);
+    setToast('Banner saved!');
+    setTimeout(() => setToast(null), 2500);
+  };
+
+  const selectedPalette =
+    BANNER_PALETTES.find((p) => p.id === currentBannerColor) || BANNER_PALETTES[0];
+
+  // Accurate account join date or site creation date
+  const joinedDateFormatted = new Date(
+    activeProfileUser.isCreator && user?.created_at
+      ? user.created_at
+      : activeProfileUser.joinedAt
+  ).toLocaleDateString('en-US', {
     month: 'short',
     day: 'numeric',
     year: 'numeric',
   });
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/65 backdrop-blur-xs animate-fade-in select-none">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-fade-in select-none">
       <div
         className="relative w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh] border-2"
         style={{
@@ -81,34 +176,133 @@ export function RedditProfileModal() {
           borderColor: 'var(--card-border, #5e5148)',
         }}
       >
-        {/* Cover Banner Header (Reddit Style) */}
+        {/* Cover Banner Header with Dynamic Color & Custom Text */}
         <div
-          className="relative h-32 sm:h-36 w-full flex items-end p-4 border-b overflow-hidden"
+          className="relative min-h-[140px] sm:min-h-[155px] w-full flex flex-col justify-between p-4 border-b overflow-hidden transition-all duration-300"
           style={{
-            background: activeProfileUser.isCreator
-              ? 'linear-gradient(135deg, #FD9A4D 0%, #E07A2B 50%, #B05A1D 100%)'
-              : 'linear-gradient(135deg, #4A312C 0%, #6A5747 50%, #8F6B48 100%)',
+            background: selectedPalette.gradient,
             borderColor: 'var(--card-line, #ebdcc9)',
           }}
         >
-          {/* Subtle Grid / Texture */}
-          <div className="absolute inset-0 opacity-15 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]" />
+          {/* Subtle Grid / Texture Pattern */}
+          <div
+            className="absolute inset-0 opacity-20 bg-[radial-gradient(#fff_1.2px,transparent_1.2px)] [background-size:16px_16px]"
+          />
 
-          {/* Close Button */}
-          <button
-            type="button"
-            onClick={closeProfile}
-            className="absolute top-3 right-3 p-2 rounded-full bg-black/40 text-white hover:bg-black/60 transition-colors cursor-pointer"
-            title="Close Profile"
-          >
-            <StreamlineClose className="w-4 h-4" />
-          </button>
+          {/* Top Bar inside Banner: Tag + Banner Customize Button + Close Button */}
+          <div className="relative z-10 flex items-center justify-between gap-2">
+            <span className="text-[10px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-black/35 text-white shadow-xs border border-white/20">
+              {activeProfileUser.isCreator ? 'Creator & Developer Profile' : 'Community Explorer'}
+            </span>
 
-          {/* Banner Tag */}
-          <span className="relative z-10 text-[10px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-black/40 text-white/90 border border-white/20">
-            {activeProfileUser.isCreator ? 'Creator & Developer Profile' : 'Community Explorer'}
-          </span>
+            <div className="flex items-center gap-1.5">
+              {/* Cover Color & Text Customizer Button (accessible if viewing own profile or creator) */}
+              {isViewingSelf && (
+                <button
+                  type="button"
+                  onClick={() => setIsEditingBanner((prev) => !prev)}
+                  className="px-2.5 py-1 rounded-full bg-black/40 hover:bg-black/60 text-white text-[11px] font-bold flex items-center gap-1.5 transition-colors cursor-pointer border border-white/20 shadow-xs"
+                  title="Customize Banner Color & Headline"
+                >
+                  <StreamlinePalette className="w-3.5 h-3.5" />
+                  <span>{isEditingBanner ? 'Close Editor' : 'Edit Banner'}</span>
+                </button>
+              )}
+
+              <button
+                type="button"
+                onClick={closeProfile}
+                className="p-1.5 rounded-full bg-black/40 text-white hover:bg-black/60 transition-colors cursor-pointer border border-white/20"
+                title="Close Profile"
+              >
+                <StreamlineClose className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+
+          {/* Banner Text Message / Headline Display */}
+          <div className="relative z-10 mt-auto pt-2 pb-1">
+            <p className="text-white font-display font-black text-sm sm:text-base drop-shadow-md tracking-wide flex items-center gap-1.5">
+              <StreamlineStar className="w-4 h-4 text-amber-300 fill-amber-300 shrink-0" />
+              <span className="line-clamp-1">{currentBannerText}</span>
+            </p>
+          </div>
         </div>
+
+        {/* Banner Editor Tray (Toggles when "Edit Banner" is clicked) */}
+        {isEditingBanner && (
+          <div
+            className="p-4 border-b space-y-3 animate-fade-in"
+            style={{
+              backgroundColor: 'var(--card-done-bg, #fcf8ee)',
+              borderColor: 'var(--card-line, #ebdcc9)',
+            }}
+          >
+            <div>
+              <label
+                className="block text-[11px] font-black uppercase tracking-wider mb-1.5"
+                style={{ color: 'var(--text-main, #3a2e22)' }}
+              >
+                Banner Text / Headline:
+              </label>
+              <input
+                type="text"
+                value={currentBannerText}
+                onChange={(e) => setCurrentBannerText(e.target.value)}
+                maxLength={60}
+                placeholder="Write a warm cozy banner quote..."
+                className="w-full px-3 py-1.5 text-xs font-semibold rounded-xl border bg-white shadow-2xs focus:outline-none focus:ring-2 focus:ring-peach-400"
+                style={{
+                  borderColor: 'var(--card-line, #ebdcc9)',
+                  color: 'var(--text-main, #3a2e22)',
+                }}
+              />
+            </div>
+
+            <div>
+              <label
+                className="block text-[11px] font-black uppercase tracking-wider mb-1.5"
+                style={{ color: 'var(--text-main, #3a2e22)' }}
+              >
+                Banner Color Palette:
+              </label>
+              <div className="flex items-center gap-2 flex-wrap">
+                {BANNER_PALETTES.map((palette) => {
+                  const isSelected = currentBannerColor === palette.id;
+                  return (
+                    <button
+                      key={palette.id}
+                      type="button"
+                      onClick={() => setCurrentBannerColor(palette.id)}
+                      className={`px-3 py-1 rounded-xl text-xs font-bold text-white shadow-xs flex items-center gap-1.5 transition-transform active:scale-95 cursor-pointer border-2 ${
+                        isSelected ? 'ring-2 ring-[#3A2E22] scale-105' : 'opacity-90'
+                      }`}
+                      style={{
+                        background: palette.gradient,
+                        borderColor: isSelected ? '#ffffff' : 'transparent',
+                      }}
+                    >
+                      {isSelected && <StreamlineCheck className="w-3 h-3 text-white" />}
+                      <span>{palette.name}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="flex justify-end pt-1">
+              <button
+                type="button"
+                onClick={handleSaveBanner}
+                className="px-4 py-1.5 rounded-xl text-xs font-bold text-white shadow-xs flex items-center gap-1.5 transition-all cursor-pointer"
+                style={{ backgroundColor: 'var(--theme-accent, #fd9a4d)' }}
+              >
+                <StreamlineCheck className="w-3.5 h-3.5" />
+                <span>Save Banner</span>
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Profile Card Header Info */}
         <div
@@ -128,7 +322,7 @@ export function RedditProfileModal() {
               {activeProfileUser.isCreator && (
                 <div
                   className="absolute -bottom-1 -right-1 p-1 rounded-full shadow-md border-2 border-white"
-                  style={{ backgroundColor: '#FD9A4D', color: '#fff' }}
+                  style={{ backgroundColor: 'var(--theme-accent, #fd9a4d)', color: '#fff' }}
                   title="Official Developer"
                 >
                   <StreamlineStars className="w-3.5 h-3.5" />
@@ -195,7 +389,7 @@ export function RedditProfileModal() {
           </div>
         </div>
 
-        {/* Stats Strip (Karma & Cake Day) */}
+        {/* Stats Strip: Community Role & Member Joined Date (Replaces Reddit Karma & Cake Day) */}
         <div
           className="px-6 py-2.5 border-b flex items-center justify-between text-xs font-semibold"
           style={{
@@ -205,15 +399,15 @@ export function RedditProfileModal() {
           }}
         >
           <div className="flex items-center gap-1.5">
-            <span className="font-extrabold text-[#FD9A4D]">
-              {activeProfileUser.karma.toLocaleString()}
+            <StreamlineStars className="w-3.5 h-3.5 text-amber-500" />
+            <span className="font-bold" style={{ color: 'var(--text-main, #3a2e22)' }}>
+              {activeProfileUser.isCreator ? 'Lead Developer & Creator' : 'Community Explorer'}
             </span>
-            <span>Cozy Karma</span>
           </div>
 
           <div className="flex items-center gap-1.5 font-mono text-[11px]">
             <StreamlineCalendar className="w-3.5 h-3.5 text-tan-500" />
-            <span>Cake Day: {cakeDayFormatted}</span>
+            <span>Joined: {joinedDateFormatted}</span>
           </div>
         </div>
 
@@ -225,7 +419,7 @@ export function RedditProfileModal() {
           </div>
         )}
 
-        {/* Reddit-Style Navigation Tabs */}
+        {/* Navigation Tabs */}
         <div
           className="grid grid-cols-3 border-b text-xs font-bold text-center"
           style={{
@@ -367,3 +561,4 @@ export function RedditProfileModal() {
     </div>
   );
 }
+

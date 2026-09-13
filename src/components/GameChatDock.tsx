@@ -1,7 +1,9 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { useChat } from '@/context/ChatContext';
 import { useAuth } from '@/context/AuthContext';
 import { CozyAvatar } from '@/components/CozyAvatar';
+import { isDmForPartner } from '@/utils/chatStorage';
+import { Friend } from '@/types/chat';
 import {
   StreamlineClose,
   StreamlinePencil,
@@ -26,7 +28,7 @@ export function GameChatDock() {
     openDmWith,
   } = useChat();
 
-  const { user, triggerAuthPrompt } = useAuth();
+  const { user, profile, triggerAuthPrompt } = useAuth();
   const [inputText, setInputText] = useState('');
   const [isSending, setIsSending] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -55,17 +57,59 @@ export function GameChatDock() {
     }
   };
 
+  // Filter messages reliably using isDmForPartner (works across aliases and creator auth IDs)
   const currentChannelMessages = messages.filter((m) => {
     if (channel === 'world') return m.channel === 'world';
     if (activeDmPartner) {
-      return (
-        m.channel === 'dm' &&
-        ((m.senderId === activeDmPartner.id && m.receiverId) ||
-          (m.receiverId === activeDmPartner.id && m.senderId))
-      );
+      return isDmForPartner(m, activeDmPartner);
     }
     return m.channel === 'dm';
   });
+
+  // Dynamically compute all travelers with active conversation history (no friend-adding required)
+  const recentDmPartners = useMemo(() => {
+    const map = new Map<string, Friend>();
+
+    // Add friends first
+    friends.forEach((f) => {
+      const key = f.username.toLowerCase().replace(/^[@u/]+/, '');
+      map.set(key, f);
+    });
+
+    // Extract all travelers who have exchanged DMs with the user
+    messages.forEach((m) => {
+      if (m.channel === 'dm') {
+        const isSenderMe =
+          m.senderId === user?.id ||
+          (profile.isCreator && (m.senderIsCreator || m.senderName.toLowerCase() === 'jinssi'));
+
+        const otherId = isSenderMe ? (m.receiverId || 'traveler') : m.senderId;
+        const otherRaw = isSenderMe ? (m.receiverName || 'Traveler') : m.senderName;
+        const otherKey = otherRaw.toLowerCase().replace(/^[@u/]+/, '');
+        const isOtherDev =
+          otherKey === 'jinssi' ||
+          otherKey.includes('mjhane') ||
+          otherId === 'jinssi-creator' ||
+          otherId === 'creator-jinssi-dev-id';
+
+        const cleanOtherName = isOtherDev ? 'Jinssi' : otherRaw.split('@')[0];
+
+        if (otherKey && !map.has(otherKey) && cleanOtherName.toLowerCase() !== profile.username.toLowerCase()) {
+          map.set(otherKey, {
+            id: otherId,
+            username: cleanOtherName,
+            avatarConfig: isSenderMe ? {} : m.senderAvatar,
+            badge: isOtherDev ? 'Creator & Developer' : 'Cozy Explorer',
+            isOnline: true,
+            isCreator: isOtherDev,
+            addedAt: m.createdAt,
+          });
+        }
+      }
+    });
+
+    return Array.from(map.values());
+  }, [messages, friends, user?.id, profile.isCreator, profile.username]);
 
   return (
     <div className="fixed bottom-4 right-4 z-40 select-none font-sans">
@@ -224,15 +268,17 @@ export function GameChatDock() {
               ) : (
                 <>
                   <span className="text-xs font-bold text-[#3A2E22] block mb-2">
-                    Select a Friend to Message
+                    {profile.isCreator ? 'Traveler Messages & Conversations' : 'Select a Friend or Recent Chat'}
                   </span>
                   <div className="flex gap-2 overflow-x-auto pb-1">
-                    {friends.length === 0 ? (
+                    {recentDmPartners.length === 0 ? (
                       <span className="text-xs text-tan-500">
-                        No friends added yet. Click &ldquo;Add Friend&rdquo; on any user!
+                        {profile.isCreator
+                          ? 'No traveler messages yet. Incoming messages will appear here for 1-click replies!'
+                          : 'No recent chats yet. Click "Reply / DM" on any user in World Chat to message them!'}
                       </span>
                     ) : (
-                      friends.map((f) => (
+                      recentDmPartners.map((f) => (
                         <button
                           key={f.id}
                           type="button"
@@ -266,8 +312,15 @@ export function GameChatDock() {
               </div>
             ) : (
               currentChannelMessages.map((msg) => {
-                const isJinssi =
-                  msg.senderIsCreator || msg.senderName.toLowerCase().includes('jinssi');
+                const isJinssi = Boolean(
+                  msg.senderIsCreator ||
+                  msg.senderName.toLowerCase().includes('jinssi') ||
+                  msg.senderName.toLowerCase().includes('mjhane')
+                );
+                const cleanSenderName = isJinssi ? 'Jinssi' : msg.senderName.split('@')[0];
+                const isMe =
+                  msg.senderId === user?.id ||
+                  (profile.isCreator && isJinssi);
 
                 return (
                   <div key={msg.id} className="flex items-start gap-2.5 group">
@@ -276,32 +329,32 @@ export function GameChatDock() {
                       onClick={() =>
                         openProfile({
                           id: msg.senderId,
-                          username: msg.senderName,
+                          username: cleanSenderName,
                           avatarConfig: msg.senderAvatar,
                           isCreator: isJinssi,
                         })
                       }
                       className="cursor-pointer shrink-0 transition-transform active:scale-95"
-                      title={`View u/${msg.senderName}'s Profile`}
+                      title={`View u/${cleanSenderName}'s Profile`}
                     >
                       <CozyAvatar config={msg.senderAvatar} size={32} />
                     </button>
 
                     <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-1.5 leading-none mb-1">
+                      <div className="flex items-center gap-1.5 leading-none mb-1 flex-wrap">
                         <button
                           type="button"
                           onClick={() =>
                             openProfile({
                               id: msg.senderId,
-                              username: msg.senderName,
+                              username: cleanSenderName,
                               avatarConfig: msg.senderAvatar,
                               isCreator: isJinssi,
                             })
                           }
                           className="font-bold text-xs text-ink-900 hover:text-peach-600 cursor-pointer truncate"
                         >
-                          @{msg.senderName}
+                          @{cleanSenderName}
                         </button>
                         {isJinssi && (
                           <span className="text-[9px] font-black px-1.5 py-0.2 rounded-full bg-gradient-to-r from-amber-500 to-peach-500 text-white shadow-2xs">
@@ -314,6 +367,25 @@ export function GameChatDock() {
                             minute: '2-digit',
                           })}
                         </span>
+                        {!isMe && (
+                          <button
+                            type="button"
+                            onClick={() =>
+                              openDmWith({
+                                id: msg.senderId,
+                                username: cleanSenderName,
+                                avatarConfig: msg.senderAvatar,
+                                badge: isJinssi ? 'Creator & Developer' : 'Cozy Explorer',
+                                isOnline: true,
+                                isCreator: isJinssi,
+                              })
+                            }
+                            className="text-[10px] text-[#FD9A4D] hover:text-[#e07f30] font-bold ml-1 cursor-pointer transition-colors"
+                            title={`Direct Message @${cleanSenderName}`}
+                          >
+                            Reply / DM
+                          </button>
+                        )}
                       </div>
 
                       <div

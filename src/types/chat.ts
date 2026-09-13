@@ -35,6 +35,7 @@ export interface RedditUserProfileData {
   isCreator?: boolean;
   role?: string;
   joinedAt: string;
-  karma: number;
-  bannerTheme: string;
+  bannerColor?: string;
+  bannerText?: string;
+  bannerTheme?: string;
 }
