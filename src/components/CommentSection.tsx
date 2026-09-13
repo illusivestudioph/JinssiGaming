@@ -325,22 +325,28 @@ function CommentCard({
   onReplyTextChange: (value: string) => void;
   onSubmitReply: () => void;
 }) {
-  const archetype = getArchetypeFromName(comment.user_name);
+  const isCreator = comment.user_name.toLowerCase().replace(/[@\s]/g, '') === 'jinssi' || comment.user_name.toLowerCase().includes('developer');
+  const archetype = isCreator ? 'cat' : getArchetypeFromName(comment.user_name);
 
   return (
     <div className="flex flex-col gap-3">
-      <article className="notepad-card p-4 sm:p-5">
+      <article className={`notepad-card p-4 sm:p-5 ${isCreator ? 'ring-1 ring-peach-300 bg-peach-50/20' : ''}`}>
         <div className="flex gap-3 sm:gap-4">
           <CozyAvatar
-            config={{ archetype, accessory: 'sprout', bgColor: 'peach' }}
+            config={{ archetype, accessory: isCreator ? 'flower' : 'sprout', bgColor: isCreator ? 'cherry' : 'peach' }}
             size={38}
             className="shadow-xs"
           />
           <div className="min-w-0 flex-1">
-            <div className="mb-1 flex items-baseline gap-2">
+            <div className="mb-1 flex items-center flex-wrap gap-2">
               <span className="font-bold text-ink-900 text-xs sm:text-sm">
                 {comment.user_name.startsWith('@') ? comment.user_name : `@${comment.user_name}`}
               </span>
+              {isCreator && (
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-gradient-to-r from-peach-500 to-amber-500 text-white text-[10px] font-black tracking-wider shadow-xs">
+                  🌸 Creator & Dev
+                </span>
+              )}
               <span className="text-[10px] sm:text-xs font-semibold text-tan-400">
                 {new Date(comment.created_at).toLocaleDateString()}
               </span>

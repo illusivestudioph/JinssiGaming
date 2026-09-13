@@ -12,7 +12,15 @@ export interface AdventurerConfig {
   googleAvatarUrl?: string;
 }
 
+export const CREATOR_EMAIL = 'mjhanesultancruz1514@gmail.com';
+
+export function isCreatorEmail(email?: string | null): boolean {
+  if (!email) return false;
+  return email.trim().toLowerCase() === CREATOR_EMAIL.toLowerCase();
+}
+
 export type CommunityBadge =
+  | 'Creator & Developer'
   | 'Cozy Explorer'
   | 'Bookworm'
   | 'Retro Gamer'
@@ -28,6 +36,8 @@ export interface UserProfile {
   badge: CommunityBadge;
   avatarConfig: AdventurerConfig;
   joinedAt: string;
+  isCreator?: boolean;
+  role?: 'developer' | 'member';
 }
 
 export const DEFAULT_AVATAR_CONFIG: AdventurerConfig = {

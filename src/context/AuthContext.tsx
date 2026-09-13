@@ -1,13 +1,20 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { User } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
-import { UserProfile, DEFAULT_PROFILE, DEFAULT_AVATAR_CONFIG } from '@/types/profile';
+import { UserProfile, DEFAULT_PROFILE, isCreatorEmail, CommunityBadge } from '@/types/profile';
+import {
+  setRememberMePreference,
+  hasRememberMeCookie,
+  REMEMBER_ME_LOCAL_KEY,
+} from '@/utils/rememberMe';
 
 interface AuthContextType {
   user: User | null;
   profile: UserProfile;
   isLoading: boolean;
-  signInWithGoogle: () => Promise<void>;
+  rememberMe: boolean;
+  setRememberMe: (remember: boolean) => void;
+  signInWithGoogle: (remember?: boolean) => Promise<void>;
   signOut: () => Promise<void>;
   updateProfile: (updated: Partial<UserProfile>) => Promise<void>;
   // Global Auth Prompt Modal triggers
@@ -29,6 +36,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [rememberMe, setRememberMe] = useState(true);
   const [showAuthPrompt, setShowAuthPrompt] = useState(false);
   const [authPromptReason, setAuthPromptReason] = useState('Sign in with Gmail to join the cozy community.');
   const [showProfileModal, setShowProfileModal] = useState(false);
@@ -50,28 +58,40 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
   });
 
-  // Sync Supabase user metadata into profile
+  // Sync Supabase user metadata into profile (with special developer creator profile detection)
   const syncProfileFromUser = useCallback((u: User | null) => {
     if (!u) {
       setProfile((prev) => ({
         ...prev,
         id: 'guest',
         email: undefined,
+        isCreator: false,
+        role: 'member',
       }));
       return;
     }
 
+    const isCreator = isCreatorEmail(u.email);
     const meta = u.user_metadata || {};
     const googleAvatar = meta.avatar_url || meta.picture;
-    const defaultName = meta.display_name || meta.user_name || meta.full_name || u.email?.split('@')[0] || 'CozyPlayer';
+    const defaultName = isCreator
+      ? 'Jinssi'
+      : (meta.display_name || meta.user_name || meta.full_name || u.email?.split('@')[0] || 'CozyPlayer');
+
+    const defaultBadge: CommunityBadge = isCreator ? 'Creator & Developer' : 'Cozy Explorer';
+    const defaultBio = isCreator
+      ? 'Creator & Lead Developer of Jinssi Gaming 🌸'
+      : 'Sipping warm tea & exploring cozy adventures 🍵';
 
     setProfile((prev) => {
       const merged: UserProfile = {
         id: u.id,
         email: u.email,
-        username: meta.custom_username || prev.username || defaultName,
-        bio: meta.bio || prev.bio || DEFAULT_PROFILE.bio,
-        badge: meta.badge || prev.badge || DEFAULT_PROFILE.badge,
+        username: meta.custom_username || (isCreator && prev.username === 'CozyPlayer' ? 'Jinssi' : prev.username) || defaultName,
+        bio: meta.bio || (isCreator && prev.bio === DEFAULT_PROFILE.bio ? defaultBio : prev.bio) || defaultBio,
+        badge: (meta.badge as CommunityBadge) || (isCreator && prev.badge === 'Cozy Explorer' ? defaultBadge : prev.badge) || defaultBadge,
+        isCreator,
+        role: isCreator ? 'developer' : 'member',
         avatarConfig: meta.avatar_config || {
           ...prev.avatarConfig,
           googleAvatarUrl: googleAvatar || prev.avatarConfig.googleAvatarUrl,
@@ -90,12 +110,36 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
-  // Listen to Supabase Auth State
+  // Listen to Supabase Auth State & enforce cookie clearing detection
   useEffect(() => {
     let active = true;
 
+    // Check if the user had previously selected Remember Me, but their cookies were cleared
+    const hadRememberMe = typeof window !== 'undefined' && localStorage.getItem(REMEMBER_ME_LOCAL_KEY);
+    if (hadRememberMe === 'true' && !hasRememberMeCookie()) {
+      // The user cleared their cookies! Discard session and reset to Guest.
+      void supabase.auth.signOut().then(() => {
+        try {
+          localStorage.removeItem(REMEMBER_ME_LOCAL_KEY);
+          localStorage.removeItem(LOCAL_STORAGE_PROFILE_KEY);
+        } catch {
+          // ignore
+        }
+        if (active) {
+          setUser(null);
+          syncProfileFromUser(null);
+          setIsLoading(false);
+        }
+      });
+      return;
+    }
+
     void supabase.auth.getUser().then(({ data: { user: currentUser } }) => {
       if (!active) return;
+      if (currentUser && hasRememberMeCookie()) {
+        // Refresh 1-year remember-me cookie on active visit
+        setRememberMePreference(true);
+      }
       setUser(currentUser);
       syncProfileFromUser(currentUser);
       setIsLoading(false);
@@ -103,6 +147,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
       const currentUser = session?.user ?? null;
+      if (currentUser && hasRememberMeCookie()) {
+        setRememberMePreference(true);
+      }
       setUser(currentUser);
       syncProfileFromUser(currentUser);
       setIsLoading(false);
@@ -114,8 +161,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
   }, [syncProfileFromUser]);
 
-  // Sign In with Google OAuth
-  const signInWithGoogle = async () => {
+  // Sign In with Google OAuth (with Remember Me support)
+  const signInWithGoogle = async (remember: boolean = rememberMe) => {
+    // Persist remember me cookie preference
+    setRememberMePreference(remember);
+
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
@@ -128,8 +178,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // Sign Out
+  // Sign Out (clears session, cached profile, and remember me cookie)
   const signOut = async () => {
+    setRememberMePreference(false);
     await supabase.auth.signOut();
     setUser(null);
     setProfile({
@@ -138,6 +189,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
     try {
       localStorage.removeItem(LOCAL_STORAGE_PROFILE_KEY);
+      localStorage.removeItem(REMEMBER_ME_LOCAL_KEY);
     } catch {
       // ignore
     }
@@ -182,6 +234,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const triggerAuthPrompt = (reason?: string) => {
+    // If the user is already signed in, NEVER ask them to log in again!
+    if (user) return;
     if (reason) setAuthPromptReason(reason);
     setShowAuthPrompt(true);
   };
@@ -196,6 +250,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         user,
         profile,
         isLoading,
+        rememberMe,
+        setRememberMe,
         signInWithGoogle,
         signOut,
         updateProfile,

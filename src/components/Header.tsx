@@ -163,6 +163,14 @@ export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View)
               <span className="hidden sm:inline max-w-[90px] truncate text-ink-800 group-hover:text-peach-600">
                 {user ? `@${profile.username}` : 'Guest 🌱'}
               </span>
+              {profile.isCreator && (
+                <span
+                  className="hidden sm:inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-extrabold uppercase tracking-wide bg-gradient-to-r from-amber-500 to-peach-500 text-white shadow-xs"
+                  title="Verified Site Creator & Developer"
+                >
+                  DEV
+                </span>
+              )}
               <span
                 className={`w-2 h-2 rounded-full ${user ? 'bg-emerald-500 ring-2 ring-emerald-200' : 'bg-amber-400'}`}
                 title={user ? 'Signed in with Google' : 'Browsing as Guest'}

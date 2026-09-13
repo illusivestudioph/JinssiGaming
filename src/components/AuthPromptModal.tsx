@@ -3,7 +3,14 @@ import { useAuth } from '@/context/AuthContext';
 import { StreamlineStars, StreamlineClose } from '@/components/StreamlineIcons';
 
 export function AuthPromptModal() {
-  const { showAuthPrompt, authPromptReason, closeAuthPrompt, signInWithGoogle } = useAuth();
+  const {
+    showAuthPrompt,
+    authPromptReason,
+    closeAuthPrompt,
+    signInWithGoogle,
+    rememberMe,
+    setRememberMe,
+  } = useAuth();
 
   if (!showAuthPrompt) return null;
 
@@ -46,16 +53,30 @@ export function AuthPromptModal() {
           Join the Cozy Community
         </h3>
         <p
-          className="text-xs mb-6 leading-relaxed font-medium"
+          className="text-xs mb-5 leading-relaxed font-medium"
           style={{ color: 'var(--text-muted, #8f6b48)' }}
         >
           {authPromptReason}
         </p>
 
+        {/* Remember Me Checkbox */}
+        <label
+          className="flex items-center justify-center gap-2 mb-4 text-xs font-semibold cursor-pointer select-none"
+          style={{ color: 'var(--text-main, #3a2e22)' }}
+        >
+          <input
+            type="checkbox"
+            checked={rememberMe}
+            onChange={(e) => setRememberMe(e.target.checked)}
+            className="w-4 h-4 rounded cursor-pointer accent-peach-500"
+          />
+          <span>Remember me on this device</span>
+        </label>
+
         {/* Google 1-Click Button */}
         <button
           type="button"
-          onClick={signInWithGoogle}
+          onClick={() => signInWithGoogle(rememberMe)}
           className="w-full py-3 px-4 rounded-2xl font-bold text-xs shadow-xs flex items-center justify-center gap-3 transition-all active:scale-98 cursor-pointer border-2"
           style={{
             backgroundColor: 'var(--card-bg, #ffffff)',
@@ -85,10 +106,10 @@ export function AuthPromptModal() {
         </button>
 
         <p
-          className="text-[10px] mt-4 font-mono"
+          className="text-[10px] mt-4 font-sans"
           style={{ color: 'var(--text-muted, #8f6b48)' }}
         >
-          No passwords required • One-click instant login
+          {rememberMe ? 'Keeps you signed in until cookies are cleared' : 'Single session only'} • 1-Click Login
         </p>
       </div>
     </div>

@@ -15,9 +15,11 @@ import {
   StreamlineClose,
   StreamlineCheck,
   StreamlineLogOut,
+  StreamlineStars,
 } from '@/components/StreamlineIcons';
 
-const BADGE_CONFIGS: { name: CommunityBadge; icon: React.ComponentType<{ className?: string }> }[] = [
+const BADGE_CONFIGS: { name: CommunityBadge; icon: React.ComponentType<{ className?: string }>; creatorOnly?: boolean }[] = [
+  { name: 'Creator & Developer', icon: StreamlineStars, creatorOnly: true },
   { name: 'Cozy Explorer', icon: StreamlineCompassDuo },
   { name: 'Bookworm', icon: StreamlineBookDuo },
   { name: 'Retro Gamer', icon: StreamlineGameboyDuo },
@@ -33,6 +35,8 @@ export function UserProfileModal() {
     updateProfile,
     signInWithGoogle,
     signOut,
+    rememberMe,
+    setRememberMe,
     showProfileModal,
     setShowProfileModal,
     setShowAvatarBuilder,
@@ -165,21 +169,35 @@ export function UserProfileModal() {
 
             <div className="mt-3 text-center">
               <h4
-                className="font-display font-bold text-base"
+                className="font-display font-bold text-base flex items-center justify-center gap-1.5"
                 style={{ color: 'var(--text-main, #3a2e22)' }}
               >
-                @{profile.username}
+                <span>@{profile.username}</span>
+                {profile.isCreator && (
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-peach-100 border border-peach-300 text-peach-700 font-extrabold shadow-xs">
+                    🌸 Developer
+                  </span>
+                )}
               </h4>
               <span
                 className="inline-block mt-1 text-[11px] font-bold px-3 py-0.5 rounded-full border"
                 style={{
-                  backgroundColor: 'var(--section-kicker-bg, #fcf3b9)',
-                  borderColor: 'var(--section-kicker-border, #fcb274)',
-                  color: 'var(--section-kicker-color, #b05a1d)',
+                  backgroundColor: profile.isCreator ? '#fff5eb' : 'var(--section-kicker-bg, #fcf3b9)',
+                  borderColor: profile.isCreator ? '#f97316' : 'var(--section-kicker-border, #fcb274)',
+                  color: profile.isCreator ? '#ea580c' : 'var(--section-kicker-color, #b05a1d)',
                 }}
               >
                 {profile.badge}
               </span>
+
+              {profile.isCreator && (
+                <div className="mt-2.5 flex justify-center">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-amber-500 to-peach-500 text-white text-[11px] font-extrabold shadow-cozy-sm">
+                    <StreamlineStars className="w-3.5 h-3.5 fill-white text-white" />
+                    <span>Site Creator & Lead Developer</span>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Member Joined Date */}
@@ -213,9 +231,24 @@ export function UserProfileModal() {
               >
                 Sign in with Gmail whenever you want to comment on games or contribute books to the shelf!
               </p>
+
+              {/* Remember Me Toggle */}
+              <label
+                className="flex items-center justify-center gap-2 mb-3 text-xs font-semibold cursor-pointer select-none"
+                style={{ color: 'var(--text-main, #3a2e22)' }}
+              >
+                <input
+                  type="checkbox"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                  className="w-4 h-4 rounded cursor-pointer accent-peach-500"
+                />
+                <span>Remember me on this device</span>
+              </label>
+
               <button
                 type="button"
-                onClick={signInWithGoogle}
+                onClick={() => signInWithGoogle(rememberMe)}
                 className="w-full py-2.5 px-4 rounded-xl font-bold text-xs shadow-xs flex items-center justify-center gap-2.5 transition-all active:scale-98 cursor-pointer border-2"
                 style={{
                   backgroundColor: 'var(--card-bg, #ffffff)',
@@ -317,7 +350,7 @@ export function UserProfileModal() {
                 Community Badge
               </label>
               <div className="grid grid-cols-2 gap-2.5">
-                {BADGE_CONFIGS.map(({ name, icon: Icon }) => {
+                {BADGE_CONFIGS.filter((b) => !b.creatorOnly || profile.isCreator).map(({ name, icon: Icon }) => {
                   const isSelected = selectedBadge === name;
                   return (
                     <button
