@@ -1,4 +1,4 @@
-export type FaceShape = 'oval' | 'round' | 'square' | 'heart' | 'diamond';
+export type FaceShape = 'oval' | 'round' | 'square' | 'heart' | 'diamond' | 'peanut' | 'pear' | 'oblong';
 
 export interface AdventurerConfig {
   seed: string;

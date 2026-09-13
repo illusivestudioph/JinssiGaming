@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
+import { useChat } from '@/context/ChatContext';
 import { CozyAvatar } from '@/components/CozyAvatar';
 import { CommunityBadge } from '@/types/profile';
 import {
@@ -42,6 +43,7 @@ export function UserProfileModal() {
     setShowProfileModal,
     setShowAvatarBuilder,
   } = useAuth();
+  const { openProfile } = useChat();
 
   const [usernameInput, setUsernameInput] = useState(profile.username);
   const [bioInput, setBioInput] = useState(profile.bio);
@@ -199,11 +201,36 @@ export function UserProfileModal() {
                   </div>
                 </div>
               )}
+
+              {/* View Public Profile Card & Banner Button */}
+              <div className="mt-3 flex justify-center">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowProfileModal(false);
+                    openProfile({
+                      id: user ? user.id : profile.id,
+                      username: profile.username,
+                      bio: profile.bio,
+                      badge: profile.badge,
+                      avatarConfig: profile.avatarConfig,
+                      isCreator: profile.isCreator,
+                      role: profile.role,
+                      joinedAt: profile.joinedAt,
+                    });
+                  }}
+                  className="px-3.5 py-1.5 rounded-xl text-xs font-bold text-white shadow-xs flex items-center gap-1.5 transition-transform active:scale-95 cursor-pointer"
+                  style={{ backgroundColor: 'var(--theme-accent, #fd9a4d)' }}
+                >
+                  <StreamlineUser className="w-3.5 h-3.5 text-white" />
+                  <span>View Public Profile Card & Banner</span>
+                </button>
+              </div>
             </div>
 
             {/* Member Joined Date */}
             <div
-              className="flex items-center gap-1.5 text-[11px] mt-2 font-mono font-medium"
+              className="flex items-center gap-1.5 text-[11px] mt-2.5 font-mono font-medium"
               style={{ color: 'var(--text-muted, #8f6b48)' }}
             >
               <StreamlineCalendar className="w-3.5 h-3.5" style={{ color: 'var(--theme-accent, #fd9a4d)' }} />

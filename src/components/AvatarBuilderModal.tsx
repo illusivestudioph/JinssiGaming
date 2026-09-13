@@ -76,31 +76,49 @@ const SKIN_TONES: { id: string; label: string; hex: string }[] = [
   { id: '614335', label: 'Deep Cocoa', hex: '#614335' },
 ];
 
-// Face Shape Silhouettes
+// Face Shape Silhouettes based on cartoon character archetype references
 const FACE_SHAPES: { id: FaceShape; label: string; desc: string; svgD: string }[] = [
   {
     id: 'oval',
-    label: 'Oval Silhouette',
+    label: 'Oval Classic',
     desc: 'Balanced & Natural',
     svgD: 'M16 6 C24 6 27 13 27 21 C27 30 22 38 16 38 C10 38 5 30 5 21 C5 13 8 6 16 6 Z',
   },
   {
-    id: 'square',
-    label: 'Square / Chiseled',
-    desc: 'Strong Angular Jaw',
-    svgD: 'M8 8 C16 7 24 7 24 8 C26 17 26 27 22 34 C19 37 13 37 10 34 C6 27 6 17 8 8 Z',
+    id: 'round',
+    label: 'Round Chubby',
+    desc: 'Full Chubby Cheeks',
+    svgD: 'M16 7 C26 7 28 15 28 23 C28 31 24 38 16 38 C8 38 4 31 4 23 C4 15 6 7 16 7 Z',
   },
   {
-    id: 'round',
-    label: 'Round Silhouette',
-    desc: 'Soft Fuller Cheeks',
-    svgD: 'M16 6 C25 6 28 14 28 22 C28 30 24 38 16 38 C8 38 4 30 4 22 C4 14 7 6 16 6 Z',
+    id: 'square',
+    label: 'Square Chiseled',
+    desc: 'Broad Angular Jaw',
+    svgD: 'M7 9 C16 8 25 8 25 9 C26 18 26 27 22 35 C19 38 13 38 10 35 C6 27 6 18 7 9 Z',
   },
   {
     id: 'heart',
     label: 'Heart / V-Line',
     desc: 'Tapered Slender Chin',
     svgD: 'M16 7 C25 6 28 14 27 21 C26 29 20 37 16 39 C12 37 6 29 5 21 C4 14 7 6 16 7 Z',
+  },
+  {
+    id: 'peanut',
+    label: 'Peanut / Indented',
+    desc: 'Narrow Temples & Full Jaw',
+    svgD: 'M16 6 C23 6 25 12 23 18 C21 23 27 28 27 33 C27 38 21 39 16 39 C11 39 5 38 5 33 C5 28 11 23 9 18 C7 12 9 6 16 6 Z',
+  },
+  {
+    id: 'pear',
+    label: 'Pear / Bell Jaw',
+    desc: 'Tapered Forehead & Wide Jowls',
+    svgD: 'M16 6 C21 6 23 13 22 19 C21 24 28 29 28 34 C28 39 21 40 16 40 C11 40 4 39 4 34 C4 29 11 24 10 19 C9 13 11 6 16 6 Z',
+  },
+  {
+    id: 'oblong',
+    label: 'Oblong Tall',
+    desc: 'Elongated Tall Chin',
+    svgD: 'M16 4 C23 4 25 11 25 21 C25 31 23 41 16 41 C9 41 7 31 7 21 C7 11 9 4 16 4 Z',
   },
   {
     id: 'diamond',

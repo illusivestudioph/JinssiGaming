@@ -32,14 +32,20 @@ function morphAvatarHeadSvg(svgText: string, shape: FaceShape): string {
 
   const transforms: Record<FaceShape, string> = {
     oval: headPaths,
-    // Round: Cute chubby cheeks, wider jaw arc
-    round: `<g transform="translate(380, 410) scale(1.12, 0.94) translate(-380, -410)">${headPaths}</g>`,
-    // Heart: Delicate, tapered anime V-line jaw and pointed chin
-    heart: `<g transform="translate(380, 360) scale(0.91, 1.06) translate(-380, -360)">${headPaths}</g>`,
-    // Square: Strong, broader masculine/chiseled jaw presence
-    square: `<g transform="translate(380, 440) scale(1.14, 1.04) translate(-380, -440)">${headPaths}</g>`,
-    // Diamond: High cheekbones with sculpted chin definition
-    diamond: `<g transform="translate(380, 400) scale(1.08, 1.05) translate(-380, -400)">${headPaths}</g>`,
+    // Round: Cute chubby cheeks, wider rounded jaw
+    round: `<g transform="translate(380, 410) scale(1.16, 0.94) translate(-380, -410)">${headPaths}</g>`,
+    // Square: Strong chiseled masculine block jaw
+    square: `<g transform="translate(380, 440) scale(1.20, 1.05) translate(-380, -440)">${headPaths}</g>`,
+    // Heart: Anime V-line chin, tapered jaw
+    heart: `<g transform="translate(380, 360) scale(0.88, 1.08) translate(-380, -360)">${headPaths}</g>`,
+    // Diamond: High sculpted cheekbones
+    diamond: `<g transform="translate(380, 400) scale(1.10, 1.06) translate(-380, -400)">${headPaths}</g>`,
+    // Peanut / Hourglass: Indented temples, wide squarish jowls (from reference)
+    peanut: `<g transform="translate(380, 460) scale(1.18, 1.02) translate(-380, -460) skewX(-2)">${headPaths}</g>`,
+    // Pear / Bell: Heavy low cheeks and broad lower chin (from reference)
+    pear: `<g transform="translate(380, 480) scale(1.22, 1.08) translate(-380, -480)">${headPaths}</g>`,
+    // Oblong / Tall: Long vertical head and chin (from reference)
+    oblong: `<g transform="translate(380, 380) scale(0.92, 1.18) translate(-380, -380)">${headPaths}</g>`,
   };
 
   const transformedHead = transforms[shape] || headPaths;

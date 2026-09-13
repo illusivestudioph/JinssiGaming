@@ -168,9 +168,20 @@ export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View)
             {/* Cozy Member Profile Chip */}
             <button
               type="button"
-              onClick={() => setShowProfileModal(true)}
+              onClick={() => {
+                openProfile({
+                  id: user ? user.id : profile.id,
+                  username: profile.username,
+                  bio: profile.bio,
+                  badge: profile.badge,
+                  avatarConfig: profile.avatarConfig,
+                  isCreator: profile.isCreator,
+                  role: profile.role,
+                  joinedAt: profile.joinedAt,
+                });
+              }}
               className="flex items-center gap-2 bg-cream-50/90 hover:bg-cream-100 border border-tan-300/80 hover:border-peach-400 rounded-full pl-1.5 pr-3 py-1 shadow-cozy-sm transition-all text-xs font-bold text-ink-900 group select-none cursor-pointer"
-              title="Open Profile & Avatar Builder"
+              title="View Public Profile Card & Banner"
               aria-label="Open member profile"
             >
               <CozyAvatar config={profile.avatarConfig} size={26} showBorder={false} />
@@ -216,7 +227,16 @@ export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View)
                 type="button"
                 onClick={() => {
                   setMobileMenuOpen(false);
-                  setShowProfileModal(true);
+                  openProfile({
+                    id: user ? user.id : profile.id,
+                    username: profile.username,
+                    bio: profile.bio,
+                    badge: profile.badge,
+                    avatarConfig: profile.avatarConfig,
+                    isCreator: profile.isCreator,
+                    role: profile.role,
+                    joinedAt: profile.joinedAt,
+                  });
                 }}
                 className="site-nav-link text-left flex items-center gap-2.5 text-peach-600 font-bold bg-peach-50/60 p-2 rounded-xl mb-1 border border-peach-200"
               >
