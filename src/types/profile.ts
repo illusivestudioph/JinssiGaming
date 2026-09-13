@@ -71,8 +71,6 @@ export const DEFAULT_PROFILE: Omit<UserProfile, 'id'> = {
   badge: 'Cozy Explorer',
   avatarConfig: DEFAULT_AVATAR_CONFIG,
   joinedAt: new Date().toISOString(),
-  bannerColor: 'peach',
-  bannerText: 'Enjoying cozy stories & games 🍵',
 };
 
 export function getAdventurerAvatarUrl(config?: Partial<AdventurerConfig>): string {

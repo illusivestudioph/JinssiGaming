@@ -91,13 +91,17 @@ export function RedditProfileModal() {
   // Sync banner state whenever active profile changes
   useEffect(() => {
     if (!activeProfileUser) return;
-    let savedColor = activeProfileUser.bannerColor;
-    let savedText = activeProfileUser.bannerText;
+    let savedColor: string | undefined;
+    let savedText: string | undefined;
 
+    // 1. Check local storage FIRST (it holds the user's explicit saved custom banner)
     try {
       const lowerKey = `jinssi_profile_banner_${activeProfileUser.username.toLowerCase()}`;
       const rawKey = `jinssi_profile_banner_${activeProfileUser.username}`;
-      const stored = localStorage.getItem(lowerKey) || localStorage.getItem(rawKey);
+      const stored =
+        localStorage.getItem(lowerKey) ||
+        localStorage.getItem(rawKey) ||
+        (isViewingSelf ? localStorage.getItem('jinssi_user_banner') : null);
       if (stored) {
         const parsed = JSON.parse(stored);
         if (parsed.color) savedColor = parsed.color;
@@ -107,13 +111,17 @@ export function RedditProfileModal() {
       // ignore
     }
 
-    if (isViewingSelf && profile.bannerColor) {
-      savedColor = profile.bannerColor;
+    // 2. If not in localStorage, check profile or activeProfileUser
+    if (!savedColor) {
+      savedColor = (isViewingSelf && profile.bannerColor) || activeProfileUser.bannerColor;
     }
-    if (isViewingSelf && profile.bannerText !== undefined && profile.bannerText !== null) {
-      savedText = profile.bannerText;
+    if (savedText === undefined || savedText === null) {
+      savedText = (isViewingSelf && profile.bannerText !== undefined && profile.bannerText !== null)
+        ? profile.bannerText
+        : activeProfileUser.bannerText;
     }
 
+    // 3. Fallback defaults only if user never configured a banner
     setCurrentBannerColor(savedColor || (activeProfileUser.isCreator ? 'peach' : 'peach'));
     setCurrentBannerText(
       savedText !== undefined && savedText !== null
@@ -123,7 +131,7 @@ export function RedditProfileModal() {
         : 'Enjoying cozy stories & games 🍵'
     );
     setIsEditingBanner(false);
-  }, [activeProfileUser, isViewingSelf, profile.bannerColor, profile.bannerText]);
+  }, [activeProfileUser?.username, isViewingSelf]);
 
   if (!activeProfileUser) return null;
 
@@ -183,6 +191,9 @@ export function RedditProfileModal() {
     try {
       localStorage.setItem(lowerKey, JSON.stringify(bannerData));
       localStorage.setItem(rawKey, JSON.stringify(bannerData));
+      if (isViewingSelf) {
+        localStorage.setItem('jinssi_user_banner', JSON.stringify(bannerData));
+      }
     } catch {
       // ignore
     }
@@ -372,30 +383,22 @@ export function RedditProfileModal() {
           }}
         >
           <div className="flex items-end gap-3.5">
-            <div className="relative shrink-0 group">
+            <div
+              className={`relative shrink-0 ${isViewingSelf ? 'cursor-pointer hover:opacity-90 transition-opacity' : ''}`}
+              onClick={() => {
+                if (isViewingSelf) {
+                  closeProfile();
+                  setShowAvatarBuilder(true);
+                }
+              }}
+              title={isViewingSelf ? 'Click to customize avatar' : undefined}
+            >
               <CozyAvatar
                 config={isViewingSelf ? profile.avatarConfig : activeProfileUser.avatarConfig}
                 size={88}
                 className="shadow-xl rounded-full border-4 border-white"
               />
-              {isViewingSelf ? (
-                <button
-                  type="button"
-                  onClick={() => {
-                    closeProfile();
-                    setShowAvatarBuilder(true);
-                  }}
-                  className="absolute -bottom-1 -right-1 px-2.5 py-1 text-[11px] font-bold rounded-full shadow-md flex items-center gap-1 transition-transform active:scale-95 cursor-pointer border-2 border-white hover:scale-105"
-                  style={{
-                    backgroundColor: 'var(--theme-accent, #fd9a4d)',
-                    color: '#ffffff',
-                  }}
-                  title="Open Avatar Character Studio"
-                >
-                  <StreamlinePencil className="w-3.5 h-3.5" />
-                  <span>Edit</span>
-                </button>
-              ) : activeProfileUser.isCreator ? (
+              {activeProfileUser.isCreator && (
                 <div
                   className="absolute -bottom-1 -right-1 p-1 rounded-full shadow-md border-2 border-white"
                   style={{ backgroundColor: 'var(--theme-accent, #fd9a4d)', color: '#fff' }}
@@ -403,7 +406,7 @@ export function RedditProfileModal() {
                 >
                   <StreamlineStars className="w-3.5 h-3.5" />
                 </div>
-              ) : null}
+              )}
             </div>
 
             <div className="mb-1">
@@ -429,7 +432,7 @@ export function RedditProfileModal() {
             </div>
           </div>
 
-          {/* Action Buttons: If viewing self -> Edit Avatar & Sign Out; Else -> Add Friend & DM */}
+          {/* Action Buttons: If viewing self -> Single clean Edit Avatar button; Else -> Add Friend & DM */}
           {isViewingSelf ? (
             <div className="flex items-center gap-2 w-full sm:w-auto">
               <button
@@ -438,28 +441,13 @@ export function RedditProfileModal() {
                   closeProfile();
                   setShowAvatarBuilder(true);
                 }}
-                className="flex-1 sm:flex-initial px-3.5 py-1.5 rounded-xl text-xs font-bold text-white shadow-xs flex items-center justify-center gap-1.5 transition-all active:scale-95 cursor-pointer"
+                className="flex-1 sm:flex-initial px-4 py-2 rounded-xl text-xs font-bold text-white shadow-xs flex items-center justify-center gap-1.5 transition-all active:scale-95 cursor-pointer"
                 style={{ backgroundColor: 'var(--theme-accent, #fd9a4d)' }}
                 title="Open Avatar Character Studio"
               >
                 <StreamlinePencil className="w-3.5 h-3.5" />
                 <span>Edit Avatar</span>
               </button>
-
-              {user && (
-                <button
-                  type="button"
-                  onClick={async () => {
-                    await signOut();
-                    closeProfile();
-                  }}
-                  className="flex-1 sm:flex-initial px-3.5 py-1.5 rounded-xl text-xs font-bold border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-600 transition-all active:scale-95 cursor-pointer flex items-center justify-center gap-1.5 shadow-xs"
-                  title="Sign out of your account"
-                >
-                  <StreamlineLogOut className="w-3.5 h-3.5" />
-                  <span>Sign Out</span>
-                </button>
-              )}
             </div>
           ) : (
             <div className="flex items-center gap-2 w-full sm:w-auto">

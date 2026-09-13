@@ -102,8 +102,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           useGooglePhoto: Boolean(googleAvatar && prev.avatarConfig.useGooglePhoto),
         },
         joinedAt: u.created_at || prev.joinedAt,
-        bannerColor: meta.banner_color || prev.bannerColor || (isCreator ? 'peach' : 'peach'),
-        bannerText: meta.banner_text !== undefined ? meta.banner_text : (prev.bannerText || (isCreator ? 'Welcome to Jinssi Gaming! 🌸' : 'Enjoying cozy stories & games 🍵')),
+        bannerColor: meta.banner_color || prev.bannerColor,
+        bannerText: meta.banner_text !== undefined ? meta.banner_text : prev.bannerText,
       };
 
       try {
@@ -285,6 +285,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Save to local cache
     try {
       localStorage.setItem(LOCAL_STORAGE_PROFILE_KEY, JSON.stringify(nextProfile));
+      if (nextProfile.bannerColor || nextProfile.bannerText !== undefined) {
+        localStorage.setItem(
+          'jinssi_user_banner',
+          JSON.stringify({ color: nextProfile.bannerColor, text: nextProfile.bannerText })
+        );
+      }
     } catch {
       // ignore
     }

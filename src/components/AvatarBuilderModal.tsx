@@ -670,13 +670,31 @@ export function AvatarBuilderModal() {
                             : 'bg-white border-[#EADCCB] hover:border-[#FD9A4D] hover:bg-[#FFFDFB]'
                         }`}
                       >
-                        {/* Live Reshaped Face Thumbnail */}
-                        <div className="w-11 h-11 rounded-xl overflow-hidden shrink-0 border border-[#EADCCB] bg-[#FFD7B5] shadow-xs flex items-center justify-center">
-                          <CozyAvatar
-                            config={{ ...draftConfig, faceShape: fs.id }}
-                            size={44}
-                            showBorder={false}
-                          />
+                        {/* Distinct Face Silhouette Thumbnail */}
+                        <div
+                          className={`w-11 h-11 rounded-xl shrink-0 border shadow-2xs flex items-center justify-center transition-all ${
+                            isSelected
+                              ? 'border-[#FD9A4D] bg-[#FD9A4D]/15'
+                              : 'border-[#EADCCB] bg-[#FFF8F0]'
+                          }`}
+                        >
+                          <svg viewBox="0 0 32 44" className="w-6 h-8" fill="none">
+                            <path
+                              d={fs.svgD}
+                              fill={`#${draftConfig.skinColor || 'F2D3B1'}`}
+                              stroke={isSelected ? '#C95A0B' : '#6A5747'}
+                              strokeWidth="1.75"
+                              strokeLinejoin="round"
+                            />
+                            <ellipse cx="12" cy="18" rx="1.2" ry="1.2" fill={isSelected ? '#C95A0B' : '#8A7565'} />
+                            <ellipse cx="20" cy="18" rx="1.2" ry="1.2" fill={isSelected ? '#C95A0B' : '#8A7565'} />
+                            <path
+                              d="M14 26 C15 27.5 17 27.5 18 26"
+                              stroke={isSelected ? '#C95A0B' : '#8A7565'}
+                              strokeWidth="1.2"
+                              strokeLinecap="round"
+                            />
+                          </svg>
                         </div>
                         <div className="min-w-0 flex-1">
                           <div className={`font-bold text-xs truncate ${isSelected ? 'text-[#C95A0B]' : 'text-[#3A2E22]'}`}>

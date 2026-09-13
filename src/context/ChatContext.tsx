@@ -196,23 +196,25 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       ? 'Jinssi'
       : (data.username || 'CozyAdventurer').split('@')[0];
 
-    // Load saved banner settings if this is Jinssi or user has saved banner
-    let savedBannerColor = data.bannerColor;
-    let savedBannerText = data.bannerText;
-    if (!savedBannerColor || savedBannerText === undefined) {
-      try {
-        const lowerKey = `jinssi_profile_banner_${cleanUsername.toLowerCase()}`;
-        const rawKey = `jinssi_profile_banner_${cleanUsername}`;
-        const stored = localStorage.getItem(lowerKey) || localStorage.getItem(rawKey);
-        if (stored) {
-          const parsed = JSON.parse(stored);
-          if (parsed.color && !savedBannerColor) savedBannerColor = parsed.color;
-          if (parsed.text !== undefined && savedBannerText === undefined) savedBannerText = parsed.text;
-        }
-      } catch {
-        // ignore
+    // Load saved banner settings: check localStorage first for the user's custom saved banner
+    const lowerKey = `jinssi_profile_banner_${cleanUsername.toLowerCase()}`;
+    const rawKey = `jinssi_profile_banner_${cleanUsername}`;
+    let savedBannerColor: string | undefined;
+    let savedBannerText: string | undefined;
+
+    try {
+      const stored = localStorage.getItem(lowerKey) || localStorage.getItem(rawKey);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed.color) savedBannerColor = parsed.color;
+        if (parsed.text !== undefined) savedBannerText = parsed.text;
       }
+    } catch {
+      // ignore
     }
+
+    if (!savedBannerColor) savedBannerColor = data.bannerColor;
+    if (savedBannerText === undefined) savedBannerText = data.bannerText;
 
     setActiveProfileUser({
       id: data.id || `user-${cleanUsername}`,

@@ -33,19 +33,19 @@ function morphAvatarHeadSvg(svgText: string, shape: FaceShape): string {
   const transforms: Record<FaceShape, string> = {
     oval: headPaths,
     // Round: Cute chubby cheeks, wider rounded jaw
-    round: `<g transform="translate(380, 410) scale(1.16, 0.94) translate(-380, -410)">${headPaths}</g>`,
+    round: `<g transform="translate(381, 440) scale(1.22, 0.90) translate(-381, -440)">${headPaths}</g>`,
     // Square: Strong chiseled masculine block jaw
-    square: `<g transform="translate(380, 440) scale(1.20, 1.05) translate(-380, -440)">${headPaths}</g>`,
+    square: `<g transform="translate(381, 460) scale(1.28, 1.06) translate(-381, -460)">${headPaths}</g>`,
     // Heart: Anime V-line chin, tapered jaw
-    heart: `<g transform="translate(380, 360) scale(0.88, 1.08) translate(-380, -360)">${headPaths}</g>`,
+    heart: `<g transform="translate(381, 380) scale(0.84, 1.10) translate(-381, -380)">${headPaths}</g>`,
     // Diamond: High sculpted cheekbones
-    diamond: `<g transform="translate(380, 400) scale(1.10, 1.06) translate(-380, -400)">${headPaths}</g>`,
-    // Peanut / Hourglass: Indented temples, wide squarish jowls (from reference)
-    peanut: `<g transform="translate(380, 460) scale(1.18, 1.02) translate(-380, -460) skewX(-2)">${headPaths}</g>`,
-    // Pear / Bell: Heavy low cheeks and broad lower chin (from reference)
-    pear: `<g transform="translate(380, 480) scale(1.22, 1.08) translate(-380, -480)">${headPaths}</g>`,
-    // Oblong / Tall: Long vertical head and chin (from reference)
-    oblong: `<g transform="translate(380, 380) scale(0.92, 1.18) translate(-380, -380)">${headPaths}</g>`,
+    diamond: `<g transform="translate(381, 400) scale(1.18, 1.08) translate(-381, -400)">${headPaths}</g>`,
+    // Peanut / Hourglass: Indented temples, wide squarish jowls
+    peanut: `<g transform="translate(381, 460) scale(1.24, 1.04) translate(-381, -460) skewX(-3)">${headPaths}</g>`,
+    // Pear / Bell: Heavy low cheeks and broad lower chin
+    pear: `<g transform="translate(381, 500) scale(1.30, 1.10) translate(-381, -500)">${headPaths}</g>`,
+    // Oblong / Tall: Long vertical head and chin
+    oblong: `<g transform="translate(381, 380) scale(0.88, 1.22) translate(-381, -380)">${headPaths}</g>`,
   };
 
   const transformedHead = transforms[shape] || headPaths;
@@ -85,7 +85,7 @@ export function CozyAvatar({
     // Fetch and morph SVG
     const processSvg = (rawSvg: string) => {
       const morphedSvg = morphAvatarHeadSvg(rawSvg, shape);
-      const dataUri = `data:image/svg+xml;utf8,${encodeURIComponent(morphedSvg)}`;
+      const dataUri = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(morphedSvg)}`;
       transformedSvgCache.set(cacheKey, dataUri);
       if (active) {
         setDisplaySrc(dataUri);
