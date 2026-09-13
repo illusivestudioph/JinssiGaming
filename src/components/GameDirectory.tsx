@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { categories, type Game } from '@/data/games';
 import { useSiteContent } from '@/context/SiteContentContext';
 import { GameCard } from './GameCard';
-import { Search, SlidersHorizontal, ArrowRight } from 'lucide-react';
+import { Search, SlidersHorizontal, ArrowRight } from '@/components/StreamlineIcons';
 import { StreamlineGamepad } from '@/components/StreamlineIcons';
 
 interface GameDirectoryProps {

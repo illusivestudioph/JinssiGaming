@@ -21,7 +21,7 @@ import {
   Sliders,
   Check,
   Music,
-} from 'lucide-react';
+} from '@/components/StreamlineIcons';
 import { useMusic } from '@/context/MusicContext';
 
 export interface AudiobookPlayerProps {

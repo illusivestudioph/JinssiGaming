@@ -9,7 +9,7 @@ import {
   BookOpen, 
   Search, 
   ExternalLink 
-} from 'lucide-react';
+} from '@/components/StreamlineIcons';
 
 interface ArticleManagerProps {
   articles: Article[];

@@ -21,8 +21,7 @@ import { ContactPage } from '@/components/ContactPage';
 import { CookieConsent } from '@/components/CookieConsent';
 import { AdSenseUnit } from '@/components/AdSenseUnit';
 import { GameCard } from '@/components/GameCard';
-import { ArrowRight, Search } from 'lucide-react';
-import { StreamlineGamepad } from '@/components/StreamlineIcons';
+import { StreamlineGamepad, StreamlineSearch } from '@/components/StreamlineIcons';
 
 // 1. Context Provider
 import { SiteContentProvider, useSiteContent } from '@/context/SiteContentContext'; 
@@ -536,7 +535,7 @@ function WalkthroughsPage({
       <div className="mb-10 space-y-4 max-w-4xl mx-auto">
         {/* Search Bar */}
         <div className="relative">
-          <Search className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-tan-400 pointer-events-none" />
+          <StreamlineSearch className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-tan-400 pointer-events-none" />
           <input
             type="text"
             placeholder="Search cozy games, guides, or genres (e.g. Tiny Glade, Unpacking)..."

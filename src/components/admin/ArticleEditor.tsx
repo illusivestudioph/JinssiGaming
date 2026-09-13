@@ -12,7 +12,7 @@ import {
   Upload, 
   Bookmark,
   BookOpen
-} from 'lucide-react';
+} from '@/components/StreamlineIcons';
 
 interface ArticleEditorProps {
   article: Article;

@@ -19,7 +19,7 @@ import {
   Share2,
   Copy,
   Mail,
-} from 'lucide-react';
+} from '@/components/StreamlineIcons';
 
 interface WalkthroughViewProps {
   game: Game;

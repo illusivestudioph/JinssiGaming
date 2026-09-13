@@ -381,6 +381,10 @@ export function RedditProfileModal() {
     year: 'numeric',
   });
 
+  const effectiveBadge = isEditingProfile
+    ? selectedBadge
+    : ((isViewingSelf ? profile.badge : activeProfileUser.badge) || (activeProfileUser.isCreator ? 'Creator & Developer' : 'Cozy Explorer'));
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-fade-in select-none">
       <div
@@ -406,7 +410,7 @@ export function RedditProfileModal() {
           {/* Top Bar inside Banner: Tag + Banner Customize Button + Close Button */}
           <div className="relative z-10 flex items-center justify-between gap-2">
             <span className="text-[10px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-black/35 text-white shadow-xs border border-white/20">
-              {activeProfileUser.isCreator ? 'Creator & Developer Profile' : 'Community Explorer'}
+              {effectiveBadge}
             </span>
 
             <div className="flex items-center gap-1.5">
@@ -591,7 +595,7 @@ export function RedditProfileModal() {
                 className="text-xs font-semibold mt-0.5"
                 style={{ color: 'var(--text-muted, #8f6b48)' }}
               >
-                {isEditingProfile ? selectedBadge : activeProfileUser.badge}
+                {effectiveBadge}
               </p>
             </div>
           </div>
@@ -665,28 +669,6 @@ export function RedditProfileModal() {
               </button>
             </div>
           )}
-        </div>
-
-        {/* Stats Strip: Community Role & Member Joined Date (Replaces Reddit Karma & Cake Day) */}
-        <div
-          className="px-6 py-2.5 border-b flex items-center justify-between text-xs font-semibold"
-          style={{
-            backgroundColor: 'var(--card-bg, #fefcf7)',
-            borderColor: 'var(--card-line, #ebdcc9)',
-            color: 'var(--text-muted, #8f6b48)',
-          }}
-        >
-          <div className="flex items-center gap-1.5">
-            <StreamlineStars className="w-3.5 h-3.5 text-amber-500" />
-            <span className="font-bold" style={{ color: 'var(--text-main, #3a2e22)' }}>
-              {activeProfileUser.isCreator ? 'Lead Developer & Creator' : 'Community Explorer'}
-            </span>
-          </div>
-
-          <div className="flex items-center gap-1.5 font-mono text-[11px]">
-            <StreamlineCalendar className="w-3.5 h-3.5 text-tan-500" />
-            <span>Joined: {joinedDateFormatted}</span>
-          </div>
         </div>
 
         {/* Toast Notification */}
@@ -833,7 +815,7 @@ export function RedditProfileModal() {
           </form>
         ) : (
           <>
-            {/* Stats Strip: Community Role & Member Joined Date (Replaces Reddit Karma & Cake Day) */}
+            {/* Stats Strip: Community Badge & Member Joined Date */}
             <div
               className="px-6 py-2.5 border-b flex items-center justify-between text-xs font-semibold"
               style={{
@@ -842,12 +824,18 @@ export function RedditProfileModal() {
                 color: 'var(--text-muted, #8f6b48)',
               }}
             >
-              <div className="flex items-center gap-1.5">
-                <StreamlineStars className="w-3.5 h-3.5 text-amber-500" />
-                <span className="font-bold" style={{ color: 'var(--text-main, #3a2e22)' }}>
-                  {activeProfileUser.isCreator ? 'Lead Developer & Creator' : 'Community Explorer'}
-                </span>
-              </div>
+              {(() => {
+                const badgeConfig = BADGE_OPTIONS.find((b) => b.name === effectiveBadge);
+                const BadgeIcon = badgeConfig?.icon || StreamlineStars;
+                return (
+                  <div className="flex items-center gap-1.5">
+                    <BadgeIcon className="w-3.5 h-3.5 text-amber-500" />
+                    <span className="font-bold" style={{ color: 'var(--text-main, #3a2e22)' }}>
+                      {effectiveBadge}
+                    </span>
+                  </div>
+                );
+              })()}
 
               <div className="flex items-center gap-1.5 font-mono text-[11px]">
                 <StreamlineCalendar className="w-3.5 h-3.5 text-tan-500" />

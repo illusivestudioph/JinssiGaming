@@ -26,7 +26,7 @@ import {
   ExternalLink,
   FileText,
   Star,
-} from 'lucide-react';
+} from '@/components/StreamlineIcons';
 import { getGutenbergId, fetchGutenbergById } from '@/services/gutenberg';
 import { useMusic } from '@/context/MusicContext';
 import { AmbientMixerModal } from '@/components/AmbientMixerModal';

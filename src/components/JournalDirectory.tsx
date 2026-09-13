@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useSiteContent } from '@/context/SiteContentContext';
 import { articleCategories, type Article } from '@/data/articles';
-import { BookOpen, Clock, Search, Tag, Coffee, ArrowRight } from 'lucide-react';
+import { BookOpen, Clock, Search, Tag, Coffee, ArrowRight } from '@/components/StreamlineIcons';
 import { getOptimizedImageUrl } from '@/utils/imageOptimization';
 
 interface JournalDirectoryProps {

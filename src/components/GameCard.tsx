@@ -1,5 +1,5 @@
 import type { Game } from '@/data/games';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight } from '@/components/StreamlineIcons';
 import { getOptimizedImageUrl } from '@/utils/imageOptimization';
 
 function getBadgeTextColor(hexColor: string) {

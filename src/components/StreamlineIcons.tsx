@@ -922,5 +922,694 @@ export function StreamlineStar({ className = 'w-4 h-4', size, ...props }: Stream
   );
 }
 
+/**
+ * Official Streamline Line - Navigation Menu (Hamburger)
+ */
+export function StreamlineMenu({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+    </svg>
+  );
+}
+
+/**
+ * Official Streamline Line - Security Lock
+ */
+export function StreamlineLock({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 0h10.5a2.25 2.25 0 012.25 2.25v6a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 18.75v-6a2.25 2.25 0 012.25-2.25z" />
+    </svg>
+  );
+}
+
+/**
+ * Official Streamline Line - Sliders / Mixer Controls
+ */
+export function StreamlineSliders({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M6 3v5m0 4v9m12-18v9m0 4v5M12 3v2m0 4v13M3.5 8h5M15.5 16h5M9.5 5h5" />
+    </svg>
+  );
+}
+
+/**
+ * Official Streamline Line - Magnifying Glass Search
+ */
+export function StreamlineSearch({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35M19 10.5a8.5 8.5 0 11-17 0 8.5 8.5 0 0117 0z" />
+    </svg>
+  );
+}
+
+/**
+ * Official Streamline Line - Arrow Right
+ */
+export function StreamlineArrowRight({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M4.5 12h15m0 0l-5.25-5.25M19.5 12l-5.25 5.25" />
+    </svg>
+  );
+}
+
+/**
+ * Official Streamline Line - Arrow Left
+ */
+export function StreamlineArrowLeft({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M19.5 12h-15m0 0l5.25-5.25M4.5 12l5.25 5.25" />
+    </svg>
+  );
+}
+
+/**
+ * Official Streamline Line - Clock Time
+ */
+export function StreamlineClock({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M12 6v6l4 2m6-2a10 10 0 11-20 0 10 10 0 0120 0z" />
+    </svg>
+  );
+}
+
+/**
+ * Official Streamline Line - Tag Category
+ */
+export function StreamlineTag({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l8.5 8.5a2.25 2.25 0 003.182 0l4.318-4.318a2.25 2.25 0 000-3.182l-8.5-8.5A2.25 2.25 0 009.568 3zM6.75 6.75h.008v.008H6.75V6.75z" />
+    </svg>
+  );
+}
+
+/**
+ * Official Streamline Line - Cloud Rain
+ */
+export function StreamlineCloudRain({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M4 14.899A7 7 0 1115.71 8h1.79a4.5 4.5 0 012.5 8.242M8 19v2m4-3v2m4-1v2" />
+    </svg>
+  );
+}
+
+/**
+ * Official Streamline Line - Campfire Flame
+ */
+export function StreamlineFlame({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M12 2c1.5 3 4 5.5 4 8.5a4 4 0 01-8 0c0-1.5.5-2.5 1.5-3.5 0 3 2 4.5 2.5 4.5s1.5-.5 1.5-2c0-2-1.5-3.5-1-7.5zM12 22a8 8 0 01-8-8c0-4 3-7 4-8 .5 1.5 2 2.5 3 2.5s3-1 3.5-2.5c1 1.5 5.5 4.5 5.5 8a8 8 0 01-8 8z" />
+    </svg>
+  );
+}
+
+/**
+ * Official Streamline Line - Wind Breeze
+ */
+export function StreamlineWind({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M4 8h12a3 3 0 10-3-3M2 12h16a3 3 0 11-3 3m-9 4h6a2 2 0 10-2-2" />
+    </svg>
+  );
+}
+
+/**
+ * Official Streamline Line - Music Note
+ */
+export function StreamlineMusic({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M9 18V5l12-2v13M9 18a3 3 0 11-6 0 3 3 0 016 0zm12 0a3 3 0 11-6 0 3 3 0 016 0z" />
+    </svg>
+  );
+}
+
+/**
+ * Official Streamline Line - Pause
+ */
+export function StreamlinePause({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" d="M10 4.5H7.5a1 1 0 00-1 1v13a1 1 0 001 1H10a1 1 0 001-1v-13a1 1 0 00-1-1zm6.5 0H14a1 1 0 00-1 1v13a1 1 0 001 1h2.5a1 1 0 001-1v-13a1 1 0 00-1-1z" />
+    </svg>
+  );
+}
+
+/**
+ * Official Streamline Line - Play
+ */
+export function StreamlinePlay({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M5.25 4.75l14 7.25-14 7.25V4.75z" />
+    </svg>
+  );
+}
+
+/**
+ * Official Streamline Line - Volume Speaker
+ */
+export function StreamlineVolume({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M11 5L6 9H2v6h4l5 4V5zm4.5 3.5a5 5 0 010 7M19 5.5a9 9 0 010 13" />
+    </svg>
+  );
+}
+
+/**
+ * Official Streamline Line - Volume Mute
+ */
+export function StreamlineVolumeMute({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M11 5L6 9H2v6h4l5 4V5zm12 4l-6 6m0-6l6 6" />
+    </svg>
+  );
+}
+
+/**
+ * Official Streamline Line - Copy Document
+ */
+export function StreamlineCopy({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M8 7v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-8a2 2 0 00-2 2zm-4 4V5a2 2 0 012-2h10" />
+    </svg>
+  );
+}
+
+/**
+ * Official Streamline Line - Check Circle
+ */
+export function StreamlineCheckCircle({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M9 12.5l2 2 4.5-4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+  );
+}
+
+/**
+ * Official Streamline Line - Loader Spinner
+ */
+export function StreamlineLoader({ className = 'w-4 h-4 animate-spin', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" d="M12 3v3m0 12v3m9-9h-3M6 12H3m15.364-6.364l-2.121 2.121M7.757 16.243l-2.121 2.121m12.728 0l-2.121-2.121M7.757 7.757L5.636 5.636" />
+    </svg>
+  );
+}
+
+/**
+ * Official Streamline Line - Book Open Story
+ */
+export function StreamlineBookOpen({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+    </svg>
+  );
+}
+
+export function StreamlineChevronDown({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+    </svg>
+  );
+}
+
+export function StreamlineChevronUp({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
+    </svg>
+  );
+}
+
+export function StreamlineChevronLeft({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+    </svg>
+  );
+}
+
+export function StreamlineChevronRight({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+    </svg>
+  );
+}
+
+export function StreamlineArrowDown({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m0 0l5.25-5.25M12 19.5l-5.25-5.25" />
+    </svg>
+  );
+}
+
+export function StreamlineArrowUp({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M12 19.5v-15m0 0l-5.25 5.25M12 4.5l5.25 5.25" />
+    </svg>
+  );
+}
+
+export function StreamlinePlus({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+    </svg>
+  );
+}
+
+export function StreamlineTrash({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+    </svg>
+  );
+}
+
+export function StreamlineEdit({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
+    </svg>
+  );
+}
+
+export function StreamlineSave({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2zM17 21v-8H7v8M7 3v5h8" />
+    </svg>
+  );
+}
+
+export function StreamlineUpload({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+    </svg>
+  );
+}
+
+export function StreamlineDownload({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+    </svg>
+  );
+}
+
+export function StreamlineExternalLink({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M13.5 10.5L21 3m0 0h-5.25M21 3v5.25M10.5 4.5H5.25A2.25 2.25 0 003 6.75v12A2.25 2.25 0 005.25 21h12a2.25 2.25 0 002.25-2.25v-5.25" />
+    </svg>
+  );
+}
+
+export function StreamlineShare({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" />
+    </svg>
+  );
+}
+
+export function StreamlineRotateCcw({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M2.5 2v6h6M2.66 15.57a10 10 0 10.57-8.38L2.5 8" />
+    </svg>
+  );
+}
+
+export function StreamlineRotateCw({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M21.5 2v6h-6M21.34 15.57a10 10 0 11-.57-8.38L21.5 8" />
+    </svg>
+  );
+}
+
+export function StreamlineRefresh({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+    </svg>
+  );
+}
+
+export function StreamlineSkipBack({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M19 20L9 12l10-8v16zM5 19V5" />
+    </svg>
+  );
+}
+
+export function StreamlineSkipForward({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M5 4l10 8-10 8V4zM19 5v14" />
+    </svg>
+  );
+}
+
+export function StreamlineBookmarkCheck({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M5 21V5a2 2 0 012-2h10a2 2 0 012 2v16l-7-4-7 4zm4-11l2 2 4-4" />
+    </svg>
+  );
+}
+
+export function StreamlineBookMarked({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M4 19.5v-15A2.5 2.5 0 016.5 2H20v20H6.5a2.5 2.5 0 01-2.5-2.5zm6-17.5v8l3-2 3 2V2" />
+    </svg>
+  );
+}
+
+export function StreamlineLibrary({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M4 19.5v-15A2.5 2.5 0 016.5 2H19a1 1 0 011 1v18a1 1 0 01-1 1H6.5a2.5 2.5 0 01-2.5-2.5zm4-11.5h8m-8 4h6m-6 4h8M4 6v13.5a2.5 2.5 0 002.5 2.5H20" />
+    </svg>
+  );
+}
+
+export function StreamlineFileText({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+    </svg>
+  );
+}
+
+export function StreamlineImage({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+    </svg>
+  );
+}
+
+export function StreamlineEye({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+      <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+export function StreamlineEyeOff({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" />
+    </svg>
+  );
+}
+
+export function StreamlineShoppingBag({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+    </svg>
+  );
+}
+
+export function StreamlineShieldCheck({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+    </svg>
+  );
+}
+
+export function StreamlineDollarSign({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" />
+    </svg>
+  );
+}
+
+export function StreamlineSparkles({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
+    </svg>
+  );
+}
+
+export function StreamlineCloud({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
+    </svg>
+  );
+}
+
+export function StreamlineWifiOff({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M1 1l22 22m-5.28-17.72a15.938 15.938 0 00-10.72 0M5 12.55a10.94 10.94 0 015.17-2.39m4.83.39a10.95 10.95 0 013 2M8.53 16.11a6 6 0 016.95 0M12 20h.01" />
+    </svg>
+  );
+}
+
+export function StreamlineAlertCircle({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01" />
+    </svg>
+  );
+}
+
+export function StreamlineAlertTriangle({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0zM12 9v4m0 4h.01" />
+    </svg>
+  );
+}
+
+export function StreamlineHelpCircle({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3m0 3.5v.5" />
+    </svg>
+  );
+}
+
+export function StreamlineMail({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+    </svg>
+  );
+}
+
+export function StreamlineLink({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71m-1.75 6.82a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" />
+    </svg>
+  );
+}
+
+export function StreamlineList({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" />
+    </svg>
+  );
+}
+
+export function StreamlineColumns({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M12 3v18M3 5a2 2 0 012-2h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5z" />
+    </svg>
+  );
+}
+
+export function StreamlineSquare({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+export function StreamlineType({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M4 7V4h16v3M9 20h6M12 4v16" />
+    </svg>
+  );
+}
+
+export function StreamlineZoomIn({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <circle cx="11" cy="11" r="8" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35M11 8v6M8 11h6" />
+    </svg>
+  );
+}
+
+export function StreamlineZoomOut({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <circle cx="11" cy="11" r="8" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35M8 11h6" />
+    </svg>
+  );
+}
+
+export function StreamlineMaximize({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+    </svg>
+  );
+}
+
+export function StreamlineMinimize({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M4 14h6v6m10-10h-6V4m0 6l7-7M3 21l7-7" />
+    </svg>
+  );
+}
+
+export function StreamlineZap({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+    </svg>
+  );
+}
+
+export function StreamlineWand({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M15 4V2m0 16v-2M8 9h2m10 0h-2m-2.172-4.828l1.414-1.414M4.758 15.242l1.414-1.414M2 22l10-10m7.172 1.172l1.414 1.414M16.242 4.758l1.414-1.414" />
+    </svg>
+  );
+}
+
+// Seamless drop-in compatibility aliases replacing generic Lucide icons with authentic Streamline icons
+export {
+  StreamlineChevronDown as ChevronDown,
+  StreamlineChevronUp as ChevronUp,
+  StreamlineChevronLeft as ChevronLeft,
+  StreamlineChevronRight as ChevronRight,
+  StreamlineArrowDown as ArrowDown,
+  StreamlineArrowUp as ArrowUp,
+  StreamlineArrowLeft as ArrowLeft,
+  StreamlineArrowRight as ArrowRight,
+  StreamlinePlus as Plus,
+  StreamlineTrash as Trash2,
+  StreamlineEdit as Edit2,
+  StreamlineSave as Save,
+  StreamlineUpload as Upload,
+  StreamlineDownload as Download,
+  StreamlineExternalLink as ExternalLink,
+  StreamlineShare as Share2,
+  StreamlineRotateCcw as RotateCcw,
+  StreamlineRotateCw as RotateCw,
+  StreamlineRefresh as RefreshCw,
+  StreamlineSkipBack as SkipBack,
+  StreamlineSkipForward as SkipForward,
+  StreamlineBookmarkCheck as BookmarkCheck,
+  StreamlineBookMarked as BookMarked,
+  StreamlineLibrary as Library,
+  StreamlineFileText as FileText,
+  StreamlineImage as Image,
+  StreamlineEye as Eye,
+  StreamlineEyeOff as EyeOff,
+  StreamlineShoppingBag as ShoppingBag,
+  StreamlineShieldCheck as ShieldCheck,
+  StreamlineDollarSign as DollarSign,
+  StreamlineSparkles as Sparkles,
+  StreamlineCloud as Cloud,
+  StreamlineWifiOff as WifiOff,
+  StreamlineAlertCircle as AlertCircle,
+  StreamlineAlertTriangle as AlertTriangle,
+  StreamlineHelpCircle as HelpCircle,
+  StreamlineMail as Mail,
+  StreamlineLink as Link,
+  StreamlineList as List,
+  StreamlineColumns as Columns,
+  StreamlineSquare as Square,
+  StreamlineType as Type,
+  StreamlineZoomIn as ZoomIn,
+  StreamlineZoomOut as ZoomOut,
+  StreamlineMaximize as Maximize2,
+  StreamlineMinimize as Minimize2,
+  StreamlineZap as Zap,
+  StreamlineWand as Wand2,
+  StreamlineCheck as Check,
+  StreamlineCheckCircle as CheckCircle,
+  StreamlineCheckCircle as CheckCircle2,
+  StreamlineClose as X,
+  StreamlineSearch as Search,
+  StreamlineSliders as Sliders,
+  StreamlineSliders as SlidersHorizontal,
+  StreamlineClock as Clock,
+  StreamlineTag as Tag,
+  StreamlineCloudRain as CloudRain,
+  StreamlineFlame as Flame,
+  StreamlineWind as Wind,
+  StreamlineMusic as Music,
+  StreamlinePause as Pause,
+  StreamlinePlay as Play,
+  StreamlineVolume as Volume2,
+  StreamlineVolumeMute as VolumeX,
+  StreamlineCopy as Copy,
+  StreamlineLoader as Loader2,
+  StreamlineBookOpen as BookOpen,
+  StreamlineBook as Book,
+  StreamlineBookmark as Bookmark,
+  StreamlineCoffee as Coffee,
+  StreamlineMoon as Moon,
+  StreamlineSun as Sun,
+  StreamlineHeart as Heart,
+  StreamlineHeadphones as Headphones,
+  StreamlineUser as User,
+  StreamlineUsers as Users,
+  StreamlineCompass as Compass,
+  StreamlineCalendar as Calendar,
+  StreamlineStar as Star,
+  StreamlineLock as Lock,
+  StreamlineMenu as Menu,
+};
+
+
 
 

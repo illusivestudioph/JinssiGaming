@@ -18,7 +18,7 @@ import {
   FileText,
   Clock,
   BookMarked,
-} from 'lucide-react';
+} from '@/components/StreamlineIcons';
 
 interface StoryEditorProps {
   story: Story;

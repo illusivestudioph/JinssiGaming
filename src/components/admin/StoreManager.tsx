@@ -23,7 +23,7 @@ import {
   CheckCircle2,
   AlertCircle,
   Coffee
-} from 'lucide-react';
+} from '@/components/StreamlineIcons';
 
 interface StoreManagerProps {
   products: StoreProduct[];

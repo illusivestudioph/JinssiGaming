@@ -18,7 +18,7 @@ import {
   Sun,
   Moon,
   Coffee,
-} from 'lucide-react';
+} from '@/components/StreamlineIcons';
 
 // Configure PDF.js worker using matching CDN build
 if (typeof window !== 'undefined' && !pdfjsLib.GlobalWorkerOptions.workerSrc) {

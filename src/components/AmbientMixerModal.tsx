@@ -11,7 +11,7 @@ import {
   X,
   CheckCircle2,
   Sliders,
-} from 'lucide-react';
+} from '@/components/StreamlineIcons';
 
 interface AmbientMixerModalProps {
   isOpen: boolean;

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useSiteContent, type CtaLink, type WalletOption } from '@/context/SiteContentContext';
 import { supabase } from '@/lib/supabase';
-import { Coffee, X, Copy, Check } from 'lucide-react';
+import { Coffee, X, Copy, Check } from '@/components/StreamlineIcons';
 
 export function CtaFooter({ onNavigate }: { onNavigate: (view: 'about' | 'privacy' | 'terms' | 'contact' | 'store') => void }) {
   const { ctaLinks, logoImage } = useSiteContent();

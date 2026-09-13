@@ -7,7 +7,7 @@ import { CozyAvatar } from "@/components/CozyAvatar";
 import { AmbientMixerModal } from "@/components/AmbientMixerModal";
 import { MagneticText } from "@/components/MagneticText";
 import { getOptimizedImageUrl } from '@/utils/imageOptimization';
-import { Lock, Menu, X, Music, Pause, Volume2, VolumeX, Sliders } from 'lucide-react';
+import { StreamlineLock, StreamlineMenu, StreamlineClose, StreamlineSliders } from '@/components/StreamlineIcons';
 
 export type View = 'home' | 'walkthroughs' | 'journal' | 'stories' | 'store' | 'about' | 'privacy' | 'terms' | 'contact' | 'admin';
 
@@ -216,7 +216,7 @@ export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View)
               aria-controls="mobile-navigation"
               aria-label={mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
             >
-              {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              {mobileMenuOpen ? <StreamlineClose className="h-5 w-5" /> : <StreamlineMenu className="h-5 w-5" />}
             </button>
           </div>
         </div>
@@ -286,7 +286,7 @@ export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View)
                 }}
                 className="mt-2.5 flex items-center justify-center gap-2 w-full py-2 px-3 rounded-xl bg-peach-100 text-peach-700 text-xs font-bold hover:bg-peach-200 transition-colors"
               >
-                <Sliders className="w-3.5 h-3.5" />
+                <StreamlineSliders className="w-3.5 h-3.5" />
                 Open Sound Lounge (Rain, Fireplace...)
               </button>
             </div>
@@ -302,11 +302,11 @@ export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View)
         <div className="fixed inset-0 bg-ink-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="notepad-card max-w-md w-full p-8 relative animate-fade-in">
             <button onClick={() => setShowAuthModal(false)} className="absolute top-4 right-4 text-tan-400 hover:text-ink-900">
-              <X size={24} />
+              <StreamlineClose className="w-6 h-6" />
             </button>
             <div className="flex justify-center mb-4">
               <div className="p-3 bg-earth-100 rounded-full text-earth-600">
-                <Lock size={32} />
+                <StreamlineLock className="w-8 h-8" />
               </div>
             </div>
             <h2 className="text-2xl font-display font-bold text-center text-ink-900 mb-2">Restricted Access</h2>

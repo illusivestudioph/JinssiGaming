@@ -17,7 +17,7 @@ import {
   BookOpen,
   ArrowRight,
   ExternalLink,
-} from 'lucide-react';
+} from '@/components/StreamlineIcons';
 
 interface ArticleViewProps {
   article: Article;

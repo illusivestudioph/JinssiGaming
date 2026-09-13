@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Music, Pause, Volume2, VolumeX, Sliders } from 'lucide-react';
+import { StreamlineMusic, StreamlinePause, StreamlineVolume, StreamlineVolumeMute, StreamlineSliders } from '@/components/StreamlineIcons';
 import { useMusic } from '@/context/MusicContext';
 import { AmbientMixerModal } from '@/components/AmbientMixerModal';
 
@@ -57,7 +57,7 @@ export function BackgroundMusic({ compact = false }: BackgroundMusicProps) {
                   }}
                   className="mt-1 inline-flex items-center gap-1 text-[11px] font-bold text-peach-600 hover:text-peach-700 bg-white/80 px-2 py-0.5 rounded-full border border-tan-200 transition-colors shadow-cozy-sm"
                 >
-                  <Sliders className="w-2.5 h-2.5" />
+                  <StreamlineSliders className="w-2.5 h-2.5" />
                   <span>{hasActiveAmbience ? 'Ambience On' : 'Mix Ambience'}</span>
                 </button>
               </div>
@@ -72,7 +72,7 @@ export function BackgroundMusic({ compact = false }: BackgroundMusicProps) {
               aria-label={playing ? 'Pause background music' : 'Play background music'}
               title={playing ? 'Pause music' : 'Play music'}
             >
-              {playing ? <Pause className="h-4 w-4" /> : <Music className="h-4 w-4" />}
+              {playing ? <StreamlinePause className="h-4 w-4" /> : <StreamlineMusic className="h-4 w-4" />}
               <span className="vinyl-play-text">{playing ? 'Playing' : 'Play music'}</span>
             </button>
             <button
@@ -81,14 +81,14 @@ export function BackgroundMusic({ compact = false }: BackgroundMusicProps) {
               className="p-2 rounded-full border border-tan-200 bg-cream-50 hover:bg-peach-100 text-tan-600 hover:text-peach-600 transition-colors"
               title="Open Ambient Sound Lounge"
             >
-              <Sliders className="w-4 h-4" />
+              <StreamlineSliders className="w-4 h-4" />
             </button>
           </div>
         )}
 
       {!compact && (
         <>
-          <Music className="h-4 w-4 text-earth-600" aria-hidden="true" />
+          <StreamlineMusic className="h-4 w-4 text-earth-600" aria-hidden="true" />
           <label className="sr-only" htmlFor="bgm-volume">
             Music volume
           </label>
@@ -110,9 +110,9 @@ export function BackgroundMusic({ compact = false }: BackgroundMusicProps) {
             title={muted ? 'Unmute music' : 'Mute music'}
           >
             {muted || userVolume === 0 ? (
-              <VolumeX className="h-4 w-4" />
+              <StreamlineVolumeMute className="h-4 w-4" />
             ) : (
-              <Volume2 className="h-4 w-4" />
+              <StreamlineVolume className="h-4 w-4" />
             )}
           </button>
         </>

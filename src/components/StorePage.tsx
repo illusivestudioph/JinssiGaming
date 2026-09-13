@@ -14,7 +14,7 @@ import {
   Tag,
   Coffee,
   Heart
-} from 'lucide-react';
+} from '@/components/StreamlineIcons';
 import { AdSenseUnit } from '@/components/AdSenseUnit';
 
 export function StorePage() {

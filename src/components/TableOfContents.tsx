@@ -9,7 +9,7 @@ import {
   X,
   Compass,
   EyeOff,
-} from 'lucide-react';
+} from '@/components/StreamlineIcons';
 
 interface TableOfContentsProps {
   sections: WalkthroughSection[];

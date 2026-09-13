@@ -30,7 +30,7 @@ import {
   BookMarked,
   ExternalLink,
   ShoppingBag
-} from 'lucide-react';
+} from '@/components/StreamlineIcons';
 
 const DRAFT_STORAGE_KEY = 'jinssi-admin-editing-game-draft';
 

@@ -1,6 +1,6 @@
 import { useSiteContent } from '@/context/SiteContentContext';
 import type { Article } from '@/data/articles';
-import { Clock, ArrowRight } from 'lucide-react';
+import { Clock, ArrowRight } from '@/components/StreamlineIcons';
 import { StreamlineCoffeeDuo, StreamlineBookDuo } from '@/components/StreamlineIcons';
 import { getOptimizedImageUrl } from '@/utils/imageOptimization';
 
