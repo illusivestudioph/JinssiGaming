@@ -1,12 +1,15 @@
 export interface AdventurerConfig {
   seed: string;
+  gender?: 'male' | 'female' | 'neutral';
   skinColor: string;
   hair: string;
   hairColor: string;
+  eyebrows?: string;
   eyes: string;
   mouth: string;
   glasses: string;
   features: string;
+  earrings?: string;
   backgroundColor: string;
   useGooglePhoto?: boolean;
   googleAvatarUrl?: string;
@@ -42,13 +45,16 @@ export interface UserProfile {
 
 export const DEFAULT_AVATAR_CONFIG: AdventurerConfig = {
   seed: 'CozyPlayer',
+  gender: 'neutral',
   skinColor: 'f2d3b1',
   hair: 'short01',
   hairColor: '4a312c',
+  eyebrows: 'variant02',
   eyes: 'variant01',
   mouth: 'variant01',
   glasses: 'none',
-  features: 'blush',
+  features: 'none',
+  earrings: 'none',
   backgroundColor: 'ffd7b5',
   useGooglePhoto: false,
 };
@@ -71,8 +77,22 @@ export function getAdventurerAvatarUrl(config?: Partial<AdventurerConfig>): stri
   const params = new URLSearchParams();
   params.set('seed', config.seed || 'CozyPlayer');
   params.set('skinColor', config.skinColor || 'f2d3b1');
-  params.set('hair', config.hair || 'short01');
+
+  if (config.hair === 'none' || config.hair === 'bald') {
+    params.set('hairProbability', '0');
+  } else {
+    params.set('hair', config.hair || 'short01');
+    params.set('hairProbability', '100');
+  }
+
   params.set('hairColor', config.hairColor || '4a312c');
+
+  if (config.eyebrows && config.eyebrows !== 'none') {
+    params.set('eyebrows', config.eyebrows);
+  } else {
+    params.set('eyebrows', 'variant02');
+  }
+
   params.set('eyes', config.eyes || 'variant01');
   params.set('mouth', config.mouth || 'variant01');
   params.set('backgroundColor', config.backgroundColor || 'ffd7b5');
@@ -89,6 +109,13 @@ export function getAdventurerAvatarUrl(config?: Partial<AdventurerConfig>): stri
     params.set('featuresProbability', '100');
   } else {
     params.set('featuresProbability', '0');
+  }
+
+  if (config.earrings && config.earrings !== 'none') {
+    params.set('earrings', config.earrings);
+    params.set('earringsProbability', '100');
+  } else {
+    params.set('earringsProbability', '0');
   }
 
   return `https://api.dicebear.com/9.x/adventurer/svg?${params.toString()}`;
