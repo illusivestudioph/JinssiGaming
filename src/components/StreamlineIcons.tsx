@@ -373,3 +373,250 @@ export function StreamlineStars({ className = 'w-4 h-4', size, ...props }: Strea
     </svg>
   );
 }
+
+/**
+ * Official Streamline Plump Duo - Cozy Explorer Map Pin & Star
+ */
+export function StreamlineCompassDuo({ className = 'w-5 h-5', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 48 48"
+      width={size}
+      height={size}
+      className={className}
+      fill="none"
+      {...props}
+    >
+      <path
+        fill="currentColor"
+        fillOpacity="0.25"
+        d="M42 21c0 12.919 -13.35 22.128 -17.056 24.436a1.765 1.765 0 0 1 -1.888 0C19.351 43.128 6 33.919 6 21c0 -9.941 8.059 -18 18 -18s18 8.059 18 18Z"
+      />
+      <path
+        fill="currentColor"
+        fillOpacity="0.75"
+        d="M22.224 11.423c0.746 -1.439 2.805 -1.439 3.55 0l2.156 4.155 4.614 0.909c1.523 0.3 2.138 2.145 1.1 3.3L30.36 23.44l0.6 4.861c0.196 1.584 -1.45 2.747 -2.878 2.035L24 28.298l-4.081 2.038c-1.428 0.712 -3.074 -0.451 -2.878 -2.035l0.6 -4.861 -3.286 -3.654c-1.037 -1.154 -0.422 -3 1.101 -3.3l4.614 -0.908 2.155 -4.155Z"
+      />
+      <path
+        stroke="currentColor"
+        strokeWidth="3.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M42 21c0 12.919 -13.35 22.128 -17.056 24.436a1.765 1.765 0 0 1 -1.888 0C19.351 43.128 6 33.919 6 21c0 -9.941 8.059 -18 18 -18s18 8.059 18 18Z"
+      />
+      <path
+        stroke="currentColor"
+        strokeWidth="2.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M22.224 11.423c0.747 -1.439 2.805 -1.439 3.551 0l2.156 4.155 4.613 0.909c1.523 0.3 2.139 2.145 1.1 3.3L30.36 23.44l0.6 4.861c0.195 1.584 -1.45 2.747 -2.878 2.035L24 28.298l-4.082 2.038c-1.427 0.712 -3.073 -0.451 -2.878 -2.035l0.6 -4.861 -3.285 -3.654c-1.038 -1.154 -0.422 -3 1.1 -3.3l4.614 -0.908 2.155 -4.155Z"
+      />
+    </svg>
+  );
+}
+
+/**
+ * Official Streamline Plump Duo - Bookworm Open Classic Book
+ */
+export function StreamlineBookDuo({ className = 'w-5 h-5', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 48 48"
+      width={size}
+      height={size}
+      className={className}
+      fill="none"
+      {...props}
+    >
+      <path
+        fill="currentColor"
+        fillOpacity="0.2"
+        d="M37.8479 44.4957c2.551 -0.2182 4.4766 -2.1972 4.6643 -4.7506C42.7496 36.517 43 31.3657 43 24s-0.2504 -12.517 -0.4878 -15.74508c-0.1877 -2.55343 -2.1132 -4.5324 -4.6643 -4.75062C34.9089 3.25287 30.3696 3 24 3c-6.3695 0 -10.9088 0.25286 -13.8479 0.50429 -2.55102 0.21822 -4.47654 2.19719 -4.66429 4.75062C5.25045 11.483 5 16.6343 5 24c0 7.3657 0.25044 12.517 0.48779 15.7451 0.18775 2.5534 2.11328 4.5324 4.66431 4.7506C13.0912 44.7471 17.6304 45 24 45c6.3696 0 10.9088 -0.2529 13.8479 -0.5043Z"
+      />
+      <path
+        fill="currentColor"
+        fillOpacity="0.5"
+        d="M14 3.2417v41.5162c-1.5012 -0.0795 -2.7802 -0.1711 -3.8479 -0.2624 -2.55104 -0.2182 -4.47656 -2.1972 -4.66431 -4.7506C5.25044 36.5168 5 31.3655 5 23.9998s0.25045 -12.517 0.48781 -15.74507c0.18775 -2.55344 2.11327 -4.53241 4.66429 -4.75063 1.0678 -0.09134 2.3467 -0.18287 3.8479 -0.2624Z"
+      />
+      <path
+        stroke="currentColor"
+        strokeWidth="3.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M37.8479 44.4957c2.551 -0.2182 4.4766 -2.1972 4.6643 -4.7506C42.7496 36.517 43 31.3657 43 24s-0.2504 -12.517 -0.4878 -15.74508c-0.1877 -2.55343 -2.1132 -4.5324 -4.6643 -4.75062C34.9089 3.25287 30.3696 3 24 3c-6.3695 0 -10.9088 0.25286 -13.8479 0.50429 -2.55102 0.21822 -4.47654 2.19719 -4.66429 4.75062C5.25045 11.483 5 16.6343 5 24c0 7.3657 0.25044 12.517 0.48779 15.7451 0.18775 2.5534 2.11328 4.5324 4.66431 4.7506C13.0912 44.7471 17.6304 45 24 45c6.3696 0 10.9088 -0.2529 13.8479 -0.5043Z"
+      />
+      <path stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" d="M14 3.2417v41.5162" />
+      <path stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" d="M22 13h11M22 20h6" />
+    </svg>
+  );
+}
+
+/**
+ * Official Streamline Plump Duo - Retro Gamer Handheld Gameboy
+ */
+export function StreamlineGameboyDuo({ className = 'w-5 h-5', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 48 48"
+      width={size}
+      height={size}
+      className={className}
+      fill="none"
+      {...props}
+    >
+      <path
+        fill="currentColor"
+        fillOpacity="0.25"
+        d="M35.8764 44.4668c2.4574 -0.2273 4.3555 -2.0605 4.5731 -4.5188C40.7214 36.8764 41 31.8209 41 24s-0.2786 -12.8764 -0.5505 -15.94798c-0.2176 -2.45829 -2.1157 -4.29155 -4.5731 -4.51879C33.0585 3.27266 28.9316 3 24 3s-9.0585 0.27266 -11.8764 0.53323c-2.45739 0.22724 -4.3555 2.0605 -4.5731 4.51879C7.27861 11.1236 7 16.1791 7 24s0.27861 12.8764 0.5505 15.948c0.2176 2.4583 2.11571 4.2915 4.5731 4.5188C14.9415 44.7273 19.0684 45 24 45s9.0585 -0.2727 11.8764 -0.5332Z"
+      />
+      <path
+        fill="currentColor"
+        fillOpacity="0.6"
+        d="M31.7513 26.7674c1.5625 -0.0967 2.8228 -1.1676 2.9865 -2.7245C34.8786 22.7035 35 20.7509 35 18c0 -2.7509 -0.1214 -4.7035 -0.2622 -6.0429 -0.1637 -1.5569 -1.424 -2.6278 -2.9865 -2.72447C29.9267 9.11974 27.2301 9 24 9c-3.2301 0 -5.9267 0.11974 -7.7513 0.23263 -1.5625 0.09667 -2.8228 1.16757 -2.9865 2.72447C13.1214 13.2965 13 15.2491 13 18c0 2.7509 0.1214 4.7035 0.2622 6.0429 0.1637 1.5569 1.424 2.6278 2.9865 2.7245C18.0733 26.8803 20.7699 27 24 27c3.2301 0 5.9267 -0.1197 7.7513 -0.2326Z"
+      />
+      <path
+        stroke="currentColor"
+        strokeWidth="3.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M35.8764 44.4668c2.4574 -0.2273 4.3555 -2.0605 4.5731 -4.5188C40.7214 36.8764 41 31.8209 41 24s-0.2786 -12.8764 -0.5505 -15.94798c-0.2176 -2.45829 -2.1157 -4.29155 -4.5731 -4.51879C33.0585 3.27266 28.9316 3 24 3s-9.0585 0.27266 -11.8764 0.53323c-2.45739 0.22724 -4.3555 2.0605 -4.5731 4.51879C7.27861 11.1236 7 16.1791 7 24s0.27861 12.8764 0.5505 15.948c0.2176 2.4583 2.11571 4.2915 4.5731 4.5188C14.9415 44.7273 19.0684 45 24 45s9.0585 -0.2727 11.8764 -0.5332Z"
+      />
+      <path
+        stroke="currentColor"
+        strokeWidth="3.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M31.7513 26.7674c1.5625 -0.0967 2.8228 -1.1676 2.9865 -2.7245C34.8786 22.7035 35 20.7509 35 18c0 -2.7509 -0.1214 -4.7035 -0.2622 -6.0429 -0.1637 -1.5569 -1.424 -2.6278 -2.9865 -2.72447C29.9267 9.11974 27.2301 9 24 9c-3.2301 0 -5.9267 0.11974 -7.7513 0.23263 -1.5625 0.09667 -2.8228 1.16757 -2.9865 2.72447C13.1214 13.2965 13 15.2491 13 18c0 2.7509 0.1214 4.7035 0.2622 6.0429 0.1637 1.5569 1.424 2.6278 2.9865 2.7245C18.0733 26.8803 20.7699 27 24 27c3.2301 0 5.9267 -0.1197 7.7513 -0.2326Z"
+      />
+      <circle cx="30.5" cy="35.5" r="3.5" fill="currentColor" fillOpacity="0.4" stroke="currentColor" strokeWidth="2.8" />
+      <path stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" d="M17.5 32v7M21 35.5h-7" />
+    </svg>
+  );
+}
+
+/**
+ * Official Streamline Plump Duo - Cafe Regular Steaming Mug
+ */
+export function StreamlineCoffeeDuo({ className = 'w-5 h-5', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 48 48"
+      width={size}
+      height={size}
+      className={className}
+      fill="none"
+      {...props}
+    >
+      <path
+        fill="currentColor"
+        fillOpacity="0.25"
+        d="M5.078 36.31c0.15 4.652 3.207 8.132 7.849 8.465C14.81 44.91 17.14 45 20 45c2.86 0 5.19 -0.09 7.073 -0.225 4.642 -0.333 7.698 -3.813 7.849 -8.465 0.048 -1.478 0.078 -3.233 0.078 -5.31 0 -5.568 -0.217 -8.922 -0.411 -10.813 -0.137 -1.328 -1.072 -2.34 -2.392 -2.535C30.164 17.35 26.42 17 20 17c-6.42 0 -10.165 0.35 -12.197 0.652 -1.32 0.195 -2.255 1.207 -2.392 2.535C5.217 22.077 5 25.432 5 31c0 2.077 0.03 3.832 0.078 5.31Z"
+      />
+      <path
+        stroke="currentColor"
+        strokeWidth="3.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M5.078 36.31c0.15 4.652 3.207 8.132 7.849 8.465C14.81 44.91 17.14 45 20 45c2.86 0 5.19 -0.09 7.073 -0.225 4.642 -0.333 7.698 -3.813 7.849 -8.465 0.048 -1.478 0.078 -3.233 0.078 -5.31 0 -5.568 -0.217 -8.922 -0.411 -10.813 -0.137 -1.328 -1.072 -2.34 -2.392 -2.535C30.164 17.35 26.42 17 20 17c-6.42 0 -10.165 0.35 -12.197 0.652 -1.32 0.195 -2.255 1.207 -2.392 2.535C5.217 22.077 5 25.432 5 31c0 2.077 0.03 3.832 0.078 5.31Z"
+      />
+      <path
+        stroke="currentColor"
+        strokeWidth="3.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M35 22h2.632c2.733 0 5.105 1.862 5.288 4.589a36.103 36.103 0 0 1 0 4.822C42.737 34.138 40.365 36 37.632 36H35"
+      />
+      <path stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" d="M25 4v6M17 6v6" />
+    </svg>
+  );
+}
+
+/**
+ * Official Streamline Plump Duo - Midnight Scholar Moon & Starry Constellation
+ */
+export function StreamlineMoonDuo({ className = 'w-5 h-5', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 48 48"
+      width={size}
+      height={size}
+      className={className}
+      fill="none"
+      {...props}
+    >
+      <path
+        fill="currentColor"
+        fillOpacity="0.25"
+        d="M18.228 19.47c0 7.669 6.216 13.885 13.884 13.885 1.121 0 2.21 -0.133 3.254 -0.383 0.81 -0.195 1.595 0.54 1.271 1.31C33.987 40.578 27.76 45 20.5 45 10.835 45 3 37.165 3 27.5S10.835 10 20.5 10c0.571 0 0.849 0.68 0.506 1.138a13.823 13.823 0 0 0 -2.778 8.333Z"
+      />
+      <path
+        fill="currentColor"
+        fillOpacity="0.8"
+        d="M38.324 27.404c-0.261 0.795 -1.386 0.795 -1.648 0l-1.615 -4.912a0.868 0.868 0 0 0 -0.553 -0.553l-4.912 -1.615c-0.795 -0.262 -0.795 -1.387 0 -1.648l4.912 -1.615a0.868 0.868 0 0 0 0.553 -0.553l1.615 -4.912c0.261 -0.795 1.386 -0.795 1.648 0l1.615 4.912a0.868 0.868 0 0 0 0.553 0.553l4.912 1.615c0.795 0.262 0.795 1.387 0 1.648l-4.912 1.615a0.868 0.868 0 0 0 -0.553 0.553l-1.615 4.912Z"
+      />
+      <path
+        stroke="currentColor"
+        strokeWidth="3.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M18.228 19.47c0 7.669 6.217 13.885 13.885 13.885 1.12 0 2.21 -0.133 3.253 -0.383 0.811 -0.195 1.595 0.54 1.272 1.31C33.988 40.578 27.76 45 20.5 45 10.835 45 3 37.165 3 27.5S10.835 10 20.5 10c0.572 0 0.85 0.68 0.506 1.138a13.823 13.823 0 0 0 -2.778 8.333Z"
+      />
+      <path
+        stroke="currentColor"
+        strokeWidth="2.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M38.324 27.404c-0.261 0.795 -1.386 0.795 -1.648 0l-1.615 -4.912a0.868 0.868 0 0 0 -0.553 -0.553l-4.912 -1.615c-0.795 -0.262 -0.795 -1.387 0 -1.648l4.912 -1.615a0.868 0.868 0 0 0 0.553 -0.553l1.615 -4.912c0.261 -0.795 1.386 -0.795 1.648 0l1.615 4.912a0.868 0.868 0 0 0 0.553 0.553l4.912 1.615c0.795 0.262 0.795 1.387 0 1.648l-4.912 1.615a0.868 0.868 0 0 0 -0.553 0.553l-1.615 4.912Z"
+      />
+      <path stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" d="M29 4v5M31.5 6.5h-5" />
+    </svg>
+  );
+}
+
+/**
+ * Official Streamline Plump Duo - Tea Brewer Cozy Sprout & Herbal Leaf
+ */
+export function StreamlineLeafDuo({ className = 'w-5 h-5', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 48 48"
+      width={size}
+      height={size}
+      className={className}
+      fill="none"
+      {...props}
+    >
+      <path
+        fill="currentColor"
+        fillOpacity="0.25"
+        d="M42.1159 3.88405S23.4569 -0.490561 12.7435 10.2228c-7.10016 7.1002 -7.69972 18.0123 -1.3391 24.3728 2.8914 2.8915 6.7234 4.3446 10.7104 4.4026C21.3828 37.1022 21 35.065 21 33c0 -1.8464 0.0984 -3.4907 0.2109 -4.7706 0.2734 -3.1088 2.3879 -6.2672 6.2393 -6.8119C29.1237 21.1808 31.5276 21 35 21c3.1573 0 5.4312 0.1494 7.0759 0.3545 2.0556 -8.8735 0.04 -17.47045 0.04 -17.47045Z"
+      />
+      <path
+        stroke="currentColor"
+        strokeWidth="3.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M12.1908 35.3272c-0.2691 -0.2327 -0.5314 -0.4765 -0.7864 -0.7316 -6.36062 -6.3605 -5.76105 -17.2726 1.3391 -24.3728C23.4569 -0.490561 42.1159 3.88405 42.1159 3.88405S44.004 11.9372 42.2617 20.5"
+      />
+      <path stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" d="M16.711 38c1.3706 0.5116 2.8139 0.8259 4.289 0.9452" />
+      <path stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" d="M37 9c-5 3.3333 -27 19.5 -27 36" />
+      <path
+        fill="currentColor"
+        fillOpacity="0.8"
+        stroke="currentColor"
+        strokeWidth="2.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M25.1955 28.5798c0.1453 -1.6521 1.1727 -2.9695 2.8149 -3.2018C29.4481 25.1747 31.6563 25 35 25s5.5519 0.1747 6.9896 0.378c1.6422 0.2323 2.6696 1.5497 2.8149 3.2018C44.9089 29.7673 45 31.2925 45 33c0 4.5142 -2.3825 8.7382 -6.3963 10.8039C37.2629 44.494 35.9544 45 35 45c-0.9544 0 -2.2629 -0.506 -3.6037 -1.1961C27.3825 41.7382 25 37.5142 25 33c0 -1.7075 0.0911 -3.2327 0.1955 -4.4202Z"
+      />
+      <path stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" d="M31 33.7333 34.7059 38 40 30" />
+    </svg>
+  );
+}
+

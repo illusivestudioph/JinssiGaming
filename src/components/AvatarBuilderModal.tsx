@@ -133,18 +133,43 @@ export function AvatarBuilderModal() {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fade-in select-none">
-      <div className="relative w-full max-w-xl bg-[#FFFDF9] border-2 border-[#5E5148] rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
+      <div
+        className="relative w-full max-w-xl rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh] border-2"
+        style={{
+          backgroundColor: 'var(--card-bg, #fefcf7)',
+          borderColor: 'var(--card-border, #5e5148)',
+        }}
+      >
         {/* Header Ribbon */}
-        <div className="px-6 py-4 bg-gradient-to-r from-[#FFF5EC] via-[#FFFBF5] to-[#F3F9F0] border-b border-[#E8D9C8] flex items-center justify-between">
+        <div
+          className="px-6 py-4 border-b flex items-center justify-between"
+          style={{
+            backgroundColor: 'var(--card-done-bg, #fcf8ee)',
+            borderColor: 'var(--card-line, #ebdcc9)',
+          }}
+        >
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-2xl bg-[#FFE4CE] border border-[#FD9A4D]/40 flex items-center justify-center text-[#E07A2B] shadow-xs">
-              <StreamlinePalette className="w-5 h-5 text-[#E07A2B]" />
+            <div
+              className="w-9 h-9 rounded-2xl border-2 flex items-center justify-center shadow-xs"
+              style={{
+                backgroundColor: 'var(--theme-accent-soft, #fcdfaa)',
+                borderColor: 'var(--theme-accent, #fd9a4d)',
+                color: 'var(--theme-accent, #fd9a4d)',
+              }}
+            >
+              <StreamlinePalette className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="font-display font-bold text-lg text-[#3A2E22]">
+              <h3
+                className="font-display font-bold text-lg"
+                style={{ color: 'var(--text-main, #3a2e22)' }}
+              >
                 Adventurer Character Studio
               </h3>
-              <p className="text-xs text-[#7A6858] font-medium">
+              <p
+                className="text-xs font-medium"
+                style={{ color: 'var(--text-muted, #8f6b48)' }}
+              >
                 Customize your illustrated persona with authentic hand-drawn vector artwork
               </p>
             </div>
@@ -152,14 +177,21 @@ export function AvatarBuilderModal() {
           <button
             type="button"
             onClick={handleClose}
-            className="p-2 rounded-full hover:bg-[#F2E4D4] text-[#7A6858] hover:text-[#3A2E22] transition-colors"
+            className="p-2 rounded-full hover:opacity-80 transition-colors cursor-pointer"
+            style={{ color: 'var(--text-muted, #8f6b48)' }}
           >
             <StreamlineClose className="w-5 h-5" />
           </button>
         </div>
 
         {/* Top Showcase Preview Banner */}
-        <div className="p-6 bg-gradient-to-b from-[#FFF9F2] to-[#FFF3E8] border-b border-[#E8D9C8] flex flex-col sm:flex-row items-center gap-5 justify-between">
+        <div
+          className="p-6 border-b flex flex-col sm:flex-row items-center gap-5 justify-between"
+          style={{
+            backgroundColor: 'var(--card-done-bg, #fcf8ee)',
+            borderColor: 'var(--card-line, #ebdcc9)',
+          }}
+        >
           <div className="flex items-center gap-4">
             <div className="relative group cursor-pointer" onClick={handleRandomize} title="Click to randomize!">
               <CozyAvatar
@@ -173,20 +205,37 @@ export function AvatarBuilderModal() {
                   e.stopPropagation();
                   handleRandomize();
                 }}
-                className="absolute -bottom-1 -right-1 p-2 bg-[#FD9A4D] hover:bg-[#E88735] text-white rounded-full shadow-md transition-all active:rotate-180"
+                className="absolute -bottom-1 -right-1 p-2 rounded-full shadow-md transition-all active:rotate-180"
+                style={{
+                  backgroundColor: 'var(--theme-accent, #fd9a4d)',
+                  color: 'var(--theme-accent-text, #ffffff)',
+                }}
                 title="Roll Random Character"
               >
                 <StreamlineDice className="w-3.5 h-3.5" />
               </button>
             </div>
             <div>
-              <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#E07A2B] bg-[#FFF0E2] px-2.5 py-0.5 rounded-md border border-[#FD9A4D]/40">
+              <span
+                className="text-[10px] font-extrabold uppercase tracking-widest px-2.5 py-0.5 rounded-md border"
+                style={{
+                  backgroundColor: 'var(--section-kicker-bg, #fcf3b9)',
+                  borderColor: 'var(--section-kicker-border, #fcb274)',
+                  color: 'var(--section-kicker-color, #b05a1d)',
+                }}
+              >
                 Illustrated Adventurer
               </span>
-              <h4 className="font-display font-bold text-base text-[#3A2E22] mt-1">
+              <h4
+                className="font-display font-bold text-base mt-1"
+                style={{ color: 'var(--text-main, #3a2e22)' }}
+              >
                 @{profile.username}
               </h4>
-              <p className="text-xs text-[#7A6858]">
+              <p
+                className="text-xs"
+                style={{ color: 'var(--text-muted, #8f6b48)' }}
+              >
                 {HAIRSTYLES.find((h) => h.id === draftConfig.hair)?.label} • {HAIR_COLORS.find((c) => c.id === draftConfig.hairColor)?.label}
               </p>
             </div>
@@ -196,15 +245,26 @@ export function AvatarBuilderModal() {
           <button
             type="button"
             onClick={handleRandomize}
-            className="px-4 py-2 rounded-xl border-2 border-[#E5D7C5] bg-white hover:border-[#FD9A4D] text-xs font-bold text-[#3A2E22] shadow-xs flex items-center gap-2 transition-all active:scale-95"
+            className="px-4 py-2 rounded-xl border-2 text-xs font-bold shadow-xs flex items-center gap-2 transition-all active:scale-95 cursor-pointer"
+            style={{
+              backgroundColor: 'var(--card-bg, #ffffff)',
+              borderColor: 'var(--card-line, #ebdcc9)',
+              color: 'var(--text-main, #3a2e22)',
+            }}
           >
-            <StreamlineDice className="w-4 h-4 text-[#FD9A4D]" />
+            <StreamlineDice className="w-4 h-4" style={{ color: 'var(--theme-accent, #fd9a4d)' }} />
             <span>Roll Random Persona</span>
           </button>
         </div>
 
         {/* Customization Navigation Tabs */}
-        <div className="flex border-b border-[#E8D9C8] px-6 bg-[#FAF4ED] gap-2 overflow-x-auto text-xs font-bold text-[#7A6858]">
+        <div
+          className="flex border-b px-6 gap-2 overflow-x-auto text-xs font-bold"
+          style={{
+            backgroundColor: 'var(--card-done-bg, #fcf8ee)',
+            borderColor: 'var(--card-line, #ebdcc9)',
+          }}
+        >
           {[
             { id: 'hair', label: 'Hairstyle' },
             { id: 'skin', label: 'Skin & Eyes' },
@@ -218,11 +278,13 @@ export function AvatarBuilderModal() {
                 key={tab.id}
                 type="button"
                 onClick={() => setActiveTab(tab.id as CustomizerTab)}
-                className={`py-2.5 px-3 border-b-2 transition-all whitespace-nowrap ${
-                  isActive
-                    ? 'border-[#FD9A4D] text-[#E07A2B] font-extrabold'
-                    : 'border-transparent hover:text-[#3A2E22]'
+                className={`py-2.5 px-3 border-b-2 transition-all whitespace-nowrap cursor-pointer ${
+                  isActive ? 'font-extrabold' : 'border-transparent'
                 }`}
+                style={{
+                  borderColor: isActive ? 'var(--theme-accent, #fd9a4d)' : 'transparent',
+                  color: isActive ? 'var(--theme-accent, #fd9a4d)' : 'var(--text-muted, #8f6b48)',
+                }}
               >
                 {tab.label}
               </button>
@@ -231,7 +293,10 @@ export function AvatarBuilderModal() {
         </div>
 
         {/* Tab Panels */}
-        <div className="p-6 overflow-y-auto space-y-6 flex-1 bg-[#FFFDF9]">
+        <div
+          className="p-6 overflow-y-auto space-y-6 flex-1"
+          style={{ backgroundColor: 'var(--card-bg, #fefcf7)' }}
+        >
           {/* TAB 1: HAIRSTYLE & COLOR */}
           {activeTab === 'hair' && (
             <div className="space-y-5">
@@ -503,18 +568,29 @@ export function AvatarBuilderModal() {
         </div>
 
         {/* Footer Actions */}
-        <div className="px-6 py-3.5 bg-[#FAF4ED] border-t border-[#E8D9C8] flex items-center justify-end gap-3">
+        <div
+          className="px-6 py-3.5 border-t flex items-center justify-end gap-3"
+          style={{
+            backgroundColor: 'var(--card-done-bg, #fcf8ee)',
+            borderColor: 'var(--card-line, #ebdcc9)',
+          }}
+        >
           <button
             type="button"
             onClick={handleClose}
-            className="px-4 py-2 rounded-xl text-xs font-bold text-[#6A5747] hover:bg-[#EFE3D4] transition-colors"
+            className="px-4 py-2 rounded-xl text-xs font-bold transition-colors cursor-pointer hover:opacity-80"
+            style={{ color: 'var(--text-muted, #8f6b48)' }}
           >
             Cancel
           </button>
           <button
             type="button"
             onClick={handleSave}
-            className="px-5 py-2 rounded-xl bg-[#FD9A4D] hover:bg-[#E88735] text-white text-xs font-bold shadow-xs flex items-center gap-1.5 transition-colors active:scale-95"
+            className="px-5 py-2 rounded-xl text-xs font-bold shadow-md flex items-center gap-1.5 transition-colors active:scale-95 cursor-pointer"
+            style={{
+              backgroundColor: 'var(--theme-accent, #fd9a4d)',
+              color: 'var(--theme-accent-text, #ffffff)',
+            }}
           >
             <StreamlineCheck className="w-4 h-4" />
             <span>Save Avatar</span>
