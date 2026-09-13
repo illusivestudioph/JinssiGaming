@@ -1,16 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import {
   X,
-  User,
-  Sparkles,
-  Award,
   BookOpen,
-  MessageSquare,
   LogOut,
   Check,
   Edit3,
   Calendar,
-  LogIn,
   Compass,
   Gamepad2,
   Coffee,
@@ -19,6 +14,7 @@ import {
 import { useAuth } from '@/context/AuthContext';
 import { CozyAvatar } from '@/components/CozyAvatar';
 import { CommunityBadge } from '@/types/profile';
+import { StreamlineUser, StreamlineStars } from '@/components/StreamlineIcons';
 
 const BADGE_CONFIGS: { name: CommunityBadge; icon: React.ComponentType<{ className?: string }> }[] = [
   { name: 'Cozy Explorer', icon: Compass },
@@ -26,7 +22,7 @@ const BADGE_CONFIGS: { name: CommunityBadge; icon: React.ComponentType<{ classNa
   { name: 'Retro Gamer', icon: Gamepad2 },
   { name: 'Cafe Regular', icon: Coffee },
   { name: 'Midnight Scholar', icon: Moon },
-  { name: 'Tea Brewer', icon: Sparkles },
+  { name: 'Tea Brewer', icon: StreamlineStars },
 ];
 
 export function UserProfileModal() {
@@ -66,26 +62,33 @@ export function UserProfileModal() {
     setTimeout(() => setToast(null), 2500);
   };
 
+  const handleOpenAvatarStudio = () => {
+    setShowProfileModal(false);
+    setShowAvatarBuilder(true);
+  };
+
   const joinedFormatted = new Date(profile.joinedAt).toLocaleDateString('en-US', {
     month: 'short',
     year: 'numeric',
   });
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fade-in">
-      <div className="relative w-full max-w-md bg-cream-100 dark:bg-stone-900 border-2 border-tan-300 dark:border-stone-700 rounded-3xl shadow-cozy-lg overflow-hidden flex flex-col max-h-[92vh]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fade-in select-none">
+      <div className="relative w-full max-w-md bg-[#FFFDF9] border-2 border-[#5E5148] rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
         {/* Header Ribbon */}
-        <div className="relative px-6 py-4 bg-gradient-to-r from-[#FEE4CB] via-[#FFF2E2] to-[#E2F0D9] dark:from-stone-800 dark:to-stone-800 border-b border-tan-200 dark:border-stone-700 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <User className="w-5 h-5 text-peach-600 dark:text-peach-400" />
-            <h3 className="font-display font-bold text-lg text-ink-900 dark:text-cream-50">
+        <div className="px-6 py-4 bg-gradient-to-r from-[#FFF5EC] via-[#FFFBF5] to-[#F3F9F0] border-b border-[#E8D9C8] flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-2xl bg-[#FFE4CE] border border-[#FD9A4D]/40 flex items-center justify-center text-[#E07A2B] shadow-xs">
+              <StreamlineUser className="w-5 h-5 text-[#E07A2B]" />
+            </div>
+            <h3 className="font-display font-bold text-lg text-[#3A2E22]">
               Cozy Member Profile
             </h3>
           </div>
           <button
             type="button"
             onClick={() => setShowProfileModal(false)}
-            className="p-1.5 rounded-full hover:bg-black/10 dark:hover:bg-stone-700 text-tan-700 dark:text-tan-300 transition-colors"
+            className="p-2 rounded-full hover:bg-[#F2E4D4] text-[#7A6858] hover:text-[#3A2E22] transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -93,23 +96,23 @@ export function UserProfileModal() {
 
         {/* Toast Alert */}
         {toast && (
-          <div className="bg-emerald-500 text-white text-xs font-bold px-4 py-2 text-center animate-fade-in flex items-center justify-center gap-1.5 shadow-sm">
+          <div className="bg-emerald-600 text-white text-xs font-bold px-4 py-2 text-center animate-fade-in flex items-center justify-center gap-1.5 shadow-sm">
             <Check className="w-3.5 h-3.5" />
             <span>{toast}</span>
           </div>
         )}
 
         {/* Scrollable Body */}
-        <div className="p-6 overflow-y-auto space-y-6">
+        <div className="p-6 overflow-y-auto space-y-6 flex-1 bg-[#FFFDF9]">
           {/* Avatar Card Showcase */}
-          <div className="flex flex-col items-center justify-center p-5 bg-cream-50 dark:bg-stone-800/60 rounded-2xl border border-tan-200 dark:border-stone-700 shadow-inner">
+          <div className="flex flex-col items-center justify-center p-5 bg-[#FAF4ED] rounded-2xl border-2 border-[#EADCCB] shadow-inner">
             <div className="relative">
-              <CozyAvatar config={profile.avatarConfig} size={92} className="shadow-cozy-md" />
+              <CozyAvatar config={profile.avatarConfig} size={96} className="shadow-md rounded-full border-2 border-white" />
               <button
                 type="button"
-                onClick={() => setShowAvatarBuilder(true)}
-                className="absolute -bottom-1 -right-1 px-2.5 py-1 bg-peach-500 hover:bg-peach-600 text-white text-[11px] font-bold rounded-full shadow-md flex items-center gap-1 transition-transform active:scale-95"
-                title="Open Avatar Builder"
+                onClick={handleOpenAvatarStudio}
+                className="absolute -bottom-1 -right-1 px-3 py-1 bg-[#FD9A4D] hover:bg-[#E88735] text-white text-[11px] font-bold rounded-full shadow-md flex items-center gap-1.5 transition-transform active:scale-95 cursor-pointer"
+                title="Open Avatar Character Studio"
               >
                 <Edit3 className="w-3 h-3" />
                 <span>Edit</span>
@@ -117,16 +120,16 @@ export function UserProfileModal() {
             </div>
 
             <div className="mt-3 text-center">
-              <h4 className="font-display font-bold text-base text-ink-900 dark:text-cream-50">
+              <h4 className="font-display font-bold text-base text-[#3A2E22]">
                 @{profile.username}
               </h4>
-              <span className="inline-block mt-1 text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-300/60 dark:border-amber-700/50">
+              <span className="inline-block mt-1 text-[11px] font-bold px-3 py-0.5 rounded-full bg-[#FFF0E2] text-[#E07A2B] border border-[#FD9A4D]/40">
                 {profile.badge}
               </span>
             </div>
 
             {/* Member Joined Date */}
-            <div className="flex items-center gap-1.5 text-[11px] text-tan-500 dark:text-tan-400 mt-2 font-mono">
+            <div className="flex items-center gap-1.5 text-[11px] text-[#7A6858] mt-2 font-mono">
               <Calendar className="w-3 h-3" />
               <span>Joined {joinedFormatted}</span>
             </div>
@@ -134,17 +137,17 @@ export function UserProfileModal() {
 
           {/* Guest Sign-In Notice */}
           {!user && (
-            <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50 text-center">
-              <p className="text-xs font-bold text-amber-900 dark:text-amber-200 mb-1">
+            <div className="p-4 rounded-2xl bg-[#FFF9F2] border-2 border-[#FBD9BC] text-center">
+              <p className="text-xs font-bold text-[#3A2E22] mb-1">
                 You are currently browsing as a Guest 🌱
               </p>
-              <p className="text-[11px] text-amber-700 dark:text-amber-300 mb-3">
+              <p className="text-[11px] text-[#7A6858] mb-3 leading-relaxed">
                 Sign in with Gmail whenever you want to comment on games or contribute books to the shelf!
               </p>
               <button
                 type="button"
                 onClick={signInWithGoogle}
-                className="w-full py-2.5 px-4 bg-white dark:bg-stone-800 hover:bg-cream-50 dark:hover:bg-stone-700 border-2 border-tan-300 dark:border-stone-600 rounded-xl font-bold text-xs text-ink-900 dark:text-cream-100 shadow-cozy-xs flex items-center justify-center gap-2.5 transition-all active:scale-98"
+                className="w-full py-2.5 px-4 bg-white hover:bg-[#FFFDFB] border-2 border-[#EADCCB] hover:border-[#FD9A4D] rounded-xl font-bold text-xs text-[#3A2E22] shadow-xs flex items-center justify-center gap-2.5 transition-all active:scale-98 cursor-pointer"
               >
                 <svg className="w-4 h-4" viewBox="0 0 24 24">
                   <path
@@ -173,26 +176,26 @@ export function UserProfileModal() {
           <form onSubmit={handleSaveProfile} className="space-y-4">
             {/* Username Input */}
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-tan-700 dark:text-tan-300 mb-1.5">
+              <label className="block text-xs font-bold uppercase tracking-wider text-[#6A5747] mb-1.5">
                 Username / Display Name
               </label>
               <div className="relative">
-                <span className="absolute left-3 top-2.5 text-xs text-tan-400 font-mono">@</span>
+                <span className="absolute left-3 top-2.5 text-xs text-[#8A7565] font-mono">@</span>
                 <input
                   type="text"
                   value={usernameInput}
                   onChange={(e) => setUsernameInput(e.target.value)}
                   maxLength={20}
                   placeholder="Your cozy name"
-                  className="w-full pl-7 pr-3 py-2 text-xs font-bold rounded-xl bg-white dark:bg-stone-800 border border-tan-200 dark:border-stone-700 text-ink-900 dark:text-cream-100 focus:outline-none focus:border-peach-400"
+                  className="w-full pl-7 pr-3 py-2 text-xs font-bold rounded-xl bg-white border-2 border-[#EADCCB] text-[#3A2E22] focus:border-[#FD9A4D] outline-none shadow-xs"
                 />
               </div>
-              <p className="text-[10px] text-tan-500 mt-1">Letters, numbers, and underscores only</p>
+              <p className="text-[10px] text-[#7A6858] mt-1 font-medium">Letters, numbers, and underscores only</p>
             </div>
 
             {/* Cozy Bio */}
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-tan-700 dark:text-tan-300 mb-1.5">
+              <label className="block text-xs font-bold uppercase tracking-wider text-[#6A5747] mb-1.5">
                 Cozy Bio / Tagline
               </label>
               <textarea
@@ -201,16 +204,16 @@ export function UserProfileModal() {
                 maxLength={90}
                 rows={2}
                 placeholder="What games or books are you enjoying?"
-                className="w-full p-2.5 text-xs rounded-xl bg-white dark:bg-stone-800 border border-tan-200 dark:border-stone-700 text-ink-900 dark:text-cream-100 focus:outline-none focus:border-peach-400 resize-none"
+                className="w-full p-2.5 text-xs rounded-xl bg-white border-2 border-[#EADCCB] text-[#3A2E22] focus:border-[#FD9A4D] outline-none resize-none shadow-xs font-medium"
               />
             </div>
 
             {/* Badge Picker */}
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-tan-700 dark:text-tan-300 mb-1.5">
+              <label className="block text-xs font-bold uppercase tracking-wider text-[#6A5747] mb-1.5">
                 Community Badge
               </label>
-              <div className="grid grid-cols-2 gap-1.5">
+              <div className="grid grid-cols-2 gap-2">
                 {BADGE_CONFIGS.map(({ name, icon: Icon }) => {
                   const isSelected = selectedBadge === name;
                   return (
@@ -218,13 +221,13 @@ export function UserProfileModal() {
                       key={name}
                       type="button"
                       onClick={() => setSelectedBadge(name)}
-                      className={`p-2 rounded-xl text-left text-[11px] font-bold border transition-all flex items-center gap-2 truncate ${
+                      className={`p-2.5 rounded-xl text-left text-[11px] font-bold border-2 transition-all flex items-center gap-2 truncate cursor-pointer ${
                         isSelected
-                          ? 'bg-amber-100 dark:bg-amber-950/70 border-amber-400 text-amber-900 dark:text-amber-200 shadow-xs'
-                          : 'bg-white dark:bg-stone-800 border-tan-200 dark:border-stone-700 hover:border-peach-300 text-ink-800 dark:text-cream-100'
+                          ? 'bg-[#FD9A4D] text-white border-[#E07A2B] shadow-xs'
+                          : 'bg-white border-[#EADCCB] hover:border-[#FD9A4D] text-[#3A2E22] hover:bg-[#FFFDFB]'
                       }`}
                     >
-                      <Icon className="w-3.5 h-3.5 shrink-0 text-amber-600 dark:text-amber-400" />
+                      <Icon className={`w-4 h-4 shrink-0 ${isSelected ? 'text-white' : 'text-[#FD9A4D]'}`} />
                       <span className="truncate">{name}</span>
                     </button>
                   );
@@ -234,7 +237,7 @@ export function UserProfileModal() {
 
             <button
               type="submit"
-              className="w-full py-2.5 rounded-xl bg-peach-500 hover:bg-peach-600 text-white font-bold text-xs shadow-cozy-xs transition-colors flex items-center justify-center gap-1.5"
+              className="w-full py-3 rounded-xl bg-[#FD9A4D] hover:bg-[#E88735] text-white font-bold text-xs shadow-xs transition-all active:scale-98 flex items-center justify-center gap-1.5 cursor-pointer"
             >
               <Check className="w-4 h-4" />
               <span>Save Profile Changes</span>
@@ -243,17 +246,17 @@ export function UserProfileModal() {
 
           {/* Signed-in Account Details & Sign Out */}
           {user && (
-            <div className="pt-4 border-t border-tan-200 dark:border-stone-700 flex items-center justify-between">
+            <div className="pt-4 border-t border-[#E8D9C8] flex items-center justify-between">
               <div className="min-w-0">
-                <span className="text-[10px] uppercase font-bold text-tan-500 block">Signed in as</span>
-                <span className="text-xs font-mono text-ink-800 dark:text-cream-200 truncate block">
+                <span className="text-[10px] uppercase font-bold text-[#7A6858] block">Signed in as</span>
+                <span className="text-xs font-mono text-[#3A2E22] truncate block">
                   {user.email}
                 </span>
               </div>
               <button
                 type="button"
                 onClick={signOut}
-                className="px-3 py-1.5 rounded-xl border border-rose-300 dark:border-rose-800 hover:bg-rose-50 dark:hover:bg-rose-950/40 text-rose-600 dark:text-rose-400 text-xs font-bold flex items-center gap-1.5 transition-colors"
+                className="px-3 py-1.5 rounded-xl border-2 border-rose-200 hover:bg-rose-50 text-rose-600 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
               >
                 <LogOut className="w-3.5 h-3.5" />
                 <span>Sign Out</span>

@@ -1,6 +1,7 @@
 import React from 'react';
-import { X, Sparkles, LogIn } from 'lucide-react';
+import { X } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+import { StreamlineStars } from '@/components/StreamlineIcons';
 
 export function AuthPromptModal() {
   const { showAuthPrompt, authPromptReason, closeAuthPrompt, signInWithGoogle } = useAuth();
@@ -8,27 +9,27 @@ export function AuthPromptModal() {
   if (!showAuthPrompt) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fade-in">
-      <div className="relative w-full max-w-sm bg-cream-100 dark:bg-stone-900 border-2 border-tan-300 dark:border-stone-700 rounded-3xl shadow-cozy-lg overflow-hidden flex flex-col p-6 text-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fade-in select-none">
+      <div className="relative w-full max-w-sm bg-[#FFFDF9] border-2 border-[#5E5148] rounded-3xl shadow-2xl overflow-hidden flex flex-col p-6 text-center">
         {/* Close Button */}
         <button
           type="button"
           onClick={closeAuthPrompt}
-          className="absolute top-4 right-4 p-1.5 rounded-full hover:bg-tan-200/50 dark:hover:bg-stone-800 text-tan-600 dark:text-tan-400 transition-colors"
+          className="absolute top-4 right-4 p-2 rounded-full hover:bg-[#F2E4D4] text-[#7A6858] hover:text-[#3A2E22] transition-colors cursor-pointer"
         >
           <X className="w-4 h-4" />
         </button>
 
         {/* Icon */}
-        <div className="w-12 h-12 rounded-2xl bg-peach-100 dark:bg-peach-950/50 border border-peach-300 dark:border-peach-800 flex items-center justify-center mx-auto text-peach-600 dark:text-peach-400 mb-3 shadow-xs">
-          <Sparkles className="w-6 h-6" />
+        <div className="w-12 h-12 rounded-2xl bg-[#FFE4CE] border border-[#FD9A4D]/40 flex items-center justify-center mx-auto text-[#E07A2B] mb-3 shadow-xs">
+          <StreamlineStars className="w-6 h-6 text-[#E07A2B]" />
         </div>
 
         {/* Title & Reason */}
-        <h3 className="font-display font-bold text-lg text-ink-900 dark:text-cream-50 mb-1">
+        <h3 className="font-display font-bold text-lg text-[#3A2E22] mb-1">
           Join the Cozy Community
         </h3>
-        <p className="text-xs text-tan-600 dark:text-tan-400 mb-6 leading-relaxed">
+        <p className="text-xs text-[#7A6858] mb-6 leading-relaxed font-medium">
           {authPromptReason}
         </p>
 
@@ -36,7 +37,7 @@ export function AuthPromptModal() {
         <button
           type="button"
           onClick={signInWithGoogle}
-          className="w-full py-3 px-4 bg-white dark:bg-stone-800 hover:bg-cream-50 dark:hover:bg-stone-700 border-2 border-tan-300 dark:border-stone-600 rounded-2xl font-bold text-xs text-ink-900 dark:text-cream-100 shadow-cozy-xs flex items-center justify-center gap-3 transition-all active:scale-98"
+          className="w-full py-3 px-4 bg-white hover:bg-[#FFFDFB] border-2 border-[#EADCCB] hover:border-[#FD9A4D] rounded-2xl font-bold text-xs text-[#3A2E22] shadow-xs flex items-center justify-center gap-3 transition-all active:scale-98 cursor-pointer"
         >
           <svg className="w-4 h-4" viewBox="0 0 24 24">
             <path
@@ -59,7 +60,7 @@ export function AuthPromptModal() {
           <span>Continue with Google</span>
         </button>
 
-        <p className="text-[10px] text-tan-500 dark:text-tan-400 mt-4">
+        <p className="text-[10px] text-[#8A7565] mt-4 font-mono">
           No passwords required • One-click instant login
         </p>
       </div>
