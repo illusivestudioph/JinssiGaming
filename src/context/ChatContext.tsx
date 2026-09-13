@@ -30,6 +30,7 @@ interface ChatContextType {
   activeProfileUser: RedditUserProfileData | null;
   openProfile: (userData: Partial<RedditUserProfileData>) => void;
   closeProfile: () => void;
+  broadcastBannerUpdate: (username: string, bannerColor: string, bannerText: string) => void;
   unreadCount: number;
 }
 
@@ -76,7 +77,46 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
         }
         return open;
       });
-    }).subscribe((status) => {
+    });
+
+    // Realtime World Sync for profile banners
+    ch.on(
+      'broadcast',
+      { event: 'user_profile_banner_update' },
+      ({
+        payload,
+      }: {
+        payload: { username: string; bannerColor?: string; bannerText?: string };
+      }) => {
+        if (!payload || !payload.username) return;
+
+        const lowerKey = `jinssi_profile_banner_${payload.username.toLowerCase()}`;
+        const rawKey = `jinssi_profile_banner_${payload.username}`;
+        const bannerData = { color: payload.bannerColor, text: payload.bannerText };
+        try {
+          localStorage.setItem(lowerKey, JSON.stringify(bannerData));
+          localStorage.setItem(rawKey, JSON.stringify(bannerData));
+        } catch {
+          // ignore
+        }
+
+        // Live Realtime World Sync: if viewing this user's profile card, update live
+        setActiveProfileUser((prev) => {
+          if (!prev) return null;
+          if (prev.username.toLowerCase() === payload.username.toLowerCase()) {
+            return {
+              ...prev,
+              bannerColor: payload.bannerColor || prev.bannerColor,
+              bannerText:
+                payload.bannerText !== undefined ? payload.bannerText : prev.bannerText,
+            };
+          }
+          return prev;
+        });
+      }
+    );
+
+    ch.subscribe((status) => {
       if (status === 'SUBSCRIBED') {
         console.log('Connected to Cozy Realtime Chat WebSocket.');
       }
@@ -241,6 +281,20 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     setActiveProfileUser(null);
   };
 
+  const broadcastBannerUpdate = (username: string, bannerColor: string, bannerText: string) => {
+    if (realtimeChannelRef.current) {
+      void realtimeChannelRef.current.send({
+        type: 'broadcast',
+        event: 'user_profile_banner_update',
+        payload: {
+          username,
+          bannerColor,
+          bannerText,
+        },
+      });
+    }
+  };
+
   return (
     <ChatContext.Provider
       value={{
@@ -260,6 +314,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
         activeProfileUser,
         openProfile,
         closeProfile,
+        broadcastBannerUpdate,
         unreadCount,
       }}
     >

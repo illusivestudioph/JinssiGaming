@@ -71,9 +71,26 @@ const BANNER_PALETTES: BannerColorOption[] = [
 ];
 
 export function RedditProfileModal() {
-  const { activeProfileUser, closeProfile, isFriend, addFriend, removeFriend, openDmWith, openProfile } =
-    useChat();
-  const { user, profile, triggerAuthPrompt, signOut, setShowAvatarBuilder, updateProfile } = useAuth();
+  const {
+    activeProfileUser,
+    closeProfile,
+    isFriend,
+    addFriend,
+    removeFriend,
+    openDmWith,
+    openProfile,
+    broadcastBannerUpdate,
+  } = useChat();
+  const {
+    user,
+    profile,
+    triggerAuthPrompt,
+    signOut,
+    setShowAvatarBuilder,
+    updateProfile,
+    setShowProfileModal,
+    setAvatarBuilderReturnTo,
+  } = useAuth();
   const [activeTab, setActiveTab] = useState<'overview' | 'comments' | 'trophies'>('overview');
   const [toast, setToast] = useState<string | null>(null);
 
@@ -198,14 +215,21 @@ export function RedditProfileModal() {
       // ignore
     }
 
-    // Immediately update activeProfileUser in ChatContext
+    // 1. Immediately update activeProfileUser in ChatContext
     openProfile({
       ...activeProfileUser,
       bannerColor: currentBannerColor,
       bannerText: currentBannerText,
     });
 
-    // If viewing own profile, persist into AuthContext (local storage + Supabase user metadata)
+    // 2. Broadcast via Supabase Realtime WebSocket to all users (World Sync!)
+    broadcastBannerUpdate(
+      activeProfileUser.username,
+      currentBannerColor,
+      currentBannerText
+    );
+
+    // 3. If viewing own profile, persist into AuthContext (local storage + Supabase user metadata)
     if (isViewingSelf) {
       await updateProfile({
         bannerColor: currentBannerColor,
@@ -214,7 +238,7 @@ export function RedditProfileModal() {
     }
 
     setIsEditingBanner(false);
-    setToast('Banner saved!');
+    setToast('Banner saved & synced with world! ✨');
     setTimeout(() => setToast(null), 2500);
   };
 
@@ -263,15 +287,29 @@ export function RedditProfileModal() {
             <div className="flex items-center gap-1.5">
               {/* Cover Color & Text Customizer Button (accessible if viewing own profile or creator) */}
               {isViewingSelf && (
-                <button
-                  type="button"
-                  onClick={() => setIsEditingBanner((prev) => !prev)}
-                  className="px-2.5 py-1 rounded-full bg-black/40 hover:bg-black/60 text-white text-[11px] font-bold flex items-center gap-1.5 transition-colors cursor-pointer border border-white/20 shadow-xs"
-                  title="Customize Banner Color & Headline"
-                >
-                  <StreamlinePalette className="w-3.5 h-3.5" />
-                  <span>{isEditingBanner ? 'Close Editor' : 'Edit Banner'}</span>
-                </button>
+                <>
+                  {isEditingBanner && (
+                    <button
+                      type="button"
+                      onClick={handleSaveBanner}
+                      className="px-3 py-1 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold flex items-center gap-1.5 transition-all shadow-md cursor-pointer border border-white/40 active:scale-95 animate-pulse"
+                      title="Save Banner & Sync with World"
+                    >
+                      <StreamlineCheck className="w-3.5 h-3.5" />
+                      <span>Save Banner</span>
+                    </button>
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={() => setIsEditingBanner((prev) => !prev)}
+                    className="px-2.5 py-1 rounded-full bg-black/40 hover:bg-black/60 text-white text-[11px] font-bold flex items-center gap-1.5 transition-colors cursor-pointer border border-white/20 shadow-xs"
+                    title="Customize Banner Color & Headline"
+                  >
+                    <StreamlinePalette className="w-3.5 h-3.5" />
+                    <span>{isEditingBanner ? 'Close Editor' : 'Edit Banner'}</span>
+                  </button>
+                </>
               )}
 
               <button
@@ -364,11 +402,11 @@ export function RedditProfileModal() {
               <button
                 type="button"
                 onClick={handleSaveBanner}
-                className="px-4 py-1.5 rounded-xl text-xs font-bold text-white shadow-xs flex items-center gap-1.5 transition-all cursor-pointer"
-                style={{ backgroundColor: 'var(--theme-accent, #fd9a4d)' }}
+                className="px-5 py-2 rounded-xl text-xs font-bold text-white shadow-md flex items-center gap-2 transition-all active:scale-95 cursor-pointer bg-emerald-600 hover:bg-emerald-700"
+                title="Save Banner changes and sync live across the cozy world"
               >
-                <StreamlineCheck className="w-3.5 h-3.5" />
-                <span>Save Banner</span>
+                <StreamlineCheck className="w-4 h-4" />
+                <span>Save Banner & World Sync</span>
               </button>
             </div>
           </div>
@@ -388,6 +426,7 @@ export function RedditProfileModal() {
               onClick={() => {
                 if (isViewingSelf) {
                   closeProfile();
+                  setAvatarBuilderReturnTo('public_profile');
                   setShowAvatarBuilder(true);
                 }
               }}
@@ -432,21 +471,35 @@ export function RedditProfileModal() {
             </div>
           </div>
 
-          {/* Action Buttons: If viewing self -> Single clean Edit Avatar button; Else -> Add Friend & DM */}
+          {/* Action Buttons: If viewing self -> Edit Avatar & Edit Profile; Else -> Add Friend & DM */}
           {isViewingSelf ? (
             <div className="flex items-center gap-2 w-full sm:w-auto">
               <button
                 type="button"
                 onClick={() => {
                   closeProfile();
+                  setAvatarBuilderReturnTo('public_profile');
                   setShowAvatarBuilder(true);
                 }}
-                className="flex-1 sm:flex-initial px-4 py-2 rounded-xl text-xs font-bold text-white shadow-xs flex items-center justify-center gap-1.5 transition-all active:scale-95 cursor-pointer"
+                className="flex-1 sm:flex-initial px-3.5 py-1.5 rounded-xl text-xs font-bold text-white shadow-xs flex items-center justify-center gap-1.5 transition-all active:scale-95 cursor-pointer"
                 style={{ backgroundColor: 'var(--theme-accent, #fd9a4d)' }}
                 title="Open Avatar Character Studio"
               >
                 <StreamlinePencil className="w-3.5 h-3.5" />
                 <span>Edit Avatar</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  closeProfile();
+                  setShowProfileModal(true);
+                }}
+                className="flex-1 sm:flex-initial px-3.5 py-1.5 rounded-xl text-xs font-bold border border-[#EADCCB] bg-white hover:bg-[#FFFDFB] text-[#3A2E22] shadow-xs flex items-center justify-center gap-1.5 transition-all active:scale-95 cursor-pointer"
+                title="Edit Username, Bio Tagline & Community Badge"
+              >
+                <StreamlinePencil className="w-3.5 h-3.5 text-[#FD9A4D]" />
+                <span>Edit Profile</span>
               </button>
             </div>
           ) : (

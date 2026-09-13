@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
+import { useChat } from '@/context/ChatContext';
 import { CozyAvatar } from '@/components/CozyAvatar';
 import { AdventurerConfig, FaceShape, getAdventurerAvatarUrl } from '@/types/profile';
 import {
@@ -197,7 +198,16 @@ const BACKGROUND_COLORS: { id: string; label: string; hex: string }[] = [
 type CustomizerTab = 'hair' | 'face' | 'accessories' | 'skin' | 'backdrop';
 
 export function AvatarBuilderModal() {
-  const { profile, updateProfile, showAvatarBuilder, setShowAvatarBuilder, setShowProfileModal } = useAuth();
+  const {
+    user,
+    profile,
+    updateProfile,
+    showAvatarBuilder,
+    setShowAvatarBuilder,
+    setShowProfileModal,
+    avatarBuilderReturnTo,
+  } = useAuth();
+  const { openProfile } = useChat();
   const [activeTab, setActiveTab] = useState<CustomizerTab>('hair');
   const [hairCategoryFilter, setHairCategoryFilter] = useState<'all' | 'male' | 'female'>('all');
 
@@ -213,13 +223,45 @@ export function AvatarBuilderModal() {
 
   const handleClose = () => {
     setShowAvatarBuilder(false);
-    setShowProfileModal(true);
+    if (avatarBuilderReturnTo === 'edit_profile') {
+      setShowProfileModal(true);
+    } else {
+      // Reopen public profile card
+      openProfile({
+        id: user ? user.id : profile.id,
+        username: profile.username,
+        bio: profile.bio,
+        badge: profile.badge,
+        avatarConfig: profile.avatarConfig,
+        isCreator: profile.isCreator,
+        role: profile.role,
+        joinedAt: profile.joinedAt,
+        bannerColor: profile.bannerColor,
+        bannerText: profile.bannerText,
+      });
+    }
   };
 
-  const handleSave = () => {
-    updateProfile({ avatarConfig: draftConfig });
+  const handleSave = async () => {
+    await updateProfile({ avatarConfig: draftConfig });
     setShowAvatarBuilder(false);
-    setShowProfileModal(true);
+    if (avatarBuilderReturnTo === 'edit_profile') {
+      setShowProfileModal(true);
+    } else {
+      // Return to public profile card with the newly updated avatar!
+      openProfile({
+        id: user ? user.id : profile.id,
+        username: profile.username,
+        bio: profile.bio,
+        badge: profile.badge,
+        avatarConfig: draftConfig,
+        isCreator: profile.isCreator,
+        role: profile.role,
+        joinedAt: profile.joinedAt,
+        bannerColor: profile.bannerColor,
+        bannerText: profile.bannerText,
+      });
+    }
   };
 
   // Gender preset selection switches presentation and filters hairstyles

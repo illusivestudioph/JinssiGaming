@@ -28,6 +28,8 @@ interface AuthContextType {
   setShowProfileModal: (show: boolean) => void;
   showAvatarBuilder: boolean;
   setShowAvatarBuilder: (show: boolean) => void;
+  avatarBuilderReturnTo: 'public_profile' | 'edit_profile';
+  setAvatarBuilderReturnTo: (destination: 'public_profile' | 'edit_profile') => void;
 }
 
 const LOCAL_STORAGE_PROFILE_KEY = 'jinssi-user-profile';
@@ -43,6 +45,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [authPromptReason, setAuthPromptReason] = useState('Sign in with Gmail to join the cozy community.');
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showAvatarBuilder, setShowAvatarBuilder] = useState(false);
+  const [avatarBuilderReturnTo, setAvatarBuilderReturnTo] = useState<'public_profile' | 'edit_profile'>('public_profile');
 
   // Initialize profile with defaults or cached local profile
   const [profile, setProfile] = useState<UserProfile>(() => {
@@ -345,6 +348,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setShowProfileModal,
         showAvatarBuilder,
         setShowAvatarBuilder,
+        avatarBuilderReturnTo,
+        setAvatarBuilderReturnTo,
       }}
     >
       {children}

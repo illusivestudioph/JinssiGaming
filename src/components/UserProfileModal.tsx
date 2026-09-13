@@ -42,6 +42,7 @@ export function UserProfileModal() {
     showProfileModal,
     setShowProfileModal,
     setShowAvatarBuilder,
+    setAvatarBuilderReturnTo,
   } = useAuth();
   const { openProfile } = useChat();
 
@@ -72,6 +73,7 @@ export function UserProfileModal() {
 
   const handleOpenAvatarStudio = () => {
     setShowProfileModal(false);
+    setAvatarBuilderReturnTo('edit_profile');
     setShowAvatarBuilder(true);
   };
 
