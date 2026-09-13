@@ -34,6 +34,7 @@ export function UserProfileModal() {
     profile,
     updateProfile,
     signInWithGoogle,
+    devSignInAsCreator,
     signOut,
     rememberMe,
     setRememberMe,
@@ -275,6 +276,20 @@ export function UserProfileModal() {
                   />
                 </svg>
                 <span>Continue with Google</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={devSignInAsCreator}
+                className="w-full mt-2 py-2 px-3 rounded-xl text-xs font-bold transition-all hover:scale-101 active:scale-98 cursor-pointer border flex items-center justify-center gap-1.5"
+                style={{
+                  backgroundColor: 'var(--theme-accent-soft, #fcdfaa)',
+                  borderColor: 'var(--theme-accent, #fd9a4d)',
+                  color: 'var(--text-main, #3a2e22)',
+                }}
+              >
+                <StreamlineStars className="w-3.5 h-3.5" />
+                <span>Developer Mode: Quick Sign in as Jinssi</span>
               </button>
             </div>
           )}

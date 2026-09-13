@@ -15,6 +15,7 @@ interface AuthContextType {
   rememberMe: boolean;
   setRememberMe: (remember: boolean) => void;
   signInWithGoogle: (remember?: boolean) => Promise<void>;
+  devSignInAsCreator: () => void;
   signOut: () => Promise<void>;
   updateProfile: (updated: Partial<UserProfile>) => Promise<void>;
   // Global Auth Prompt Modal triggers
@@ -30,6 +31,7 @@ interface AuthContextType {
 }
 
 const LOCAL_STORAGE_PROFILE_KEY = 'jinssi-user-profile';
+const DEV_SESSION_KEY = 'jinssi-dev-session';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -118,13 +120,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const hadRememberMe = typeof window !== 'undefined' && localStorage.getItem(REMEMBER_ME_LOCAL_KEY);
     if (hadRememberMe === 'true' && !hasRememberMeCookie()) {
       // The user cleared their cookies! Discard session and reset to Guest.
+      try {
+        localStorage.removeItem(DEV_SESSION_KEY);
+        localStorage.removeItem(REMEMBER_ME_LOCAL_KEY);
+        localStorage.removeItem(LOCAL_STORAGE_PROFILE_KEY);
+      } catch {
+        // ignore
+      }
       void supabase.auth.signOut().then(() => {
-        try {
-          localStorage.removeItem(REMEMBER_ME_LOCAL_KEY);
-          localStorage.removeItem(LOCAL_STORAGE_PROFILE_KEY);
-        } catch {
-          // ignore
-        }
         if (active) {
           setUser(null);
           syncProfileFromUser(null);
@@ -136,12 +139,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     void supabase.auth.getUser().then(({ data: { user: currentUser } }) => {
       if (!active) return;
-      if (currentUser && hasRememberMeCookie()) {
-        // Refresh 1-year remember-me cookie on active visit
-        setRememberMePreference(true);
+      if (currentUser) {
+        if (hasRememberMeCookie()) {
+          setRememberMePreference(true);
+        }
+        setUser(currentUser);
+        syncProfileFromUser(currentUser);
+      } else {
+        // Check for active developer session in local storage
+        try {
+          const devRaw = localStorage.getItem(DEV_SESSION_KEY);
+          if (devRaw && hasRememberMeCookie()) {
+            const parsedDev = JSON.parse(devRaw) as User;
+            setUser(parsedDev);
+            syncProfileFromUser(parsedDev);
+            setIsLoading(false);
+            return;
+          }
+        } catch {
+          // ignore
+        }
+        setUser(null);
+        syncProfileFromUser(null);
       }
-      setUser(currentUser);
-      syncProfileFromUser(currentUser);
       setIsLoading(false);
     });
 
@@ -150,8 +170,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (currentUser && hasRememberMeCookie()) {
         setRememberMePreference(true);
       }
-      setUser(currentUser);
-      syncProfileFromUser(currentUser);
+      if (currentUser) {
+        setUser(currentUser);
+        syncProfileFromUser(currentUser);
+      }
       setIsLoading(false);
     });
 
@@ -166,33 +188,80 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Persist remember me cookie preference
     setRememberMePreference(remember);
 
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: window.location.origin,
-      },
-    });
-    if (error) {
-      console.error('Google sign-in error:', error.message);
-      alert(`Could not sign in with Google: ${error.message}`);
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: window.location.origin,
+        },
+      });
+
+      if (error) {
+        console.error('Google sign-in error:', error.message);
+        const isProviderDisabled =
+          error.message.includes('Unsupported provider') ||
+          error.message.includes('provider is not enabled') ||
+          error.message.includes('validation_failed');
+
+        if (isProviderDisabled) {
+          alert(
+            'Google Sign-In is not enabled yet in your Supabase Dashboard.\n\n' +
+            'To enable it:\n' +
+            '1. Go to Supabase Dashboard -> Authentication -> Providers -> Google.\n' +
+            '2. Toggle "Enable Sign in with Google" ON and paste your Google Client ID & Secret.\n\n' +
+            '🌸 In the meantime, you can use "Quick Sign in as Jinssi (Developer)" to test all creator, chat, and friend features immediately!'
+          );
+        } else {
+          alert(`Could not sign in with Google: ${error.message}`);
+        }
+      }
+    } catch (err: unknown) {
+      const errMsg = err instanceof Error ? err.message : String(err);
+      console.error('Google sign-in exception:', errMsg);
+      alert(`Sign in error: ${errMsg}`);
     }
+  };
+
+  // Instant developer / creator sign-in (for local testing & dev)
+  const devSignInAsCreator = () => {
+    setRememberMePreference(true);
+    const devUser = {
+      id: 'creator-jinssi-dev-id',
+      email: CREATOR_EMAIL,
+      user_metadata: {
+        display_name: 'Jinssi',
+        role: 'developer',
+      },
+      created_at: new Date().toISOString(),
+    } as unknown as User;
+
+    try {
+      localStorage.setItem(DEV_SESSION_KEY, JSON.stringify(devUser));
+    } catch {
+      // ignore
+    }
+
+    setUser(devUser);
+    syncProfileFromUser(devUser);
+    setShowAuthPrompt(false);
   };
 
   // Sign Out (clears session, cached profile, and remember me cookie)
   const signOut = async () => {
     setRememberMePreference(false);
+    try {
+      localStorage.removeItem(DEV_SESSION_KEY);
+      localStorage.removeItem(LOCAL_STORAGE_PROFILE_KEY);
+      localStorage.removeItem(REMEMBER_ME_LOCAL_KEY);
+    } catch {
+      // ignore
+    }
     await supabase.auth.signOut();
     setUser(null);
     setProfile({
       id: 'guest',
       ...DEFAULT_PROFILE,
     });
-    try {
-      localStorage.removeItem(LOCAL_STORAGE_PROFILE_KEY);
-      localStorage.removeItem(REMEMBER_ME_LOCAL_KEY);
-    } catch {
-      // ignore
-    }
     setShowProfileModal(false);
   };
 
@@ -253,6 +322,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         rememberMe,
         setRememberMe,
         signInWithGoogle,
+        devSignInAsCreator,
         signOut,
         updateProfile,
         showAuthPrompt,
