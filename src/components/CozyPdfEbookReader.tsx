@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import * as pdfjsLib from 'pdfjs-dist';
 import {
   ChevronLeft,
@@ -11,7 +11,6 @@ import {
   Bookmark,
   BookmarkCheck,
   List,
-  Headphones,
   ExternalLink,
   Loader2,
   Columns,
@@ -20,8 +19,6 @@ import {
   Moon,
   Coffee,
 } from 'lucide-react';
-import { CHILDREN_OF_MU_FULL_CHAPTERS } from '@/data/childrenOfMuFullText';
-import { AudiobookPlayer } from '@/components/AudiobookPlayer';
 
 // Configure PDF.js worker using matching CDN build
 if (typeof window !== 'undefined' && !pdfjsLib.GlobalWorkerOptions.workerSrc) {
@@ -100,7 +97,8 @@ export function CozyPdfEbookReader({
   });
 
   const [scale, setScale] = useState<number>(1.15);
-  const [twoPageMode, setTwoPageMode] = useState<boolean>(false);
+  // Default to 2-page spread for The Children of Mu
+  const [twoPageMode, setTwoPageMode] = useState<boolean>(true);
   const [pageTone, setPageTone] = useState<PageTone>(() => {
     try {
       return (localStorage.getItem('jinssi-ebook-tone') as PageTone) || 'parchment';
@@ -115,6 +113,11 @@ export function CozyPdfEbookReader({
   const [jumpInput, setJumpInput] = useState<string>(String(currentPage));
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
   const [bookmarkToast, setBookmarkToast] = useState<string | null>(null);
+
+  // Natural book page flipping state
+  const [flipDirection, setFlipDirection] = useState<'next' | 'prev' | null>(null);
+  const [isFlipping, setIsFlipping] = useState<boolean>(false);
+  const flipTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasLeftRef = useRef<HTMLCanvasElement>(null);
@@ -173,7 +176,16 @@ export function CozyPdfEbookReader({
     }
   }, [pageTone]);
 
-  // 3. Render page onto Canvas
+  // Clean up flip timer on unmount
+  useEffect(() => {
+    return () => {
+      if (flipTimeoutRef.current) {
+        clearTimeout(flipTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  // 3. Double-buffered Canvas Rendering: Eliminates black-and-white strobe/flashing
   const renderPageToCanvas = useCallback(
     async (
       pageNumber: number,
@@ -192,19 +204,25 @@ export function CozyPdfEbookReader({
         const pixelRatio = window.devicePixelRatio || 1.5;
         const viewport = page.getViewport({ scale: scale * (twoPageMode ? 0.85 : 1) });
 
-        canvas.width = Math.floor(viewport.width * pixelRatio);
-        canvas.height = Math.floor(viewport.height * pixelRatio);
-        canvas.style.width = `${Math.floor(viewport.width)}px`;
-        canvas.style.height = `${Math.floor(viewport.height)}px`;
+        // Double-buffering: render silently to an offscreen canvas
+        // The visible canvas maintains its current image and never blanks out or flashes
+        const offscreen = document.createElement('canvas');
+        const targetW = Math.floor(viewport.width * pixelRatio);
+        const targetH = Math.floor(viewport.height * pixelRatio);
+        offscreen.width = targetW;
+        offscreen.height = targetH;
 
-        const ctx = canvas.getContext('2d', { alpha: false });
-        if (!ctx) return;
+        const offCtx = offscreen.getContext('2d', { alpha: false });
+        if (!offCtx) return;
 
-        ctx.imageSmoothingEnabled = true;
-        ctx.imageSmoothingQuality = 'high';
+        // Fill background with warm page tone so no stark white glare can occur
+        offCtx.fillStyle = pageTone === 'night' ? '#18181C' : '#F9F5EC';
+        offCtx.fillRect(0, 0, targetW, targetH);
+        offCtx.imageSmoothingEnabled = true;
+        offCtx.imageSmoothingQuality = 'high';
 
         const renderContext = {
-          canvasContext: ctx,
+          canvasContext: offCtx,
           viewport,
           transform: [pixelRatio, 0, 0, pixelRatio, 0, 0],
         };
@@ -212,13 +230,26 @@ export function CozyPdfEbookReader({
         const renderTask = page.render(renderContext);
         taskRef.current = renderTask;
         await renderTask.promise;
+
+        // When offscreen rendering finishes, blit directly onto visible canvas in 0ms
+        if (canvas.width !== targetW || canvas.height !== targetH) {
+          canvas.width = targetW;
+          canvas.height = targetH;
+          canvas.style.width = `${Math.floor(viewport.width)}px`;
+          canvas.style.height = `${Math.floor(viewport.height)}px`;
+        }
+
+        const ctx = canvas.getContext('2d', { alpha: false });
+        if (ctx) {
+          ctx.drawImage(offscreen, 0, 0);
+        }
       } catch (err: any) {
         if (err?.name !== 'RenderingCancelledException') {
           console.warn('Canvas render notice:', err);
         }
       }
     },
-    [pdfDoc, scale, twoPageMode]
+    [pdfDoc, scale, twoPageMode, pageTone]
   );
 
   useEffect(() => {
@@ -230,125 +261,40 @@ export function CozyPdfEbookReader({
     }
   }, [pdfDoc, currentPage, scale, twoPageMode, renderPageToCanvas, totalPages]);
 
-  // Audiobook TTS narration for PDF pages
-  const [isAudiobookPlaying, setIsAudiobookPlaying] = useState<boolean>(false);
-  const [isAudiobookOpen, setIsAudiobookOpen] = useState<boolean>(false);
-  const [audiobookParagraphIndex, setAudiobookParagraphIndex] = useState<number>(0);
-  const pdfUtteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
-
-  const activeChapter = useMemo(() => {
-    return (
-      [...CHILDREN_OF_MU_FULL_CHAPTERS]
-        .reverse()
-        .find((ch) => currentPage >= ch.startPage) || CHILDREN_OF_MU_FULL_CHAPTERS[0]
-    );
-  }, [currentPage]);
-
-  // Sync speech index on chapter change
-  useEffect(() => {
-    setAudiobookParagraphIndex(0);
-  }, [activeChapter.chapterNumber]);
-
-  const stopAudiobook = useCallback(() => {
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
+  // Tactile Book Page Flip trigger
+  const triggerFlip = (direction: 'next' | 'prev') => {
+    if (flipTimeoutRef.current) {
+      clearTimeout(flipTimeoutRef.current);
     }
-    setIsAudiobookPlaying(false);
-  }, []);
+    setFlipDirection(direction);
+    setIsFlipping(true);
+    flipTimeoutRef.current = setTimeout(() => {
+      setIsFlipping(false);
+      setFlipDirection(null);
+    }, 420);
+  };
 
   // Navigation handlers
-  const goToPage = (num: number) => {
-    stopAudiobook();
+  const goToPage = (num: number, direction?: 'next' | 'prev') => {
     const target = Math.max(1, Math.min(totalPages, num));
+    if (target === currentPage) return;
+    if (direction) {
+      triggerFlip(direction);
+    }
     setCurrentPage(target);
   };
 
   const handlePrevPage = () => {
-    stopAudiobook();
+    if (currentPage <= 1) return;
     const step = twoPageMode ? 2 : 1;
-    goToPage(currentPage - step);
+    goToPage(currentPage - step, 'prev');
   };
 
   const handleNextPage = () => {
-    stopAudiobook();
+    if (currentPage >= totalPages) return;
     const step = twoPageMode ? 2 : 1;
-    goToPage(currentPage + step);
+    goToPage(currentPage + step, 'next');
   };
-
-  const handleListenToPage = useCallback(async () => {
-    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
-
-    if (isAudiobookPlaying) {
-      stopAudiobook();
-      return;
-    }
-
-    if (!pdfDoc) return;
-
-    try {
-      const page = await pdfDoc.getPage(currentPage);
-      const textContent = await page.getTextContent();
-      const extractedText = textContent.items
-        .map((item: any) => item.str || '')
-        .join(' ')
-        .replace(/\s+/g, ' ')
-        .trim();
-
-      let textToSpeak = extractedText;
-
-      // Scanned PDF fallback: Use authentic transcribed unabridged text from CHILDREN_OF_MU_FULL_CHAPTERS
-      if (!textToSpeak || textToSpeak.length < 15) {
-        const nextChapter = CHILDREN_OF_MU_FULL_CHAPTERS.find(
-          (ch) => ch.chapterNumber === activeChapter.chapterNumber + 1
-        );
-        const endPage = nextChapter ? nextChapter.startPage : 290;
-        const pageSpan = Math.max(1, endPage - activeChapter.startPage);
-        const pageOffset = Math.max(0, currentPage - activeChapter.startPage);
-        const fraction = pageOffset / pageSpan;
-        const paraIndex = Math.min(
-          activeChapter.content.length - 1,
-          Math.floor(fraction * activeChapter.content.length)
-        );
-
-        // Read 2-3 paragraph block corresponding to this page
-        const paragraphsSlice = activeChapter.content.slice(paraIndex, paraIndex + 3);
-        textToSpeak = paragraphsSlice.join(' ');
-      }
-
-      if (!textToSpeak) {
-        textToSpeak = `Chapter ${activeChapter.chapterNumber}: ${activeChapter.title}. Please turn pages to explore the authentic facsimile edition.`;
-      }
-
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(textToSpeak);
-      pdfUtteranceRef.current = utterance;
-      utterance.rate = 1.0;
-
-      utterance.onstart = () => setIsAudiobookPlaying(true);
-      utterance.onend = () => {
-        setIsAudiobookPlaying(false);
-        // Automatically advance to next page if available
-        if (currentPage < totalPages) {
-          goToPage(currentPage + 1);
-        }
-      };
-      utterance.onerror = () => setIsAudiobookPlaying(false);
-
-      window.speechSynthesis.speak(utterance);
-    } catch (err) {
-      console.warn('PDF text extraction error:', err);
-      setIsAudiobookPlaying(false);
-    }
-  }, [isAudiobookPlaying, pdfDoc, currentPage, totalPages, activeChapter, stopAudiobook]);
-
-  // Clean up speech on unmount
-  useEffect(() => {
-    return () => {
-      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-      }
-    };
-  }, []);
 
   const handleZoom = (delta: number) => {
     setScale((prev) => {
@@ -663,30 +609,61 @@ export function CozyPdfEbookReader({
               </div>
             </button>
 
-            {/* Book Pages Frame with Authentic Paper Shadow */}
+            {/* Book Pages Frame with Authentic Paper Shadow & Center Spine */}
             <div
-              className={`book-pages-wrapper relative flex items-center justify-center rounded-xl p-1.5 sm:p-2.5 transition-all shadow-[0_12px_36px_rgba(40,25,12,0.18)] ${
-                twoPageMode ? 'bg-[#3A2D24] gap-1' : 'bg-[#3A2D24]'
+              className={`book-pages-wrapper book-spread-perspective relative flex items-center justify-center rounded-2xl p-2 sm:p-3.5 transition-all shadow-[0_16px_48px_rgba(25,15,8,0.28)] ${
+                pageTone === 'night'
+                  ? 'bg-[#1D1B1A] border-2 border-[#38322D]'
+                  : 'bg-gradient-to-b from-[#3E2F25] via-[#33251D] to-[#2B1F17] border-2 border-[#524135]'
               }`}
             >
-              {/* Left Page Canvas */}
+              {/* Left Page Canvas Leaf */}
               <div
-                className="relative rounded-lg overflow-hidden bg-white shadow-inner flex flex-col items-center justify-center"
-                style={{ filter: TONE_FILTERS[pageTone] }}
+                className={`relative rounded-l-lg overflow-hidden bg-[#FBF7EE] dark:bg-[#1C1A19] shadow-md flex flex-col items-center justify-center transition-all ${
+                  isFlipping && flipDirection === 'prev' ? 'animate-book-flip-prev z-20' : 'z-10'
+                }`}
+                style={{
+                  filter: TONE_FILTERS[pageTone],
+                  boxShadow: twoPageMode
+                    ? 'inset -14px 0 18px -8px rgba(0,0,0,0.2), -2px 2px 8px rgba(0,0,0,0.08)'
+                    : '0 4px 14px rgba(0,0,0,0.12)',
+                }}
               >
-                <canvas ref={canvasLeftRef} className="block max-w-full h-auto" />
+                <canvas ref={canvasLeftRef} className="block max-w-full h-auto select-none" />
+
+                {/* Left Page Inner Gutter Spine Crease (binding shadow) */}
+                {twoPageMode && (
+                  <div className="absolute top-0 right-0 bottom-0 w-8 sm:w-12 pointer-events-none bg-gradient-to-l from-black/20 via-black/5 to-transparent z-10" />
+                )}
+
                 <div className="w-full text-center py-1 text-[10px] font-mono opacity-50 bg-black/5 select-none">
                   Page {currentPage} of {totalPages}
                 </div>
               </div>
 
-              {/* Right Page Canvas (when 2-page mode is enabled) */}
+              {/* Central Spine Binding Gutter (only in 2-page spread) */}
+              {twoPageMode && currentPage < totalPages && (
+                <div className="relative w-2 sm:w-3 self-stretch bg-gradient-to-r from-[#221711] via-[#48372A] to-[#221711] shadow-inner flex items-center justify-center z-15">
+                  <div className="w-[1px] h-full bg-black/50" />
+                </div>
+              )}
+
+              {/* Right Page Canvas Leaf (when 2-page mode is enabled) */}
               {twoPageMode && currentPage < totalPages && (
                 <div
-                  className="relative rounded-lg overflow-hidden bg-white shadow-inner flex flex-col items-center justify-center border-l border-stone-300"
-                  style={{ filter: TONE_FILTERS[pageTone] }}
+                  className={`relative rounded-r-lg overflow-hidden bg-[#FBF7EE] dark:bg-[#1C1A19] shadow-md flex flex-col items-center justify-center transition-all ${
+                    isFlipping && flipDirection === 'next' ? 'animate-book-flip-next z-20' : 'z-10'
+                  }`}
+                  style={{
+                    filter: TONE_FILTERS[pageTone],
+                    boxShadow:
+                      'inset 14px 0 18px -8px rgba(0,0,0,0.2), 2px 2px 8px rgba(0,0,0,0.08)',
+                  }}
                 >
-                  <canvas ref={canvasRightRef} className="block max-w-full h-auto" />
+                  {/* Right Page Inner Gutter Spine Crease (binding shadow) */}
+                  <div className="absolute top-0 left-0 bottom-0 w-8 sm:w-12 pointer-events-none bg-gradient-to-r from-black/20 via-black/5 to-transparent z-10" />
+
+                  <canvas ref={canvasRightRef} className="block max-w-full h-auto select-none" />
                   <div className="w-full text-center py-1 text-[10px] font-mono opacity-50 bg-black/5 select-none">
                     Page {currentPage + 1} of {totalPages}
                   </div>
@@ -801,74 +778,8 @@ export function CozyPdfEbookReader({
             {twoPageMode ? <Columns className="w-3.5 h-3.5" /> : <Square className="w-3.5 h-3.5" />}
             <span className="hidden lg:inline">{twoPageMode ? '2-Page Spread' : 'Single Page'}</span>
           </button>
-
-          {/* Audiobook Mode Player Button */}
-          <button
-            type="button"
-            onClick={() => setIsAudiobookOpen((prev) => !prev)}
-            className={`p-1.5 rounded-xl border transition-colors flex items-center gap-1.5 text-[11px] font-bold cursor-pointer ${
-              isAudiobookOpen
-                ? 'bg-amber-500 text-stone-950 border-amber-400 shadow-cozy-xs'
-                : 'bg-black/40 hover:bg-black/60 border-[#5A473B] text-amber-300'
-            }`}
-            title={isAudiobookOpen ? 'Close Audiobook Player' : 'Open Audiobook Player for this chapter'}
-          >
-            <Headphones className="w-3.5 h-3.5" />
-            <span className="hidden md:inline">
-              Audiobook ({activeChapter.title.split(':')[0]})
-            </span>
-          </button>
-
-          {/* Quick Page Read-Aloud Button */}
-          <button
-            type="button"
-            onClick={handleListenToPage}
-            className={`p-1.5 rounded-xl border transition-colors flex items-center gap-1.5 text-[11px] font-bold cursor-pointer ${
-              isAudiobookPlaying
-                ? 'bg-amber-500 text-stone-950 border-amber-400 shadow-cozy-xs animate-pulse'
-                : 'bg-black/40 hover:bg-black/60 border-[#5A473B] text-amber-300'
-            }`}
-            title={isAudiobookPlaying ? 'Stop Reading Aloud' : 'Listen to this page with Audiobook voice'}
-          >
-            <Headphones className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">
-              {isAudiobookPlaying ? 'Reading Page...' : 'Read Page Aloud'}
-            </span>
-          </button>
         </div>
       </footer>
-
-      {/* Docked Audiobook Player inside PDF Reader */}
-      <AudiobookPlayer
-        paragraphs={activeChapter.content}
-        activeParagraphIndex={audiobookParagraphIndex}
-        onParagraphChange={setAudiobookParagraphIndex}
-        bookTitle={title}
-        bookAuthor={author}
-        chapterTitle={activeChapter.title}
-        isOpen={isAudiobookOpen}
-        onClose={() => setIsAudiobookOpen(false)}
-        hasNextChapter={activeChapter.chapterNumber < CHILDREN_OF_MU_FULL_CHAPTERS.length}
-        hasPrevChapter={activeChapter.chapterNumber > 1}
-        onNextChapter={() => {
-          const next = CHILDREN_OF_MU_FULL_CHAPTERS.find(
-            (c) => c.chapterNumber === activeChapter.chapterNumber + 1
-          );
-          if (next) {
-            goToPage(next.startPage);
-            setAudiobookParagraphIndex(0);
-          }
-        }}
-        onPrevChapter={() => {
-          const prev = CHILDREN_OF_MU_FULL_CHAPTERS.find(
-            (c) => c.chapterNumber === activeChapter.chapterNumber - 1
-          );
-          if (prev) {
-            goToPage(prev.startPage);
-            setAudiobookParagraphIndex(0);
-          }
-        }}
-      />
     </div>
   );
 }
