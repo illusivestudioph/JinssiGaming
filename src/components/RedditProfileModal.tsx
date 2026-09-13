@@ -16,7 +16,6 @@ import {
   StreamlinePalette,
   StreamlineStar,
   StreamlineLogOut,
-  StreamlineUser,
 } from '@/components/StreamlineIcons';
 
 interface ProfileComment {
@@ -293,398 +292,394 @@ export function RedditProfileModal() {
   const selectedPalette =
     BANNER_PALETTES.find((p) => p.id === currentBannerColor) || BANNER_PALETTES[0];
 
-  // Format join date as "Month Year" (e.g. Sep 2026), matching UserProfileModal
-  const rawJoinDate = isViewingSelf
-    ? (profile.joinedAt || user?.created_at || new Date().toISOString())
-    : (activeProfileUser.joinedAt || new Date().toISOString());
-
-  const parsedDate = new Date(rawJoinDate);
-  const validDate = isNaN(parsedDate.getTime()) ? new Date() : parsedDate;
-
-  const joinedFormatted = validDate.toLocaleDateString('en-US', {
+  // Accurate account join date or site creation date
+  const joinedDateFormatted = new Date(
+    activeProfileUser.isCreator && user?.created_at
+      ? user.created_at
+      : activeProfileUser.joinedAt
+  ).toLocaleDateString('en-US', {
     month: 'short',
+    day: 'numeric',
     year: 'numeric',
   });
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fade-in select-none">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-fade-in select-none">
       <div
-        className="relative w-full max-w-md rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh] border-2"
+        className="relative w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh] border-2"
         style={{
           backgroundColor: 'var(--card-bg, #fefcf7)',
           borderColor: 'var(--card-border, #5e5148)',
         }}
       >
-        {/* Header Ribbon (Matches UserProfileModal exactly) */}
+        {/* Cover Banner Header with Dynamic Color & Absolute Centered Custom Text */}
         <div
-          className="px-6 py-4 border-b-2 flex items-center justify-between"
+          className="relative h-36 sm:h-40 w-full p-4 border-b overflow-hidden transition-all duration-300 flex flex-col justify-between"
+          style={{
+            background: selectedPalette.gradient,
+            borderColor: 'var(--card-line, #ebdcc9)',
+          }}
+        >
+          {/* Subtle Grid / Texture Pattern */}
+          <div
+            className="absolute inset-0 opacity-20 bg-[radial-gradient(#fff_1.2px,transparent_1.2px)] [background-size:16px_16px]"
+          />
+
+          {/* Top Bar inside Banner: Tag + Banner Customize Button + Close Button */}
+          <div className="relative z-10 flex items-center justify-between gap-2">
+            <span className="text-[10px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-black/35 text-white shadow-xs border border-white/20">
+              {activeProfileUser.isCreator ? 'Creator & Developer Profile' : 'Community Explorer'}
+            </span>
+
+            <div className="flex items-center gap-1.5">
+              {/* Cover Color & Text Customizer Button (accessible if viewing own profile or creator) */}
+              {isViewingSelf && (
+                <>
+                  {isEditingBanner && (
+                    <button
+                      type="button"
+                      onClick={handleSaveBanner}
+                      className="px-3 py-1 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold flex items-center gap-1.5 transition-all shadow-md cursor-pointer border border-white/40 active:scale-95 animate-pulse"
+                      title="Save Banner & Sync with World"
+                    >
+                      <StreamlineCheck className="w-3.5 h-3.5" />
+                      <span>Save Banner</span>
+                    </button>
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={() => setIsEditingBanner((prev) => !prev)}
+                    className="px-2.5 py-1 rounded-full bg-black/40 hover:bg-black/60 text-white text-[11px] font-bold flex items-center gap-1.5 transition-colors cursor-pointer border border-white/20 shadow-xs"
+                    title="Customize Banner Color & Headline"
+                  >
+                    <StreamlinePalette className="w-3.5 h-3.5" />
+                    <span>{isEditingBanner ? 'Close Editor' : 'Edit Banner'}</span>
+                  </button>
+                </>
+              )}
+
+              <button
+                type="button"
+                onClick={closeProfile}
+                className="p-1.5 rounded-full bg-black/40 text-white hover:bg-black/60 transition-colors cursor-pointer border border-white/20"
+                title="Close Profile"
+              >
+                <StreamlineClose className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+
+          {/* Absolute Centered Banner Text / Headline Message */}
+          <div className="absolute inset-0 z-10 flex items-center justify-center px-8 pointer-events-none">
+            {currentBannerText && (
+              <div className="max-w-md text-center">
+                <p className="text-white font-display font-black text-base sm:text-lg drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] tracking-wide flex items-center justify-center gap-2">
+                  <StreamlineStar className="w-4 h-4 text-amber-300 fill-amber-300 shrink-0 drop-shadow-xs" />
+                  <span className="line-clamp-2">{currentBannerText}</span>
+                  <StreamlineStar className="w-4 h-4 text-amber-300 fill-amber-300 shrink-0 drop-shadow-xs" />
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Banner Editor Tray (Toggles when "Edit Banner" is clicked) */}
+        {isEditingBanner && (
+          <div
+            className="p-4 border-b space-y-3 animate-fade-in"
+            style={{
+              backgroundColor: 'var(--card-done-bg, #fcf8ee)',
+              borderColor: 'var(--card-line, #ebdcc9)',
+            }}
+          >
+            <div>
+              <label
+                className="block text-[11px] font-black uppercase tracking-wider mb-1.5"
+                style={{ color: 'var(--text-main, #3a2e22)' }}
+              >
+                Banner Text / Headline:
+              </label>
+              <input
+                type="text"
+                value={currentBannerText}
+                onChange={(e) => setCurrentBannerText(e.target.value)}
+                maxLength={60}
+                placeholder="Write a warm cozy banner quote..."
+                className="w-full px-3 py-1.5 text-xs font-semibold rounded-xl border bg-white shadow-2xs focus:outline-none focus:ring-2 focus:ring-peach-400"
+                style={{
+                  borderColor: 'var(--card-line, #ebdcc9)',
+                  color: 'var(--text-main, #3a2e22)',
+                }}
+              />
+            </div>
+
+            <div>
+              <label
+                className="block text-[11px] font-black uppercase tracking-wider mb-1.5"
+                style={{ color: 'var(--text-main, #3a2e22)' }}
+              >
+                Banner Color Palette:
+              </label>
+              <div className="flex items-center gap-2 flex-wrap">
+                {BANNER_PALETTES.map((palette) => {
+                  const isSelected = currentBannerColor === palette.id;
+                  return (
+                    <button
+                      key={palette.id}
+                      type="button"
+                      onClick={() => setCurrentBannerColor(palette.id)}
+                      className={`px-3 py-1 rounded-xl text-xs font-bold text-white shadow-xs flex items-center gap-1.5 transition-transform active:scale-95 cursor-pointer border-2 ${
+                        isSelected ? 'ring-2 ring-[#3A2E22] scale-105' : 'opacity-90'
+                      }`}
+                      style={{
+                        background: palette.gradient,
+                        borderColor: isSelected ? '#ffffff' : 'transparent',
+                      }}
+                    >
+                      {isSelected && <StreamlineCheck className="w-3 h-3 text-white" />}
+                      <span>{palette.name}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="flex justify-end pt-1">
+              <button
+                type="button"
+                onClick={handleSaveBanner}
+                className="px-5 py-2 rounded-xl text-xs font-bold text-white shadow-md flex items-center gap-2 transition-all active:scale-95 cursor-pointer bg-emerald-600 hover:bg-emerald-700"
+                title="Save Banner changes and sync live across the cozy world"
+              >
+                <StreamlineCheck className="w-4 h-4" />
+                <span>Save Banner & World Sync</span>
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Profile Card Header Info */}
+        <div
+          className="px-6 pt-0 pb-4 border-b flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4 -mt-10 relative z-20"
           style={{
             backgroundColor: 'var(--card-done-bg, #fcf8ee)',
             borderColor: 'var(--card-line, #ebdcc9)',
           }}
         >
-          <div className="flex items-center gap-3">
+          <div className="flex items-end gap-3.5">
             <div
-              className="w-9 h-9 rounded-2xl border-2 flex items-center justify-center shadow-xs"
-              style={{
-                backgroundColor: 'var(--theme-accent-soft, #fcdfaa)',
-                borderColor: 'var(--theme-accent, #fd9a4d)',
-                color: 'var(--theme-accent, #fd9a4d)',
+              className={`relative shrink-0 ${isViewingSelf ? 'cursor-pointer hover:opacity-90 transition-opacity' : ''}`}
+              onClick={() => {
+                if (isViewingSelf) {
+                  closeProfile();
+                  setAvatarBuilderReturnTo('public_profile');
+                  setShowAvatarBuilder(true);
+                }
               }}
+              title={isViewingSelf ? 'Click to customize avatar' : undefined}
             >
-              <StreamlineUser className="w-5 h-5" />
+              <CozyAvatar
+                config={isViewingSelf ? profile.avatarConfig : activeProfileUser.avatarConfig}
+                size={88}
+                className="shadow-xl rounded-full border-4 border-white"
+              />
+              {activeProfileUser.isCreator && (
+                <div
+                  className="absolute -bottom-1 -right-1 p-1 rounded-full shadow-md border-2 border-white"
+                  style={{ backgroundColor: 'var(--theme-accent, #fd9a4d)', color: '#fff' }}
+                  title="Official Developer"
+                >
+                  <StreamlineStars className="w-3.5 h-3.5" />
+                </div>
+              )}
             </div>
-            <h3
-              className="font-display font-bold text-lg"
-              style={{ color: 'var(--text-main, #3a2e22)' }}
-            >
-              {isViewingSelf ? 'Cozy Member Profile' : `@${activeProfileUser.username}'s Profile`}
-            </h3>
+
+            <div className="mb-1">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <h3
+                  className="font-display font-bold text-lg leading-tight"
+                  style={{ color: 'var(--text-main, #3a2e22)' }}
+                >
+                  u/{activeProfileUser.username}
+                </h3>
+                {activeProfileUser.isCreator && (
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-peach-100 text-peach-700 font-extrabold border border-peach-300">
+                    Developer
+                  </span>
+                )}
+              </div>
+              <p
+                className="text-xs font-semibold mt-0.5"
+                style={{ color: 'var(--text-muted, #8f6b48)' }}
+              >
+                {activeProfileUser.badge}
+              </p>
+            </div>
           </div>
-          <button
-            type="button"
-            onClick={closeProfile}
-            className="p-2 rounded-full hover:opacity-80 transition-colors cursor-pointer"
-            style={{ color: 'var(--text-muted, #8f6b48)' }}
-            title="Close modal"
-          >
-            <StreamlineClose className="w-4 h-4" />
-          </button>
+
+          {/* Action Buttons: If viewing self -> Edit Avatar & Edit Profile; Else -> Add Friend & DM */}
+          {isViewingSelf ? (
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              <button
+                type="button"
+                onClick={() => {
+                  closeProfile();
+                  setAvatarBuilderReturnTo('public_profile');
+                  setShowAvatarBuilder(true);
+                }}
+                className="flex-1 sm:flex-initial px-3.5 py-1.5 rounded-xl text-xs font-bold text-white shadow-xs flex items-center justify-center gap-1.5 transition-all active:scale-95 cursor-pointer"
+                style={{ backgroundColor: 'var(--theme-accent, #fd9a4d)' }}
+                title="Open Avatar Character Studio"
+              >
+                <StreamlinePencil className="w-3.5 h-3.5" />
+                <span>Edit Avatar</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  closeProfile();
+                  setShowProfileModal(true);
+                }}
+                className="flex-1 sm:flex-initial px-3.5 py-1.5 rounded-xl text-xs font-bold border border-[#EADCCB] bg-white hover:bg-[#FFFDFB] text-[#3A2E22] shadow-xs flex items-center justify-center gap-1.5 transition-all active:scale-95 cursor-pointer"
+                title="Edit Username, Bio Tagline & Community Badge"
+              >
+                <StreamlinePencil className="w-3.5 h-3.5 text-[#FD9A4D]" />
+                <span>Edit Profile</span>
+              </button>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              <button
+                type="button"
+                onClick={handleToggleFriend}
+                className={`flex-1 sm:flex-initial px-3.5 py-1.5 rounded-xl text-xs font-bold border-2 transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-xs ${
+                  isAlreadyFriend
+                    ? 'bg-emerald-50 border-emerald-400 text-emerald-800'
+                    : 'bg-white border-[#EADCCB] hover:border-[#FD9A4D] text-[#3A2E22]'
+                }`}
+              >
+                {isAlreadyFriend ? (
+                  <>
+                    <StreamlineCheck className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>Friends</span>
+                  </>
+                ) : (
+                  <>
+                    <StreamlineUsers className="w-3.5 h-3.5 text-[#FD9A4D]" />
+                    <span>Add Friend</span>
+                  </>
+                )}
+              </button>
+
+              <button
+                type="button"
+                onClick={handleStartDm}
+                className="flex-1 sm:flex-initial px-4 py-1.5 rounded-xl text-xs font-bold text-white shadow-xs flex items-center justify-center gap-1.5 transition-all active:scale-95 cursor-pointer"
+                style={{ backgroundColor: 'var(--theme-accent, #fd9a4d)' }}
+              >
+                <StreamlinePencil className="w-3.5 h-3.5" />
+                <span>Direct Message</span>
+              </button>
+            </div>
+          )}
         </div>
 
-        {/* Toast Alert */}
+        {/* Stats Strip: Community Role & Member Joined Date (Replaces Reddit Karma & Cake Day) */}
+        <div
+          className="px-6 py-2.5 border-b flex items-center justify-between text-xs font-semibold"
+          style={{
+            backgroundColor: 'var(--card-bg, #fefcf7)',
+            borderColor: 'var(--card-line, #ebdcc9)',
+            color: 'var(--text-muted, #8f6b48)',
+          }}
+        >
+          <div className="flex items-center gap-1.5">
+            <StreamlineStars className="w-3.5 h-3.5 text-amber-500" />
+            <span className="font-bold" style={{ color: 'var(--text-main, #3a2e22)' }}>
+              {activeProfileUser.isCreator ? 'Lead Developer & Creator' : 'Community Explorer'}
+            </span>
+          </div>
+
+          <div className="flex items-center gap-1.5 font-mono text-[11px]">
+            <StreamlineCalendar className="w-3.5 h-3.5 text-tan-500" />
+            <span>Joined: {joinedDateFormatted}</span>
+          </div>
+        </div>
+
+        {/* Toast Notification */}
         {toast && (
-          <div
-            className="text-xs font-bold px-4 py-2 text-center animate-fade-in flex items-center justify-center gap-1.5 shadow-xs"
-            style={{
-              backgroundColor: 'var(--theme-accent, #649058)',
-              color: 'var(--theme-accent-text, #ffffff)',
-            }}
-          >
-            <StreamlineCheck className="w-4 h-4" />
+          <div className="bg-[#649058] text-white text-xs font-bold px-4 py-1.5 text-center animate-fade-in flex items-center justify-center gap-1">
+            <StreamlineCheck className="w-3.5 h-3.5" />
             <span>{toast}</span>
           </div>
         )}
 
-        {/* Scrollable Body */}
+        {/* Navigation Tabs */}
         <div
-          className="p-6 overflow-y-auto space-y-5 flex-1"
-          style={{ backgroundColor: 'var(--card-bg, #fefcf7)' }}
+          className="grid grid-cols-3 border-b text-xs font-bold text-center"
+          style={{
+            backgroundColor: 'var(--card-done-bg, #fcf8ee)',
+            borderColor: 'var(--card-line, #ebdcc9)',
+          }}
         >
-          {/* Avatar Card Showcase with Integrated Cozy Banner */}
-          <div
-            className="rounded-2xl border-2 overflow-hidden shadow-inner flex flex-col items-center"
-            style={{
-              backgroundColor: 'var(--card-done-bg, #fcf8ee)',
-              borderColor: 'var(--card-line, #ebdcc9)',
-            }}
-          >
-            {/* Cover Banner */}
-            <div
-              className="relative h-28 sm:h-32 w-full p-3 overflow-hidden flex flex-col justify-between transition-all duration-300"
-              style={{
-                background: selectedPalette.gradient,
-              }}
-            >
-              {/* Subtle Grid / Texture Pattern */}
-              <div
-                className="absolute inset-0 opacity-20 bg-[radial-gradient(#fff_1.2px,transparent_1.2px)] [background-size:16px_16px]"
-              />
-
-              {/* Banner Top Controls */}
-              <div className="relative z-10 flex items-center justify-between">
-                <span className="text-[10px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-black/35 text-white shadow-xs border border-white/20">
-                  {activeProfileUser.isCreator ? 'Creator & Dev' : 'Community Explorer'}
-                </span>
-
-                {isViewingSelf && (
-                  <div className="flex items-center gap-1.5">
-                    {isEditingBanner && (
-                      <button
-                        type="button"
-                        onClick={handleSaveBanner}
-                        className="px-2.5 py-1 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-bold flex items-center gap-1 transition-all shadow-md cursor-pointer border border-white/40 active:scale-95"
-                        title="Save Banner & Sync with World"
-                      >
-                        <StreamlineCheck className="w-3 h-3" />
-                        <span>Save</span>
-                      </button>
-                    )}
-                    <button
-                      type="button"
-                      onClick={() => setIsEditingBanner((prev) => !prev)}
-                      className="px-2.5 py-1 rounded-full bg-black/40 hover:bg-black/60 text-white text-[10px] font-bold flex items-center gap-1 transition-colors cursor-pointer border border-white/20 shadow-xs"
-                      title="Customize Banner Color & Headline"
-                    >
-                      <StreamlinePalette className="w-3 h-3" />
-                      <span>{isEditingBanner ? 'Close' : 'Edit Banner'}</span>
-                    </button>
-                  </div>
-                )}
-              </div>
-
-              {/* Absolute Centered Custom Banner Text */}
-              <div className="absolute inset-0 z-10 flex items-center justify-center px-6 pointer-events-none">
-                {currentBannerText && (
-                  <p className="text-white font-display font-black text-sm sm:text-base drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] tracking-wide flex items-center justify-center gap-1.5 text-center">
-                    <StreamlineStar className="w-3.5 h-3.5 text-amber-300 fill-amber-300 shrink-0 drop-shadow-xs" />
-                    <span className="line-clamp-2">{currentBannerText}</span>
-                    <StreamlineStar className="w-3.5 h-3.5 text-amber-300 fill-amber-300 shrink-0 drop-shadow-xs" />
-                  </p>
-                )}
-              </div>
-            </div>
-
-            {/* Banner Editor Tray (Toggles when "Edit Banner" is clicked) */}
-            {isEditingBanner && (
-              <div
-                className="w-full p-4 border-b space-y-3 animate-fade-in text-xs"
+          {[
+            { id: 'overview', label: 'Overview' },
+            { id: 'comments', label: 'Comments' },
+            { id: 'trophies', label: 'Trophy Case' },
+          ].map((t) => {
+            const isSelected = activeTab === t.id;
+            return (
+              <button
+                key={t.id}
+                type="button"
+                onClick={() => setActiveTab(t.id as 'overview' | 'comments' | 'trophies')}
+                className={`py-2.5 border-b-2 transition-all cursor-pointer ${
+                  isSelected
+                    ? 'font-black bg-white/40'
+                    : 'border-transparent text-tan-600 hover:bg-black/5'
+                }`}
                 style={{
-                  backgroundColor: '#ffffff',
-                  borderColor: 'var(--card-line, #ebdcc9)',
+                  borderColor: isSelected ? 'var(--theme-accent, #fd9a4d)' : 'transparent',
+                  color: isSelected ? 'var(--theme-accent, #fd9a4d)' : 'var(--text-muted, #8f6b48)',
                 }}
               >
-                <div>
-                  <label
-                    className="block text-[10px] font-bold uppercase tracking-wider mb-1"
-                    style={{ color: 'var(--text-muted, #8f6b48)' }}
-                  >
-                    Banner Tagline
-                  </label>
-                  <input
-                    type="text"
-                    value={currentBannerText}
-                    onChange={(e) => setCurrentBannerText(e.target.value)}
-                    maxLength={60}
-                    placeholder="Write a warm cozy banner quote..."
-                    className="w-full px-3 py-1.5 text-xs font-semibold rounded-xl border bg-cream-50/60 shadow-2xs focus:outline-none focus:ring-2 focus:ring-peach-400"
-                    style={{
-                      borderColor: 'var(--card-line, #ebdcc9)',
-                      color: 'var(--text-main, #3a2e22)',
-                    }}
-                  />
-                </div>
+                {t.label}
+              </button>
+            );
+          })}
+        </div>
 
-                <div>
-                  <label
-                    className="block text-[10px] font-bold uppercase tracking-wider mb-1"
-                    style={{ color: 'var(--text-muted, #8f6b48)' }}
-                  >
-                    Color Palette
-                  </label>
-                  <div className="flex items-center gap-1.5 flex-wrap">
-                    {BANNER_PALETTES.map((palette) => {
-                      const isSelected = currentBannerColor === palette.id;
-                      return (
-                        <button
-                          key={palette.id}
-                          type="button"
-                          onClick={() => setCurrentBannerColor(palette.id)}
-                          className={`px-2.5 py-1 rounded-xl text-[11px] font-bold text-white shadow-xs flex items-center gap-1 transition-transform active:scale-95 cursor-pointer border ${
-                            isSelected ? 'ring-2 ring-[#3A2E22] scale-105' : 'opacity-90'
-                          }`}
-                          style={{
-                            background: palette.gradient,
-                            borderColor: isSelected ? '#ffffff' : 'transparent',
-                          }}
-                        >
-                          {isSelected && <StreamlineCheck className="w-3 h-3 text-white" />}
-                          <span>{palette.name}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                <div className="flex justify-end pt-1">
-                  <button
-                    type="button"
-                    onClick={handleSaveBanner}
-                    className="px-4 py-1.5 rounded-xl text-xs font-bold text-white shadow-xs flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer bg-emerald-600 hover:bg-emerald-700"
-                  >
-                    <StreamlineCheck className="w-3.5 h-3.5" />
-                    <span>Save Banner</span>
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* Avatar & Persona Info (Overlapping banner) */}
-            <div className="w-full px-5 pb-5 pt-0 flex flex-col items-center text-center -mt-12 relative z-10">
-              <div className="relative">
-                <CozyAvatar
-                  config={isViewingSelf ? profile.avatarConfig : activeProfileUser.avatarConfig}
-                  size={96}
-                  className="shadow-md rounded-full border-4 border-white"
-                />
-                {isViewingSelf && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      closeProfile();
-                      setAvatarBuilderReturnTo('public_profile');
-                      setShowAvatarBuilder(true);
-                    }}
-                    className="absolute -bottom-1 -right-1 px-3 py-1 text-[11px] font-bold rounded-full shadow-md flex items-center gap-1.5 transition-transform active:scale-95 cursor-pointer border border-white"
-                    style={{
-                      backgroundColor: 'var(--theme-accent, #fd9a4d)',
-                      color: 'var(--theme-accent-text, #ffffff)',
-                    }}
-                    title="Open Avatar Character Studio"
-                  >
-                    <StreamlinePencil className="w-3.5 h-3.5" />
-                    <span>Edit</span>
-                  </button>
-                )}
-              </div>
-
-              <div className="mt-3">
-                <h4
-                  className="font-display font-bold text-lg flex items-center justify-center gap-1.5"
-                  style={{ color: 'var(--text-main, #3a2e22)' }}
-                >
-                  <span>@{activeProfileUser.username}</span>
-                  {activeProfileUser.isCreator && (
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-peach-100 border border-peach-300 text-peach-700 font-extrabold shadow-xs">
-                      🌸 Developer
-                    </span>
-                  )}
-                </h4>
-
-                <span
-                  className="inline-block mt-1 text-[11px] font-bold px-3 py-0.5 rounded-full border"
-                  style={{
-                    backgroundColor: activeProfileUser.isCreator ? '#fff5eb' : 'var(--section-kicker-bg, #fcf3b9)',
-                    borderColor: activeProfileUser.isCreator ? '#f97316' : 'var(--section-kicker-border, #fcb274)',
-                    color: activeProfileUser.isCreator ? '#ea580c' : 'var(--section-kicker-color, #b05a1d)',
-                  }}
-                >
-                  {activeProfileUser.badge}
-                </span>
-
-                {/* Primary Action Button: Edit Profile (Self) OR Add Friend & Message (Other) */}
-                {isViewingSelf ? (
-                  <div className="mt-3 flex justify-center">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        closeProfile();
-                        setShowProfileModal(true);
-                      }}
-                      className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold text-white shadow-xs transition-transform active:scale-95 cursor-pointer"
-                      style={{
-                        backgroundColor: 'var(--theme-accent, #649058)',
-                      }}
-                      title="Edit Username, Bio Tagline & Community Badge"
-                    >
-                      <StreamlinePencil className="w-3.5 h-3.5" />
-                      <span>Edit Profile</span>
-                    </button>
-                  </div>
-                ) : (
-                  <div className="mt-3 flex items-center justify-center gap-2">
-                    <button
-                      type="button"
-                      onClick={handleToggleFriend}
-                      className={`px-3.5 py-1.5 rounded-full text-xs font-bold border transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-xs ${
-                        isAlreadyFriend
-                          ? 'bg-emerald-50 border-emerald-400 text-emerald-800'
-                          : 'bg-white border-[#EADCCB] hover:border-[#FD9A4D] text-[#3A2E22]'
-                      }`}
-                    >
-                      {isAlreadyFriend ? (
-                        <>
-                          <StreamlineCheck className="w-3.5 h-3.5 text-emerald-600" />
-                          <span>Friends</span>
-                        </>
-                      ) : (
-                        <>
-                          <StreamlineUsers className="w-3.5 h-3.5 text-[#FD9A4D]" />
-                          <span>Add Friend</span>
-                        </>
-                      )}
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={handleStartDm}
-                      className="px-4 py-1.5 rounded-full text-xs font-bold text-white shadow-xs flex items-center justify-center gap-1.5 transition-all active:scale-95 cursor-pointer"
-                      style={{ backgroundColor: 'var(--theme-accent, #649058)' }}
-                    >
-                      <StreamlinePencil className="w-3.5 h-3.5" />
-                      <span>Message</span>
-                    </button>
-                  </div>
-                )}
-
-                {/* Join Date - Formatted identical to UserProfileModal */}
-                <div
-                  className="mt-2.5 flex items-center justify-center gap-1.5 text-[11px] font-medium"
-                  style={{ color: 'var(--text-muted, #8f6b48)' }}
-                >
-                  <StreamlineCalendar className="w-3.5 h-3.5 text-tan-500" />
-                  <span>Joined {joinedFormatted}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Navigation Pill Tabs */}
-          <div
-            className="grid grid-cols-3 p-1 rounded-2xl border text-xs font-bold text-center"
-            style={{
-              backgroundColor: 'var(--card-done-bg, #fcf8ee)',
-              borderColor: 'var(--card-line, #ebdcc9)',
-            }}
-          >
-            {[
-              { id: 'overview', label: 'Overview' },
-              { id: 'comments', label: 'Comments' },
-              { id: 'trophies', label: 'Trophy Case' },
-            ].map((t) => {
-              const isSelected = activeTab === t.id;
-              return (
-                <button
-                  key={t.id}
-                  type="button"
-                  onClick={() => setActiveTab(t.id as 'overview' | 'comments' | 'trophies')}
-                  className={`py-1.5 rounded-xl transition-all cursor-pointer ${
-                    isSelected
-                      ? 'font-bold bg-white text-[#3A2E22] shadow-xs'
-                      : 'text-tan-600 hover:text-[#3A2E22]'
-                  }`}
-                >
-                  {t.label}
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Tab Body */}
+        {/* Tab Body */}
+        <div
+          className="p-6 overflow-y-auto space-y-4 flex-1 text-xs"
+          style={{ backgroundColor: 'var(--card-bg, #fefcf7)' }}
+        >
           {activeTab === 'overview' && (
-            <div className="space-y-3.5">
+            <div className="space-y-4">
               <div className="p-4 rounded-2xl bg-white border border-[#EADCCB] shadow-2xs">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-tan-500 block mb-1">
-                  Cozy Bio / Tagline
+                  About
                 </span>
                 <p className="text-xs text-[#3A2E22] leading-relaxed font-medium">
-                  {activeProfileUser.bio || 'Sipping warm tea & exploring cozy adventures 🍵'}
+                  {activeProfileUser.bio}
                 </p>
               </div>
 
-              <div className="grid grid-cols-2 gap-2.5">
-                <div className="p-3 rounded-2xl bg-white border border-[#EADCCB]">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="p-3.5 rounded-2xl bg-white border border-[#EADCCB]">
                   <span className="text-[10px] font-bold text-tan-500 block">Favorite Activity</span>
                   <div className="font-bold text-[#3A2E22] mt-0.5 flex items-center gap-1.5">
-                    <StreamlineGamepad className="w-3.5 h-3.5 text-[#649058]" />
+                    <StreamlineGamepad className="w-3.5 h-3.5 text-[#FD9A4D]" />
                     <span>Retro Gaming</span>
                   </div>
                 </div>
 
-                <div className="p-3 rounded-2xl bg-white border border-[#EADCCB]">
+                <div className="p-3.5 rounded-2xl bg-white border border-[#EADCCB]">
                   <span className="text-[10px] font-bold text-tan-500 block">Reading Status</span>
                   <div className="font-bold text-[#3A2E22] mt-0.5 flex items-center gap-1.5">
-                    <StreamlineBook className="w-3.5 h-3.5 text-[#649058]" />
+                    <StreamlineBook className="w-3.5 h-3.5 text-[#FD9A4D]" />
                     <span>Story Explorer</span>
                   </div>
                 </div>
@@ -740,9 +735,9 @@ export function RedditProfileModal() {
           )}
 
           {activeTab === 'trophies' && (
-            <div className="grid grid-cols-2 gap-2.5">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {activeProfileUser.isCreator && (
-                <div className="p-3 rounded-2xl bg-gradient-to-br from-amber-50 to-orange-50 border border-orange-300 text-center col-span-2">
+                <div className="p-3 rounded-2xl bg-gradient-to-br from-amber-50 to-orange-50 border border-orange-300 text-center">
                   <StreamlineStars className="w-6 h-6 text-orange-600 mx-auto mb-1" />
                   <div className="font-bold text-xs text-orange-950">Site Creator</div>
                   <div className="text-[10px] text-orange-800">Lead Developer</div>
@@ -750,13 +745,13 @@ export function RedditProfileModal() {
               )}
 
               <div className="p-3 rounded-2xl bg-white border border-[#EADCCB] text-center">
-                <StreamlineCoffee className="w-6 h-6 text-[#649058] mx-auto mb-1" />
+                <StreamlineCoffee className="w-6 h-6 text-[#FD9A4D] mx-auto mb-1" />
                 <div className="font-bold text-xs text-[#3A2E22]">Cafe Regular</div>
                 <div className="text-[10px] text-tan-600">Active Explorer</div>
               </div>
 
               <div className="p-3 rounded-2xl bg-white border border-[#EADCCB] text-center">
-                <StreamlineBook className="w-6 h-6 text-[#649058] mx-auto mb-1" />
+                <StreamlineBook className="w-6 h-6 text-[#FD9A4D] mx-auto mb-1" />
                 <div className="font-bold text-xs text-[#3A2E22]">Story Scholar</div>
                 <div className="text-[10px] text-tan-600">Reader Club</div>
               </div>
@@ -764,65 +759,39 @@ export function RedditProfileModal() {
           )}
         </div>
 
-        {/* Footer Ribbon (Matches UserProfileModal exactly) */}
+        {/* Footer Ribbon */}
         <div
-          className="px-6 py-4 border-t-2 flex items-center justify-between"
+          className="px-6 py-3 border-t flex items-center justify-between text-xs"
           style={{
             backgroundColor: 'var(--card-done-bg, #fcf8ee)',
             borderColor: 'var(--card-line, #ebdcc9)',
+            color: 'var(--text-muted, #8f6b48)',
           }}
         >
-          {user && isViewingSelf ? (
-            <>
-              <div className="min-w-0">
-                <span
-                  className="text-[10px] uppercase font-bold block"
-                  style={{ color: 'var(--text-muted, #8f6b48)' }}
-                >
-                  Signed in as
-                </span>
-                <span
-                  className="text-xs font-mono truncate block font-medium"
-                  style={{ color: 'var(--text-main, #3a2e22)' }}
-                >
-                  {user.email}
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={async () => {
-                    await signOut();
-                    closeProfile();
-                  }}
-                  className="px-3 py-1.5 rounded-xl border-2 border-rose-200 hover:bg-rose-50 text-rose-600 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
-                >
-                  <StreamlineLogOut className="w-3.5 h-3.5" />
-                  <span>Sign Out</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={closeProfile}
-                  className="px-3 py-1.5 rounded-xl border border-tan-300 hover:bg-white text-xs font-bold text-[#3A2E22] transition-colors cursor-pointer"
-                >
-                  Close
-                </button>
-              </div>
-            </>
+          {isViewingSelf && user ? (
+            <button
+              type="button"
+              onClick={async () => {
+                await signOut();
+                closeProfile();
+              }}
+              className="px-3.5 py-1.5 rounded-xl border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer shadow-xs active:scale-95"
+              title="Sign out of your account"
+            >
+              <StreamlineLogOut className="w-3.5 h-3.5" />
+              <span>Sign Out</span>
+            </button>
           ) : (
-            <>
-              <span className="text-[11px] font-medium" style={{ color: 'var(--text-muted, #8f6b48)' }}>
-                Cozy community traveler
-              </span>
-              <button
-                type="button"
-                onClick={closeProfile}
-                className="px-4 py-1.5 rounded-xl border border-tan-300 bg-white hover:bg-[#FFFDFB] text-xs font-bold text-[#3A2E22] transition-colors cursor-pointer shadow-xs"
-              >
-                Close
-              </button>
-            </>
+            <span className="font-mono text-[11px]">Jinssi Gaming Member</span>
           )}
+
+          <button
+            type="button"
+            onClick={closeProfile}
+            className="px-4 py-1.5 rounded-xl font-bold bg-white border border-tan-300 hover:border-peach-400 transition-colors cursor-pointer text-[#3A2E22] shadow-xs"
+          >
+            Close
+          </button>
         </div>
       </div>
     </div>
