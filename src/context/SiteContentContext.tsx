@@ -183,21 +183,10 @@ function normalizeContent(parsed: Partial<SavedContent> | null | undefined): Sav
 
   const rawGames = Array.isArray(parsed?.games) ? parsed.games : initialGames;
   
-  // 1. Strictly filter out TV Archive or any AI test entries
-  const filteredGames = rawGames.filter((g) => {
-    if (!g || !g.id) return false;
-    if (g.id === 'game-1789682891873') return false;
-    const titleLower = (g.title || '').toLowerCase();
-    if (titleLower.includes('tv archive') || titleLower.includes('tv tidy') || titleLower.includes('ai gen')) {
-      return false;
-    }
-    return true;
-  });
-
-  // 2. Guarantee all 4 foundational manual games (Librarian, Ducks, Cellar Keeper, Re:Store)
-  // are NEVER lost or truncated. If any is missing or has empty walkthrough, restore from initialGames.
+  // Guarantee all 5 base games are NEVER lost or truncated.
+  // If any is missing or has empty walkthrough, restore from initialGames.
   const baseGames = initialGames.map((baseGame) => {
-    const existing = filteredGames.find((g) => g.id === baseGame.id);
+    const existing = rawGames.find((g) => g.id === baseGame.id);
     if (!existing) return baseGame;
     const existingSteps = existing.walkthrough?.reduce((acc, s) => acc + (s.steps?.length || 0), 0) || 0;
     const baseSteps = baseGame.walkthrough?.reduce((acc, s) => acc + (s.steps?.length || 0), 0) || 0;
@@ -211,9 +200,9 @@ function normalizeContent(parsed: Partial<SavedContent> | null | undefined): Sav
     return existing;
   });
 
-  // 3. Preserve any new games added by wife or admin
+  // Preserve any additional games added by wife or admin
   const baseGameIds = new Set(initialGames.map((g) => g.id));
-  const userAddedGames = filteredGames.filter((g) => !baseGameIds.has(g.id));
+  const userAddedGames = rawGames.filter((g) => g && g.id && !baseGameIds.has(g.id));
 
   const finalGames = [...baseGames, ...userAddedGames];
 

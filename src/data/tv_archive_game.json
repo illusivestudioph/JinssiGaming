@@ -1,0 +1,71 @@
+{
+  "id": "game-1789682891873",
+  "title": "TV Archive: Tidy Up Together",
+  "category": "Cozy Games",
+  "coverAlt": "TV Archive: Tidy Up Together cover",
+  "gameLink": "https://store.steampowered.com/app/4934370/TV_Archive_Tidy_Up_Together/",
+  "developer": "Games Together",
+  "coverImage": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/965b0ece-78d5-4df7-a6b0-d448a77bdc14-title.webp",
+  "editorNote": "",
+  "accentColor": "#ff5100",
+  "description": "Shelve the videotapes, unlock new skills, and use your unique methods to tidy up the TV archive. Enjoy the online co-op and online PvP with your friends, or go solo! Fill up the shelves and experience a sense of relief and satisfaction.",
+  "walkthrough": [
+    {
+      "id": "section-1789683363480",
+      "title": "Basics & Game Modes",
+      "steps": [
+        {
+          "id": "step-1789683374918",
+          "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/22b4ab65-1442-4f51-90be-9a897794f65f-first.webp",
+          "title": "Choose Your Playstyle",
+          "imageAlt": "Step illustration",
+          "hasSpoiler": false,
+          "description": "Pick the mode that fits you best:\n\n•Single Player — work through the archive at your own pace, quietly and methodically\n•Online Co-op — tidy up together with friends, split tasks and share the work\n•Online PvP — compete to sort tapes faster and plan the most efficient routes\n•Sandbox Mode — every skill is unlocked from the start; experiment freely\n•No-Skill Mode — no assists at all; pure manual sorting for the full challenge",
+          "spoilerText": ""
+        },
+        {
+          "id": "step-1789684203431",
+          "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/989424c9-a5b5-4425-a9d8-d0869ec52d14-controls.webp",
+          "title": "Learn the Controls & Skills",
+          "imageAlt": "Step illustration",
+          "hasSpoiler": false,
+          "description": "Pick up tapes, check their labels, and place them on the matching shelf. As you sort, earn points to unlock skills:\n\n•Sort Numerically — auto-orders tapes in your hand by number\n•Highlight Shelf — lights up exactly where your top tape belongs\n•Highlight Tapes — marks all matching tapes of the same type\n•Auto-Placement — sets tapes correctly on the shelf automatically\n•Auto-Collect — instantly gathers matching tapes from around the room",
+          "spoilerText": ""
+        },
+        {
+          "id": "step-1789684434732",
+          "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/a8bc4d9b-c4da-4a7d-9f78-6fd4bf597dd1-maps.webp",
+          "title": "Know Where Every Tape Belongs",
+          "imageAlt": "Step illustration",
+          "hasSpoiler": false,
+          "description": "Every videotape goes to one dedicated category shelf. Use this list to place items instantly — or rely on the in-game map and shelf signs to guide you.",
+          "spoilerText": ""
+        }
+      ]
+    },
+    {
+      "id": "section-1789684404976",
+      "title": "Master List — All 20 Categories",
+      "steps": [
+        {
+          "id": "step-1789684417684",
+          "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/d8d9732b-fc2a-488f-8e9d-7288b228c04f-1---action-movies.webp",
+          "title": "ACTION MOVIES",
+          "imageAlt": "Step illustration",
+          "hasSpoiler": false,
+          "description": "•Assassins and Companions\n•Cowboy Westwood\n•Gladiator Maximus\n•Gold, Bold, and Uncle\n•Green Beret Veteran: Kill\n•Green Beret Veteran: Survive\n•Guardians of the Ocean\n•Hell Weapon I\n•Hell Weapon II\n•Hell Weapon III\n•Outlaw Westwood\n•Thieves of the Land\n•Utopia Priests I\n•Utopia Priests II\n•Utopia Priests III",
+          "spoilerText": ""
+        },
+        {
+          "id": "step-1789685215451",
+          "image": "",
+          "title": "DRAMA MOVIES",
+          "imageAlt": "Step illustration",
+          "hasSpoiler": false,
+          "description": "•",
+          "spoilerText": ""
+        }
+      ]
+    }
+  ]
+}
