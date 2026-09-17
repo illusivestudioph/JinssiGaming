@@ -177,17 +177,22 @@ function normalizeContent(parsed: Partial<SavedContent> | null | undefined): Sav
   );
   const finalStories = [CHILDREN_OF_MU_STORY, ...withoutMu];
 
-  const normalizedProducts: StoreProduct[] = Array.isArray(parsed?.products) && parsed.products.length > 0
-    ? parsed.products
-    : initialProducts;
+  const mockProductIds = new Set(['cozy-farm-planner-pdf', 'cozy-completionist-checklist', 'cozy-notion-hub']);
+  const cleanProducts = Array.isArray(parsed?.products)
+    ? parsed.products.filter((p) => !mockProductIds.has(p.id) && !p.coverImage?.includes('unsplash.com'))
+    : [];
+  const normalizedProducts: StoreProduct[] = cleanProducts.length > 0 ? cleanProducts : initialProducts;
 
   const rawGames = Array.isArray(parsed?.games) ? parsed.games : initialGames;
   
-  // Guarantee all 5 base games are NEVER lost or truncated.
-  // If any is missing or has empty walkthrough, restore from initialGames.
+  // Guarantee the 4 completed manual games are NEVER lost or truncated.
+  // For TV Archive (which wife is actively writing), always use her live edits unconditionally.
   const baseGames = initialGames.map((baseGame) => {
     const existing = rawGames.find((g) => g.id === baseGame.id);
     if (!existing) return baseGame;
+    if (baseGame.id === 'game-1789682891873') {
+      return existing;
+    }
     const existingSteps = existing.walkthrough?.reduce((acc, s) => acc + (s.steps?.length || 0), 0) || 0;
     const baseSteps = baseGame.walkthrough?.reduce((acc, s) => acc + (s.steps?.length || 0), 0) || 0;
     if (existingSteps < baseSteps) {
