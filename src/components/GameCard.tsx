@@ -37,16 +37,22 @@ export function GameCard({ game, onClick, completedCount = 0 }: GameCardProps) {
         </span>
       )}
 
-      {/* Image header: framed thumbnail with 16:9 aspect ratio */}
-      <div className="game-card-photo">
+      {/* Image header: framed thumbnail fitted to showcase the complete artwork */}
+      <div className="game-card-photo relative overflow-hidden flex items-center justify-center bg-cream-300/40">
         <img
-          src={getOptimizedImageUrl(game.coverImage, { width: 800, quality: 80, format: 'webp' })}
+          src={getOptimizedImageUrl(game.coverImage)}
+          alt=""
+          aria-hidden="true"
+          className="absolute inset-0 w-full h-full object-cover blur-sm scale-110 opacity-30 pointer-events-none"
+        />
+        <img
+          src={getOptimizedImageUrl(game.coverImage)}
           alt={game.coverAlt}
           loading="lazy"
           decoding="async"
           width={600}
           height={338}
-          className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+          className="relative z-10 w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
         />
       </div>
 

@@ -118,18 +118,13 @@ export function getOptimizedImageUrl(
   const { width = 600, height, quality = 80, format = 'webp' } = options;
 
   try {
-    // 1. Supabase Storage Transformations: route to built-in render/image endpoint
-    if (url.includes('/storage/v1/object/public/') || url.includes('/storage/v1/render/image/public/')) {
-      const renderEndpointUrl = url.replace(
-        '/storage/v1/object/public/',
-        '/storage/v1/render/image/public/'
-      );
-      const urlObj = new URL(renderEndpointUrl);
-      urlObj.searchParams.set('width', width.toString());
-      if (height) urlObj.searchParams.set('height', height.toString());
-      urlObj.searchParams.set('quality', quality.toString());
-      urlObj.searchParams.set('format', format);
-      return urlObj.toString();
+    // 1. Supabase Storage: serve the authentic object directly (do not distort aspect ratio via render/image)
+    if (url.includes('/storage/v1/render/image/public/')) {
+      const cleanUrl = url.replace('/storage/v1/render/image/public/', '/storage/v1/object/public/');
+      return cleanUrl.split('?')[0];
+    }
+    if (url.includes('/storage/v1/object/public/')) {
+      return url.split('?')[0];
     }
 
     // 2. Unsplash Dynamic Optimization
