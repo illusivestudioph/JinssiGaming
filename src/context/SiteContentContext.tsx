@@ -66,7 +66,7 @@ export interface SiteContentContextValue {
 }
 
 const SiteContentContext = createContext<SiteContentContextValue | null>(null);
-const storageKey = 'jinssi-site-content';
+const storageKey = 'jinssi-site-content-v2';
 const BROADCAST_CHANNEL_NAME = 'jinssi_site_content_channel';
 
 const defaultContent: SavedContent = {
@@ -181,8 +181,13 @@ function normalizeContent(parsed: Partial<SavedContent> | null | undefined): Sav
     ? parsed.products
     : initialProducts;
 
+  const rawGames = Array.isArray(parsed?.games) ? parsed.games : initialGames;
+  const cleanGames = rawGames.filter(
+    (g) => g.id !== 'game-1789682891873' && !g.title?.toLowerCase().includes('tv archive')
+  );
+
   return {
-    games: Array.isArray(parsed?.games) ? parsed.games : initialGames,
+    games: cleanGames.length > 0 ? cleanGames : initialGames,
     articles: normalizedArticles,
     stories: finalStories,
     products: normalizedProducts,
