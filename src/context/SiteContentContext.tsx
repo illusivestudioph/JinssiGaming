@@ -182,7 +182,7 @@ function normalizeContent(parsed: Partial<SavedContent> | null | undefined): Sav
     : initialProducts;
 
   return {
-    games: Array.isArray(parsed?.games) && parsed.games.length > 0 ? parsed.games : initialGames,
+    games: Array.isArray(parsed?.games) ? parsed.games : initialGames,
     articles: normalizedArticles,
     stories: finalStories,
     products: normalizedProducts,
@@ -298,25 +298,6 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
           // If local has newer modifications (e.g. edited right before reload/offline), preserve local and push to Supabase
           // Safety: ensure a stale local cache cannot accidentally wipe games or stories present in remote
           if (localTimestamp > remoteTimestamp) {
-            const localGameIds = new Set(contentRef.current.games.map((g) => g.id));
-            const missingGames = remoteNormalized.games.filter((rg) => !localGameIds.has(rg.id));
-            const localStoryIds = new Set(contentRef.current.stories.map((s) => s.id));
-            const missingStories = remoteNormalized.stories.filter((rs) => !localStoryIds.has(rs.id));
-            const localProductIds = new Set((contentRef.current.products || []).map((p) => p.id));
-            const missingProducts = (remoteNormalized.products || []).filter((rp) => !localProductIds.has(rp.id));
-
-            if (missingGames.length > 0 || missingStories.length > 0 || missingProducts.length > 0) {
-              const merged: SavedContent = {
-                ...contentRef.current,
-                games: [...contentRef.current.games, ...missingGames],
-                stories: [...contentRef.current.stories, ...missingStories],
-                products: [...(contentRef.current.products || []), ...missingProducts],
-                updated_at: new Date().toISOString(),
-              };
-              contentRef.current = merged;
-              setContent(merged);
-            }
-
             setSyncStatus('saving');
             const { error: pushError } = await supabase.from('site_content').upsert({
               id: 'default',

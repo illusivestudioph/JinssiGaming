@@ -231,6 +231,18 @@ export function AdminDashboard() {
     setSavedDraft(null);
   };
 
+  const handleDeleteGame = (gameId: string) => {
+    if (savedDraft?.game?.id === gameId) {
+      setSavedDraft(null);
+    }
+    try {
+      localStorage.removeItem(DRAFT_STORAGE_KEY);
+    } catch {
+      // ignore
+    }
+    removeGame(gameId);
+  };
+
   const handleSaveAssets = () => {
     void forceCloudSync();
     setAssetSaveMessage('Site assets auto-saved and synced.');
@@ -1027,7 +1039,7 @@ export function AdminDashboard() {
                   <Edit2 size={18} /> Edit
                 </button>
                 <button 
-                  onClick={() => removeGame(game.id)} 
+                  onClick={() => handleDeleteGame(game.id)} 
                   className="p-3 text-red-500 bg-red-50 hover:bg-red-100 hover:text-red-700 rounded-xl transition-colors"
                   title="Delete Game"
                 >
