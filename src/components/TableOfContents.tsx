@@ -118,34 +118,68 @@ export function TableOfContents({
           playDropdownSfx();
           setIsOpen((prev) => !prev);
         }}
-        className={`site-button table-of-contents-trigger flex items-center justify-between gap-3 text-sm font-semibold transition-all ${
+        className={`table-of-contents-trigger flex items-center gap-3 border-2 transition-transform hover:scale-105 active:scale-95 cursor-pointer ${
           floating
-            ? 'bg-cream-100/95 backdrop-blur-md text-ink-900 border-2 border-tan-300 shadow-cozy-lg px-4 py-2.5 rounded-full hover:border-peach-300 hover:bg-cream-50'
-            : 'w-full sm:w-auto bg-cream-50 text-ink-900 border-2 border-tan-200 shadow-cozy-sm hover:border-peach-300 px-4 py-2.5 rounded-xl'
+            ? 'px-4 py-2.5 rounded-2xl shadow-xl w-auto text-left'
+            : 'w-full sm:w-auto bg-cream-50 text-ink-900 border-2 border-tan-200 shadow-cozy-sm hover:border-peach-300 px-4 py-2.5 rounded-xl justify-between text-sm font-semibold'
         }`}
+        style={floating ? {
+          backgroundColor: 'var(--card-bg, #fefcf7)',
+          borderColor: 'var(--theme-accent, #fd9a4d)',
+          color: 'var(--text-main, #3a2e22)',
+        } : undefined}
         aria-expanded={isOpen}
         aria-haspopup="true"
         aria-label="Table of Contents: Jump to step or section"
       >
-        <div className="flex items-center gap-2.5">
-          <div
-            className="w-6 h-6 rounded-lg flex items-center justify-center text-white shadow-cozy-sm flex-shrink-0 toc-accent-badge"
-            style={{ backgroundColor: 'var(--theme-accent)' }}
-          >
-            {floating ? <Compass className="w-3.5 h-3.5" /> : <BookOpen className="w-3.5 h-3.5" />}
-          </div>
-          <span className="font-display font-bold text-ink-900">
-            {floating ? 'Jump to Step' : 'Table of Contents'}
-          </span>
-          <span className="pill text-xs bg-cream-200/80 text-tan-600 font-sans px-2 py-0.5">
-            {completedCount}/{totalSteps}
-          </span>
-        </div>
-        <ChevronDown
-          className={`w-4 h-4 text-tan-500 transition-transform duration-200 ${
-            isOpen ? (floating ? 'rotate-0' : 'rotate-180') : (floating ? 'rotate-180' : 'rotate-0')
-          }`}
-        />
+        {floating ? (
+          <>
+            <div className="relative flex items-center flex-shrink-0">
+              <div
+                className="w-8 h-8 rounded-xl flex items-center justify-center text-white shadow-xs"
+                style={{ backgroundColor: 'var(--theme-accent, #fd9a4d)' }}
+              >
+                <Compass className="w-4 h-4" />
+              </div>
+            </div>
+
+            <div className="text-left flex-1 min-w-0 pr-1">
+              <div className="text-xs font-bold font-display leading-tight flex items-center gap-1.5">
+                <span>Jump to Step</span>
+                <ChevronDown
+                  className={`w-3.5 h-3.5 text-tan-500 transition-transform duration-200 ${
+                    isOpen ? 'rotate-180' : 'rotate-0'
+                  }`}
+                />
+              </div>
+              <div className="text-[10px] text-tan-500 font-semibold">
+                {completedCount}/{totalSteps} Steps Complete
+              </div>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="flex items-center gap-2.5">
+              <div
+                className="w-6 h-6 rounded-lg flex items-center justify-center text-white shadow-cozy-sm flex-shrink-0 toc-accent-badge"
+                style={{ backgroundColor: 'var(--theme-accent)' }}
+              >
+                <BookOpen className="w-3.5 h-3.5" />
+              </div>
+              <span className="font-display font-bold text-ink-900">
+                Table of Contents
+              </span>
+              <span className="pill text-xs bg-cream-200/80 text-tan-600 font-sans px-2 py-0.5">
+                {completedCount}/{totalSteps}
+              </span>
+            </div>
+            <ChevronDown
+              className={`w-4 h-4 text-tan-500 transition-transform duration-200 ${
+                isOpen ? 'rotate-180' : 'rotate-0'
+              }`}
+            />
+          </>
+        )}
       </button>
 
       {/* Dropdown Menu Panel */}
