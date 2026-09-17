@@ -66,7 +66,7 @@ export interface SiteContentContextValue {
 }
 
 const SiteContentContext = createContext<SiteContentContextValue | null>(null);
-const storageKey = 'jinssi-site-content-v2';
+const storageKey = 'jinssi-site-content-v3';
 const BROADCAST_CHANNEL_NAME = 'jinssi_site_content_channel';
 
 const defaultContent: SavedContent = {
@@ -181,10 +181,44 @@ function normalizeContent(parsed: Partial<SavedContent> | null | undefined): Sav
     ? parsed.products
     : initialProducts;
 
-  const normalizedGames = Array.isArray(parsed?.games) ? parsed.games : initialGames;
+  const rawGames = Array.isArray(parsed?.games) ? parsed.games : initialGames;
+  
+  // 1. Strictly filter out TV Archive or any AI test entries
+  const filteredGames = rawGames.filter((g) => {
+    if (!g || !g.id) return false;
+    if (g.id === 'game-1789682891873') return false;
+    const titleLower = (g.title || '').toLowerCase();
+    if (titleLower.includes('tv archive') || titleLower.includes('tv tidy') || titleLower.includes('ai gen')) {
+      return false;
+    }
+    return true;
+  });
+
+  // 2. Guarantee all 4 foundational manual games (Librarian, Ducks, Cellar Keeper, Re:Store)
+  // are NEVER lost or truncated. If any is missing or has empty walkthrough, restore from initialGames.
+  const baseGames = initialGames.map((baseGame) => {
+    const existing = filteredGames.find((g) => g.id === baseGame.id);
+    if (!existing) return baseGame;
+    const existingSteps = existing.walkthrough?.reduce((acc, s) => acc + (s.steps?.length || 0), 0) || 0;
+    const baseSteps = baseGame.walkthrough?.reduce((acc, s) => acc + (s.steps?.length || 0), 0) || 0;
+    if (existingSteps < baseSteps) {
+      return {
+        ...existing,
+        walkthrough: baseGame.walkthrough,
+        coverImage: existing.coverImage || baseGame.coverImage,
+      };
+    }
+    return existing;
+  });
+
+  // 3. Preserve any new games added by wife or admin
+  const baseGameIds = new Set(initialGames.map((g) => g.id));
+  const userAddedGames = filteredGames.filter((g) => !baseGameIds.has(g.id));
+
+  const finalGames = [...baseGames, ...userAddedGames];
 
   return {
-    games: normalizedGames.length > 0 ? normalizedGames : initialGames,
+    games: finalGames.length > 0 ? finalGames : initialGames,
     articles: normalizedArticles,
     stories: finalStories,
     products: normalizedProducts,
@@ -208,6 +242,10 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
 
   const [content, setContent] = useState<SavedContent>(() => {
     try {
+      // Purge legacy storage versions so old corrupted states do not persist
+      localStorage.removeItem('jinssi-site-content');
+      localStorage.removeItem('jinssi-site-content-v2');
+
       const saved = localStorage.getItem(storageKey);
       if (!saved) return defaultContent;
       const parsed = JSON.parse(saved) as Partial<SavedContent>;
@@ -361,20 +399,7 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
           const newRecord = payload.new as { content?: Partial<SavedContent>; updated_at?: string } | undefined;
           if (newRecord?.content) {
             const remoteNormalized = normalizeContent(newRecord.content);
-            setContent((current) => {
-              // Merge remote games with current games so neither user overwrites the other
-              const remoteGameMap = new Map(remoteNormalized.games.map((g) => [g.id, g]));
-              const mergedGames = [...remoteNormalized.games];
-              current.games.forEach((cg) => {
-                if (!remoteGameMap.has(cg.id)) {
-                  mergedGames.push(cg);
-                }
-              });
-              return {
-                ...remoteNormalized,
-                games: mergedGames,
-              };
-            });
+            setContent(remoteNormalized);
             setSyncStatus('synced');
             setLastSyncedAt(new Date().toLocaleTimeString());
           }
