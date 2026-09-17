@@ -6,6 +6,7 @@ import { CommentSection } from './CommentSection';
 import { TableOfContents } from './TableOfContents';
 import { ConfettiCanvas } from './ConfettiCanvas';
 import { getOptimizedImageUrl } from '@/utils/imageOptimization';
+import { useChat } from '@/context/ChatContext';
 import {
   ArrowLeft,
   Check,
@@ -27,6 +28,7 @@ interface WalkthroughViewProps {
 }
 
 export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
+  const { isOpen: isChatOpen } = useChat();
   const { completedSteps, toggleStep, showSpoilers, toggleSpoilers, resetProgress } =
     useProgress(game.id);
   const { playCheckSfx, playUncheckSfx, playDropdownSfx } = useMusic();
@@ -440,9 +442,9 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
         )}
       </div>
 
-      {/* Floating Quick Navigation Trigger */}
-      {showFloatingTOC && (
-        <div className="fixed bottom-6 right-6 z-30 animate-fade-in">
+      {/* Floating Quick Navigation Trigger: neatly stacked above Cozy Game Chat at bottom-20 right-4 with zero overlap */}
+      {showFloatingTOC && !isChatOpen && (
+        <div className="fixed bottom-20 right-4 z-30 animate-fade-in">
           <TableOfContents
             sections={game.walkthrough}
             accentColor={game.accentColor}
