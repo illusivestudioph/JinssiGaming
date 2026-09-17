@@ -181,13 +181,10 @@ function normalizeContent(parsed: Partial<SavedContent> | null | undefined): Sav
     ? parsed.products
     : initialProducts;
 
-  const rawGames = Array.isArray(parsed?.games) ? parsed.games : initialGames;
-  const cleanGames = rawGames.filter(
-    (g) => g.id !== 'game-1789682891873' && !g.title?.toLowerCase().includes('tv archive')
-  );
+  const normalizedGames = Array.isArray(parsed?.games) ? parsed.games : initialGames;
 
   return {
-    games: cleanGames.length > 0 ? cleanGames : initialGames,
+    games: normalizedGames.length > 0 ? normalizedGames : initialGames,
     articles: normalizedArticles,
     stories: finalStories,
     products: normalizedProducts,
@@ -350,6 +347,43 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
     void loadRemoteContent();
     return () => {
       cancelled = true;
+    };
+  }, []);
+
+  // Live real-time sync across devices: when wife or any admin updates content, sync immediately
+  useEffect(() => {
+    const channel = supabase
+      .channel('site_content_live_sync')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'site_content', filter: 'id=eq.default' },
+        (payload) => {
+          const newRecord = payload.new as { content?: Partial<SavedContent>; updated_at?: string } | undefined;
+          if (newRecord?.content) {
+            const remoteNormalized = normalizeContent(newRecord.content);
+            setContent((current) => {
+              // Merge remote games with current games so neither user overwrites the other
+              const remoteGameMap = new Map(remoteNormalized.games.map((g) => [g.id, g]));
+              const mergedGames = [...remoteNormalized.games];
+              current.games.forEach((cg) => {
+                if (!remoteGameMap.has(cg.id)) {
+                  mergedGames.push(cg);
+                }
+              });
+              return {
+                ...remoteNormalized,
+                games: mergedGames,
+              };
+            });
+            setSyncStatus('synced');
+            setLastSyncedAt(new Date().toLocaleTimeString());
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      void supabase.removeChannel(channel);
     };
   }, []);
 
