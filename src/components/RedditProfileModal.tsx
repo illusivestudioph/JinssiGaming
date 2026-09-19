@@ -119,7 +119,6 @@ export function RedditProfileModal() {
     setShowAvatarBuilder,
     updateProfile,
     signInWithGoogle,
-    devSignInAsCreator,
     rememberMe,
     setRememberMe,
     setShowProfileModal,

@@ -21,12 +21,13 @@ import { ContactPage } from '@/components/ContactPage';
 import { CookieConsent } from '@/components/CookieConsent';
 import { AdSenseUnit } from '@/components/AdSenseUnit';
 import { GameCard } from '@/components/GameCard';
-import { StreamlineGamepad, StreamlineSearch } from '@/components/StreamlineIcons';
+import { StreamlineGamepad, StreamlineSearch, StreamlineLock } from '@/components/StreamlineIcons';
 
 // 1. Context Provider
 import { SiteContentProvider, useSiteContent } from '@/context/SiteContentContext'; 
 import { MusicProvider } from '@/context/MusicContext';
-import { AuthProvider } from '@/context/AuthContext';
+import { AuthProvider, useAuth } from '@/context/AuthContext';
+import { isCreatorEmail, CREATOR_EMAIL } from '@/types/profile';
 import { UserProfileModal } from '@/components/UserProfileModal';
 import { AvatarBuilderModal } from '@/components/AvatarBuilderModal';
 import { AuthPromptModal } from '@/components/AuthPromptModal';
@@ -60,6 +61,7 @@ function App() {
 
 function AppContent() {
   const { games, articles, stories } = useSiteContent();
+  const { user, profile, triggerAuthPrompt } = useAuth();
   const [activeStory, setActiveStory] = useState<Story | null>(() => {
     try {
       const saved = sessionStorage.getItem('jinssi-active-story');
@@ -352,6 +354,51 @@ function AppContent() {
     }
 
     if (view === 'admin') {
+      const isAuthorizedDev = Boolean(user?.email && isCreatorEmail(user.email) && profile.isCreator);
+      if (!isAuthorizedDev) {
+        return (
+          <div className="min-h-[70vh] flex items-center justify-center p-6">
+            <div className="notepad-card max-w-lg w-full p-8 text-center space-y-5 border-2 border-red-300 shadow-xl bg-cream-50 animate-fade-in">
+              <div className="w-16 h-16 rounded-3xl bg-red-100 text-red-600 mx-auto flex items-center justify-center shadow-inner">
+                <StreamlineLock className="w-8 h-8" />
+              </div>
+              <div className="space-y-2">
+                <h2 className="text-2xl sm:text-3xl font-bold font-display text-ink-900">
+                  Developer Access Required
+                </h2>
+                <p className="text-sm text-ink-700 leading-relaxed font-sans">
+                  The admin management dashboard and site content controls are strictly reserved for the verified site developer.
+                </p>
+                <div className="p-3 bg-cream-100 rounded-xl border border-tan-300/70 text-xs font-mono text-ink-800 break-all">
+                  Authorized Developer: <span className="font-bold text-earth-700">{CREATOR_EMAIL}</span>
+                </div>
+              </div>
+              <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                {!user ? (
+                  <button
+                    type="button"
+                    onClick={() => triggerAuthPrompt(`Sign in with ${CREATOR_EMAIL} to access the developer dashboard.`)}
+                    className="flex-1 py-3 px-4 rounded-xl bg-earth-500 hover:bg-earth-600 text-white font-bold text-sm shadow-md transition-transform active:scale-95 cursor-pointer"
+                  >
+                    Sign in with Google
+                  </button>
+                ) : (
+                  <p className="text-xs text-red-600 font-semibold w-full">
+                    Signed in as {user.email}. This account is not authorized to edit site content.
+                  </p>
+                )}
+                <button
+                  type="button"
+                  onClick={() => handleNavigate('home')}
+                  className="flex-1 py-3 px-4 rounded-xl bg-tan-200 hover:bg-tan-300 text-ink-800 font-bold text-sm transition-transform active:scale-95 cursor-pointer"
+                >
+                  Return to Home
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      }
       return <AdminDashboard />;
     }
 

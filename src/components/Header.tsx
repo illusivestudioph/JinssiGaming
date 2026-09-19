@@ -17,6 +17,7 @@ import {
   StreamlineVolume,
   StreamlineVolumeMute,
 } from '@/components/StreamlineIcons';
+import { isCreatorEmail, CREATOR_EMAIL } from '@/types/profile';
 
 export type View = 'home' | 'walkthroughs' | 'journal' | 'stories' | 'store' | 'about' | 'privacy' | 'terms' | 'contact' | 'admin';
 
@@ -53,6 +54,10 @@ export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View)
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!user || !isCreatorEmail(user.email)) {
+      setError(`Access denied. Only the developer (${CREATOR_EMAIL}) can unlock admin mode. Please sign in with Google first.`);
+      return;
+    }
     if (password === 'JINSSICRUISE') {
       setShowAuthModal(false);
       setPassword('');
@@ -101,7 +106,15 @@ export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View)
               <button aria-current={view === 'stories' ? 'page' : undefined} onClick={() => handleNavigate('stories')} className={`site-nav-link ${view === 'stories' ? 'text-peach-500 is-active' : 'text-tan-600'}`}>Stories</button>
               <button aria-current={view === 'store' ? 'page' : undefined} onClick={() => handleNavigate('store')} className={`site-nav-link ${view === 'store' ? 'text-peach-500 is-active' : 'text-tan-600'}`}>Store</button>
               <button aria-current={view === 'about' ? 'page' : undefined} onClick={() => handleNavigate('about')} className={`site-nav-link ${view === 'about' ? 'text-peach-500 is-active' : 'text-tan-600'}`}>About</button>
-              {view === 'admin' && <span className="font-bold text-earth-500 ml-4">Admin Mode</span>}
+              {profile.isCreator && isCreatorEmail(user?.email) && (
+                <button
+                  aria-current={view === 'admin' ? 'page' : undefined}
+                  onClick={() => handleNavigate('admin')}
+                  className={`site-nav-link font-bold ${view === 'admin' ? 'text-peach-500 is-active' : 'text-earth-700 hover:text-earth-900'}`}
+                >
+                  Admin
+                </button>
+              )}
             </nav>
 
             {/* Persistent Header Music & Ambience Control */}
@@ -199,7 +212,7 @@ export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View)
               <span className="hidden sm:inline max-w-[90px] truncate text-ink-800 group-hover:text-peach-600">
                 {user ? `@${profile.username}` : 'Guest'}
               </span>
-              {profile.isCreator && (
+              {profile.isCreator && isCreatorEmail(user?.email) && (
                 <span
                   className="hidden sm:inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-extrabold uppercase tracking-wide bg-gradient-to-r from-amber-500 to-peach-500 text-white shadow-xs"
                   title="Verified Site Creator & Developer"
@@ -230,10 +243,11 @@ export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View)
           </div>
         </div>
 
+        {/* Mobile Navigation Dropdown */}
         {mobileMenuOpen && (
-          <nav id="mobile-navigation" className="border-t-2 border-tan-200 px-4 py-3 md:hidden">
-            <div className="flex flex-col gap-1">
-              {/* Mobile Profile Link */}
+          <nav id="mobile-navigation" className="site-header-mobile-menu border-t-2 border-tan-200 bg-cream-100 px-4 py-4 md:hidden shadow-cozy-lg animate-fade-in" aria-label="Mobile Navigation">
+            <div className="flex flex-col gap-3">
+              {/* Cozy Profile Quick Bar */}
               <button
                 type="button"
                 onClick={() => {
@@ -251,12 +265,12 @@ export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View)
                     bannerText: profile.bannerText,
                   });
                 }}
-                className="site-nav-link text-left flex items-center gap-2.5 text-peach-600 font-bold bg-peach-50/60 p-2 rounded-xl mb-1 border border-peach-200"
+                className="flex items-center gap-3 p-2 rounded-2xl bg-cream-50 border border-tan-300/80 shadow-cozy-sm text-left active:scale-98 transition-transform cursor-pointer"
               >
-                <CozyAvatar config={profile.avatarConfig} size={28} showBorder={false} />
-                <div>
-                  <span className="block text-xs text-ink-900">
-                    {user ? `@${profile.username}` : 'Guest Profile'}
+                <CozyAvatar config={profile.avatarConfig} size={36} />
+                <div className="min-w-0 flex-1">
+                  <span className="block text-xs font-bold text-ink-900 truncate">
+                    {user ? `@${profile.username}` : 'Guest Explorer'}
                   </span>
                   <span className="block text-[10px] text-tan-500 font-normal">
                     {user ? profile.badge : 'Tap to customize avatar or sign in'}
@@ -270,6 +284,15 @@ export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View)
               <button aria-current={view === 'stories' ? 'page' : undefined} onClick={() => handleNavigate('stories')} className={`site-nav-link text-left ${view === 'stories' ? 'text-peach-500' : 'text-tan-600'}`}>Stories</button>
               <button aria-current={view === 'store' ? 'page' : undefined} onClick={() => handleNavigate('store')} className={`site-nav-link text-left ${view === 'store' ? 'text-peach-500' : 'text-tan-600'}`}>Store</button>
               <button aria-current={view === 'about' ? 'page' : undefined} onClick={() => handleNavigate('about')} className={`site-nav-link text-left ${view === 'about' ? 'text-peach-500' : 'text-tan-600'}`}>About</button>
+              {profile.isCreator && isCreatorEmail(user?.email) && (
+                <button
+                  aria-current={view === 'admin' ? 'page' : undefined}
+                  onClick={() => handleNavigate('admin')}
+                  className={`site-nav-link text-left font-bold ${view === 'admin' ? 'text-peach-500' : 'text-earth-700'}`}
+                >
+                  Admin Dashboard
+                </button>
+              )}
               
               {/* Mobile volume slider */}
               <div className="mt-3 pt-3 border-t border-tan-200 flex items-center justify-between gap-3 text-xs text-tan-600 px-1">

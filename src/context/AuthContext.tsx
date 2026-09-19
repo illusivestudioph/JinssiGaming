@@ -15,7 +15,6 @@ interface AuthContextType {
   rememberMe: boolean;
   setRememberMe: (remember: boolean) => void;
   signInWithGoogle: (remember?: boolean) => Promise<void>;
-  devSignInAsCreator: () => void;
   signOut: () => Promise<void>;
   updateProfile: (updated: Partial<UserProfile>) => Promise<void>;
   // Global Auth Prompt Modal triggers
@@ -33,7 +32,6 @@ interface AuthContextType {
 }
 
 const LOCAL_STORAGE_PROFILE_KEY = 'jinssi-user-profile';
-const DEV_SESSION_KEY = 'jinssi-dev-session';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -49,10 +47,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Initialize profile with defaults or cached local profile
   const [profile, setProfile] = useState<UserProfile>(() => {
+    // Discard any residual dev session immediately
+    try {
+      localStorage.removeItem('jinssi-dev-session');
+    } catch {
+      // ignore
+    }
+
     try {
       const cached = localStorage.getItem(LOCAL_STORAGE_PROFILE_KEY);
       if (cached) {
-        return JSON.parse(cached);
+        const parsed = JSON.parse(cached);
+        // Security check: Only verified CREATOR_EMAIL can ever hold creator role or badge
+        if (parsed.isCreator || parsed.role === 'developer' || parsed.badge === 'Creator & Developer') {
+          if (!parsed.email || !isCreatorEmail(parsed.email)) {
+            parsed.isCreator = false;
+            parsed.role = 'member';
+            if (parsed.badge === 'Creator & Developer') {
+              parsed.badge = 'Cozy Explorer';
+            }
+          }
+        }
+        return parsed;
       }
     } catch {
       // ignore
@@ -76,7 +92,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    const isCreator = isCreatorEmail(u.email);
+    const isCreator = Boolean(u.email && isCreatorEmail(u.email));
     const meta = u.user_metadata || {};
     const googleAvatar = meta.avatar_url || meta.picture;
     const defaultName = isCreator
@@ -128,7 +144,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (hadRememberMe === 'true' && !hasRememberMeCookie()) {
       // The user cleared their cookies! Discard session and reset to Guest.
       try {
-        localStorage.removeItem(DEV_SESSION_KEY);
+        localStorage.removeItem('jinssi-dev-session');
         localStorage.removeItem(REMEMBER_ME_LOCAL_KEY);
         localStorage.removeItem(LOCAL_STORAGE_PROFILE_KEY);
       } catch {
@@ -153,19 +169,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser(currentUser);
         syncProfileFromUser(currentUser);
       } else {
-        // Check for active developer session in local storage
-        try {
-          const devRaw = localStorage.getItem(DEV_SESSION_KEY);
-          if (devRaw && hasRememberMeCookie()) {
-            const parsedDev = JSON.parse(devRaw) as User;
-            setUser(parsedDev);
-            syncProfileFromUser(parsedDev);
-            setIsLoading(false);
-            return;
-          }
-        } catch {
-          // ignore
-        }
         setUser(null);
         syncProfileFromUser(null);
       }
@@ -215,8 +218,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             'Google Sign-In is not enabled yet in your Supabase Dashboard.\n\n' +
             'To enable it:\n' +
             '1. Go to Supabase Dashboard -> Authentication -> Providers -> Google.\n' +
-            '2. Toggle "Enable Sign in with Google" ON and paste your Google Client ID & Secret.\n\n' +
-            '🌸 In the meantime, you can use "Quick Sign in as Jinssi (Developer)" to test all creator, chat, and friend features immediately!'
+            '2. Toggle "Enable Sign in with Google" ON and paste your Google Client ID & Secret.'
           );
         } else {
           alert(`Could not sign in with Google: ${error.message}`);
@@ -229,35 +231,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // Instant developer / creator sign-in (for local testing & dev)
-  const devSignInAsCreator = () => {
-    setRememberMePreference(true);
-    const devUser = {
-      id: 'creator-jinssi-dev-id',
-      email: CREATOR_EMAIL,
-      user_metadata: {
-        display_name: 'Jinssi',
-        role: 'developer',
-      },
-      created_at: new Date().toISOString(),
-    } as unknown as User;
-
-    try {
-      localStorage.setItem(DEV_SESSION_KEY, JSON.stringify(devUser));
-    } catch {
-      // ignore
-    }
-
-    setUser(devUser);
-    syncProfileFromUser(devUser);
-    setShowAuthPrompt(false);
-  };
-
   // Sign Out (clears session, cached profile, and remember me cookie)
   const signOut = async () => {
     setRememberMePreference(false);
     try {
-      localStorage.removeItem(DEV_SESSION_KEY);
+      localStorage.removeItem('jinssi-dev-session');
       localStorage.removeItem(LOCAL_STORAGE_PROFILE_KEY);
       localStorage.removeItem(REMEMBER_ME_LOCAL_KEY);
     } catch {
@@ -274,12 +252,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Update Profile & Sync to Supabase user_metadata
   const updateProfile = async (updated: Partial<UserProfile>) => {
+    const isCreator = Boolean(user?.email && isCreatorEmail(user.email));
+    const safeUpdated = { ...updated };
+    if (!isCreator) {
+      delete safeUpdated.isCreator;
+      delete safeUpdated.role;
+      if (safeUpdated.badge === 'Creator & Developer') {
+        safeUpdated.badge = 'Cozy Explorer';
+      }
+      if (safeUpdated.username && safeUpdated.username.toLowerCase() === 'jinssi') {
+        safeUpdated.username = profile.username && profile.username.toLowerCase() !== 'jinssi' ? profile.username : 'CozyPlayer';
+      }
+    }
+
     const nextProfile: UserProfile = {
       ...profile,
-      ...updated,
+      ...safeUpdated,
+      isCreator,
+      role: isCreator ? 'developer' : 'member',
       avatarConfig: {
         ...profile.avatarConfig,
-        ...(updated.avatarConfig || {}),
+        ...(safeUpdated.avatarConfig || {}),
       },
     };
 
@@ -337,7 +330,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         rememberMe,
         setRememberMe,
         signInWithGoogle,
-        devSignInAsCreator,
         signOut,
         updateProfile,
         showAuthPrompt,

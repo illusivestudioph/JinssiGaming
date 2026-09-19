@@ -29,12 +29,54 @@ import {
   BookOpen,
   BookMarked,
   ExternalLink,
-  ShoppingBag
+  ShoppingBag,
+  Lock,
 } from '@/components/StreamlineIcons';
+import { useAuth } from '@/context/AuthContext';
+import { isCreatorEmail, CREATOR_EMAIL } from '@/types/profile';
 
 const DRAFT_STORAGE_KEY = 'jinssi-admin-editing-game-draft';
 
 export function AdminDashboard() {
+  const { user, profile, triggerAuthPrompt } = useAuth();
+  const isAuthorizedDev = Boolean(user?.email && isCreatorEmail(user.email) && profile.isCreator);
+
+  if (!isAuthorizedDev) {
+    return (
+      <div className="min-h-[70vh] flex items-center justify-center p-6">
+        <div className="notepad-card max-w-lg w-full p-8 text-center space-y-5 border-2 border-red-300 shadow-xl bg-cream-50 animate-fade-in">
+          <div className="w-16 h-16 rounded-3xl bg-red-100 text-red-600 mx-auto flex items-center justify-center shadow-inner">
+            <AlertTriangle className="w-8 h-8" />
+          </div>
+          <div className="space-y-2">
+            <h2 className="text-2xl sm:text-3xl font-bold font-display text-ink-900">
+              Access Restricted
+            </h2>
+            <p className="text-sm text-ink-700 leading-relaxed font-sans">
+              Site management and content editing permissions are strictly restricted to the verified developer account.
+            </p>
+            <div className="p-3 bg-cream-100 rounded-xl border border-tan-300/70 text-xs font-mono text-ink-800 break-all">
+              Authorized Developer: <span className="font-bold text-earth-700">{CREATOR_EMAIL}</span>
+            </div>
+          </div>
+          {!user ? (
+            <button
+              type="button"
+              onClick={() => triggerAuthPrompt(`Sign in with ${CREATOR_EMAIL} to access the developer dashboard.`)}
+              className="w-full py-3 px-4 rounded-xl bg-earth-500 hover:bg-earth-600 text-white font-bold text-sm shadow-md transition-transform active:scale-95 cursor-pointer"
+            >
+              Sign in with Google
+            </button>
+          ) : (
+            <p className="text-xs text-red-600 font-semibold">
+              Signed in as {user.email}. This account is not authorized to edit or delete site content.
+            </p>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   const { 
     games, 
     articles,

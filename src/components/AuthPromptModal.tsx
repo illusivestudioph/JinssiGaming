@@ -8,7 +8,6 @@ export function AuthPromptModal() {
     authPromptReason,
     closeAuthPrompt,
     signInWithGoogle,
-    devSignInAsCreator,
     rememberMe,
     setRememberMe,
   } = useAuth();
@@ -105,23 +104,6 @@ export function AuthPromptModal() {
           </svg>
           <span>Continue with Google</span>
         </button>
-
-        {/* Developer Instant Sign-In Option */}
-        <div className="mt-3 pt-3 border-t border-tan-200/60 flex flex-col gap-2">
-          <button
-            type="button"
-            onClick={devSignInAsCreator}
-            className="w-full py-2 px-3 rounded-xl text-xs font-bold transition-all hover:scale-101 active:scale-98 cursor-pointer border flex items-center justify-center gap-1.5"
-            style={{
-              backgroundColor: 'var(--theme-accent-soft, #fcdfaa)',
-              borderColor: 'var(--theme-accent, #fd9a4d)',
-              color: 'var(--text-main, #3a2e22)',
-            }}
-          >
-            <StreamlineStars className="w-3.5 h-3.5" />
-            <span>Developer Mode: Quick Sign in as Jinssi</span>
-          </button>
-        </div>
 
         <p
           className="text-[10px] mt-3 font-sans"
