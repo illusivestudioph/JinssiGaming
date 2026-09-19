@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { AdventurerConfig, FaceShape, getAdventurerAvatarUrl } from '@/types/profile';
 
 interface CozyAvatarProps {
@@ -28,8 +28,16 @@ export function CozyAvatar({
   className = '',
   showBorder = true,
 }: CozyAvatarProps) {
+  const [loadFailed, setLoadFailed] = useState(false);
+  const [fallbackFailed, setFallbackFailed] = useState(false);
+
   const avatarUrl = getAdventurerAvatarUrl(config);
+  const safeSeed = encodeURIComponent(config?.seed || 'CozyPlayer');
+  // Simple, bulletproof fallback URL with only seed
+  const fallbackUrl = `https://api.dicebear.com/9.x/adventurer/svg?seed=${safeSeed}&backgroundColor=ffd7b5`;
   const shape: FaceShape = config?.faceShape || 'oval';
+
+  const initial = (config?.seed || 'C').slice(0, 1).toUpperCase();
 
   return (
     <div
@@ -41,15 +49,28 @@ export function CozyAvatar({
         height: size,
       }}
     >
-      <img
-        src={avatarUrl}
-        alt="Cozy Adventurer Avatar"
-        className="w-full h-full object-cover select-none transition-transform duration-200"
-        style={FACE_SHAPE_STYLES[shape] || FACE_SHAPE_STYLES.oval}
-        loading="lazy"
-        decoding="async"
-        referrerPolicy="no-referrer"
-      />
+      {!fallbackFailed ? (
+        <img
+          src={loadFailed ? fallbackUrl : avatarUrl}
+          alt={config?.seed ? `${config.seed}'s Avatar` : 'Cozy Adventurer Avatar'}
+          className="w-full h-full object-cover select-none transition-transform duration-200"
+          style={FACE_SHAPE_STYLES[shape] || FACE_SHAPE_STYLES.oval}
+          loading="lazy"
+          decoding="async"
+          referrerPolicy="no-referrer"
+          onError={() => {
+            if (!loadFailed) {
+              setLoadFailed(true);
+            } else {
+              setFallbackFailed(true);
+            }
+          }}
+        />
+      ) : (
+        <span className="font-extrabold text-[#945524] select-none text-xs">
+          {initial}
+        </span>
+      )}
     </div>
   );
 }

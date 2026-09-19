@@ -198,7 +198,7 @@ export function GameChatDock() {
       {
         id: 'npc-mochicat',
         username: 'MochiCat',
-        avatarConfig: { seed: 'MochiCat', faceShape: 'round', hair: 'curly01', hairColor: '4a312c' },
+        avatarConfig: { seed: 'MochiCat', faceShape: 'round', hair: 'long04', hairColor: '4a312c' },
         badge: 'Cafe Regular',
         isOnline: true,
         addedAt: new Date(Date.now() - 1000 * 60 * 60 * 12).toISOString(),
@@ -206,7 +206,7 @@ export function GameChatDock() {
       {
         id: 'npc-matchaknight',
         username: 'MatchaKnight',
-        avatarConfig: { seed: 'MatchaKnight', faceShape: 'square', hair: 'short02', hairColor: '2c3e50' },
+        avatarConfig: { seed: 'MatchaKnight', faceShape: 'square', hair: 'short02', hairColor: '2c1b18' },
         badge: 'Tea Brewer',
         isOnline: true,
         addedAt: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
@@ -214,7 +214,7 @@ export function GameChatDock() {
       {
         id: 'npc-pixelbard',
         username: 'PixelBard',
-        avatarConfig: { seed: 'PixelBard', faceShape: 'oval', hair: 'long01', hairColor: '8e44ad' },
+        avatarConfig: { seed: 'PixelBard', faceShape: 'oval', hair: 'long01', hairColor: '9287ff' },
         badge: 'Retro Gamer',
         isOnline: true,
         addedAt: new Date(Date.now() - 1000 * 60 * 60 * 36).toISOString(),
@@ -222,7 +222,7 @@ export function GameChatDock() {
       {
         id: 'npc-stardewsam',
         username: 'StardewSam',
-        avatarConfig: { seed: 'StardewSam', faceShape: 'oval', hair: 'short04', hairColor: 'e67e22' },
+        avatarConfig: { seed: 'StardewSam', faceShape: 'oval', hair: 'short04', hairColor: 'd6b370' },
         badge: 'Cozy Explorer',
         isOnline: true,
         addedAt: new Date(Date.now() - 1000 * 60 * 60 * 48).toISOString(),
@@ -230,7 +230,7 @@ export function GameChatDock() {
       {
         id: 'npc-lunafable',
         username: 'LunaFable',
-        avatarConfig: { seed: 'LunaFable', faceShape: 'heart', hair: 'long02', hairColor: '34495e' },
+        avatarConfig: { seed: 'LunaFable', faceShape: 'heart', hair: 'long02', hairColor: '2c1b18' },
         badge: 'Midnight Scholar',
         isOnline: true,
         addedAt: new Date(Date.now() - 1000 * 60 * 60 * 5).toISOString(),
@@ -238,7 +238,7 @@ export function GameChatDock() {
       {
         id: 'npc-cinnamonbun',
         username: 'CinnamonBun',
-        avatarConfig: { seed: 'CinnamonBun', faceShape: 'round', hair: 'bun01', hairColor: 'd35400' },
+        avatarConfig: { seed: 'CinnamonBun', faceShape: 'round', hair: 'long07', hairColor: 'e5a075' },
         badge: 'Cafe Regular',
         isOnline: true,
         addedAt: new Date(Date.now() - 1000 * 60 * 60 * 18).toISOString(),
@@ -246,7 +246,7 @@ export function GameChatDock() {
       {
         id: 'npc-fernwhisperer',
         username: 'FernWhisperer',
-        avatarConfig: { seed: 'FernWhisperer', faceShape: 'oval', hair: 'braids01', hairColor: '27ae60' },
+        avatarConfig: { seed: 'FernWhisperer', faceShape: 'oval', hair: 'long09', hairColor: '85c446' },
         badge: 'Cozy Explorer',
         isOnline: true,
         addedAt: new Date(Date.now() - 1000 * 60 * 60 * 15).toISOString(),
@@ -254,7 +254,7 @@ export function GameChatDock() {
       {
         id: 'npc-chronotrigger99',
         username: 'ChronoTrigger99',
-        avatarConfig: { seed: 'ChronoTrigger99', faceShape: 'square', hair: 'short03', hairColor: 'c0392b' },
+        avatarConfig: { seed: 'ChronoTrigger99', faceShape: 'square', hair: 'short05', hairColor: '4a312c' },
         badge: 'Retro Gamer',
         isOnline: true,
         addedAt: new Date(Date.now() - 1000 * 60 * 60 * 30).toISOString(),
@@ -262,7 +262,7 @@ export function GameChatDock() {
       {
         id: 'npc-bobbabarista',
         username: 'BobbaBarista',
-        avatarConfig: { seed: 'BobbaBarista', faceShape: 'round', hair: 'short01', hairColor: '6e2c00' },
+        avatarConfig: { seed: 'BobbaBarista', faceShape: 'round', hair: 'short06', hairColor: '4a312c' },
         badge: 'Tea Brewer',
         isOnline: true,
         addedAt: new Date(Date.now() - 1000 * 60 * 60 * 8).toISOString(),
@@ -270,7 +270,7 @@ export function GameChatDock() {
       {
         id: 'npc-willowgrove',
         username: 'WillowGrove',
-        avatarConfig: { seed: 'WillowGrove', faceShape: 'oval', hair: 'long03', hairColor: '16a085' },
+        avatarConfig: { seed: 'WillowGrove', faceShape: 'oval', hair: 'long03', hairColor: '85c446' },
         badge: 'Bookworm',
         isOnline: true,
         addedAt: new Date(Date.now() - 1000 * 60 * 60 * 22).toISOString(),
@@ -278,7 +278,7 @@ export function GameChatDock() {
       {
         id: 'npc-kitsunesip',
         username: 'KitsuneSip',
-        avatarConfig: { seed: 'KitsuneSip', faceShape: 'heart', hair: 'pigtails01', hairColor: 'e74c3c' },
+        avatarConfig: { seed: 'KitsuneSip', faceShape: 'heart', hair: 'long10', hairColor: 'f59797' },
         badge: 'Cafe Regular',
         isOnline: true,
         addedAt: new Date(Date.now() - 1000 * 60 * 60 * 14).toISOString(),
@@ -286,7 +286,7 @@ export function GameChatDock() {
       {
         id: 'npc-astraea',
         username: 'Astraea',
-        avatarConfig: { seed: 'Astraea', faceShape: 'heart', hair: 'curly02', hairColor: '2c3e50' },
+        avatarConfig: { seed: 'Astraea', faceShape: 'heart', hair: 'long11', hairColor: '9287ff' },
         badge: 'Midnight Scholar',
         isOnline: true,
         addedAt: new Date(Date.now() - 1000 * 60 * 60 * 4).toISOString(),
@@ -294,7 +294,7 @@ export function GameChatDock() {
       {
         id: 'npc-honeymead',
         username: 'HoneyMead',
-        avatarConfig: { seed: 'HoneyMead', faceShape: 'round', hair: 'short05', hairColor: 'f39c12' },
+        avatarConfig: { seed: 'HoneyMead', faceShape: 'round', hair: 'short09', hairColor: 'd6b370' },
         badge: 'Tea Brewer',
         isOnline: true,
         addedAt: new Date(Date.now() - 1000 * 60 * 60 * 26).toISOString(),
@@ -302,7 +302,7 @@ export function GameChatDock() {
       {
         id: 'npc-cozygamersteph',
         username: 'CozyGamerSteph',
-        avatarConfig: { seed: 'CozyGamerSteph', faceShape: 'oval', hair: 'long04', hairColor: '7f8c8d' },
+        avatarConfig: { seed: 'CozyGamerSteph', faceShape: 'oval', hair: 'long06', hairColor: 'e5a075' },
         badge: 'Cozy Explorer',
         isOnline: true,
         addedAt: new Date(Date.now() - 1000 * 60 * 60 * 11).toISOString(),
@@ -310,7 +310,7 @@ export function GameChatDock() {
       {
         id: 'npc-bookishbramble',
         username: 'BookishBramble',
-        avatarConfig: { seed: 'BookishBramble', faceShape: 'square', hair: 'short01', hairColor: '34495e' },
+        avatarConfig: { seed: 'BookishBramble', faceShape: 'square', hair: 'short01', hairColor: '2c1b18' },
         badge: 'Bookworm',
         isOnline: true,
         addedAt: new Date(Date.now() - 1000 * 60 * 60 * 40).toISOString(),
@@ -318,7 +318,7 @@ export function GameChatDock() {
       {
         id: 'npc-nekonook',
         username: 'NekoNook',
-        avatarConfig: { seed: 'NekoNook', faceShape: 'round', hair: 'bun02', hairColor: '9b59b6' },
+        avatarConfig: { seed: 'NekoNook', faceShape: 'round', hair: 'long12', hairColor: 'f59797' },
         badge: 'Cafe Regular',
         isOnline: true,
         addedAt: new Date(Date.now() - 1000 * 60 * 60 * 7).toISOString(),
@@ -326,7 +326,7 @@ export function GameChatDock() {
       {
         id: 'npc-dungeonbaker',
         username: 'DungeonBaker',
-        avatarConfig: { seed: 'DungeonBaker', faceShape: 'oval', hair: 'short02', hairColor: 'b9770e' },
+        avatarConfig: { seed: 'DungeonBaker', faceShape: 'oval', hair: 'short11', hairColor: '4a312c' },
         badge: 'Retro Gamer',
         isOnline: true,
         addedAt: new Date(Date.now() - 1000 * 60 * 60 * 33).toISOString(),
@@ -334,7 +334,7 @@ export function GameChatDock() {
       {
         id: 'npc-chailover',
         username: 'ChaiLover',
-        avatarConfig: { seed: 'ChaiLover', faceShape: 'round', hair: 'curly01', hairColor: '784212' },
+        avatarConfig: { seed: 'ChaiLover', faceShape: 'round', hair: 'long05', hairColor: '4a312c' },
         badge: 'Tea Brewer',
         isOnline: true,
         addedAt: new Date(Date.now() - 1000 * 60 * 60 * 9).toISOString(),
@@ -342,7 +342,7 @@ export function GameChatDock() {
       {
         id: 'npc-quietquill',
         username: 'QuietQuill',
-        avatarConfig: { seed: 'QuietQuill', faceShape: 'oval', hair: 'bob01', hairColor: '212f3d' },
+        avatarConfig: { seed: 'QuietQuill', faceShape: 'oval', hair: 'short13', hairColor: '2c1b18' },
         badge: 'Bookworm',
         isOnline: true,
         addedAt: new Date(Date.now() - 1000 * 60 * 60 * 50).toISOString(),
@@ -350,7 +350,7 @@ export function GameChatDock() {
       {
         id: 'npc-mapleleaves',
         username: 'MapleLeaves',
-        avatarConfig: { seed: 'MapleLeaves', faceShape: 'round', hair: 'wavy01', hairColor: 'ba4a00' },
+        avatarConfig: { seed: 'MapleLeaves', faceShape: 'round', hair: 'long08', hairColor: 'e5a075' },
         badge: 'Cozy Explorer',
         isOnline: true,
         addedAt: new Date(Date.now() - 1000 * 60 * 60 * 16).toISOString(),

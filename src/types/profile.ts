@@ -73,6 +73,12 @@ export const DEFAULT_PROFILE: Omit<UserProfile, 'id'> = {
   joinedAt: new Date().toISOString(),
 };
 
+const VALID_ADVENTURER_HAIRSTYLES = new Set([
+  'short01', 'short02', 'short03', 'short04', 'short05', 'short06', 'short07', 'short08', 'short09',
+  'short10', 'short11', 'short12', 'short13', 'short14', 'short15', 'short16', 'short17', 'short18', 'short19',
+  'long01', 'long02', 'long03', 'long04', 'long05', 'long06', 'long07', 'long08', 'long09', 'long10', 'long11', 'long12',
+]);
+
 export function getAdventurerAvatarUrl(config?: Partial<AdventurerConfig>): string {
   if (!config) return `https://api.dicebear.com/9.x/adventurer/svg?seed=CozyPlayer&backgroundColor=ffd7b5`;
 
@@ -82,16 +88,21 @@ export function getAdventurerAvatarUrl(config?: Partial<AdventurerConfig>): stri
 
   const params = new URLSearchParams();
   params.set('seed', config.seed || 'CozyPlayer');
-  params.set('skinColor', config.skinColor || 'f2d3b1');
+  params.set('skinColor', (config.skinColor || 'f2d3b1').replace('#', ''));
 
   if (config.hair === 'none' || config.hair === 'bald') {
     params.set('hairProbability', '0');
+  } else if (config.hair && VALID_ADVENTURER_HAIRSTYLES.has(config.hair)) {
+    params.set('hair', config.hair);
+    params.set('hairProbability', '100');
   } else {
-    params.set('hair', config.hair || 'short01');
+    // If not specified or unrecognized, let the seed determine a valid hairstyle naturally
     params.set('hairProbability', '100');
   }
 
-  params.set('hairColor', config.hairColor || '4a312c');
+  if (config.hairColor) {
+    params.set('hairColor', config.hairColor.replace('#', ''));
+  }
 
   if (config.eyebrows && config.eyebrows !== 'none') {
     params.set('eyebrows', config.eyebrows);
@@ -99,9 +110,15 @@ export function getAdventurerAvatarUrl(config?: Partial<AdventurerConfig>): stri
     params.set('eyebrows', 'variant02');
   }
 
-  params.set('eyes', config.eyes || 'variant01');
-  params.set('mouth', config.mouth || 'variant01');
-  params.set('backgroundColor', config.backgroundColor || 'ffd7b5');
+  if (config.eyes) {
+    params.set('eyes', config.eyes);
+  }
+  if (config.mouth) {
+    params.set('mouth', config.mouth);
+  }
+  if (config.backgroundColor) {
+    params.set('backgroundColor', config.backgroundColor.replace('#', ''));
+  }
 
   if (config.glasses && config.glasses !== 'none') {
     params.set('glasses', config.glasses);
