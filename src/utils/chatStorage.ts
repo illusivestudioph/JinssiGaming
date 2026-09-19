@@ -66,6 +66,39 @@ export function isDmForPartner(
   return false;
 }
 
+export const DEFAULT_WORLD_MESSAGES: ChatMessage[] = [
+  {
+    id: 'seed-world-1',
+    channel: 'world',
+    senderId: 'creator-jinssi-dev-id',
+    senderName: 'Jinssi',
+    senderAvatar: { seed: 'Jinssi', hairColor: '4a312c' },
+    senderIsCreator: true,
+    text: 'Welcome to our cozy gaming sanctuary! ✨ Feel free to chat, discuss game secrets, or say hello.',
+    createdAt: new Date(Date.now() - 1000 * 60 * 180).toISOString(),
+  },
+  {
+    id: 'seed-world-2',
+    channel: 'world',
+    senderId: 'npc-mochicat',
+    senderName: 'MochiCat',
+    senderAvatar: { seed: 'MochiCat', faceShape: 'round' },
+    senderIsCreator: false,
+    text: 'Loving the walkthroughs and guides here! Anyone playing cozy farm sims tonight? ☕',
+    createdAt: new Date(Date.now() - 1000 * 60 * 60).toISOString(),
+  },
+  {
+    id: 'seed-world-3',
+    channel: 'world',
+    senderId: 'npc-matchaknight',
+    senderName: 'MatchaKnight',
+    senderAvatar: { seed: 'MatchaKnight', faceShape: 'square' },
+    senderIsCreator: false,
+    text: 'Brewed some hot matcha and checking out the game reviews. Cozy vibes all around 🍵',
+    createdAt: new Date(Date.now() - 1000 * 60 * 20).toISOString(),
+  },
+];
+
 /**
  * Reads local messages archive from browser storage
  */
@@ -76,10 +109,16 @@ export function getLocalMessages(
   try {
     const key = channel === 'world' ? LOCAL_STORAGE_KEY_WORLD : LOCAL_STORAGE_KEY_DMS;
     const raw = localStorage.getItem(key);
-    if (!raw) return [];
+    if (!raw) {
+      if (channel === 'world') {
+        return DEFAULT_WORLD_MESSAGES;
+      }
+      return [];
+    }
     const parsed: ChatMessage[] = JSON.parse(raw);
     if (channel === 'world') {
-      return parsed.filter((m) => m.channel === 'world');
+      const filtered = parsed.filter((m) => m.channel === 'world');
+      return filtered.length > 0 ? filtered : DEFAULT_WORLD_MESSAGES;
     }
     if (dmPartner) {
       return parsed.filter((m) => isDmForPartner(m, dmPartner));
@@ -87,7 +126,7 @@ export function getLocalMessages(
     return parsed.filter((m) => m.channel === 'dm');
   } catch (err) {
     console.warn('Failed to load local chat archive:', err);
-    return [];
+    return channel === 'world' ? DEFAULT_WORLD_MESSAGES : [];
   }
 }
 

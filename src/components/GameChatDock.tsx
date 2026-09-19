@@ -193,39 +193,167 @@ export function GameChatDock() {
       }
     });
 
-    // 5. Cozy community default regulars
+    // 5. Cozy community default regulars (20 believable community travelers)
     const cozyDefaults: Friend[] = [
       {
         id: 'npc-mochicat',
         username: 'MochiCat',
-        avatarConfig: { seed: 'MochiCat', ears: 'cat' },
+        avatarConfig: { seed: 'MochiCat', faceShape: 'round', hair: 'curly01', hairColor: '4a312c' },
         badge: 'Cafe Regular',
         isOnline: true,
-        addedAt: new Date().toISOString(),
+        addedAt: new Date(Date.now() - 1000 * 60 * 60 * 12).toISOString(),
       },
       {
         id: 'npc-matchaknight',
         username: 'MatchaKnight',
-        avatarConfig: { seed: 'MatchaKnight' },
+        avatarConfig: { seed: 'MatchaKnight', faceShape: 'square', hair: 'short02', hairColor: '2c3e50' },
         badge: 'Tea Brewer',
         isOnline: true,
-        addedAt: new Date().toISOString(),
+        addedAt: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
       },
       {
         id: 'npc-pixelbard',
         username: 'PixelBard',
-        avatarConfig: { seed: 'PixelBard' },
+        avatarConfig: { seed: 'PixelBard', faceShape: 'oval', hair: 'long01', hairColor: '8e44ad' },
         badge: 'Retro Gamer',
         isOnline: true,
-        addedAt: new Date().toISOString(),
+        addedAt: new Date(Date.now() - 1000 * 60 * 60 * 36).toISOString(),
       },
       {
-        id: 'npc-stardewstar',
-        username: 'StardewStar',
-        avatarConfig: { seed: 'StardewStar' },
+        id: 'npc-stardewsam',
+        username: 'StardewSam',
+        avatarConfig: { seed: 'StardewSam', faceShape: 'oval', hair: 'short04', hairColor: 'e67e22' },
         badge: 'Cozy Explorer',
         isOnline: true,
-        addedAt: new Date().toISOString(),
+        addedAt: new Date(Date.now() - 1000 * 60 * 60 * 48).toISOString(),
+      },
+      {
+        id: 'npc-lunafable',
+        username: 'LunaFable',
+        avatarConfig: { seed: 'LunaFable', faceShape: 'heart', hair: 'long02', hairColor: '34495e' },
+        badge: 'Midnight Scholar',
+        isOnline: true,
+        addedAt: new Date(Date.now() - 1000 * 60 * 60 * 5).toISOString(),
+      },
+      {
+        id: 'npc-cinnamonbun',
+        username: 'CinnamonBun',
+        avatarConfig: { seed: 'CinnamonBun', faceShape: 'round', hair: 'bun01', hairColor: 'd35400' },
+        badge: 'Cafe Regular',
+        isOnline: true,
+        addedAt: new Date(Date.now() - 1000 * 60 * 60 * 18).toISOString(),
+      },
+      {
+        id: 'npc-fernwhisperer',
+        username: 'FernWhisperer',
+        avatarConfig: { seed: 'FernWhisperer', faceShape: 'oval', hair: 'braids01', hairColor: '27ae60' },
+        badge: 'Cozy Explorer',
+        isOnline: true,
+        addedAt: new Date(Date.now() - 1000 * 60 * 60 * 15).toISOString(),
+      },
+      {
+        id: 'npc-chronotrigger99',
+        username: 'ChronoTrigger99',
+        avatarConfig: { seed: 'ChronoTrigger99', faceShape: 'square', hair: 'short03', hairColor: 'c0392b' },
+        badge: 'Retro Gamer',
+        isOnline: true,
+        addedAt: new Date(Date.now() - 1000 * 60 * 60 * 30).toISOString(),
+      },
+      {
+        id: 'npc-bobbabarista',
+        username: 'BobbaBarista',
+        avatarConfig: { seed: 'BobbaBarista', faceShape: 'round', hair: 'short01', hairColor: '6e2c00' },
+        badge: 'Tea Brewer',
+        isOnline: true,
+        addedAt: new Date(Date.now() - 1000 * 60 * 60 * 8).toISOString(),
+      },
+      {
+        id: 'npc-willowgrove',
+        username: 'WillowGrove',
+        avatarConfig: { seed: 'WillowGrove', faceShape: 'oval', hair: 'long03', hairColor: '16a085' },
+        badge: 'Bookworm',
+        isOnline: true,
+        addedAt: new Date(Date.now() - 1000 * 60 * 60 * 22).toISOString(),
+      },
+      {
+        id: 'npc-kitsunesip',
+        username: 'KitsuneSip',
+        avatarConfig: { seed: 'KitsuneSip', faceShape: 'heart', hair: 'pigtails01', hairColor: 'e74c3c' },
+        badge: 'Cafe Regular',
+        isOnline: true,
+        addedAt: new Date(Date.now() - 1000 * 60 * 60 * 14).toISOString(),
+      },
+      {
+        id: 'npc-astraea',
+        username: 'Astraea',
+        avatarConfig: { seed: 'Astraea', faceShape: 'heart', hair: 'curly02', hairColor: '2c3e50' },
+        badge: 'Midnight Scholar',
+        isOnline: true,
+        addedAt: new Date(Date.now() - 1000 * 60 * 60 * 4).toISOString(),
+      },
+      {
+        id: 'npc-honeymead',
+        username: 'HoneyMead',
+        avatarConfig: { seed: 'HoneyMead', faceShape: 'round', hair: 'short05', hairColor: 'f39c12' },
+        badge: 'Tea Brewer',
+        isOnline: true,
+        addedAt: new Date(Date.now() - 1000 * 60 * 60 * 26).toISOString(),
+      },
+      {
+        id: 'npc-cozygamersteph',
+        username: 'CozyGamerSteph',
+        avatarConfig: { seed: 'CozyGamerSteph', faceShape: 'oval', hair: 'long04', hairColor: '7f8c8d' },
+        badge: 'Cozy Explorer',
+        isOnline: true,
+        addedAt: new Date(Date.now() - 1000 * 60 * 60 * 11).toISOString(),
+      },
+      {
+        id: 'npc-bookishbramble',
+        username: 'BookishBramble',
+        avatarConfig: { seed: 'BookishBramble', faceShape: 'square', hair: 'short01', hairColor: '34495e' },
+        badge: 'Bookworm',
+        isOnline: true,
+        addedAt: new Date(Date.now() - 1000 * 60 * 60 * 40).toISOString(),
+      },
+      {
+        id: 'npc-nekonook',
+        username: 'NekoNook',
+        avatarConfig: { seed: 'NekoNook', faceShape: 'round', hair: 'bun02', hairColor: '9b59b6' },
+        badge: 'Cafe Regular',
+        isOnline: true,
+        addedAt: new Date(Date.now() - 1000 * 60 * 60 * 7).toISOString(),
+      },
+      {
+        id: 'npc-dungeonbaker',
+        username: 'DungeonBaker',
+        avatarConfig: { seed: 'DungeonBaker', faceShape: 'oval', hair: 'short02', hairColor: 'b9770e' },
+        badge: 'Retro Gamer',
+        isOnline: true,
+        addedAt: new Date(Date.now() - 1000 * 60 * 60 * 33).toISOString(),
+      },
+      {
+        id: 'npc-chailover',
+        username: 'ChaiLover',
+        avatarConfig: { seed: 'ChaiLover', faceShape: 'round', hair: 'curly01', hairColor: '784212' },
+        badge: 'Tea Brewer',
+        isOnline: true,
+        addedAt: new Date(Date.now() - 1000 * 60 * 60 * 9).toISOString(),
+      },
+      {
+        id: 'npc-quietquill',
+        username: 'QuietQuill',
+        avatarConfig: { seed: 'QuietQuill', faceShape: 'oval', hair: 'bob01', hairColor: '212f3d' },
+        badge: 'Bookworm',
+        isOnline: true,
+        addedAt: new Date(Date.now() - 1000 * 60 * 60 * 50).toISOString(),
+      },
+      {
+        id: 'npc-mapleleaves',
+        username: 'MapleLeaves',
+        avatarConfig: { seed: 'MapleLeaves', faceShape: 'round', hair: 'wavy01', hairColor: 'ba4a00' },
+        badge: 'Cozy Explorer',
+        isOnline: true,
+        addedAt: new Date(Date.now() - 1000 * 60 * 60 * 16).toISOString(),
       },
     ];
 
@@ -709,12 +837,45 @@ export function GameChatDock() {
                     );
                     const cleanSenderName = isJinssi ? 'Jinssi' : msg.senderName.split('@')[0];
                     const isMe =
-                      msg.senderId === user?.id ||
-                      (profile.isCreator && isJinssi);
+                      Boolean(user?.id && msg.senderId === user.id) ||
+                      (profile.isCreator && isJinssi) ||
+                      (user?.email && msg.senderName.toLowerCase() === user.email.toLowerCase()) ||
+                      (profile.username && cleanSenderName.toLowerCase() === profile.username.toLowerCase());
                     const isAlreadyFriend = isFriend(cleanSenderName) || isFriend(msg.senderId);
 
+                    // Messenger Style: User (Me) on the RIGHT
+                    if (isMe) {
+                      return (
+                        <div key={msg.id} className="flex justify-end w-full group">
+                          <div className="flex flex-col items-end max-w-[80%] min-w-0">
+                            <div className="flex items-center gap-1.5 leading-none mb-1 justify-end">
+                              <span className="text-[9px] text-tan-400 font-mono">
+                                {new Date(msg.createdAt).toLocaleTimeString([], {
+                                  hour: '2-digit',
+                                  minute: '2-digit',
+                                })}
+                              </span>
+                              <span className="text-[10px] font-bold text-peach-600">
+                                You
+                              </span>
+                              {isJinssi && (
+                                <span className="text-[9px] font-black px-1.5 py-0.2 rounded-full bg-gradient-to-r from-amber-500 to-peach-500 text-white shadow-2xs">
+                                  DEV
+                                </span>
+                              )}
+                            </div>
+
+                            <div className="bg-[#FD9A4D] text-white text-xs px-3.5 py-2 rounded-2xl rounded-br-xs shadow-xs font-medium leading-relaxed break-words max-w-full">
+                              {msg.text}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    }
+
+                    // Messenger Style: Other Users on the LEFT with avatar & quick game chat action buttons
                     return (
-                      <div key={msg.id} className="flex items-start gap-2.5 group">
+                      <div key={msg.id} className="flex items-start gap-2.5 w-full group">
                         <button
                           type="button"
                           onClick={() =>
@@ -725,13 +886,13 @@ export function GameChatDock() {
                               isCreator: isJinssi,
                             })
                           }
-                          className="cursor-pointer shrink-0 transition-transform active:scale-95"
+                          className="cursor-pointer shrink-0 transition-transform active:scale-95 self-start mt-0.5"
                           title={`View u/${cleanSenderName}'s Profile`}
                         >
-                          <CozyAvatar config={msg.senderAvatar} size={32} />
+                          <CozyAvatar config={msg.senderAvatar} size={30} />
                         </button>
 
-                        <div className="min-w-0 flex-1">
+                        <div className="flex flex-col items-start max-w-[80%] min-w-0">
                           <div className="flex items-center gap-1.5 leading-none mb-1 flex-wrap">
                             <button
                               type="button"
@@ -741,8 +902,8 @@ export function GameChatDock() {
                                   username: cleanSenderName,
                                   avatarConfig: msg.senderAvatar,
                                   isCreator: isJinssi,
-                                })
-                              }
+                                }
+                              )}
                               className="font-bold text-xs text-ink-900 hover:text-peach-600 cursor-pointer truncate"
                             >
                               @{cleanSenderName}
@@ -750,11 +911,6 @@ export function GameChatDock() {
                             {isJinssi && (
                               <span className="text-[9px] font-black px-1.5 py-0.2 rounded-full bg-gradient-to-r from-amber-500 to-peach-500 text-white shadow-2xs">
                                 DEV
-                              </span>
-                            )}
-                            {isMe && (
-                              <span className="text-[9px] font-bold text-tan-500">
-                                (You)
                               </span>
                             )}
                             <span className="text-[9px] text-tan-400 font-mono">
@@ -765,69 +921,67 @@ export function GameChatDock() {
                             </span>
 
                             {/* Quick Game Chat Action Icons Beside Username */}
-                            {!isMe && (
-                              <div className="inline-flex items-center gap-1 ml-1">
-                                {/* Quick Chat / DM Icon */}
-                                <button
-                                  type="button"
-                                  onClick={() =>
-                                    handleQuickChat({
-                                      id: msg.senderId,
-                                      username: cleanSenderName,
-                                      avatarConfig: msg.senderAvatar,
-                                      badge: isJinssi ? 'Creator & Developer' : 'Cozy Explorer',
-                                      isOnline: true,
-                                      isCreator: isJinssi,
-                                    })
-                                  }
-                                  className="p-1 rounded-md bg-cream-100 hover:bg-peach-100 text-tan-600 hover:text-peach-600 transition-all cursor-pointer shadow-2xs active:scale-90"
-                                  title={`Direct Message @${cleanSenderName}`}
-                                  aria-label={`Direct Message @${cleanSenderName}`}
-                                >
-                                  <StreamlineMessageSquare className="w-3 h-3" />
-                                </button>
+                            <div className="inline-flex items-center gap-1 ml-1">
+                              {/* Quick Chat / DM Icon */}
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  handleQuickChat({
+                                    id: msg.senderId,
+                                    username: cleanSenderName,
+                                    avatarConfig: msg.senderAvatar,
+                                    badge: isJinssi ? 'Creator & Developer' : 'Cozy Explorer',
+                                    isOnline: true,
+                                    isCreator: isJinssi,
+                                  })
+                                }
+                                className="p-1 rounded-md bg-cream-100 hover:bg-peach-100 text-tan-600 hover:text-peach-600 transition-all cursor-pointer shadow-2xs active:scale-90"
+                                title={`Direct Message @${cleanSenderName}`}
+                                aria-label={`Direct Message @${cleanSenderName}`}
+                              >
+                                <StreamlineMessageSquare className="w-3 h-3" />
+                              </button>
 
-                                {/* Quick Add Friend Icon */}
-                                <button
-                                  type="button"
-                                  onClick={() =>
-                                    handleQuickAddFriend({
-                                      id: msg.senderId,
-                                      username: cleanSenderName,
-                                      avatarConfig: msg.senderAvatar,
-                                      badge: isJinssi ? 'Creator & Developer' : 'Cozy Explorer',
-                                      isOnline: true,
-                                      isCreator: isJinssi,
-                                    })
-                                  }
-                                  className={`p-1 rounded-md transition-all cursor-pointer shadow-2xs active:scale-90 ${
-                                    isAlreadyFriend
-                                      ? 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100'
-                                      : 'bg-cream-100 hover:bg-peach-100 text-tan-600 hover:text-peach-600'
-                                  }`}
-                                  title={
-                                    isAlreadyFriend
-                                      ? `Friends with @${cleanSenderName} (Click to remove)`
-                                      : `Add @${cleanSenderName} to friends`
-                                  }
-                                  aria-label={
-                                    isAlreadyFriend
-                                      ? `Friends with @${cleanSenderName}`
-                                      : `Add @${cleanSenderName} to friends`
-                                  }
-                                >
-                                  {isAlreadyFriend ? (
-                                    <StreamlineUserCheck className="w-3 h-3 text-emerald-600" />
-                                  ) : (
-                                    <StreamlineUserPlus className="w-3 h-3" />
-                                  )}
-                                </button>
-                              </div>
-                            )}
+                              {/* Quick Add Friend Icon */}
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  handleQuickAddFriend({
+                                    id: msg.senderId,
+                                    username: cleanSenderName,
+                                    avatarConfig: msg.senderAvatar,
+                                    badge: isJinssi ? 'Creator & Developer' : 'Cozy Explorer',
+                                    isOnline: true,
+                                    isCreator: isJinssi,
+                                  })
+                                }
+                                className={`p-1 rounded-md transition-all cursor-pointer shadow-2xs active:scale-90 ${
+                                  isAlreadyFriend
+                                    ? 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100'
+                                    : 'bg-cream-100 hover:bg-peach-100 text-tan-600 hover:text-peach-600'
+                                }`}
+                                title={
+                                  isAlreadyFriend
+                                    ? `Friends with @${cleanSenderName} (Click to remove)`
+                                    : `Add @${cleanSenderName} to friends`
+                                }
+                                aria-label={
+                                  isAlreadyFriend
+                                    ? `Friends with @${cleanSenderName}`
+                                    : `Add @${cleanSenderName} to friends`
+                                }
+                              >
+                                {isAlreadyFriend ? (
+                                  <StreamlineUserCheck className="w-3 h-3 text-emerald-600" />
+                                ) : (
+                                  <StreamlineUserPlus className="w-3 h-3" />
+                                )}
+                              </button>
+                            </div>
                           </div>
 
                           <div
-                            className={`text-xs px-3 py-2 rounded-2xl inline-block max-w-[92%] leading-relaxed ${
+                            className={`text-xs px-3.5 py-2 rounded-2xl rounded-bl-xs shadow-xs leading-relaxed break-words max-w-full ${
                               isJinssi
                                 ? 'bg-peach-50 border border-peach-200 text-ink-900 font-medium'
                                 : 'bg-white border border-tan-200 text-ink-900'
