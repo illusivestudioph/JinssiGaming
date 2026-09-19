@@ -896,17 +896,17 @@ export function RedditProfileModal() {
                   <div className="grid grid-cols-2 gap-3">
                     <div className="p-3.5 rounded-2xl bg-white border border-[#EADCCB]">
                       <span className="text-[10px] font-bold text-tan-500 block">Favorite Activity</span>
-                      <div className="font-bold text-[#3A2E22] mt-0.5 flex items-center gap-1.5">
-                        <StreamlineGamepad className="w-3.5 h-3.5 text-[#FD9A4D]" />
-                        <span>Retro Gaming</span>
+                      <div className="font-bold text-[#3A2E22] mt-0.5 flex items-center gap-1.5 truncate">
+                        <StreamlineGamepad className="w-3.5 h-3.5 text-[#FD9A4D] shrink-0" />
+                        <span className="truncate">{activeProfileUser.favoriteActivity || (isViewingSelf ? 'Retro Gaming' : 'Cozy Gaming')}</span>
                       </div>
                     </div>
 
                     <div className="p-3.5 rounded-2xl bg-white border border-[#EADCCB]">
                       <span className="text-[10px] font-bold text-tan-500 block">Reading Status</span>
-                      <div className="font-bold text-[#3A2E22] mt-0.5 flex items-center gap-1.5">
-                        <StreamlineBook className="w-3.5 h-3.5 text-[#FD9A4D]" />
-                        <span>Story Explorer</span>
+                      <div className="font-bold text-[#3A2E22] mt-0.5 flex items-center gap-1.5 truncate">
+                        <StreamlineBook className="w-3.5 h-3.5 text-[#FD9A4D] shrink-0" />
+                        <span className="truncate">{activeProfileUser.readingStatus || (isViewingSelf ? 'Story Explorer' : 'Book Explorer')}</span>
                       </div>
                     </div>
                   </div>

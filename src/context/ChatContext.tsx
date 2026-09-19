@@ -274,10 +274,12 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       },
       isCreator: isTargetCreator,
       role: isTargetCreator ? 'developer' : 'member',
-      joinedAt: data.joinedAt || new Date().toISOString(),
-      bannerColor: savedBannerColor || (isTargetCreator ? 'peach' : 'peach'),
+      joinedAt: data.joinedAt || (isTargetCreator ? '2024-01-01T00:00:00.000Z' : new Date().toISOString()),
+      bannerColor: savedBannerColor || (isTargetCreator ? 'sakura' : 'peach'),
       bannerText: savedBannerText !== undefined && savedBannerText !== null ? savedBannerText : (isTargetCreator ? 'Welcome to Jinssi Gaming! 🌸' : 'Enjoying cozy stories & games 🍵'),
       bannerTheme: data.bannerTheme || (isTargetCreator ? 'sakura' : 'cafe'),
+      favoriteActivity: data.favoriteActivity || (isTargetCreator ? 'Cozy Game Development' : 'Retro Gaming'),
+      readingStatus: data.readingStatus || (isTargetCreator ? 'Jinssi Chronicles' : 'Story Explorer'),
       startInEditMode: Boolean(data.startInEditMode),
     });
   };

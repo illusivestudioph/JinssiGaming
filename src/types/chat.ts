@@ -24,6 +24,13 @@ export interface Friend {
   isCreator?: boolean;
   lastSeen?: string;
   addedAt: string;
+  bio?: string;
+  joinedAt?: string;
+  bannerColor?: string;
+  bannerText?: string;
+  bannerTheme?: string;
+  favoriteActivity?: string;
+  readingStatus?: string;
 }
 
 export interface RedditUserProfileData {
@@ -38,5 +45,7 @@ export interface RedditUserProfileData {
   bannerColor?: string;
   bannerText?: string;
   bannerTheme?: string;
+  favoriteActivity?: string;
+  readingStatus?: string;
   startInEditMode?: boolean;
 }

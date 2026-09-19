@@ -202,6 +202,12 @@ export function GameChatDock() {
         badge: 'Cafe Regular',
         isOnline: true,
         addedAt: new Date(Date.now() - 1000 * 60 * 60 * 12).toISOString(),
+        bio: 'Cat mom, pastry lover, and visual novel enthusiast. Say hi! 🐾',
+        bannerColor: 'sakura',
+        bannerText: 'Baking strawberry treats & cat cafe management 🍰🐾',
+        favoriteActivity: 'Baking Sims & VNs',
+        readingStatus: 'Chapter 14 in Sweet Cafe',
+        joinedAt: '2024-11-12T14:20:00.000Z',
       },
       {
         id: 'npc-matchaknight',
@@ -210,6 +216,12 @@ export function GameChatDock() {
         badge: 'Tea Brewer',
         isOnline: true,
         addedAt: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
+        bio: 'Passionate about tea ceremonies, zelda-like puzzles, and cozy rain.',
+        bannerColor: 'matcha',
+        bannerText: 'Brewing ceremonial matcha & exploring peaceful realms 🍵✨',
+        favoriteActivity: 'Puzzle Adventures',
+        readingStatus: 'The Way of Tea',
+        joinedAt: '2025-02-18T09:15:00.000Z',
       },
       {
         id: 'npc-pixelbard',
@@ -218,6 +230,12 @@ export function GameChatDock() {
         badge: 'Retro Gamer',
         isOnline: true,
         addedAt: new Date(Date.now() - 1000 * 60 * 60 * 36).toISOString(),
+        bio: 'Sound designer & 90s JRPG archivist. Chrono Trigger forever.',
+        bannerColor: 'lavender',
+        bannerText: 'Composing 16-bit chiptunes & hunting retro secrets 🎵👾',
+        favoriteActivity: 'SNES Classics',
+        readingStatus: 'Lore of Guardia',
+        joinedAt: '2024-08-04T18:40:00.000Z',
       },
       {
         id: 'npc-stardewsam',
@@ -226,6 +244,12 @@ export function GameChatDock() {
         badge: 'Cozy Explorer',
         isOnline: true,
         addedAt: new Date(Date.now() - 1000 * 60 * 60 * 48).toISOString(),
+        bio: 'Min-maxing ancient fruit crops by day, listening to lofi by night.',
+        bannerColor: 'honey',
+        bannerText: 'Year 5 on the farm • Blueberry wine master 🍓🚜',
+        favoriteActivity: 'Farming Sims',
+        readingStatus: 'Pelican Town Almanac',
+        joinedAt: '2025-01-20T11:05:00.000Z',
       },
       {
         id: 'npc-lunafable',
@@ -234,6 +258,12 @@ export function GameChatDock() {
         badge: 'Midnight Scholar',
         isOnline: true,
         addedAt: new Date(Date.now() - 1000 * 60 * 60 * 5).toISOString(),
+        bio: 'Mythology buff, astrology nerd, and collector of indie fantasy tales.',
+        bannerColor: 'lavender',
+        bannerText: 'Reading ancient folklore under starlit skies 🌙📖',
+        favoriteActivity: 'Mythology RPGs',
+        readingStatus: 'Celestial Chronicles Vol. 3',
+        joinedAt: '2025-03-09T22:30:00.000Z',
       },
       {
         id: 'npc-cinnamonbun',
@@ -242,6 +272,12 @@ export function GameChatDock() {
         badge: 'Cafe Regular',
         isOnline: true,
         addedAt: new Date(Date.now() - 1000 * 60 * 60 * 18).toISOString(),
+        bio: 'Cozy lifestyle creator. Collecting animal crossing villagers.',
+        bannerColor: 'peach',
+        bannerText: 'Fresh cinnamon rolls & warm cozy blankets 🥐☕',
+        favoriteActivity: 'Island Decorating',
+        readingStatus: 'Cozy Home Baking',
+        joinedAt: '2025-04-14T16:12:00.000Z',
       },
       {
         id: 'npc-fernwhisperer',
@@ -250,6 +286,12 @@ export function GameChatDock() {
         badge: 'Cozy Explorer',
         isOnline: true,
         addedAt: new Date(Date.now() - 1000 * 60 * 60 * 15).toISOString(),
+        bio: 'Botany enthusiast enjoying nature sim games and forest foraging.',
+        bannerColor: 'matcha',
+        bannerText: 'Plant whisperer • Greenhouse & terrarium curator 🌿🪴',
+        favoriteActivity: 'Forest Foraging',
+        readingStatus: 'Encyclopedia of Herbs',
+        joinedAt: '2024-09-28T07:45:00.000Z',
       },
       {
         id: 'npc-chronotrigger99',
@@ -258,6 +300,12 @@ export function GameChatDock() {
         badge: 'Retro Gamer',
         isOnline: true,
         addedAt: new Date(Date.now() - 1000 * 60 * 60 * 30).toISOString(),
+        bio: 'Pixel art fanatic and veteran turn-based combat tactician.',
+        bannerColor: 'espresso',
+        bannerText: 'Lavos defeated 13 times • Time travel speedruns ⏳⚔️',
+        favoriteActivity: 'JRPG Speedruns',
+        readingStatus: 'Epoch Flight Manual',
+        joinedAt: '2024-06-19T13:00:00.000Z',
       },
       {
         id: 'npc-bobbabarista',
@@ -266,6 +314,12 @@ export function GameChatDock() {
         badge: 'Tea Brewer',
         isOnline: true,
         addedAt: new Date(Date.now() - 1000 * 60 * 60 * 8).toISOString(),
+        bio: 'Part-time barista, full-time cafe management game speedrunner.',
+        bannerColor: 'honey',
+        bannerText: 'Taro milk tea with extra brown sugar boba 🧋✨',
+        favoriteActivity: 'Coffee Talk',
+        readingStatus: 'Tea Master Guides',
+        joinedAt: '2025-05-02T15:20:00.000Z',
       },
       {
         id: 'npc-willowgrove',
@@ -274,6 +328,12 @@ export function GameChatDock() {
         badge: 'Bookworm',
         isOnline: true,
         addedAt: new Date(Date.now() - 1000 * 60 * 60 * 22).toISOString(),
+        bio: 'Librarian at heart. Loves rich worldbuilding and emotional narratives.',
+        bannerColor: 'matcha',
+        bannerText: 'Lost in the mossy pages of fantasy epics 🍃📚',
+        favoriteActivity: 'Narrative Adventures',
+        readingStatus: 'The Forgotten Forest',
+        joinedAt: '2024-12-01T10:10:00.000Z',
       },
       {
         id: 'npc-kitsunesip',
@@ -282,6 +342,12 @@ export function GameChatDock() {
         badge: 'Cafe Regular',
         isOnline: true,
         addedAt: new Date(Date.now() - 1000 * 60 * 60 * 14).toISOString(),
+        bio: 'Japanese folklore enthusiast and cozy indie game streamer.',
+        bannerColor: 'sakura',
+        bannerText: 'Fox shrine guardian sipping iced hojicha 🦊🌸',
+        favoriteActivity: 'Okami & Spiritfarer',
+        readingStatus: 'Shrine Spirit Legends',
+        joinedAt: '2025-02-27T19:50:00.000Z',
       },
       {
         id: 'npc-astraea',
@@ -290,6 +356,12 @@ export function GameChatDock() {
         badge: 'Midnight Scholar',
         isOnline: true,
         addedAt: new Date(Date.now() - 1000 * 60 * 60 * 4).toISOString(),
+        bio: 'Night owl studying astrophysics and playing astronomy sims.',
+        bannerColor: 'lavender',
+        bannerText: 'Stargazing, constellation mapping & space chill vibes 🔭🌌',
+        favoriteActivity: 'Space Exploration',
+        readingStatus: 'Star Atlas 2026',
+        joinedAt: '2024-10-15T02:15:00.000Z',
       },
       {
         id: 'npc-honeymead',
@@ -298,6 +370,12 @@ export function GameChatDock() {
         badge: 'Tea Brewer',
         isOnline: true,
         addedAt: new Date(Date.now() - 1000 * 60 * 60 * 26).toISOString(),
+        bio: 'Beekeeper and cozy gaming streamer. Always sweet vibes.',
+        bannerColor: 'honey',
+        bannerText: 'Artisanal honey brewing & cozy cottagecore life 🍯🐝',
+        favoriteActivity: 'Beekeeping Sims',
+        readingStatus: 'The Hive Almanac',
+        joinedAt: '2025-03-22T12:00:00.000Z',
       },
       {
         id: 'npc-cozygamersteph',
@@ -306,6 +384,12 @@ export function GameChatDock() {
         badge: 'Cozy Explorer',
         isOnline: true,
         addedAt: new Date(Date.now() - 1000 * 60 * 60 * 11).toISOString(),
+        bio: 'Reviewing relaxing games that soothe the mind. Spread kindness!',
+        bannerColor: 'peach',
+        bannerText: 'Cozy Nintendo Switch gaming & candlelit evenings 🕯️🎮',
+        favoriteActivity: 'Cozy Reviews',
+        readingStatus: 'Indie Game Digest',
+        joinedAt: '2025-01-08T17:35:00.000Z',
       },
       {
         id: 'npc-bookishbramble',
@@ -314,6 +398,12 @@ export function GameChatDock() {
         badge: 'Bookworm',
         isOnline: true,
         addedAt: new Date(Date.now() - 1000 * 60 * 60 * 40).toISOString(),
+        bio: 'Gothic mystery novel fan and point-and-click detective gamer.',
+        bannerColor: 'espresso',
+        bannerText: 'Annotating paperbacks with cup of dark roast ☕📖',
+        favoriteActivity: 'Mystery Solving',
+        readingStatus: 'The Manor Riddle',
+        joinedAt: '2024-07-29T14:40:00.000Z',
       },
       {
         id: 'npc-nekonook',
@@ -322,6 +412,12 @@ export function GameChatDock() {
         badge: 'Cafe Regular',
         isOnline: true,
         addedAt: new Date(Date.now() - 1000 * 60 * 60 * 7).toISOString(),
+        bio: 'Cozy cat rescuer. Finding all hidden cats in cozy games.',
+        bannerColor: 'sakura',
+        bannerText: 'Paws, purrs, and warm vanilla lattes 🐾🧁',
+        favoriteActivity: 'Cat Cafe Manager',
+        readingStatus: 'Cats of Kyoto',
+        joinedAt: '2025-04-03T11:25:00.000Z',
       },
       {
         id: 'npc-dungeonbaker',
@@ -330,6 +426,12 @@ export function GameChatDock() {
         badge: 'Retro Gamer',
         isOnline: true,
         addedAt: new Date(Date.now() - 1000 * 60 * 60 * 33).toISOString(),
+        bio: 'Dungeon crawler by night, sourdough baker by morning.',
+        bannerColor: 'honey',
+        bannerText: 'Baking sourdough bread in ancient dungeon ruins 🥖🏰',
+        favoriteActivity: 'Roguelite Cooking',
+        readingStatus: 'Dungeon Recipes',
+        joinedAt: '2024-09-14T08:15:00.000Z',
       },
       {
         id: 'npc-chailover',
@@ -338,6 +440,12 @@ export function GameChatDock() {
         badge: 'Tea Brewer',
         isOnline: true,
         addedAt: new Date(Date.now() - 1000 * 60 * 60 * 9).toISOString(),
+        bio: 'Warm drinks and slow-paced puzzle games are my therapy.',
+        bannerColor: 'espresso',
+        bannerText: 'Spiced masala chai with cardamom & cinnamon ☕🍂',
+        favoriteActivity: 'Slow Puzzlers',
+        readingStatus: 'Spice Roads & Tea',
+        joinedAt: '2025-02-11T13:45:00.000Z',
       },
       {
         id: 'npc-quietquill',
@@ -346,6 +454,12 @@ export function GameChatDock() {
         badge: 'Bookworm',
         isOnline: true,
         addedAt: new Date(Date.now() - 1000 * 60 * 60 * 50).toISOString(),
+        bio: 'Calligrapher, poet, and lover of atmospheric storybook games.',
+        bannerColor: 'matcha',
+        bannerText: 'Writing cozy poetry on vintage parchment 📜✒️',
+        favoriteActivity: 'Storybook RPGs',
+        readingStatus: 'Poems of the Valley',
+        joinedAt: '2024-11-30T16:00:00.000Z',
       },
       {
         id: 'npc-mapleleaves',
@@ -354,6 +468,12 @@ export function GameChatDock() {
         badge: 'Cozy Explorer',
         isOnline: true,
         addedAt: new Date(Date.now() - 1000 * 60 * 60 * 16).toISOString(),
+        bio: 'Collecting colorful autumn leaves and relaxing with campfire sims.',
+        bannerColor: 'peach',
+        bannerText: 'Autumn walks through golden maple canopies 🍁🍂',
+        favoriteActivity: 'Nature Walks',
+        readingStatus: 'Autumn Memories',
+        joinedAt: '2025-03-17T10:30:00.000Z',
       },
     ];
 
@@ -632,6 +752,12 @@ export function GameChatDock() {
                               avatarConfig: t.avatarConfig,
                               badge: t.badge,
                               isCreator: isJinssi,
+                              bio: t.bio,
+                              bannerColor: t.bannerColor,
+                              bannerText: t.bannerText,
+                              favoriteActivity: t.favoriteActivity,
+                              readingStatus: t.readingStatus,
+                              joinedAt: t.joinedAt,
                             })
                           }
                           title={`View @${t.username}'s Profile`}
@@ -732,15 +858,26 @@ export function GameChatDock() {
                 <div className="px-4 py-2 border-b bg-peach-50/50 border-peach-200 flex items-center justify-between text-xs">
                   <div
                     className="flex items-center gap-2 cursor-pointer"
-                    onClick={() =>
+                    onClick={() => {
+                      const matchingTraveler = onlineTravelers.find(
+                        (t) =>
+                          t.id === activeDmPartner.id ||
+                          t.username.toLowerCase() === activeDmPartner.username.toLowerCase()
+                      );
                       openProfile({
                         id: activeDmPartner.id,
                         username: activeDmPartner.username,
                         avatarConfig: activeDmPartner.avatarConfig,
                         badge: activeDmPartner.badge,
                         isCreator: activeDmPartner.isCreator,
-                      })
-                    }
+                        bio: matchingTraveler?.bio,
+                        bannerColor: matchingTraveler?.bannerColor,
+                        bannerText: matchingTraveler?.bannerText,
+                        favoriteActivity: matchingTraveler?.favoriteActivity,
+                        readingStatus: matchingTraveler?.readingStatus,
+                        joinedAt: matchingTraveler?.joinedAt,
+                      });
+                    }}
                   >
                     <CozyAvatar config={activeDmPartner.avatarConfig} size={24} />
                     <span className="font-bold text-[#3A2E22]">@{activeDmPartner.username}</span>
@@ -874,36 +1011,42 @@ export function GameChatDock() {
                     }
 
                     // Messenger Style: Other Users on the LEFT with avatar & quick game chat action buttons
+                    const matchingTraveler = onlineTravelers.find(
+                      (t) => t.id === msg.senderId || t.username.toLowerCase() === cleanSenderName.toLowerCase()
+                    );
+
+                    const handleOpenMsgProfile = () => {
+                      openProfile({
+                        id: msg.senderId,
+                        username: cleanSenderName,
+                        avatarConfig: matchingTraveler?.avatarConfig || msg.senderAvatar,
+                        badge: matchingTraveler?.badge || (isJinssi ? 'Creator & Developer' : 'Cozy Explorer'),
+                        isCreator: isJinssi,
+                        bio: matchingTraveler?.bio,
+                        bannerColor: matchingTraveler?.bannerColor,
+                        bannerText: matchingTraveler?.bannerText,
+                        favoriteActivity: matchingTraveler?.favoriteActivity,
+                        readingStatus: matchingTraveler?.readingStatus,
+                        joinedAt: matchingTraveler?.joinedAt,
+                      });
+                    };
+
                     return (
                       <div key={msg.id} className="flex items-start gap-2.5 w-full group">
                         <button
                           type="button"
-                          onClick={() =>
-                            openProfile({
-                              id: msg.senderId,
-                              username: cleanSenderName,
-                              avatarConfig: msg.senderAvatar,
-                              isCreator: isJinssi,
-                            })
-                          }
+                          onClick={handleOpenMsgProfile}
                           className="cursor-pointer shrink-0 transition-transform active:scale-95 self-start mt-0.5"
                           title={`View u/${cleanSenderName}'s Profile`}
                         >
-                          <CozyAvatar config={msg.senderAvatar} size={30} />
+                          <CozyAvatar config={matchingTraveler?.avatarConfig || msg.senderAvatar} size={30} />
                         </button>
 
                         <div className="flex flex-col items-start max-w-[80%] min-w-0">
                           <div className="flex items-center gap-1.5 leading-none mb-1 flex-wrap">
                             <button
                               type="button"
-                              onClick={() =>
-                                openProfile({
-                                  id: msg.senderId,
-                                  username: cleanSenderName,
-                                  avatarConfig: msg.senderAvatar,
-                                  isCreator: isJinssi,
-                                }
-                              )}
+                              onClick={handleOpenMsgProfile}
                               className="font-bold text-xs text-ink-900 hover:text-peach-600 cursor-pointer truncate"
                             >
                               @{cleanSenderName}
