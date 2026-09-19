@@ -387,7 +387,7 @@ export function RedditProfileModal() {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-fade-in select-none">
       <div
-        className="relative w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh] border-2"
+        className="relative w-full max-w-lg sm:max-w-xl rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh] border-2"
         style={{
           backgroundColor: 'var(--card-bg, #fefcf7)',
           borderColor: 'var(--card-border, #5e5148)',
@@ -395,7 +395,7 @@ export function RedditProfileModal() {
       >
         {/* Cover Banner Header with Dynamic Color & Absolute Centered Custom Text */}
         <div
-          className="relative h-36 sm:h-40 w-full p-4 border-b overflow-hidden transition-all duration-300 flex flex-col justify-between"
+          className="relative h-40 sm:h-44 w-full p-4 border-b overflow-hidden transition-all duration-300 flex flex-col justify-between"
           style={{
             background: selectedPalette.gradient,
             borderColor: 'var(--card-line, #ebdcc9)',
@@ -542,13 +542,14 @@ export function RedditProfileModal() {
 
         {/* Profile Card Header Info */}
         <div
-          className="px-6 pt-0 pb-4 border-b flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4 -mt-10 relative z-20"
+          className="px-6 pt-0 pb-4 border-b flex flex-col gap-3 -mt-12 relative z-20"
           style={{
             backgroundColor: 'var(--card-done-bg, #fcf8ee)',
             borderColor: 'var(--card-line, #ebdcc9)',
           }}
         >
-          <div className="flex items-end gap-3.5">
+          {/* Row 1: Avatar on the Left (overlapping banner) + Action Buttons on the Right */}
+          <div className="flex items-end justify-between gap-3">
             <div
               className={`relative shrink-0 ${isViewingSelf ? 'cursor-pointer hover:opacity-90 transition-opacity' : ''}`}
               onClick={() => {
@@ -562,7 +563,7 @@ export function RedditProfileModal() {
             >
               <CozyAvatar
                 config={isViewingSelf ? profile.avatarConfig : activeProfileUser.avatarConfig}
-                size={88}
+                size={84}
                 className="shadow-xl rounded-full border-4 border-white"
               />
               {activeProfileUser.isCreator && (
@@ -576,98 +577,100 @@ export function RedditProfileModal() {
               )}
             </div>
 
-            <div className="mb-1">
-              <div className="flex items-center gap-1.5 flex-wrap">
-                <h3
-                  className="font-display font-bold text-lg leading-tight"
-                  style={{ color: 'var(--text-main, #3a2e22)' }}
+            {/* Action Buttons: If viewing self -> Edit Avatar & Edit Profile; Else -> Add Friend & DM */}
+            {isViewingSelf ? (
+              <div className="flex items-center gap-2 shrink-0 pb-1 flex-wrap justify-end">
+                <button
+                  type="button"
+                  onClick={() => {
+                    closeProfile();
+                    setAvatarBuilderReturnTo('public_profile');
+                    setShowAvatarBuilder(true);
+                  }}
+                  className="px-3.5 py-1.5 rounded-xl text-xs font-bold text-white shadow-xs flex items-center justify-center gap-1.5 transition-all active:scale-95 cursor-pointer whitespace-nowrap"
+                  style={{ backgroundColor: 'var(--theme-accent, #fd9a4d)' }}
+                  title="Open Avatar Character Studio"
                 >
-                  u/{isEditingProfile ? (usernameInput || activeProfileUser.username) : activeProfileUser.username}
-                </h3>
-                {activeProfileUser.isCreator && (
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-peach-100 text-peach-700 font-extrabold border border-peach-300">
-                    Developer
-                  </span>
-                )}
+                  <StreamlinePencil className="w-3.5 h-3.5" />
+                  <span>Edit Avatar</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsEditingProfile((prev) => !prev);
+                  }}
+                  className={`px-3.5 py-1.5 rounded-xl text-xs font-bold border shadow-xs flex items-center justify-center gap-1.5 transition-all active:scale-95 cursor-pointer whitespace-nowrap ${
+                    isEditingProfile
+                      ? 'bg-peach-100 border-peach-400 text-peach-800'
+                      : 'border-[#EADCCB] bg-white hover:bg-[#FFFDFB] text-[#3A2E22]'
+                  }`}
+                  title="Edit Username, Bio Tagline & Community Badge"
+                >
+                  <StreamlinePencil className="w-3.5 h-3.5 text-[#FD9A4D]" />
+                  <span>{isEditingProfile ? 'Cancel Edit' : 'Edit Profile'}</span>
+                </button>
               </div>
-              <p
-                className="text-xs font-semibold mt-0.5"
-                style={{ color: 'var(--text-muted, #8f6b48)' }}
-              >
-                {effectiveBadge}
-              </p>
-            </div>
+            ) : (
+              <div className="flex items-center gap-2 shrink-0 pb-1 flex-wrap justify-end">
+                <button
+                  type="button"
+                  onClick={handleToggleFriend}
+                  className={`px-3.5 py-1.5 rounded-xl text-xs font-bold border-2 transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-xs whitespace-nowrap ${
+                    isAlreadyFriend
+                      ? 'bg-emerald-50 border-emerald-400 text-emerald-800'
+                      : 'bg-white border-[#EADCCB] hover:border-[#FD9A4D] text-[#3A2E22]'
+                  }`}
+                >
+                  {isAlreadyFriend ? (
+                    <>
+                      <StreamlineCheck className="w-3.5 h-3.5 text-emerald-600" />
+                      <span>Friends</span>
+                    </>
+                  ) : (
+                    <>
+                      <StreamlineUsers className="w-3.5 h-3.5 text-[#FD9A4D]" />
+                      <span>Add Friend</span>
+                    </>
+                  )}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleStartDm}
+                  className="px-4 py-1.5 rounded-xl text-xs font-bold text-white shadow-xs flex items-center justify-center gap-1.5 transition-all active:scale-95 cursor-pointer whitespace-nowrap"
+                  style={{ backgroundColor: 'var(--theme-accent, #fd9a4d)' }}
+                >
+                  <StreamlinePencil className="w-3.5 h-3.5" />
+                  <span>Direct Message</span>
+                </button>
+              </div>
+            )}
           </div>
 
-          {/* Action Buttons: If viewing self -> Edit Avatar & Edit Profile; Else -> Add Friend & DM */}
-          {isViewingSelf ? (
-            <div className="flex items-center gap-2 w-full sm:w-auto">
-              <button
-                type="button"
-                onClick={() => {
-                  closeProfile();
-                  setAvatarBuilderReturnTo('public_profile');
-                  setShowAvatarBuilder(true);
-                }}
-                className="flex-1 sm:flex-initial px-3.5 py-1.5 rounded-xl text-xs font-bold text-white shadow-xs flex items-center justify-center gap-1.5 transition-all active:scale-95 cursor-pointer"
-                style={{ backgroundColor: 'var(--theme-accent, #fd9a4d)' }}
-                title="Open Avatar Character Studio"
+          {/* Row 2: Username & Badge (Full width with plenty of room for long names!) */}
+          <div className="min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h3
+                className="font-display font-bold text-xl sm:text-2xl leading-tight truncate max-w-full break-all"
+                style={{ color: 'var(--text-main, #3a2e22)' }}
+                title={`u/${isEditingProfile ? (usernameInput || activeProfileUser.username) : activeProfileUser.username}`}
               >
-                <StreamlinePencil className="w-3.5 h-3.5" />
-                <span>Edit Avatar</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => {
-                  setIsEditingProfile((prev) => !prev);
-                }}
-                className={`flex-1 sm:flex-initial px-3.5 py-1.5 rounded-xl text-xs font-bold border shadow-xs flex items-center justify-center gap-1.5 transition-all active:scale-95 cursor-pointer ${
-                  isEditingProfile
-                    ? 'bg-peach-100 border-peach-400 text-peach-800'
-                    : 'border-[#EADCCB] bg-white hover:bg-[#FFFDFB] text-[#3A2E22]'
-                }`}
-                title="Edit Username, Bio Tagline & Community Badge"
-              >
-                <StreamlinePencil className="w-3.5 h-3.5 text-[#FD9A4D]" />
-                <span>{isEditingProfile ? 'Cancel Edit' : 'Edit Profile'}</span>
-              </button>
+                u/{isEditingProfile ? (usernameInput || activeProfileUser.username) : activeProfileUser.username}
+              </h3>
+              {activeProfileUser.isCreator && (
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-peach-100 text-peach-700 font-extrabold border border-peach-300 shrink-0">
+                  Developer
+                </span>
+              )}
             </div>
-          ) : (
-            <div className="flex items-center gap-2 w-full sm:w-auto">
-              <button
-                type="button"
-                onClick={handleToggleFriend}
-                className={`flex-1 sm:flex-initial px-3.5 py-1.5 rounded-xl text-xs font-bold border-2 transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-xs ${
-                  isAlreadyFriend
-                    ? 'bg-emerald-50 border-emerald-400 text-emerald-800'
-                    : 'bg-white border-[#EADCCB] hover:border-[#FD9A4D] text-[#3A2E22]'
-                }`}
-              >
-                {isAlreadyFriend ? (
-                  <>
-                    <StreamlineCheck className="w-3.5 h-3.5 text-emerald-600" />
-                    <span>Friends</span>
-                  </>
-                ) : (
-                  <>
-                    <StreamlineUsers className="w-3.5 h-3.5 text-[#FD9A4D]" />
-                    <span>Add Friend</span>
-                  </>
-                )}
-              </button>
-
-              <button
-                type="button"
-                onClick={handleStartDm}
-                className="flex-1 sm:flex-initial px-4 py-1.5 rounded-xl text-xs font-bold text-white shadow-xs flex items-center justify-center gap-1.5 transition-all active:scale-95 cursor-pointer"
-                style={{ backgroundColor: 'var(--theme-accent, #fd9a4d)' }}
-              >
-                <StreamlinePencil className="w-3.5 h-3.5" />
-                <span>Direct Message</span>
-              </button>
-            </div>
-          )}
+            <p
+              className="text-xs font-semibold mt-0.5"
+              style={{ color: 'var(--text-muted, #8f6b48)' }}
+            >
+              {effectiveBadge}
+            </p>
+          </div>
         </div>
 
         {/* Toast Notification */}
