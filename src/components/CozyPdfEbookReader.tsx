@@ -97,8 +97,27 @@ export function CozyPdfEbookReader({
   });
 
   const [scale, setScale] = useState<number>(1.15);
-  // Default to 2-page spread for The Children of Mu
+  // Default to 2-page spread for desktop; mobile is automatically 1 page at a time
   const [twoPageMode, setTwoPageMode] = useState<boolean>(true);
+  const [isMobile, setIsMobile] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth < 768;
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Enforce single-page reading on mobile view (just one page at a time)
+  const effectiveTwoPageMode = isMobile ? false : twoPageMode;
+
   const [pageTone, setPageTone] = useState<PageTone>(() => {
     try {
       return (localStorage.getItem('jinssi-ebook-tone') as PageTone) || 'parchment';
@@ -202,7 +221,7 @@ export function CozyPdfEbookReader({
 
         const page = await pdfDoc.getPage(pageNumber);
         const pixelRatio = window.devicePixelRatio || 1.5;
-        const viewport = page.getViewport({ scale: scale * (twoPageMode ? 0.85 : 1) });
+        const viewport = page.getViewport({ scale: scale * (effectiveTwoPageMode ? 0.85 : 1) });
 
         // Double-buffering: render silently to an offscreen canvas
         // The visible canvas maintains its current image and never blanks out or flashes
@@ -249,17 +268,17 @@ export function CozyPdfEbookReader({
         }
       }
     },
-    [pdfDoc, scale, twoPageMode, pageTone]
+    [pdfDoc, scale, effectiveTwoPageMode, pageTone]
   );
 
   useEffect(() => {
     if (!pdfDoc) return;
     renderPageToCanvas(currentPage, canvasLeftRef.current, renderTaskLeftRef);
 
-    if (twoPageMode && currentPage < totalPages) {
+    if (effectiveTwoPageMode && currentPage < totalPages) {
       renderPageToCanvas(currentPage + 1, canvasRightRef.current, renderTaskRightRef);
     }
-  }, [pdfDoc, currentPage, scale, twoPageMode, renderPageToCanvas, totalPages]);
+  }, [pdfDoc, currentPage, scale, effectiveTwoPageMode, renderPageToCanvas, totalPages]);
 
   // Tactile Book Page Flip trigger
   const triggerFlip = (direction: 'next' | 'prev') => {
@@ -286,13 +305,13 @@ export function CozyPdfEbookReader({
 
   const handlePrevPage = () => {
     if (currentPage <= 1) return;
-    const step = twoPageMode ? 2 : 1;
+    const step = effectiveTwoPageMode ? 2 : 1;
     goToPage(currentPage - step, 'prev');
   };
 
   const handleNextPage = () => {
     if (currentPage >= totalPages) return;
-    const step = twoPageMode ? 2 : 1;
+    const step = effectiveTwoPageMode ? 2 : 1;
     goToPage(currentPage + step, 'next');
   };
 
@@ -332,7 +351,7 @@ export function CozyPdfEbookReader({
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [currentPage, totalPages, twoPageMode]);
+  }, [currentPage, totalPages, effectiveTwoPageMode]);
 
   // Fullscreen toggle
   const toggleFullscreen = () => {
@@ -550,7 +569,7 @@ export function CozyPdfEbookReader({
       {/* ========================================================= */}
       {/* MAIN BOOK PAGE CANVAS VIEWPORT (AUTHENTIC BOOK AESTHETIC) */}
       {/* ========================================================= */}
-      <div className="flex-1 overflow-auto relative p-4 sm:p-8 flex items-center justify-center min-h-[550px]">
+      <div className="flex-1 overflow-auto relative p-2 sm:p-6 flex items-center justify-center min-h-[500px]">
         {/* Loading Spinner */}
         {isLoading && (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-cream-100/80 backdrop-blur-xs z-10">
@@ -586,7 +605,7 @@ export function CozyPdfEbookReader({
               type="button"
               onClick={handlePrevPage}
               disabled={currentPage <= 1}
-              className="absolute left-0 top-0 bottom-0 w-16 sm:w-24 z-20 flex items-center justify-start pl-2 text-ink-900/30 hover:text-amber-600 hover:bg-black/[0.02] transition-colors cursor-pointer group disabled:pointer-events-none"
+              className="absolute left-0 top-0 bottom-0 w-12 sm:w-24 z-20 flex items-center justify-start pl-2 text-ink-900/30 hover:text-amber-600 hover:bg-black/[0.02] transition-colors cursor-pointer group disabled:pointer-events-none"
               title="Previous Page (Left Arrow)"
               aria-label="Previous Page"
             >
@@ -600,7 +619,7 @@ export function CozyPdfEbookReader({
               type="button"
               onClick={handleNextPage}
               disabled={currentPage >= totalPages}
-              className="absolute right-0 top-0 bottom-0 w-16 sm:w-24 z-20 flex items-center justify-end pr-2 text-ink-900/30 hover:text-amber-600 hover:bg-black/[0.02] transition-colors cursor-pointer group disabled:pointer-events-none"
+              className="absolute right-0 top-0 bottom-0 w-12 sm:w-24 z-20 flex items-center justify-end pr-2 text-ink-900/30 hover:text-amber-600 hover:bg-black/[0.02] transition-colors cursor-pointer group disabled:pointer-events-none"
               title="Next Page (Right Arrow)"
               aria-label="Next Page"
             >
@@ -611,28 +630,30 @@ export function CozyPdfEbookReader({
 
             {/* Book Pages Frame with Authentic Paper Shadow & Center Spine */}
             <div
-              className={`book-pages-wrapper book-spread-perspective relative flex items-center justify-center rounded-2xl p-2 sm:p-3.5 transition-all shadow-[0_16px_48px_rgba(25,15,8,0.28)] ${
+              className={`book-pages-wrapper book-spread-perspective relative flex items-center justify-center rounded-2xl p-1.5 sm:p-3.5 transition-all shadow-[0_16px_48px_rgba(25,15,8,0.28)] ${
                 pageTone === 'night'
                   ? 'bg-[#1D1B1A] border-2 border-[#38322D]'
                   : 'bg-gradient-to-b from-[#3E2F25] via-[#33251D] to-[#2B1F17] border-2 border-[#524135]'
               }`}
             >
-              {/* Left Page Canvas Leaf */}
+              {/* Left/Single Page Canvas Leaf */}
               <div
-                className={`relative rounded-l-lg overflow-hidden bg-[#FBF7EE] dark:bg-[#1C1A19] shadow-md flex flex-col items-center justify-center transition-all ${
+                className={`relative ${
+                  effectiveTwoPageMode ? 'rounded-l-lg' : 'rounded-lg'
+                } overflow-hidden bg-[#FBF7EE] dark:bg-[#1C1A19] shadow-md flex flex-col items-center justify-center transition-all ${
                   isFlipping && flipDirection === 'prev' ? 'animate-book-flip-prev z-20' : 'z-10'
                 }`}
                 style={{
                   filter: TONE_FILTERS[pageTone],
-                  boxShadow: twoPageMode
+                  boxShadow: effectiveTwoPageMode
                     ? 'inset -14px 0 18px -8px rgba(0,0,0,0.2), -2px 2px 8px rgba(0,0,0,0.08)'
                     : '0 4px 14px rgba(0,0,0,0.12)',
                 }}
               >
                 <canvas ref={canvasLeftRef} className="block max-w-full h-auto select-none" />
 
-                {/* Left Page Inner Gutter Spine Crease (binding shadow) */}
-                {twoPageMode && (
+                {/* Left Page Inner Gutter Spine Crease (binding shadow - 2-page mode only) */}
+                {effectiveTwoPageMode && (
                   <div className="absolute top-0 right-0 bottom-0 w-8 sm:w-12 pointer-events-none bg-gradient-to-l from-black/20 via-black/5 to-transparent z-10" />
                 )}
 
@@ -642,14 +663,14 @@ export function CozyPdfEbookReader({
               </div>
 
               {/* Central Spine Binding Gutter (only in 2-page spread) */}
-              {twoPageMode && currentPage < totalPages && (
+              {effectiveTwoPageMode && currentPage < totalPages && (
                 <div className="relative w-2 sm:w-3 self-stretch bg-gradient-to-r from-[#221711] via-[#48372A] to-[#221711] shadow-inner flex items-center justify-center z-15">
                   <div className="w-[1px] h-full bg-black/50" />
                 </div>
               )}
 
               {/* Right Page Canvas Leaf (when 2-page mode is enabled) */}
-              {twoPageMode && currentPage < totalPages && (
+              {effectiveTwoPageMode && currentPage < totalPages && (
                 <div
                   className={`relative rounded-r-lg overflow-hidden bg-[#FBF7EE] dark:bg-[#1C1A19] shadow-md flex flex-col items-center justify-center transition-all ${
                     isFlipping && flipDirection === 'next' ? 'animate-book-flip-next z-20' : 'z-10'
@@ -766,18 +787,20 @@ export function CozyPdfEbookReader({
             </button>
           </div>
 
-          {/* Single / Two-Page Spread Toggle */}
-          <button
-            type="button"
-            onClick={() => setTwoPageMode(!twoPageMode)}
-            className={`p-1.5 rounded-xl border border-[#5A473B] transition-colors hidden sm:flex items-center gap-1 text-[11px] font-bold ${
-              twoPageMode ? 'bg-amber-500 text-ink-950' : 'bg-black/30 text-cream-200 hover:bg-black/50'
-            }`}
-            title={twoPageMode ? 'Switch to Single Page' : 'Switch to 2-Page Book Spread'}
-          >
-            {twoPageMode ? <Columns className="w-3.5 h-3.5" /> : <Square className="w-3.5 h-3.5" />}
-            <span className="hidden lg:inline">{twoPageMode ? '2-Page Spread' : 'Single Page'}</span>
-          </button>
+          {/* Single / Two-Page Spread Toggle (Desktop & Tablet only) */}
+          {!isMobile && (
+            <button
+              type="button"
+              onClick={() => setTwoPageMode(!twoPageMode)}
+              className={`p-1.5 rounded-xl border border-[#5A473B] transition-colors hidden sm:flex items-center gap-1 text-[11px] font-bold ${
+                twoPageMode ? 'bg-amber-500 text-ink-950' : 'bg-black/30 text-cream-200 hover:bg-black/50'
+              }`}
+              title={twoPageMode ? 'Switch to Single Page' : 'Switch to 2-Page Book Spread'}
+            >
+              {twoPageMode ? <Columns className="w-3.5 h-3.5" /> : <Square className="w-3.5 h-3.5" />}
+              <span className="hidden lg:inline">{twoPageMode ? '2-Page Spread' : 'Single Page'}</span>
+            </button>
+          )}
         </div>
       </footer>
     </div>
