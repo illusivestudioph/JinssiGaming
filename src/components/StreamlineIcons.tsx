@@ -873,6 +873,99 @@ export function StreamlineUsers({ className = 'w-4 h-4', size, ...props }: Strea
 }
 
 /**
+ * Official Streamline Line - User Plus (Add Friend)
+ */
+export function StreamlineUserPlus({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      width={size}
+      height={size}
+      className={className}
+      {...props}
+    >
+      <path
+        stroke="currentColor"
+        strokeWidth="2.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"
+      />
+      <circle
+        cx="8.5"
+        cy="7"
+        r="4"
+        stroke="currentColor"
+        strokeWidth="2.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <line
+        x1="20"
+        y1="8"
+        x2="20"
+        y2="14"
+        stroke="currentColor"
+        strokeWidth="2.2"
+        strokeLinecap="round"
+      />
+      <line
+        x1="23"
+        y1="11"
+        x2="17"
+        y2="11"
+        stroke="currentColor"
+        strokeWidth="2.2"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+/**
+ * Official Streamline Line - User Check (Already Friends)
+ */
+export function StreamlineUserCheck({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      width={size}
+      height={size}
+      className={className}
+      {...props}
+    >
+      <path
+        stroke="currentColor"
+        strokeWidth="2.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"
+      />
+      <circle
+        cx="8.5"
+        cy="7"
+        r="4"
+        stroke="currentColor"
+        strokeWidth="2.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <polyline
+        points="17 11 19 13 23 9"
+        stroke="currentColor"
+        strokeWidth="2.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+/**
  * Official Streamline Plump Line - Face Shape Silhouette Contour
  */
 export function StreamlineFaceShape({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
@@ -1621,6 +1714,8 @@ export {
   StreamlineHeadphones as Headphones,
   StreamlineUser as User,
   StreamlineUsers as Users,
+  StreamlineUserPlus as UserPlus,
+  StreamlineUserCheck as UserCheck,
   StreamlineCompass as Compass,
   StreamlineCalendar as Calendar,
   StreamlineStar as Star,

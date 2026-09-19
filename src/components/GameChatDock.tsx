@@ -11,6 +11,11 @@ import {
   StreamlineUsers,
   StreamlineCheck,
   StreamlineCalendar,
+  StreamlineMessageSquare,
+  StreamlineUserPlus,
+  StreamlineUserCheck,
+  StreamlineSearch,
+  StreamlineUser,
 } from '@/components/StreamlineIcons';
 
 export function GameChatDock() {
@@ -23,6 +28,9 @@ export function GameChatDock() {
     activeDmPartner,
     setActiveDmPartner,
     friends,
+    addFriend,
+    removeFriend,
+    isFriend,
     sendMessage,
     openProfile,
     openDmWith,
@@ -31,7 +39,19 @@ export function GameChatDock() {
   const { user, profile, triggerAuthPrompt } = useAuth();
   const [inputText, setInputText] = useState('');
   const [isSending, setIsSending] = useState(false);
+  const [viewMode, setViewMode] = useState<'chat' | 'users'>('chat');
+  const [userSearch, setUserSearch] = useState('');
+  const [userFilter, setUserFilter] = useState<'all' | 'friends'>('all');
+  const [actionFeedback, setActionFeedback] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Auto-dismiss quick action feedback toast
+  useEffect(() => {
+    if (actionFeedback) {
+      const timer = setTimeout(() => setActionFeedback(null), 2400);
+      return () => clearTimeout(timer);
+    }
+  }, [actionFeedback]);
 
   // Auto scroll to bottom on new message
   useEffect(() => {
@@ -111,6 +131,152 @@ export function GameChatDock() {
     return Array.from(map.values());
   }, [messages, friends, user?.id, profile.isCreator, profile.username]);
 
+  // Comprehensive active online travelers roster
+  const onlineTravelers = useMemo(() => {
+    const map = new Map<string, Friend>();
+
+    // 1. Creator Jinssi (Always online at the top of the adventurer guild)
+    map.set('jinssi', {
+      id: 'jinssi-creator',
+      username: 'Jinssi',
+      avatarConfig: { seed: 'Jinssi', ears: 'cat' },
+      badge: 'Creator & Developer',
+      isOnline: true,
+      isCreator: true,
+      addedAt: new Date().toISOString(),
+    });
+
+    // 2. Current User (if logged in)
+    if (user && profile.username) {
+      const myKey = profile.username.toLowerCase().replace(/^[@u/]+/, '');
+      if (myKey && !map.has(myKey)) {
+        map.set(myKey, {
+          id: user.id,
+          username: profile.username,
+          avatarConfig: profile.avatarConfig,
+          badge: profile.badge,
+          isOnline: true,
+          isCreator: profile.isCreator,
+          addedAt: new Date().toISOString(),
+        });
+      }
+    }
+
+    // 3. Friends
+    friends.forEach((f) => {
+      const key = f.username.toLowerCase().replace(/^[@u/]+/, '');
+      if (!map.has(key)) {
+        map.set(key, { ...f, isOnline: true });
+      }
+    });
+
+    // 4. Users from chat messages
+    messages.forEach((m) => {
+      const isSenderCreator = Boolean(
+        m.senderIsCreator ||
+        m.senderName.toLowerCase().includes('jinssi') ||
+        m.senderName.toLowerCase().includes('mjhane')
+      );
+      const cleanName = isSenderCreator ? 'Jinssi' : m.senderName.split('@')[0];
+      const key = cleanName.toLowerCase().replace(/^[@u/]+/, '');
+
+      if (key && !map.has(key)) {
+        map.set(key, {
+          id: m.senderId,
+          username: cleanName,
+          avatarConfig: m.senderAvatar || { seed: cleanName },
+          badge: isSenderCreator ? 'Creator & Developer' : 'Cozy Explorer',
+          isOnline: true,
+          isCreator: isSenderCreator,
+          addedAt: m.createdAt,
+        });
+      }
+    });
+
+    // 5. Cozy community default regulars
+    const cozyDefaults: Friend[] = [
+      {
+        id: 'npc-mochicat',
+        username: 'MochiCat',
+        avatarConfig: { seed: 'MochiCat', ears: 'cat' },
+        badge: 'Cafe Regular',
+        isOnline: true,
+        addedAt: new Date().toISOString(),
+      },
+      {
+        id: 'npc-matchaknight',
+        username: 'MatchaKnight',
+        avatarConfig: { seed: 'MatchaKnight' },
+        badge: 'Tea Brewer',
+        isOnline: true,
+        addedAt: new Date().toISOString(),
+      },
+      {
+        id: 'npc-pixelbard',
+        username: 'PixelBard',
+        avatarConfig: { seed: 'PixelBard' },
+        badge: 'Retro Gamer',
+        isOnline: true,
+        addedAt: new Date().toISOString(),
+      },
+      {
+        id: 'npc-stardewstar',
+        username: 'StardewStar',
+        avatarConfig: { seed: 'StardewStar' },
+        badge: 'Cozy Explorer',
+        isOnline: true,
+        addedAt: new Date().toISOString(),
+      },
+    ];
+
+    cozyDefaults.forEach((npc) => {
+      const key = npc.username.toLowerCase();
+      if (!map.has(key)) {
+        map.set(key, npc);
+      }
+    });
+
+    return Array.from(map.values());
+  }, [messages, friends, user, profile]);
+
+  const filteredTravelers = useMemo(() => {
+    return onlineTravelers.filter((t) => {
+      const matchesSearch =
+        t.username.toLowerCase().includes(userSearch.toLowerCase()) ||
+        t.badge.toLowerCase().includes(userSearch.toLowerCase());
+
+      if (!matchesSearch) return false;
+      if (userFilter === 'friends') {
+        return isFriend(t.username) || isFriend(t.id);
+      }
+      return true;
+    });
+  }, [onlineTravelers, userSearch, userFilter, isFriend]);
+
+  const handleQuickAddFriend = (traveler: Omit<Friend, 'addedAt'> | Friend) => {
+    if (!user) {
+      triggerAuthPrompt('Sign in with Gmail to add friends and sync your buddy list.');
+      return;
+    }
+    const alreadyFriend = isFriend(traveler.username) || isFriend(traveler.id);
+    if (alreadyFriend) {
+      removeFriend(traveler.id);
+      setActionFeedback(`Removed @${traveler.username} from friends`);
+    } else {
+      addFriend(traveler);
+      setActionFeedback(`Added @${traveler.username} to your friends! 🌸`);
+    }
+  };
+
+  const handleQuickChat = (traveler: Omit<Friend, 'addedAt'> | Friend) => {
+    if (!user) {
+      triggerAuthPrompt('Sign in with Gmail to direct message travelers.');
+      return;
+    }
+    openDmWith(traveler);
+    setViewMode('chat');
+  };
+
   return (
     <div className="fixed bottom-4 right-4 z-40 select-none font-sans">
       {/* MINIMIZED COZY FLOATING BUTTON */}
@@ -155,46 +321,81 @@ export function GameChatDock() {
             borderColor: 'var(--card-border, #5e5148)',
           }}
         >
-          {/* Top MMO-Style Header & Channel Tabs */}
+          {/* Action Feedback Toast */}
+          {actionFeedback && (
+            <div className="absolute top-14 left-1/2 -translate-x-1/2 z-30 px-3.5 py-1.5 rounded-full bg-ink-900/90 text-white text-[11px] font-bold shadow-lg backdrop-blur-xs animate-fade-in flex items-center gap-1.5 pointer-events-none">
+              <StreamlineStars className="w-3.5 h-3.5 text-amber-300" />
+              <span>{actionFeedback}</span>
+            </div>
+          )}
+
+          {/* Top MMO-Style Header & Channel / User Tabs */}
           <div
-            className="p-3.5 border-b flex items-center justify-between"
+            className="p-3 border-b flex items-center justify-between gap-2"
             style={{
               backgroundColor: 'var(--card-done-bg, #fcf8ee)',
               borderColor: 'var(--card-line, #ebdcc9)',
             }}
           >
-            {/* Channel Toggles */}
+            {/* Channel / View Toggles */}
             <div className="flex items-center gap-1 bg-white/80 p-1 rounded-xl border border-tan-200 shadow-2xs">
               <button
                 type="button"
                 onClick={() => {
+                  setViewMode('chat');
                   setChannel('world');
                   setActiveDmPartner(null);
                 }}
                 className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                  channel === 'world'
+                  viewMode === 'chat' && channel === 'world'
                     ? 'bg-[#FD9A4D] text-white shadow-xs'
                     : 'text-tan-600 hover:bg-tan-50'
                 }`}
               >
-                World Chat
+                World
               </button>
 
               <button
                 type="button"
-                onClick={() => setChannel('dm')}
+                onClick={() => {
+                  setViewMode('chat');
+                  setChannel('dm');
+                }}
                 className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1 ${
-                  channel === 'dm'
+                  viewMode === 'chat' && channel === 'dm'
                     ? 'bg-[#FD9A4D] text-white shadow-xs'
                     : 'text-tan-600 hover:bg-tan-50'
                 }`}
               >
                 <span>DMs</span>
                 {activeDmPartner && (
-                  <span className="text-[10px] opacity-90 truncate max-w-[60px]">
+                  <span className="text-[10px] opacity-90 truncate max-w-[50px]">
                     @{activeDmPartner.username}
                   </span>
                 )}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setViewMode('users')}
+                className={`px-2 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1 ${
+                  viewMode === 'users'
+                    ? 'bg-[#FD9A4D] text-white shadow-xs'
+                    : 'text-tan-600 hover:bg-tan-50'
+                }`}
+                title="Online Travelers List"
+              >
+                <StreamlineUsers className="w-3.5 h-3.5" />
+                <span>Users</span>
+                <span
+                  className={`text-[9px] px-1 py-0.2 rounded-full font-extrabold ${
+                    viewMode === 'users'
+                      ? 'bg-white/30 text-white'
+                      : 'bg-emerald-100 text-emerald-700'
+                  }`}
+                >
+                  {onlineTravelers.length}
+                </span>
               </button>
             </div>
 
@@ -209,139 +410,311 @@ export function GameChatDock() {
             </button>
           </div>
 
-          {/* DM Partner Header Banner if in DM Mode */}
-          {channel === 'dm' && activeDmPartner && (
-            <div className="px-4 py-2 border-b bg-peach-50/50 border-peach-200 flex items-center justify-between text-xs">
-              <div
-                className="flex items-center gap-2 cursor-pointer"
-                onClick={() =>
-                  openProfile({
-                    id: activeDmPartner.id,
-                    username: activeDmPartner.username,
-                    avatarConfig: activeDmPartner.avatarConfig,
-                    badge: activeDmPartner.badge,
-                    isCreator: activeDmPartner.isCreator,
-                  })
-                }
-              >
-                <CozyAvatar config={activeDmPartner.avatarConfig} size={24} />
-                <span className="font-bold text-[#3A2E22]">@{activeDmPartner.username}</span>
-                {activeDmPartner.isCreator && (
-                  <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-peach-200 text-peach-800 font-bold">
-                    Dev
-                  </span>
-                )}
-              </div>
-              <button
-                type="button"
-                onClick={() => setActiveDmPartner(null)}
-                className="text-[10px] text-tan-500 hover:text-peach-600 underline font-semibold cursor-pointer"
-              >
-                Switch Partner
-              </button>
-            </div>
-          )}
-
-          {/* DM Partner Selector if in DM Mode without Active Partner */}
-          {channel === 'dm' && !activeDmPartner && (
-            <div className="p-4 border-b bg-[#FCF8EE] border-[#EBDCC9]">
-              {!user ? (
-                <div className="text-center py-2">
-                  <span className="text-xs font-bold text-[#3A2E22] block mb-1">
-                    Direct Messaging is Members Only
-                  </span>
-                  <p className="text-[11px] text-tan-500 mb-2">
-                    Sign in with Google to send private messages and build your buddy list.
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      triggerAuthPrompt('Sign in with Gmail to direct message friends.')
-                    }
-                    className="px-3.5 py-1.5 rounded-xl text-xs font-bold text-white shadow-xs cursor-pointer inline-flex items-center gap-1.5 transition-transform hover:scale-102 active:scale-98"
-                    style={{ backgroundColor: 'var(--theme-accent, #fd9a4d)' }}
-                  >
-                    <StreamlineUsers className="w-3.5 h-3.5" />
-                    <span>Sign In to DM</span>
-                  </button>
-                </div>
-              ) : (
-                <>
-                  <span className="text-xs font-bold text-[#3A2E22] block mb-2">
-                    {profile.isCreator ? 'Traveler Messages & Conversations' : 'Select a Friend or Recent Chat'}
-                  </span>
-                  <div className="flex gap-2 overflow-x-auto pb-1">
-                    {recentDmPartners.length === 0 ? (
-                      <span className="text-xs text-tan-500">
-                        {profile.isCreator
-                          ? 'No traveler messages yet. Incoming messages will appear here for 1-click replies!'
-                          : 'No recent chats yet. Click "Reply / DM" on any user in World Chat to message them!'}
-                      </span>
-                    ) : (
-                      recentDmPartners.map((f) => (
-                        <button
-                          key={f.id}
-                          type="button"
-                          onClick={() => setActiveDmPartner(f)}
-                          className="p-2 rounded-xl bg-white border border-tan-200 hover:border-peach-400 flex flex-col items-center gap-1 shrink-0 cursor-pointer text-xs"
-                        >
-                          <CozyAvatar config={f.avatarConfig} size={36} />
-                          <span className="font-bold truncate max-w-[70px]">@{f.username}</span>
-                        </button>
-                      ))
-                    )}
-                  </div>
-                </>
-              )}
-            </div>
-          )}
-
-          {/* Messages Scroll Area */}
-          <div className="flex-1 p-3.5 overflow-y-auto space-y-3 bg-[#FEFCF7]">
-            {currentChannelMessages.length === 0 ? (
-              <div className="text-center py-12 text-tan-500 text-xs">
-                <div className="w-10 h-10 rounded-2xl bg-tan-100/70 border border-tan-200 flex items-center justify-center mx-auto mb-2 text-tan-500">
-                  <StreamlinePencil className="w-5 h-5" />
-                </div>
-                <p className="font-bold text-ink-800">
-                  {channel === 'world' ? 'Welcome to World Chat!' : 'Direct Message Thread'}
-                </p>
-                <p className="text-[11px] mt-1">
-                  Say hello to travelers, discuss games, and make friends.
-                </p>
-              </div>
-            ) : (
-              currentChannelMessages.map((msg) => {
-                const isJinssi = Boolean(
-                  msg.senderIsCreator ||
-                  msg.senderName.toLowerCase().includes('jinssi') ||
-                  msg.senderName.toLowerCase().includes('mjhane')
-                );
-                const cleanSenderName = isJinssi ? 'Jinssi' : msg.senderName.split('@')[0];
-                const isMe =
-                  msg.senderId === user?.id ||
-                  (profile.isCreator && isJinssi);
-
-                return (
-                  <div key={msg.id} className="flex items-start gap-2.5 group">
+          {/* VIEW 1: ONLINE USERS LIST */}
+          {viewMode === 'users' ? (
+            <div className="flex-1 flex flex-col overflow-hidden bg-[#FEFCF7]">
+              {/* Search & Filter Bar */}
+              <div className="p-3 border-b border-tan-200/80 bg-[#FCF8EE] flex flex-col gap-2">
+                <div className="relative">
+                  <StreamlineSearch className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-tan-400" />
+                  <input
+                    type="text"
+                    value={userSearch}
+                    onChange={(e) => setUserSearch(e.target.value)}
+                    placeholder="Search online travelers..."
+                    className="w-full pl-8 pr-7 py-1.5 rounded-xl text-xs bg-white border border-tan-300 focus:border-peach-400 focus:outline-none"
+                  />
+                  {userSearch && (
                     <button
                       type="button"
-                      onClick={() =>
-                        openProfile({
-                          id: msg.senderId,
-                          username: cleanSenderName,
-                          avatarConfig: msg.senderAvatar,
-                          isCreator: isJinssi,
-                        })
-                      }
-                      className="cursor-pointer shrink-0 transition-transform active:scale-95"
-                      title={`View u/${cleanSenderName}'s Profile`}
+                      onClick={() => setUserSearch('')}
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-tan-400 hover:text-tan-700 text-xs cursor-pointer"
                     >
-                      <CozyAvatar config={msg.senderAvatar} size={32} />
+                      ✕
                     </button>
+                  )}
+                </div>
 
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-1.5 leading-none mb-1 flex-wrap">
+                <div className="flex items-center justify-between text-xs">
+                  <div className="flex gap-1">
+                    <button
+                      type="button"
+                      onClick={() => setUserFilter('all')}
+                      className={`px-2 py-0.5 rounded-lg font-bold text-[11px] transition-colors cursor-pointer ${
+                        userFilter === 'all'
+                          ? 'bg-[#FD9A4D] text-white shadow-2xs'
+                          : 'text-tan-600 hover:bg-tan-100'
+                      }`}
+                    >
+                      All ({onlineTravelers.length})
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setUserFilter('friends')}
+                      className={`px-2 py-0.5 rounded-lg font-bold text-[11px] transition-colors cursor-pointer ${
+                        userFilter === 'friends'
+                          ? 'bg-[#FD9A4D] text-white shadow-2xs'
+                          : 'text-tan-600 hover:bg-tan-100'
+                      }`}
+                    >
+                      Friends ({friends.length})
+                    </button>
+                  </div>
+
+                  <span className="text-[10px] text-emerald-600 font-semibold flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    Online Roster
+                  </span>
+                </div>
+              </div>
+
+              {/* Travelers List */}
+              <div className="flex-1 overflow-y-auto p-2.5 space-y-1.5">
+                {filteredTravelers.length === 0 ? (
+                  <div className="text-center py-10 text-tan-500 text-xs">
+                    <StreamlineUsers className="w-8 h-8 mx-auto mb-2 text-tan-300" />
+                    <p className="font-bold text-ink-800">No travelers found</p>
+                    <p className="text-[11px] mt-1">Try another search or switch filters.</p>
+                  </div>
+                ) : (
+                  filteredTravelers.map((t) => {
+                    const isJinssi = Boolean(
+                      t.isCreator ||
+                      t.username.toLowerCase() === 'jinssi' ||
+                      t.badge === 'Creator & Developer'
+                    );
+                    const isMe = Boolean(
+                      (user && t.id === user.id) ||
+                      (profile.username && t.username.toLowerCase() === profile.username.toLowerCase())
+                    );
+                    const alreadyFriend = isFriend(t.username) || isFriend(t.id);
+
+                    return (
+                      <div
+                        key={t.id}
+                        className="flex items-center justify-between p-2 rounded-2xl hover:bg-cream-100 transition-colors group border border-transparent hover:border-tan-200"
+                      >
+                        {/* Left: Avatar + Info */}
+                        <div
+                          className="flex items-center gap-2.5 min-w-0 cursor-pointer flex-1 mr-2"
+                          onClick={() =>
+                            openProfile({
+                              id: t.id,
+                              username: t.username,
+                              avatarConfig: t.avatarConfig,
+                              badge: t.badge,
+                              isCreator: isJinssi,
+                            })
+                          }
+                          title={`View @${t.username}'s Profile`}
+                        >
+                          <div className="relative shrink-0">
+                            <CozyAvatar config={t.avatarConfig} size={34} />
+                            <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-white" />
+                          </div>
+
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-center gap-1.5 leading-tight">
+                              <span className="font-bold text-xs text-ink-900 group-hover:text-peach-600 truncate">
+                                @{t.username}
+                              </span>
+                              {isJinssi && (
+                                <span className="text-[8px] font-black px-1.5 py-0.2 rounded-full bg-gradient-to-r from-amber-500 to-peach-500 text-white shadow-2xs shrink-0">
+                                  DEV
+                                </span>
+                              )}
+                              {isMe && (
+                                <span className="text-[8px] font-bold text-tan-500 shrink-0">
+                                  (You)
+                                </span>
+                              )}
+                            </div>
+                            <div className="text-[10px] text-tan-500 truncate mt-0.5">
+                              {t.badge || 'Cozy Explorer'}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Right: Quick Action Buttons */}
+                        <div className="flex items-center gap-1.5 shrink-0">
+                          {!isMe ? (
+                            <>
+                              {/* Quick Chat / DM */}
+                              <button
+                                type="button"
+                                onClick={() => handleQuickChat(t)}
+                                className="p-1.5 rounded-xl bg-white hover:bg-peach-100 text-tan-600 hover:text-peach-600 border border-tan-200 transition-all cursor-pointer shadow-2xs active:scale-95"
+                                title={`Send Direct Message to @${t.username}`}
+                                aria-label={`Send Direct Message to @${t.username}`}
+                              >
+                                <StreamlineMessageSquare className="w-3.5 h-3.5" />
+                              </button>
+
+                              {/* Quick Add / Friend Toggle */}
+                              <button
+                                type="button"
+                                onClick={() => handleQuickAddFriend(t)}
+                                className={`p-1.5 rounded-xl border transition-all cursor-pointer shadow-2xs active:scale-95 ${
+                                  alreadyFriend
+                                    ? 'bg-emerald-50 border-emerald-300 text-emerald-600 hover:bg-emerald-100'
+                                    : 'bg-white border-tan-200 text-tan-600 hover:bg-peach-100 hover:text-peach-600'
+                                }`}
+                                title={alreadyFriend ? `Friends with @${t.username} (Click to remove)` : `Add @${t.username} to friends`}
+                                aria-label={alreadyFriend ? `Friends with @${t.username}` : `Add @${t.username} to friends`}
+                              >
+                                {alreadyFriend ? (
+                                  <StreamlineUserCheck className="w-3.5 h-3.5 text-emerald-600" />
+                                ) : (
+                                  <StreamlineUserPlus className="w-3.5 h-3.5" />
+                                )}
+                              </button>
+                            </>
+                          ) : (
+                            <span className="text-[10px] px-2 py-0.5 rounded-lg bg-tan-100 text-tan-600 font-bold">
+                              Active
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+
+              {/* Bottom Bar in Users Mode */}
+              <div className="p-3 border-t border-tan-200/80 bg-[#FCF8EE] flex items-center justify-between text-[11px] text-tan-600">
+                <span>Click 💬 to DM • ➕ to Add Friend</span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setViewMode('chat');
+                    setChannel('world');
+                  }}
+                  className="font-bold text-peach-600 hover:text-peach-700 underline cursor-pointer"
+                >
+                  Open World Chat
+                </button>
+              </div>
+            </div>
+          ) : (
+            /* VIEW 2: CHAT MESSAGES & INPUT */
+            <>
+              {/* DM Partner Header Banner if in DM Mode */}
+              {channel === 'dm' && activeDmPartner && (
+                <div className="px-4 py-2 border-b bg-peach-50/50 border-peach-200 flex items-center justify-between text-xs">
+                  <div
+                    className="flex items-center gap-2 cursor-pointer"
+                    onClick={() =>
+                      openProfile({
+                        id: activeDmPartner.id,
+                        username: activeDmPartner.username,
+                        avatarConfig: activeDmPartner.avatarConfig,
+                        badge: activeDmPartner.badge,
+                        isCreator: activeDmPartner.isCreator,
+                      })
+                    }
+                  >
+                    <CozyAvatar config={activeDmPartner.avatarConfig} size={24} />
+                    <span className="font-bold text-[#3A2E22]">@{activeDmPartner.username}</span>
+                    {activeDmPartner.isCreator && (
+                      <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-peach-200 text-peach-800 font-bold">
+                        Dev
+                      </span>
+                    )}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setActiveDmPartner(null)}
+                    className="text-[10px] text-tan-500 hover:text-peach-600 underline font-semibold cursor-pointer"
+                  >
+                    Switch Partner
+                  </button>
+                </div>
+              )}
+
+              {/* DM Partner Selector if in DM Mode without Active Partner */}
+              {channel === 'dm' && !activeDmPartner && (
+                <div className="p-4 border-b bg-[#FCF8EE] border-[#EBDCC9]">
+                  {!user ? (
+                    <div className="text-center py-2">
+                      <span className="text-xs font-bold text-[#3A2E22] block mb-1">
+                        Direct Messaging is Members Only
+                      </span>
+                      <p className="text-[11px] text-tan-500 mb-2">
+                        Sign in with Google to send private messages and build your buddy list.
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          triggerAuthPrompt('Sign in with Gmail to direct message friends.')
+                        }
+                        className="px-3.5 py-1.5 rounded-xl text-xs font-bold text-white shadow-xs cursor-pointer inline-flex items-center gap-1.5 transition-transform hover:scale-102 active:scale-98"
+                        style={{ backgroundColor: 'var(--theme-accent, #fd9a4d)' }}
+                      >
+                        <StreamlineUsers className="w-3.5 h-3.5" />
+                        <span>Sign In to DM</span>
+                      </button>
+                    </div>
+                  ) : (
+                    <>
+                      <span className="text-xs font-bold text-[#3A2E22] block mb-2">
+                        {profile.isCreator ? 'Traveler Messages & Conversations' : 'Select a Friend or Recent Chat'}
+                      </span>
+                      <div className="flex gap-2 overflow-x-auto pb-1">
+                        {recentDmPartners.length === 0 ? (
+                          <span className="text-xs text-tan-500">
+                            {profile.isCreator
+                              ? 'No traveler messages yet. Incoming messages will appear here for 1-click replies!'
+                              : 'No recent chats yet. Click the chat icon on any user to message them!'}
+                          </span>
+                        ) : (
+                          recentDmPartners.map((f) => (
+                            <button
+                              key={f.id}
+                              type="button"
+                              onClick={() => setActiveDmPartner(f)}
+                              className="p-2 rounded-xl bg-white border border-tan-200 hover:border-peach-400 flex flex-col items-center gap-1 shrink-0 cursor-pointer text-xs"
+                            >
+                              <CozyAvatar config={f.avatarConfig} size={36} />
+                              <span className="font-bold truncate max-w-[70px]">@{f.username}</span>
+                            </button>
+                          ))
+                        )}
+                      </div>
+                    </>
+                  )}
+                </div>
+              )}
+
+              {/* Messages Scroll Area */}
+              <div className="flex-1 p-3.5 overflow-y-auto space-y-3 bg-[#FEFCF7]">
+                {currentChannelMessages.length === 0 ? (
+                  <div className="text-center py-12 text-tan-500 text-xs">
+                    <div className="w-10 h-10 rounded-2xl bg-tan-100/70 border border-tan-200 flex items-center justify-center mx-auto mb-2 text-tan-500">
+                      <StreamlinePencil className="w-5 h-5" />
+                    </div>
+                    <p className="font-bold text-ink-800">
+                      {channel === 'world' ? 'Welcome to World Chat!' : 'Direct Message Thread'}
+                    </p>
+                    <p className="text-[11px] mt-1">
+                      Say hello to travelers, discuss games, and make friends.
+                    </p>
+                  </div>
+                ) : (
+                  currentChannelMessages.map((msg) => {
+                    const isJinssi = Boolean(
+                      msg.senderIsCreator ||
+                      msg.senderName.toLowerCase().includes('jinssi') ||
+                      msg.senderName.toLowerCase().includes('mjhane')
+                    );
+                    const cleanSenderName = isJinssi ? 'Jinssi' : msg.senderName.split('@')[0];
+                    const isMe =
+                      msg.senderId === user?.id ||
+                      (profile.isCreator && isJinssi);
+                    const isAlreadyFriend = isFriend(cleanSenderName) || isFriend(msg.senderId);
+
+                    return (
+                      <div key={msg.id} className="flex items-start gap-2.5 group">
                         <button
                           type="button"
                           onClick={() =>
@@ -352,115 +725,182 @@ export function GameChatDock() {
                               isCreator: isJinssi,
                             })
                           }
-                          className="font-bold text-xs text-ink-900 hover:text-peach-600 cursor-pointer truncate"
+                          className="cursor-pointer shrink-0 transition-transform active:scale-95"
+                          title={`View u/${cleanSenderName}'s Profile`}
                         >
-                          @{cleanSenderName}
+                          <CozyAvatar config={msg.senderAvatar} size={32} />
                         </button>
-                        {isJinssi && (
-                          <span className="text-[9px] font-black px-1.5 py-0.2 rounded-full bg-gradient-to-r from-amber-500 to-peach-500 text-white shadow-2xs">
-                            DEV
-                          </span>
-                        )}
-                        <span className="text-[9px] text-tan-400 font-mono">
-                          {new Date(msg.createdAt).toLocaleTimeString([], {
-                            hour: '2-digit',
-                            minute: '2-digit',
-                          })}
-                        </span>
-                        {!isMe && (
-                          <button
-                            type="button"
-                            onClick={() =>
-                              openDmWith({
-                                id: msg.senderId,
-                                username: cleanSenderName,
-                                avatarConfig: msg.senderAvatar,
-                                badge: isJinssi ? 'Creator & Developer' : 'Cozy Explorer',
-                                isOnline: true,
-                                isCreator: isJinssi,
-                              })
-                            }
-                            className="text-[10px] text-[#FD9A4D] hover:text-[#e07f30] font-bold ml-1 cursor-pointer transition-colors"
-                            title={`Direct Message @${cleanSenderName}`}
+
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-1.5 leading-none mb-1 flex-wrap">
+                            <button
+                              type="button"
+                              onClick={() =>
+                                openProfile({
+                                  id: msg.senderId,
+                                  username: cleanSenderName,
+                                  avatarConfig: msg.senderAvatar,
+                                  isCreator: isJinssi,
+                                })
+                              }
+                              className="font-bold text-xs text-ink-900 hover:text-peach-600 cursor-pointer truncate"
+                            >
+                              @{cleanSenderName}
+                            </button>
+                            {isJinssi && (
+                              <span className="text-[9px] font-black px-1.5 py-0.2 rounded-full bg-gradient-to-r from-amber-500 to-peach-500 text-white shadow-2xs">
+                                DEV
+                              </span>
+                            )}
+                            {isMe && (
+                              <span className="text-[9px] font-bold text-tan-500">
+                                (You)
+                              </span>
+                            )}
+                            <span className="text-[9px] text-tan-400 font-mono">
+                              {new Date(msg.createdAt).toLocaleTimeString([], {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                              })}
+                            </span>
+
+                            {/* Quick Game Chat Action Icons Beside Username */}
+                            {!isMe && (
+                              <div className="inline-flex items-center gap-1 ml-1">
+                                {/* Quick Chat / DM Icon */}
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    handleQuickChat({
+                                      id: msg.senderId,
+                                      username: cleanSenderName,
+                                      avatarConfig: msg.senderAvatar,
+                                      badge: isJinssi ? 'Creator & Developer' : 'Cozy Explorer',
+                                      isOnline: true,
+                                      isCreator: isJinssi,
+                                    })
+                                  }
+                                  className="p-1 rounded-md bg-cream-100 hover:bg-peach-100 text-tan-600 hover:text-peach-600 transition-all cursor-pointer shadow-2xs active:scale-90"
+                                  title={`Direct Message @${cleanSenderName}`}
+                                  aria-label={`Direct Message @${cleanSenderName}`}
+                                >
+                                  <StreamlineMessageSquare className="w-3 h-3" />
+                                </button>
+
+                                {/* Quick Add Friend Icon */}
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    handleQuickAddFriend({
+                                      id: msg.senderId,
+                                      username: cleanSenderName,
+                                      avatarConfig: msg.senderAvatar,
+                                      badge: isJinssi ? 'Creator & Developer' : 'Cozy Explorer',
+                                      isOnline: true,
+                                      isCreator: isJinssi,
+                                    })
+                                  }
+                                  className={`p-1 rounded-md transition-all cursor-pointer shadow-2xs active:scale-90 ${
+                                    isAlreadyFriend
+                                      ? 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100'
+                                      : 'bg-cream-100 hover:bg-peach-100 text-tan-600 hover:text-peach-600'
+                                  }`}
+                                  title={
+                                    isAlreadyFriend
+                                      ? `Friends with @${cleanSenderName} (Click to remove)`
+                                      : `Add @${cleanSenderName} to friends`
+                                  }
+                                  aria-label={
+                                    isAlreadyFriend
+                                      ? `Friends with @${cleanSenderName}`
+                                      : `Add @${cleanSenderName} to friends`
+                                  }
+                                >
+                                  {isAlreadyFriend ? (
+                                    <StreamlineUserCheck className="w-3 h-3 text-emerald-600" />
+                                  ) : (
+                                    <StreamlineUserPlus className="w-3 h-3" />
+                                  )}
+                                </button>
+                              </div>
+                            )}
+                          </div>
+
+                          <div
+                            className={`text-xs px-3 py-2 rounded-2xl inline-block max-w-[92%] leading-relaxed ${
+                              isJinssi
+                                ? 'bg-peach-50 border border-peach-200 text-ink-900 font-medium'
+                                : 'bg-white border border-tan-200 text-ink-900'
+                            }`}
                           >
-                            Reply / DM
-                          </button>
-                        )}
+                            {msg.text}
+                          </div>
+                        </div>
                       </div>
+                    );
+                  })
+                )}
+                <div ref={messagesEndRef} />
+              </div>
 
-                      <div
-                        className={`text-xs px-3 py-2 rounded-2xl inline-block max-w-[92%] leading-relaxed ${
-                          isJinssi
-                            ? 'bg-peach-50 border border-peach-200 text-ink-900 font-medium'
-                            : 'bg-white border border-tan-200 text-ink-900'
-                        }`}
-                      >
-                        {msg.text}
-                      </div>
-                    </div>
+              {/* Bottom Chat Input Form / Guest Sign-In Notice */}
+              {!user ? (
+                <div className="p-3.5 border-t bg-[#FCF8EE] border-[#EBDCC9] flex flex-col items-center justify-center text-center gap-2">
+                  <div className="text-xs text-[#3A2E22] font-semibold">
+                    Only registered members can chat and message.
                   </div>
-                );
-              })
-            )}
-            <div ref={messagesEndRef} />
-          </div>
-
-          {/* Bottom Chat Input Form / Guest Sign-In Notice */}
-          {!user ? (
-            <div className="p-3.5 border-t bg-[#FCF8EE] border-[#EBDCC9] flex flex-col items-center justify-center text-center gap-2">
-              <div className="text-xs text-[#3A2E22] font-semibold">
-                Only registered members can chat and message.
-              </div>
-              <button
-                type="button"
-                onClick={() =>
-                  triggerAuthPrompt('Sign in with Gmail to join the chat and message travelers.')
-                }
-                className="px-4 py-2 rounded-xl text-xs font-bold text-white shadow-xs transition-transform hover:scale-102 active:scale-98 cursor-pointer flex items-center gap-2"
-                style={{ backgroundColor: 'var(--theme-accent, #fd9a4d)' }}
-              >
-                <StreamlineUsers className="w-3.5 h-3.5" />
-                <span>Sign In to Chat</span>
-              </button>
-              <div className="text-[10px] text-tan-500 font-medium">
-                World Chat is currently in read-only mode for visitors.
-              </div>
-            </div>
-          ) : (
-            <form
-              onSubmit={handleSend}
-              className="p-3 border-t bg-[#FCF8EE] border-[#EBDCC9] flex flex-col gap-1.5"
-            >
-              <div className="flex items-center gap-2">
-                <input
-                  type="text"
-                  value={inputText}
-                  onChange={(e) => setInputText(e.target.value)}
-                  placeholder={
-                    channel === 'world'
-                      ? 'Message World Chat...'
-                      : activeDmPartner
-                      ? `Message @${activeDmPartner.username}...`
-                      : 'Select a friend to message...'
-                  }
-                  disabled={channel === 'dm' && !activeDmPartner}
-                  className="flex-1 px-3 py-2 rounded-xl text-xs bg-white border border-tan-300 focus:border-peach-500 focus:outline-none disabled:opacity-50"
-                />
-                <button
-                  type="submit"
-                  disabled={!inputText.trim() || isSending || (channel === 'dm' && !activeDmPartner)}
-                  className="px-3.5 py-2 rounded-xl text-xs font-bold text-white shadow-xs transition-transform active:scale-95 disabled:opacity-50 cursor-pointer"
-                  style={{ backgroundColor: 'var(--theme-accent, #fd9a4d)' }}
+                  <button
+                    type="button"
+                    onClick={() =>
+                      triggerAuthPrompt('Sign in with Gmail to join the chat and message travelers.')
+                    }
+                    className="px-4 py-2 rounded-xl text-xs font-bold text-white shadow-xs transition-transform hover:scale-102 active:scale-98 cursor-pointer flex items-center gap-2"
+                    style={{ backgroundColor: 'var(--theme-accent, #fd9a4d)' }}
+                  >
+                    <StreamlineUsers className="w-3.5 h-3.5" />
+                    <span>Sign In to Chat</span>
+                  </button>
+                  <div className="text-[10px] text-tan-500 font-medium">
+                    World Chat is currently in read-only mode for visitors.
+                  </div>
+                </div>
+              ) : (
+                <form
+                  onSubmit={handleSend}
+                  className="p-3 border-t bg-[#FCF8EE] border-[#EBDCC9] flex flex-col gap-1.5"
                 >
-                  Send
-                </button>
-              </div>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      value={inputText}
+                      onChange={(e) => setInputText(e.target.value)}
+                      placeholder={
+                        channel === 'world'
+                          ? 'Message World Chat...'
+                          : activeDmPartner
+                          ? `Message @${activeDmPartner.username}...`
+                          : 'Select a friend to message...'
+                      }
+                      disabled={channel === 'dm' && !activeDmPartner}
+                      className="flex-1 px-3 py-2 rounded-xl text-xs bg-white border border-tan-300 focus:border-peach-500 focus:outline-none disabled:opacity-50"
+                    />
+                    <button
+                      type="submit"
+                      disabled={!inputText.trim() || isSending || (channel === 'dm' && !activeDmPartner)}
+                      className="px-3.5 py-2 rounded-xl text-xs font-bold text-white shadow-xs transition-transform active:scale-95 disabled:opacity-50 cursor-pointer"
+                      style={{ backgroundColor: 'var(--theme-accent, #fd9a4d)' }}
+                    >
+                      Send
+                    </button>
+                  </div>
 
-              {/* Retention & Privacy Notice */}
-              <div className="text-[9px] text-tan-500 text-center">
-                Synced with Supabase & pruned every 7 days. Your chat history is preserved locally.
-              </div>
-            </form>
+                  {/* Retention & Privacy Notice */}
+                  <div className="text-[9px] text-tan-500 text-center">
+                    Synced with Supabase & pruned every 7 days. Your chat history is preserved locally.
+                  </div>
+                </form>
+              )}
+            </>
           )}
         </div>
       )}
