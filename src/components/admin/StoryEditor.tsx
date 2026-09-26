@@ -229,7 +229,7 @@ export function StoryEditor({
   const totalWords = story.chapters.reduce((sum, ch) => sum + ch.wordCount, 0);
 
   return (
-    <div className="max-w-5xl mx-auto px-3 sm:px-4 py-6 sm:py-8 animate-fade-in pb-24 sm:pb-8">
+    <div className="w-full max-w-5xl mx-auto px-2.5 sm:px-4 py-4 sm:py-8 animate-fade-in pb-24 sm:pb-8 min-w-0 overflow-x-clip">
       {/* Top Bar with Return & Auto-Save status */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <button
@@ -261,9 +261,9 @@ export function StoryEditor({
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-8">
+      <form onSubmit={handleSubmit} className="space-y-8 w-full max-w-full min-w-0">
         {/* Story Metadata Card */}
-        <div className="notepad-card p-6 sm:p-8 space-y-6">
+        <div className="notepad-card p-4 sm:p-8 space-y-6 w-full max-w-full min-w-0 overflow-hidden">
           <div className="border-b border-tan-200 pb-4">
             <h2 className="text-2xl sm:text-3xl font-display font-bold text-ink-900">
               {isNew ? 'Create New Story' : 'Edit Story & Chapters'}
@@ -445,7 +445,7 @@ export function StoryEditor({
         </div>
 
         {/* Chapters Section */}
-        <div className="notepad-card p-4 sm:p-6 md:p-8 space-y-6">
+        <div className="notepad-card p-3.5 sm:p-6 md:p-8 space-y-6 w-full max-w-full min-w-0 overflow-hidden">
           <div className="flex flex-wrap items-center justify-between gap-4 border-b border-tan-200 pb-4">
             <div>
               <div className="flex items-center gap-2">
@@ -469,7 +469,7 @@ export function StoryEditor({
           </div>
 
           {/* Chapter Tabs & Selector */}
-          <div className="flex gap-2 border-b border-tan-200 pb-3 overflow-x-auto no-scrollbar whitespace-nowrap">
+          <div className="flex gap-2 border-b border-tan-200 pb-3 overflow-x-auto no-scrollbar whitespace-nowrap w-full max-w-full">
             {story.chapters.map((ch, idx) => (
               <button
                 key={ch.id}

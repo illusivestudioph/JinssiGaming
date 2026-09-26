@@ -77,10 +77,10 @@ export function CtaFooter({ onNavigate }: { onNavigate: (view: 'about' | 'privac
   };
 
   return (
-    <div className="site-footer-shell flex flex-col mt-12 relative">
+    <div className="site-footer-shell flex flex-col mt-12 relative w-full max-w-full overflow-x-clip min-w-0">
       {/* Top CTA Section */}
-      <div className="max-w-5xl mx-auto px-4 py-16 w-full">
-        <div className="site-cta-panel p-10 text-center">
+      <div className="max-w-5xl mx-auto px-3 sm:px-4 py-12 sm:py-16 w-full min-w-0">
+        <div className="site-cta-panel p-5 sm:p-10 text-center w-full max-w-full overflow-hidden">
           <div className="site-section-kicker inline-flex items-center gap-2 mb-3 px-4 py-1.5 rounded-full text-sm uppercase tracking-wider">
             <span>Join the community</span>
           </div>

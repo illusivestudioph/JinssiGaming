@@ -790,7 +790,7 @@ export function AdminDashboard() {
   // --- GAME EDITOR VIEW ---
   if (editingGame) {
     return (
-      <div className="max-w-4xl mx-auto px-3 sm:px-6 py-6 sm:py-10 pb-28 sm:pb-10 animate-fade-in">
+      <div className="w-full max-w-4xl mx-auto px-2.5 sm:px-6 py-4 sm:py-10 pb-28 sm:pb-10 animate-fade-in min-w-0 overflow-x-clip">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
           <button 
             type="button"
@@ -825,7 +825,7 @@ export function AdminDashboard() {
           </div>
         </div>
 
-        <form onSubmit={handleSaveGame} className="notepad-card p-4 sm:p-6 md:p-8 shadow-cozy-lg">
+        <form onSubmit={handleSaveGame} className="notepad-card p-3.5 sm:p-6 md:p-8 shadow-cozy-lg w-full max-w-full overflow-hidden">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b-2 border-tan-100 pb-4 mb-6">
             <div>
               <h2 className="text-2xl sm:text-3xl font-display font-bold text-ink-900">Edit Game</h2>
@@ -968,48 +968,80 @@ export function AdminDashboard() {
                 ).map((coverUrl, cIndex, arr) => (
                   <div
                     key={cIndex}
-                    className="p-3 sm:p-4 rounded-xl bg-white border border-tan-200 shadow-sm flex flex-col md:flex-row items-stretch md:items-center gap-3"
+                    className="p-3 sm:p-4 rounded-xl bg-white border border-tan-200 shadow-sm flex flex-col md:flex-row items-stretch md:items-center gap-2.5 sm:gap-3 w-full max-w-full overflow-hidden"
                   >
-                    {/* Cover thumbnail / badge */}
-                    <div className="flex items-center gap-3">
-                      <div className="w-16 h-12 rounded-lg bg-cream-100 border border-tan-200 overflow-hidden flex-shrink-0 flex items-center justify-center relative">
-                        {coverUrl ? (
-                          <img
-                            src={coverUrl}
-                            alt={`Cover ${cIndex + 1}`}
-                            className="w-full h-full object-cover"
-                            onError={(e) => {
-                              (e.currentTarget as HTMLImageElement).style.display = 'none';
-                            }}
-                          />
-                        ) : (
-                          <ImageIcon className="w-5 h-5 text-tan-400" />
-                        )}
-                        <span className="absolute bottom-0 right-0 bg-ink-900/80 text-cream-100 text-[10px] font-bold px-1 rounded-tl">
-                          #{cIndex + 1}
-                        </span>
-                      </div>
-                      <div className="min-w-[90px]">
-                        <span className="text-xs font-bold text-ink-800 block">
-                          {cIndex === 0 ? 'Primary Cover' : `Slide ${cIndex + 1}`}
-                        </span>
-                        {cIndex === 0 && (
-                          <span className="text-[10px] font-semibold text-peach-600 bg-peach-50 px-1.5 py-0.5 rounded border border-peach-200">
-                            Main Card
+                    {/* Top Row on mobile: thumbnail, badge, and mobile action buttons */}
+                    <div className="flex items-center justify-between gap-2 w-full md:w-auto">
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <div className="w-14 h-11 sm:w-16 sm:h-12 rounded-lg bg-cream-100 border border-tan-200 overflow-hidden flex-shrink-0 flex items-center justify-center relative">
+                          {coverUrl ? (
+                            <img
+                              src={coverUrl}
+                              alt={`Cover ${cIndex + 1}`}
+                              className="w-full h-full object-cover"
+                              onError={(e) => {
+                                (e.currentTarget as HTMLImageElement).style.display = 'none';
+                              }}
+                            />
+                          ) : (
+                            <ImageIcon className="w-5 h-5 text-tan-400" />
+                          )}
+                          <span className="absolute bottom-0 right-0 bg-ink-900/80 text-cream-100 text-[10px] font-bold px-1 rounded-tl">
+                            #{cIndex + 1}
                           </span>
-                        )}
+                        </div>
+                        <div className="min-w-0">
+                          <span className="text-xs font-bold text-ink-800 block truncate">
+                            {cIndex === 0 ? 'Primary Cover' : `Slide ${cIndex + 1}`}
+                          </span>
+                          {cIndex === 0 && (
+                            <span className="text-[10px] font-semibold text-peach-600 bg-peach-50 px-1.5 py-0.5 rounded border border-peach-200 inline-block">
+                              Main Card
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Actions: Reorder & Delete (Mobile visible) */}
+                      <div className="flex items-center gap-1 shrink-0 md:hidden">
+                        <button
+                          type="button"
+                          disabled={cIndex === 0}
+                          onClick={() => handleMoveCoverImage(cIndex, 'up')}
+                          title="Move Up"
+                          className="p-1.5 rounded-lg border border-tan-200 text-ink-600 hover:bg-cream-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                        >
+                          <ChevronUp size={15} />
+                        </button>
+                        <button
+                          type="button"
+                          disabled={cIndex === arr.length - 1}
+                          onClick={() => handleMoveCoverImage(cIndex, 'down')}
+                          title="Move Down"
+                          className="p-1.5 rounded-lg border border-tan-200 text-ink-600 hover:bg-cream-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                        >
+                          <ChevronDown size={15} />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveCoverImage(cIndex)}
+                          title="Delete this cover"
+                          className="p-1.5 rounded-lg border border-red-200 text-red-500 hover:bg-red-50 transition-colors"
+                        >
+                          <Trash2 size={15} />
+                        </button>
                       </div>
                     </div>
 
-                    {/* URL Input */}
-                    <div className="flex-1 flex flex-col sm:flex-row gap-2">
+                    {/* URL Input and upload */}
+                    <div className="flex-1 flex flex-col sm:flex-row gap-2 min-w-0 w-full">
                       <input
                         value={coverUrl}
                         onChange={(e) => handleUpdateCoverImage(cIndex, e.target.value)}
                         placeholder="Paste image URL or upload below..."
-                        className="flex-1 w-full px-3 py-2 rounded-lg border border-tan-300 focus:border-peach-400 focus:outline-none bg-cream-50 text-xs font-medium"
+                        className="flex-1 min-w-0 w-full px-3 py-2 rounded-lg border border-tan-300 focus:border-peach-400 focus:outline-none bg-cream-50 text-xs font-medium"
                       />
-                      <label className="flex items-center justify-center px-3 py-2 bg-earth-100 text-earth-800 font-bold text-xs rounded-lg cursor-pointer hover:bg-earth-200 transition-colors whitespace-nowrap">
+                      <label className="flex items-center justify-center px-3 py-2 bg-earth-100 text-earth-800 font-bold text-xs rounded-lg cursor-pointer hover:bg-earth-200 transition-colors whitespace-nowrap w-full sm:w-auto shrink-0">
                         {uploadingKey === `game-cover-${cIndex}` ? (
                           'Optimizing...'
                         ) : uploadedKey === `game-cover-${cIndex}` ? (
@@ -1033,8 +1065,8 @@ export function AdminDashboard() {
                       </label>
                     </div>
 
-                    {/* Actions: Reorder & Delete */}
-                    <div className="flex items-center gap-1 self-end md:self-center">
+                    {/* Actions: Reorder & Delete (Desktop visible) */}
+                    <div className="hidden md:flex items-center gap-1 shrink-0">
                       <button
                         type="button"
                         disabled={cIndex === 0}
@@ -1079,11 +1111,11 @@ export function AdminDashboard() {
             </div>
 
             {/* Game Store Trailer & Gameplay Overview Video (WebM / MP4 or Video Placeholder) */}
-            <div className="md:col-span-2 p-4 sm:p-5 rounded-2xl bg-peach-50/60 border-2 border-peach-200">
+            <div className="md:col-span-2 p-3.5 sm:p-5 rounded-2xl bg-peach-50/60 border-2 border-peach-200 w-full max-w-full overflow-hidden">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
                 <div>
                   <label className="block font-bold text-ink-900 flex items-center gap-2 text-base">
-                    <Film size={20} className="text-peach-500" />
+                    <Film size={20} className="text-peach-500 shrink-0" />
                     <span>Gameplay Overview / Store Trailer Video</span>
                   </label>
                   <p className="text-xs text-ink-600 mt-0.5">
@@ -1091,39 +1123,39 @@ export function AdminDashboard() {
                   </p>
                 </div>
                 {editingGame.video === 'placeholder' ? (
-                  <span className="self-start sm:self-auto text-xs font-bold text-peach-700 bg-peach-100 px-3 py-1 rounded-full border border-peach-300 shadow-sm whitespace-nowrap">
+                  <span className="self-start sm:self-auto text-xs font-bold text-peach-700 bg-peach-100 px-3 py-1 rounded-full border border-peach-300 shadow-sm whitespace-nowrap shrink-0">
                     🎬 Trailer Placeholder Active
                   </span>
                 ) : editingGame.video ? (
-                  <span className="self-start sm:self-auto text-xs font-bold text-sage-700 bg-sage-50 px-3 py-1 rounded-full border border-sage-200 shadow-sm whitespace-nowrap">
+                  <span className="self-start sm:self-auto text-xs font-bold text-sage-700 bg-sage-50 px-3 py-1 rounded-full border border-sage-200 shadow-sm whitespace-nowrap shrink-0">
                     ✓ Gameplay Trailer Attached
                   </span>
                 ) : null}
               </div>
 
-              <div className="mt-3 flex flex-col sm:flex-row gap-2">
+              <div className="mt-3 flex flex-col sm:flex-row gap-2 w-full min-w-0">
                 <input 
                   value={editingGame.video || ''}
                   onChange={(e) => setEditingGame({...editingGame, video: e.target.value})}
-                  className="flex-1 w-full px-4 py-3 rounded-xl border-2 border-tan-200 focus:border-peach-400 focus:outline-none bg-white font-medium text-sm"
+                  className="flex-1 min-w-0 w-full px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-xl border-2 border-tan-200 focus:border-peach-400 focus:outline-none bg-white font-medium text-xs sm:text-sm"
                   placeholder="Paste video URL, or click 'Upload Gameplay Video', or 'Set Trailer Placeholder'..."
                 />
                 
                 {/* Upload Video Button with Auto WebM Conversion */}
-                <label className="flex items-center justify-center px-4 py-3 bg-peach-500 text-white font-bold rounded-xl cursor-pointer hover:bg-peach-600 transition-colors whitespace-nowrap shadow-cozy-xs w-full sm:w-auto text-sm">
+                <label className="flex items-center justify-center px-4 py-2.5 sm:py-3 bg-peach-500 text-white font-bold rounded-xl cursor-pointer hover:bg-peach-600 transition-colors whitespace-nowrap shadow-cozy-xs w-full sm:w-auto text-xs sm:text-sm shrink-0">
                   {uploadingKey === 'game-video' ? (
                     <>
-                      <Loader2 size={18} className="mr-2 animate-spin" />
+                      <Loader2 size={16} className="mr-2 animate-spin" />
                       <span>Converting to WebM...</span>
                     </>
                   ) : uploadedKey === 'game-video' ? (
                     <>
-                      <CheckCircle size={18} className="mr-2" />
+                      <CheckCircle size={16} className="mr-2" />
                       <span>Uploaded</span>
                     </>
                   ) : (
                     <>
-                      <Upload size={18} className="mr-2" />
+                      <Upload size={16} className="mr-2" />
                       <span>Upload Gameplay Video</span>
                     </>
                   )}
@@ -1150,7 +1182,7 @@ export function AdminDashboard() {
                       });
                     }
                   }}
-                  className={`px-4 py-3 rounded-xl font-bold transition-colors whitespace-nowrap border-2 text-center justify-center w-full sm:w-auto text-sm ${
+                  className={`px-4 py-2.5 sm:py-3 rounded-xl font-bold transition-colors whitespace-nowrap border-2 text-center justify-center w-full sm:w-auto text-xs sm:text-sm shrink-0 ${
                     editingGame.video === 'placeholder'
                       ? 'bg-peach-100 text-peach-700 border-peach-300'
                       : 'bg-white text-ink-800 border-tan-200 hover:bg-peach-50 hover:text-peach-600 hover:border-peach-300'
@@ -1165,7 +1197,7 @@ export function AdminDashboard() {
                 <input 
                   value={editingGame.videoTitle || ''}
                   onChange={(e) => setEditingGame({...editingGame, videoTitle: e.target.value})}
-                  className="w-full px-3.5 py-2 rounded-lg border border-tan-200 focus:border-peach-400 focus:outline-none bg-white text-xs text-ink-800"
+                  className="w-full min-w-0 px-3.5 py-2 rounded-lg border border-tan-200 focus:border-peach-400 focus:outline-none bg-white text-xs text-ink-800"
                   placeholder="Trailer title / badge (e.g. Official Gameplay Overview Trailer, 4K Cozy Preview)..."
                 />
               </div>
@@ -1242,10 +1274,10 @@ export function AdminDashboard() {
 
           <h3 className="text-2xl font-display font-bold text-ink-900 mb-4">Walkthrough Guides</h3>
           
-          <div className="flex flex-col gap-8">
+          <div className="flex flex-col gap-6 sm:gap-8 w-full min-w-0">
             {editingGame.walkthrough.map((section, sIndex) => (
-              <div key={sIndex} className="notepad-card p-4 sm:p-6 relative shadow-cozy-sm">
-                <div className="flex items-start justify-between gap-3 mb-4 sm:mb-6">
+              <div key={sIndex} className="notepad-card p-3 sm:p-6 relative shadow-cozy-sm w-full max-w-full overflow-hidden min-w-0">
+                <div className="flex items-start justify-between gap-2 sm:gap-3 mb-4 sm:mb-6">
                   <div className="flex-1 min-w-0">
                     <label className="block font-bold text-tan-600 mb-1.5 text-xs sm:text-sm uppercase tracking-wider">
                       Section {sIndex + 1} Title
@@ -1253,7 +1285,7 @@ export function AdminDashboard() {
                     <input 
                       value={section.title}
                       onChange={(e) => updateSectionTitle(sIndex, e.target.value)}
-                      className="w-full px-3.5 sm:px-4 py-2 rounded-lg border-2 border-tan-200 focus:border-peach-400 focus:outline-none font-bold text-base sm:text-lg"
+                      className="w-full min-w-0 px-3 sm:px-4 py-2 rounded-lg border-2 border-tan-200 focus:border-peach-400 focus:outline-none font-bold text-base sm:text-lg"
                     />
                   </div>
                   <button 
@@ -1267,33 +1299,33 @@ export function AdminDashboard() {
                 </div>
 
                 {/* Section Walkthrough Video (WebM / MP4) */}
-                <div className="mb-6 p-3.5 sm:p-4 bg-cream-50/80 rounded-xl border border-tan-200">
+                <div className="mb-6 p-3 sm:p-4 bg-cream-50/80 rounded-xl border border-tan-200 w-full max-w-full overflow-hidden min-w-0">
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 mb-2">
                     <label className="text-xs font-bold text-tan-600 flex items-center gap-1.5 uppercase tracking-wider">
-                      <Film size={14} className="text-peach-500" />
+                      <Film size={14} className="text-peach-500 shrink-0" />
                       <span>Section {sIndex + 1} Video Guide (Auto-Converts to WebM)</span>
                     </label>
                     {section.video === 'placeholder' ? (
-                      <span className="self-start sm:self-auto text-[11px] font-bold text-peach-600 bg-peach-100 px-2 py-0.5 rounded-full">
+                      <span className="self-start sm:self-auto text-[11px] font-bold text-peach-600 bg-peach-100 px-2 py-0.5 rounded-full shrink-0">
                         🎬 Placeholder Active
                       </span>
                     ) : section.video ? (
-                      <span className="self-start sm:self-auto text-[11px] font-bold text-sage-600 bg-sage-50 px-2 py-0.5 rounded-full">
+                      <span className="self-start sm:self-auto text-[11px] font-bold text-sage-600 bg-sage-50 px-2 py-0.5 rounded-full shrink-0">
                         ✓ Video Attached
                       </span>
                     ) : null}
                   </div>
 
-                  <div className="flex flex-col sm:flex-row gap-2">
+                  <div className="flex flex-col sm:flex-row gap-2 w-full min-w-0">
                     <input 
                       value={section.video || ''}
                       onChange={(e) => updateSectionField(sIndex, 'video', e.target.value)}
-                      className="flex-1 w-full px-3 py-2 rounded-lg border border-tan-200 focus:border-peach-400 focus:outline-none text-sm bg-white"
+                      className="flex-1 min-w-0 w-full px-3 py-2 rounded-lg border border-tan-200 focus:border-peach-400 focus:outline-none text-sm bg-white"
                       placeholder="https://... or 'placeholder' or click Upload Video"
                     />
 
                     {/* Upload Video Button with Auto WebM Conversion */}
-                    <label className="w-full sm:w-auto px-3.5 py-2.5 bg-peach-500 text-white font-bold rounded-lg cursor-pointer hover:bg-peach-600 transition-colors text-xs flex items-center justify-center gap-1.5 whitespace-nowrap shadow-cozy-xs">
+                    <label className="w-full sm:w-auto px-3.5 py-2.5 bg-peach-500 text-white font-bold rounded-lg cursor-pointer hover:bg-peach-600 transition-colors text-xs flex items-center justify-center gap-1.5 whitespace-nowrap shadow-cozy-xs shrink-0">
                       {uploadingKey === `section-video-${sIndex}` ? (
                         <>
                           <Loader2 size={14} className="animate-spin" />
@@ -1405,9 +1437,9 @@ export function AdminDashboard() {
                   ) : null}
                 </div>
 
-                <div className="flex flex-col gap-4 pl-2 sm:pl-4 border-l-2 sm:border-l-4 border-tan-200">
+                <div className="flex flex-col gap-4 pl-1.5 sm:pl-4 border-l-2 sm:border-l-4 border-tan-200 min-w-0 w-full max-w-full">
                   {section.steps.map((step, stepIndex) => (
-                    <div key={stepIndex} className="notepad-step p-3.5 sm:p-4 flex flex-col gap-3 relative group shadow-cozy-xs">
+                    <div key={stepIndex} className="notepad-step p-3 sm:p-4 flex flex-col gap-3 relative group shadow-cozy-xs min-w-0 w-full max-w-full overflow-hidden">
                       <div className="flex items-center justify-between gap-2 border-b border-tan-100 pb-2">
                         <label className="text-xs font-bold text-tan-600 uppercase tracking-wider">
                           Step {stepIndex + 1}
@@ -1415,7 +1447,7 @@ export function AdminDashboard() {
                         <button 
                           type="button" 
                           onClick={() => removeStep(sIndex, stepIndex)}
-                          className="text-red-400 hover:text-red-600 hover:bg-red-50 p-1.5 rounded-lg border border-tan-200 bg-white transition-all shadow-sm flex items-center gap-1 text-xs"
+                          className="text-red-400 hover:text-red-600 hover:bg-red-50 p-1.5 rounded-lg border border-tan-200 bg-white transition-all shadow-sm flex items-center gap-1 text-xs shrink-0"
                           title="Delete Step"
                         >
                           <Trash2 size={13} />
@@ -1428,7 +1460,7 @@ export function AdminDashboard() {
                         <input
                           value={step.title}
                           onChange={(e) => updateStep(sIndex, stepIndex, 'title', e.target.value)}
-                          className="w-full px-3 py-2 rounded-lg border border-tan-200 focus:border-peach-400 focus:outline-none mb-3 text-sm"
+                          className="w-full min-w-0 px-3 py-2 rounded-lg border border-tan-200 focus:border-peach-400 focus:outline-none mb-3 text-sm"
                           placeholder="Step title"
                           required
                         />
@@ -1436,13 +1468,13 @@ export function AdminDashboard() {
                         <textarea 
                           value={step.description}
                           onChange={(e) => updateStep(sIndex, stepIndex, 'description', e.target.value)}
-                          className="w-full px-3 py-2 rounded-lg border border-tan-200 focus:border-peach-400 focus:outline-none min-h-[80px] text-sm"
+                          className="w-full min-w-0 px-3 py-2 rounded-lg border border-tan-200 focus:border-peach-400 focus:outline-none min-h-[80px] text-sm"
                           required
                         />
                       </div>
 
                       {/* Step Spoiler Toggle & Hint */}
-                      <div className="p-3 bg-cream-100 rounded-lg border border-tan-200 flex flex-col gap-2">
+                      <div className="p-3 bg-cream-100 rounded-lg border border-tan-200 flex flex-col gap-2 min-w-0 w-full">
                         <label className="flex items-center gap-2 cursor-pointer text-xs font-bold text-ink-900">
                           <input 
                             type="checkbox"
@@ -1453,7 +1485,7 @@ export function AdminDashboard() {
                                 updateStep(sIndex, stepIndex, 'spoilerText', 'Spoiler warning: Click to reveal solution');
                               }
                             }}
-                            className="w-4 h-4 accent-peach-500 rounded cursor-pointer"
+                            className="w-4 h-4 accent-peach-500 rounded cursor-pointer shrink-0"
                           />
                           <span>Mark this step as a spoiler (blurs / hides solution until clicked)</span>
                         </label>
@@ -1462,21 +1494,21 @@ export function AdminDashboard() {
                             value={step.spoilerText || ''}
                             onChange={(e) => updateStep(sIndex, stepIndex, 'spoilerText', e.target.value)}
                             placeholder="Spoiler warning text (e.g. Puzzle solution ahead)..."
-                            className="w-full px-3 py-1.5 text-xs rounded-lg border border-tan-200 bg-white focus:outline-none font-medium text-ink-900"
+                            className="w-full min-w-0 px-3 py-1.5 text-xs rounded-lg border border-tan-200 bg-white focus:outline-none font-medium text-ink-900"
                           />
                         )}
                       </div>
 
                       <div>
                         <label className="text-xs font-bold text-tan-500 mb-1 block">Step Image (URL or Upload)</label>
-                        <div className="flex flex-col sm:flex-row gap-2">
+                        <div className="flex flex-col sm:flex-row gap-2 w-full min-w-0">
                           <input 
                             value={step.image || ''}
                             onChange={(e) => updateStep(sIndex, stepIndex, 'image', e.target.value)}
-                            className="flex-1 px-3 py-2 rounded-lg border border-tan-200 focus:border-peach-400 focus:outline-none text-sm"
+                            className="flex-1 min-w-0 w-full px-3 py-2 rounded-lg border border-tan-200 focus:border-peach-400 focus:outline-none text-sm"
                             placeholder="https:// or upload..."
                           />
-                          <div className="flex items-center gap-2 w-full sm:w-auto">
+                          <div className="flex items-center gap-2 w-full sm:w-auto shrink-0">
                             <label className="flex-1 sm:flex-initial px-3 py-2 bg-earth-100 text-earth-700 font-bold rounded-lg cursor-pointer hover:bg-earth-200 transition-colors text-xs flex items-center justify-center gap-1 whitespace-nowrap">
                               {uploadingKey === `step-${sIndex}-${stepIndex}` ? 'Uploading...' : uploadedKey === `step-${sIndex}-${stepIndex}` ? 'Uploaded' : <><Upload size={14} /> Upload</>}
                               <input 
@@ -1495,32 +1527,32 @@ export function AdminDashboard() {
                       </div>
 
                       {/* Step Video Walkthrough (WebM / MP4) */}
-                      <div className="pt-2 border-t border-tan-100">
+                      <div className="pt-2 border-t border-tan-100 min-w-0 w-full">
                         <div className="flex items-center justify-between mb-1">
                           <label className="text-xs font-bold text-tan-500 flex items-center gap-1.5">
-                            <Film size={13} className="text-peach-500" />
+                            <Film size={13} className="text-peach-500 shrink-0" />
                             <span>Step Video (Auto-Converts to WebM)</span>
                           </label>
                           {step.video === 'placeholder' ? (
-                            <span className="text-[11px] font-bold text-peach-600 bg-peach-100 px-2 py-0.5 rounded-full">
+                            <span className="text-[11px] font-bold text-peach-600 bg-peach-100 px-2 py-0.5 rounded-full shrink-0">
                               🎬 Placeholder Active
                             </span>
                           ) : step.video ? (
-                            <span className="text-[11px] font-bold text-sage-600 bg-sage-50 px-2 py-0.5 rounded-full">
+                            <span className="text-[11px] font-bold text-sage-600 bg-sage-50 px-2 py-0.5 rounded-full shrink-0">
                               ✓ Video Attached
                             </span>
                           ) : null}
                         </div>
 
-                        <div className="flex flex-col sm:flex-row gap-2">
+                        <div className="flex flex-col sm:flex-row gap-2 w-full min-w-0">
                           <input 
                             value={step.video || ''}
                             onChange={(e) => updateStep(sIndex, stepIndex, 'video', e.target.value)}
-                            className="flex-1 px-3 py-2 rounded-lg border border-tan-200 focus:border-peach-400 focus:outline-none text-sm"
+                            className="flex-1 min-w-0 w-full px-3 py-2 rounded-lg border border-tan-200 focus:border-peach-400 focus:outline-none text-sm"
                             placeholder="https://... or 'placeholder' or upload video"
                           />
 
-                          <div className="flex items-center gap-2 w-full sm:w-auto">
+                          <div className="flex items-center gap-2 w-full sm:w-auto shrink-0">
                             {/* Upload Video Button with Auto WebM Conversion */}
                             <label className="flex-1 sm:flex-initial px-3 py-2 bg-peach-500 text-white font-bold rounded-lg cursor-pointer hover:bg-peach-600 transition-colors text-xs flex items-center justify-center gap-1.5 whitespace-nowrap shadow-cozy-xs">
                               {uploadingKey === `step-video-${sIndex}-${stepIndex}` ? (
@@ -1697,7 +1729,7 @@ export function AdminDashboard() {
 
   // --- MAIN DASHBOARD VIEW ---
   return (
-    <div className="max-w-5xl mx-auto px-3 sm:px-4 py-6 sm:py-10 animate-fade-in">
+    <div className="w-full max-w-5xl mx-auto px-2.5 sm:px-4 py-4 sm:py-10 animate-fade-in min-w-0 overflow-x-clip">
       {/* Draft Recovery Alert (Shown if a crash or power outage occurred while editing) */}
       {savedDraft && !editingGame && (
         <div className="mb-6 p-4 rounded-2xl bg-amber-50 border-2 border-amber-300 shadow-cozy-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 animate-fade-in">
@@ -1771,7 +1803,7 @@ export function AdminDashboard() {
         </div>
       </div>
 
-      <div className="flex gap-2 sm:gap-4 mb-6 border-b-2 border-tan-200 pb-2 overflow-x-auto no-scrollbar whitespace-nowrap text-sm sm:text-base">
+      <div className="flex gap-2 sm:gap-4 mb-6 border-b-2 border-tan-200 pb-2 overflow-x-auto no-scrollbar whitespace-nowrap text-sm sm:text-base w-full max-w-full">
         <button onClick={() => setActiveTab('assets')} className={`font-bold pb-2 shrink-0 transition-colors ${activeTab === 'assets' ? 'text-peach-500 border-b-2 border-peach-500' : 'text-tan-500 hover:text-ink-900'}`}>Site Assets</button>
         <button onClick={() => setActiveTab('games')} className={`font-bold pb-2 shrink-0 transition-colors ${activeTab === 'games' ? 'text-peach-500 border-b-2 border-peach-500' : 'text-tan-500 hover:text-ink-900'}`}>Manage Games ({games.length})</button>
         <button onClick={() => setActiveTab('articles')} className={`font-bold pb-2 shrink-0 transition-colors ${activeTab === 'articles' ? 'text-peach-500 border-b-2 border-peach-500' : 'text-tan-500 hover:text-ink-900'}`}>Cozy Journal ({articles.length})</button>
@@ -1780,14 +1812,14 @@ export function AdminDashboard() {
       </div>
 
       {activeTab === 'assets' && (
-        <div className="notepad-card p-4 sm:p-6 flex flex-col gap-6">
+        <div className="notepad-card p-3.5 sm:p-6 flex flex-col gap-6 w-full max-w-full overflow-hidden">
           <div>
             <label className="block font-bold text-ink-900 mb-2 flex items-center gap-2"><ImageIcon size={18}/> Hero Banner</label>
             <div className="flex flex-col sm:flex-row gap-2">
               <input 
                 value={heroImage} 
                 onChange={(e) => setHeroImage(e.target.value)}
-                className="flex-1 px-4 py-3 rounded-xl border-2 border-tan-200 focus:border-peach-400 bg-cream-50 focus:outline-none text-sm"
+                className="flex-1 min-w-0 px-4 py-3 rounded-xl border-2 border-tan-200 focus:border-peach-400 bg-cream-50 focus:outline-none text-sm"
               />
               <div className="flex items-center gap-2 w-full sm:w-auto">
                 <label className="flex-1 sm:flex-initial flex items-center justify-center px-4 py-3 bg-earth-100 text-earth-700 font-bold rounded-xl cursor-pointer hover:bg-earth-200 transition-colors whitespace-nowrap text-xs">
@@ -1806,7 +1838,7 @@ export function AdminDashboard() {
               <input 
                 value={logoImage} 
                 onChange={(e) => setLogoImage(e.target.value)}
-                className="flex-1 px-4 py-3 rounded-xl border-2 border-tan-200 focus:border-peach-400 bg-cream-50 focus:outline-none text-sm"
+                className="flex-1 min-w-0 px-4 py-3 rounded-xl border-2 border-tan-200 focus:border-peach-400 bg-cream-50 focus:outline-none text-sm"
               />
               <div className="flex items-center gap-2 w-full sm:w-auto">
                 <label className="flex-1 sm:flex-initial flex items-center justify-center px-4 py-3 bg-earth-100 text-earth-700 font-bold rounded-xl cursor-pointer hover:bg-earth-200 transition-colors whitespace-nowrap text-xs">
@@ -1831,8 +1863,8 @@ export function AdminDashboard() {
             <label className="block font-bold text-ink-900 mb-4 text-lg sm:text-xl">Footer Call-to-Action Buttons & Payment Modals</label>
             <div className="flex flex-col gap-6">
               {ctaLinks?.map((link, index) => (
-                <div key={link.id} className="notepad-card p-4 sm:p-5 flex flex-col gap-4">
-                  <div className="flex flex-col sm:flex-row gap-2 sm:items-center">
+                <div key={link.id} className="notepad-card p-3.5 sm:p-5 flex flex-col gap-4 w-full max-w-full min-w-0 overflow-hidden">
+                  <div className="flex flex-col sm:flex-row gap-2 sm:items-center w-full min-w-0">
                     <input 
                       value={link.label}
                       onChange={(e) => {
@@ -1841,9 +1873,9 @@ export function AdminDashboard() {
                         setCtaLinks(newLinks);
                       }}
                       placeholder="Button Label (e.g. Buy me coffee ($5))"
-                      className="w-full sm:w-1/3 px-3 py-2 rounded-lg border border-tan-200 focus:border-peach-400 focus:outline-none font-bold text-sm"
+                      className="w-full sm:w-1/3 min-w-0 px-3 py-2 rounded-lg border border-tan-200 focus:border-peach-400 focus:outline-none font-bold text-sm"
                     />
-                    <div className="flex items-center gap-2 flex-1">
+                    <div className="flex items-center gap-2 flex-1 min-w-0">
                       <input 
                         value={link.url}
                         onChange={(e) => {
@@ -1852,7 +1884,7 @@ export function AdminDashboard() {
                           setCtaLinks(newLinks);
                         }}
                         placeholder="Fallback URL..."
-                        className="flex-1 px-3 py-2 rounded-lg border border-tan-200 focus:border-peach-400 focus:outline-none text-sm"
+                        className="flex-1 min-w-0 px-3 py-2 rounded-lg border border-tan-200 focus:border-peach-400 focus:outline-none text-sm"
                       />
                       <button 
                         onClick={() => setCtaLinks(ctaLinks.filter((_, i) => i !== index))}
@@ -1991,7 +2023,7 @@ export function AdminDashboard() {
                                   setCtaLinks(newLinks);
                                 }}
                                 placeholder="Paste QR image URL or upload..."
-                                className="flex-1 px-2 py-1.5 rounded-lg border border-tan-200 bg-cream-50"
+                                className="flex-1 min-w-0 px-2 py-1.5 rounded-lg border border-tan-200 bg-cream-50"
                               />
                               <div className="flex items-center gap-2">
                                 <label className="px-3 py-1.5 bg-earth-100 text-earth-700 font-bold rounded-lg cursor-pointer hover:bg-earth-200 whitespace-nowrap">
@@ -2033,7 +2065,7 @@ export function AdminDashboard() {
       {activeTab === 'games' && (
         <div className="flex flex-col gap-4">
           {games.map((game, idx) => (
-            <div key={game.id} className="notepad-card p-4 sm:p-5 flex flex-col sm:flex-row justify-between sm:items-center gap-3">
+            <div key={game.id} className="notepad-card p-3 sm:p-5 flex flex-col sm:flex-row justify-between sm:items-center gap-3 w-full max-w-full overflow-hidden">
               <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
                 {/* Reorder arrows */}
                 <div className="flex sm:flex-col gap-1 shrink-0">
@@ -2063,8 +2095,8 @@ export function AdminDashboard() {
                 />
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
-                    <h3 className="font-bold text-lg sm:text-xl text-ink-900 truncate">{game.title}</h3>
-                    <span className="text-[11px] sm:text-xs font-bold px-2 py-0.5 rounded-full bg-peach-100 text-peach-700 border border-peach-200">
+                    <h3 className="font-bold text-base sm:text-xl text-ink-900 truncate max-w-full">{game.title}</h3>
+                    <span className="text-[11px] sm:text-xs font-bold px-2 py-0.5 rounded-full bg-peach-100 text-peach-700 border border-peach-200 shrink-0">
                       {game.category || 'Cozy Games'}
                     </span>
                   </div>

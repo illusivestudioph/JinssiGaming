@@ -100,9 +100,9 @@ export function ArticleEditor({
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-3 sm:px-4 py-6 sm:py-8 animate-fade-in pb-24 sm:pb-8">
+    <div className="w-full max-w-4xl mx-auto px-2.5 sm:px-4 py-4 sm:py-8 animate-fade-in pb-24 sm:pb-8 min-w-0 overflow-x-clip">
       {/* Top Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
         <button
           type="button"
           onClick={onCancel}
@@ -120,7 +120,7 @@ export function ArticleEditor({
         </button>
       </div>
 
-      <form onSubmit={handleSubmit} className="notepad-card p-4 sm:p-8 md:p-10 shadow-cozy-lg">
+      <form onSubmit={handleSubmit} className="notepad-card p-3.5 sm:p-8 md:p-10 shadow-cozy-lg w-full max-w-full min-w-0 overflow-hidden">
         <div className="border-b-2 border-tan-100 pb-4 mb-8">
           <h2 className="text-2xl sm:text-3xl font-display font-bold text-ink-900">
             {isNew ? 'Write New Cozy Article' : 'Edit Cozy Article'}
@@ -377,7 +377,7 @@ export function ArticleEditor({
                     type="url"
                     value={formData.coverImage}
                     onChange={(e) => setFormData({ ...formData, coverImage: e.target.value })}
-                    className="flex-1 px-4 py-2.5 rounded-xl border-2 border-tan-200 focus:border-peach-400 focus:outline-none bg-cream-50 text-xs font-mono text-ink-900"
+                    className="flex-1 min-w-0 px-4 py-2.5 rounded-xl border-2 border-tan-200 focus:border-peach-400 focus:outline-none bg-cream-50 text-xs font-mono text-ink-900"
                     placeholder="https://..."
                     required
                   />
@@ -555,7 +555,7 @@ export function ArticleEditor({
                       value={section.image || ''}
                       onChange={(e) => updateSectionField(idx, 'image', e.target.value)}
                       placeholder="Image URL (https://...)"
-                      className="flex-1 px-3 py-2 rounded-lg border border-tan-300 text-xs bg-white"
+                      className="flex-1 min-w-0 px-3 py-2 rounded-lg border border-tan-300 text-xs bg-white"
                     />
                     <label className="cursor-pointer px-3 py-2 rounded-lg font-bold text-xs bg-cream-200 hover:bg-peach-100 text-ink-900 flex items-center justify-center gap-1 whitespace-nowrap">
                       <Upload size={13} />

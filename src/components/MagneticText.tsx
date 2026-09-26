@@ -222,12 +222,13 @@ export function MagneticText({
       {lines.map((lineWords, lineIdx) => (
         <span
           key={`line-${lineIdx}`}
-          className="block w-full text-center whitespace-nowrap"
+          className="block w-full text-center whitespace-normal"
           style={{
             display: 'block',
             width: '100%',
+            maxWidth: '100%',
             textAlign: 'center',
-            whiteSpace: 'nowrap',
+            whiteSpace: 'normal',
             overflow: 'visible',
             lineHeight: 'inherit',
           }}

@@ -98,7 +98,7 @@ export function ArticleManager({
           {filtered.map((article) => (
             <div
               key={article.id}
-              className="notepad-card p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-cozy-sm hover:shadow-cozy-md transition-shadow"
+              className="notepad-card p-3.5 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-cozy-sm hover:shadow-cozy-md transition-shadow w-full max-w-full min-w-0 overflow-hidden"
             >
               <div className="flex items-start gap-3 sm:gap-4 flex-1 min-w-0">
                 <img
@@ -106,7 +106,7 @@ export function ArticleManager({
                   alt={article.coverAlt}
                   className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl object-cover border border-tan-200 shrink-0 bg-cream-200"
                 />
-                <div className="space-y-1">
+                <div className="space-y-1 min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="px-2 py-0.5 rounded-md bg-peach-100 text-peach-700 text-[11px] font-bold">
                       {article.category}

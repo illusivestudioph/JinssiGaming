@@ -219,7 +219,7 @@ export function StoreManager({
   // --- PRODUCT EDIT MODAL / INLINE VIEW ---
   if (editingProduct) {
     return (
-      <div className="space-y-6 animate-fade-in max-w-4xl mx-auto px-3 sm:px-4 py-4 sm:py-6 pb-24 sm:pb-6">
+      <div className="space-y-6 animate-fade-in w-full max-w-4xl mx-auto px-2.5 sm:px-4 py-4 sm:py-6 pb-24 sm:pb-6 min-w-0 overflow-x-clip">
         <div className="flex items-center justify-between border-b-2 border-tan-200 pb-4">
           <div>
             <h3 className="text-xl sm:text-2xl font-display font-bold text-ink-900 flex items-center gap-2">
@@ -242,7 +242,7 @@ export function StoreManager({
           </button>
         </div>
 
-        <form onSubmit={handleSaveForm} className="notepad-card p-4 sm:p-6 md:p-8 space-y-6">
+        <form onSubmit={handleSaveForm} className="notepad-card p-3.5 sm:p-6 md:p-8 space-y-6 w-full max-w-full min-w-0 overflow-hidden">
           {/* Gumroad URL Callout Box */}
           <div className="bg-peach-50 border-2 border-peach-200 rounded-2xl p-5 shadow-cozy-xs space-y-3">
             <div className="flex items-center justify-between gap-2">
@@ -562,7 +562,7 @@ export function StoreManager({
                   setEditingProduct({ ...editingProduct, coverImage: e.target.value })
                 }
                 placeholder="https://... or click Upload"
-                className="flex-1 px-4 py-2.5 rounded-xl border-2 border-tan-200 bg-cream-50 text-ink-900 font-medium text-sm focus:outline-none focus:border-peach-400"
+                className="flex-1 min-w-0 px-4 py-2.5 rounded-xl border-2 border-tan-200 bg-cream-50 text-ink-900 font-medium text-sm focus:outline-none focus:border-peach-400"
               />
               <label className="flex items-center justify-center px-4 py-2.5 bg-earth-100 text-earth-700 font-bold rounded-xl cursor-pointer hover:bg-earth-200 transition-colors whitespace-nowrap text-xs">
                 {uploadingKey === 'store-cover' ? (
@@ -695,7 +695,7 @@ export function StoreManager({
               }
             }}
             placeholder="e.g. https://sultancruz5.gumroad.com/l/pxowg"
-            className="flex-1 px-4 py-2.5 rounded-xl border border-tan-300 bg-white text-ink-900 text-xs focus:outline-none focus:border-peach-400"
+            className="flex-1 min-w-0 px-4 py-2.5 rounded-xl border border-tan-300 bg-white text-ink-900 text-xs focus:outline-none focus:border-peach-400"
           />
           <button
             type="button"
@@ -757,7 +757,7 @@ export function StoreManager({
           {filteredProducts.map((product, index) => (
             <div
               key={product.id}
-              className="notepad-card p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-all hover:shadow-cozy-sm"
+              className="notepad-card p-3.5 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-all hover:shadow-cozy-sm w-full max-w-full min-w-0 overflow-hidden"
             >
               {/* Product Info */}
               <div className="flex items-start sm:items-center gap-4 flex-1 min-w-0">

@@ -461,10 +461,10 @@ function AppContent() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col w-full max-w-full overflow-x-clip">
       {!selectedStory && <Header view={view} onNavigate={handleNavigate} />}
 
-      <main className="flex-1 flex flex-col">{renderMainContent()}</main>
+      <main className="flex-1 flex flex-col w-full max-w-full min-w-0 overflow-x-clip">{renderMainContent()}</main>
 
       {!selectedStory && <CtaFooter onNavigate={handleNavigate} />}
       {!selectedStory && <CookieConsent />}

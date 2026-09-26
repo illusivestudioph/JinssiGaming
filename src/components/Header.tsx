@@ -75,30 +75,30 @@ export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View)
 
   return (
     <>
-      <header className="site-header bg-cream-100 border-b-2 border-tan-200 sticky top-0 z-40 transition-all duration-300">
-        <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
+      <header className="site-header bg-cream-100 border-b-2 border-tan-200 sticky top-0 z-40 transition-all duration-300 w-full max-w-full overflow-x-clip">
+        <div className="max-w-screen-2xl mx-auto px-3 sm:px-6 lg:px-8 py-2.5 sm:py-3.5 flex items-center justify-between gap-2 w-full max-w-full min-w-0">
           
           {/* LOGO WITH SECRET TRIGGER */}
-          <div className="site-logo-link flex items-center gap-3 cursor-pointer select-none group transition-all duration-300" onClick={handleLogoClick}>
+          <div className="site-logo-link flex items-center gap-2 sm:gap-3 cursor-pointer select-none group transition-all duration-300 shrink-0" onClick={handleLogoClick}>
             <img
               src={getOptimizedImageUrl(logoImage, { width: 160, quality: 80, format: 'webp' })}
               alt="Site Logo"
               decoding="async"
-              width={40}
-              height={40}
-              className="site-logo-img h-10 w-10 object-contain transition-all duration-300"
+              width={36}
+              height={36}
+              className="site-logo-img h-9 w-9 sm:h-10 sm:w-10 object-contain transition-all duration-300"
             />
             <MagneticText
               as="span"
               text="Jinssi"
-              className="site-logo-text font-display font-bold text-xl sm:text-2xl text-ink-900 transition-all duration-300"
+              className="site-logo-text font-display font-bold text-lg sm:text-2xl text-ink-900 transition-all duration-300"
               strength={0.35}
               radius={85}
               maxDisplacement={12}
             />
           </div>
 
-          <div className="flex items-center gap-3 sm:gap-4">
+          <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
             <nav className="hidden items-center gap-2 md:flex">
               <button aria-current={view === 'home' ? 'page' : undefined} onClick={() => handleNavigate('home')} className={`site-nav-link ${view === 'home' ? 'text-peach-500 is-active' : 'text-tan-600'}`}>Home</button>
               <button aria-current={view === 'walkthroughs' ? 'page' : undefined} onClick={() => handleNavigate('walkthroughs')} className={`site-nav-link ${view === 'walkthroughs' ? 'text-peach-500 is-active' : 'text-tan-600'}`}>Walkthroughs</button>
@@ -179,7 +179,7 @@ export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View)
             <button
               type="button"
               onClick={() => setIsChatOpen(true)}
-              className="flex items-center gap-1.5 bg-cream-50/90 hover:bg-cream-100 border border-tan-300/80 hover:border-peach-400 rounded-full px-2.5 py-1 shadow-cozy-sm transition-all text-xs font-bold text-ink-800 hover:text-peach-600 select-none cursor-pointer"
+              className="flex items-center gap-1.5 bg-cream-50/90 hover:bg-cream-100 border border-tan-300/80 hover:border-peach-400 rounded-full px-2 sm:px-2.5 py-1 shadow-cozy-sm transition-all text-xs font-bold text-ink-800 hover:text-peach-600 select-none cursor-pointer"
               title="Open Cozy Game Chat (World & DMs)"
               aria-label="Open chat"
             >
@@ -204,7 +204,7 @@ export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View)
                   bannerText: profile.bannerText,
                 });
               }}
-              className="flex items-center gap-2 bg-cream-50/90 hover:bg-cream-100 border border-tan-300/80 hover:border-peach-400 rounded-full pl-1.5 pr-3 py-1 shadow-cozy-sm transition-all text-xs font-bold text-ink-900 group select-none cursor-pointer"
+              className="flex items-center gap-1.5 sm:gap-2 bg-cream-50/90 hover:bg-cream-100 border border-tan-300/80 hover:border-peach-400 rounded-full pl-1 pr-1.5 sm:pl-1.5 sm:pr-3 py-0.5 sm:py-1 shadow-cozy-sm transition-all text-xs font-bold text-ink-900 group select-none cursor-pointer"
               title="View Public Profile Card & Banner"
               aria-label="Open member profile"
             >
