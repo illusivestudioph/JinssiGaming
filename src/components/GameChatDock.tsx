@@ -532,12 +532,14 @@ export function GameChatDock() {
         <button
           type="button"
           onClick={() => setIsOpen(true)}
-          className="px-4 py-2.5 rounded-2xl shadow-xl flex items-center gap-3 border-2 transition-transform hover:scale-105 active:scale-95 cursor-pointer"
+          className="p-2.5 sm:px-4 sm:py-2.5 rounded-full sm:rounded-2xl shadow-xl flex items-center gap-3 border-2 transition-transform hover:scale-105 active:scale-95 cursor-pointer"
           style={{
             backgroundColor: 'var(--card-bg, #fefcf7)',
             borderColor: 'var(--theme-accent, #fd9a4d)',
             color: 'var(--text-main, #3a2e22)',
           }}
+          title="Open Cozy Game Chat"
+          aria-label="Open Cozy Game Chat"
         >
           <div className="relative flex items-center">
             <div
@@ -546,14 +548,9 @@ export function GameChatDock() {
             >
               <StreamlinePencil className="w-4 h-4" />
             </div>
-            {/* Online Ping Indicator */}
-            <span className="absolute -top-1 -right-1 flex h-3 w-3">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500 border border-white" />
-            </span>
           </div>
 
-          <div className="text-left">
+          <div className="text-left hidden sm:block">
             <div className="text-xs font-bold font-display leading-tight">Cozy Game Chat</div>
             <div className="text-[10px] text-tan-500 font-semibold">World & DMs Active</div>
           </div>

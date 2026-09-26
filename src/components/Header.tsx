@@ -118,8 +118,8 @@ export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View)
               )}
             </nav>
 
-            {/* Persistent Header Music & Ambience Control */}
-            <div className="header-music-pill flex items-center gap-1.5 bg-cream-50/90 border border-tan-300/80 rounded-full px-2.5 py-1 shadow-cozy-sm transition-all duration-300">
+            {/* Desktop Only: Full Music & Ambience Pill */}
+            <div className="header-music-pill hidden md:flex items-center gap-1.5 bg-cream-50/90 border border-tan-300/80 rounded-full px-2.5 py-1 shadow-cozy-sm transition-all duration-300">
               <button
                 type="button"
                 onClick={() => void togglePlayback()}
@@ -136,7 +136,7 @@ export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View)
                 >
                   {playing ? <StreamlinePause className="w-3 h-3" /> : <StreamlineMusic className="w-3 h-3" />}
                 </span>
-                <span className="hidden sm:inline font-sans text-xs">
+                <span className="font-sans text-xs">
                   {playing ? (muted ? 'Muted' : 'Music On') : 'BGM'}
                 </span>
               </button>
@@ -176,7 +176,7 @@ export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View)
               )}
             </div>
 
-            {/* Cozy Member Profile Chip */}
+            {/* Desktop Only: Member Profile Chip */}
             <button
               type="button"
               onClick={() => {
@@ -193,31 +193,46 @@ export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View)
                   bannerText: profile.bannerText,
                 });
               }}
-              className="flex items-center gap-1.5 sm:gap-2 bg-cream-50/90 hover:bg-cream-100 border border-tan-300/80 hover:border-peach-400 rounded-full p-1 sm:pl-1.5 sm:pr-3 sm:py-1 shadow-cozy-sm transition-all text-xs font-bold text-ink-900 group select-none cursor-pointer"
+              className="hidden md:flex items-center gap-2 bg-cream-50/90 hover:bg-cream-100 border border-tan-300/80 hover:border-peach-400 rounded-full pl-1.5 pr-3 py-1 shadow-cozy-sm transition-all text-xs font-bold text-ink-900 group select-none cursor-pointer"
               title="View Public Profile Card & Banner"
               aria-label="Open member profile"
             >
-              <CozyAvatar config={profile.avatarConfig} size={28} showBorder={false} />
-              <span className="hidden sm:inline max-w-[90px] truncate text-ink-800 group-hover:text-peach-600">
+              <CozyAvatar config={profile.avatarConfig} size={26} showBorder={false} />
+              <span className="max-w-[100px] truncate text-ink-800 group-hover:text-peach-600">
                 {user ? `@${profile.username}` : 'Guest'}
               </span>
               {profile.isCreator && isCreatorEmail(user?.email) && (
                 <span
-                  className="hidden sm:inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-extrabold uppercase tracking-wide bg-gradient-to-r from-amber-500 to-peach-500 text-white shadow-xs"
+                  className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-extrabold uppercase tracking-wide bg-gradient-to-r from-amber-500 to-peach-500 text-white shadow-xs"
                   title="Verified Site Creator & Developer"
                 >
                   DEV
                 </span>
               )}
               <span
-                className={`hidden sm:inline-block w-2 h-2 rounded-full ${user ? 'bg-emerald-500 ring-2 ring-emerald-200' : 'bg-amber-400'}`}
+                className={`w-2 h-2 rounded-full ${user ? 'bg-emerald-500 ring-2 ring-emerald-200' : 'bg-amber-400'}`}
                 title={user ? 'Signed in with Google' : 'Browsing as Guest'}
               />
             </button>
 
+            {/* Mobile Only: Minimal Clean Controls (Single Music Icon + Menu Button) */}
             <button
               type="button"
-              className="rounded-xl border-2 border-tan-200 bg-cream-50 p-2 text-tan-600 shadow-cozy-sm transition-colors hover:border-peach-300 hover:text-peach-500 md:hidden flex items-center justify-center h-9 w-9"
+              onClick={() => void togglePlayback()}
+              className={`h-9 w-9 rounded-xl border-2 shadow-cozy-sm transition-all md:hidden flex items-center justify-center cursor-pointer active:scale-95 ${
+                playing
+                  ? 'bg-peach-100 border-peach-400 text-peach-700 animate-pulse-gentle'
+                  : 'bg-cream-50 border-tan-200 text-tan-600 hover:text-ink-900'
+              }`}
+              title={playing ? 'Pause background music' : 'Play background music'}
+              aria-label={playing ? 'Pause music' : 'Play music'}
+            >
+              {playing ? <StreamlinePause className="w-4 h-4" /> : <StreamlineMusic className="w-4 h-4" />}
+            </button>
+
+            <button
+              type="button"
+              className="rounded-xl border-2 border-tan-200 bg-cream-50 p-2 text-tan-600 shadow-cozy-sm transition-colors hover:border-peach-300 hover:text-peach-500 md:hidden flex items-center justify-center h-9 w-9 active:scale-95 cursor-pointer"
               onClick={() => {
                 playDropdownSfx();
                 setMobileMenuOpen((open) => !open);
