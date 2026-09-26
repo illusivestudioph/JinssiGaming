@@ -55,6 +55,7 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
   const [showCongratulations, setShowCongratulations] = useState(false);
   const [linkCopied, setLinkCopied] = useState(false);
   const tuturoRef = useRef<HTMLDivElement | null>(null);
+  const [mediaTab, setMediaTab] = useState<'trailer' | 'cover'>(() => game.video ? 'trailer' : 'cover');
 
   // Table of Contents navigation state
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>(() =>
@@ -232,39 +233,148 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
         Back to all games
       </button>
 
-      {/* Game header with cover image */}
-      <div className="cozy-card notepad-card mb-8 animate-fade-in">
-        <div 
-          className="h-48 sm:h-56 relative overflow-hidden"
-          style={{
-            borderTopLeftRadius: 'calc(1.2rem - 0.16rem)',
-            borderTopRightRadius: 'calc(0.7rem - 0.16rem)',
-          }}
-        >
-          <img
-            src={getOptimizedImageUrl(game.coverImage, { width: 1200, quality: 80, format: 'webp' })}
-            alt={game.coverAlt}
-            loading="lazy"
-            decoding="async"
-            className="w-full h-full object-cover"
+      {/* Game store style media hero showcase */}
+      <div className="cozy-card notepad-card mb-8 animate-fade-in overflow-hidden">
+        {game.video ? (
+          <div>
+            {/* Store-style media tabs */}
+            <div className="flex items-center justify-between px-4 sm:px-6 pt-4 pb-2 bg-cream-100/70 border-b border-tan-200">
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setMediaTab('trailer')}
+                  className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+                    mediaTab === 'trailer'
+                      ? 'bg-peach-500 text-white shadow-cozy-xs scale-[1.02]'
+                      : 'bg-white text-ink-700 border border-tan-200 hover:bg-peach-50'
+                  }`}
+                >
+                  <Play className="w-3.5 h-3.5" />
+                  <span>Gameplay Trailer</span>
+                  {game.video === 'placeholder' && (
+                    <span className="text-[10px] bg-peach-200/90 text-peach-900 px-1.5 py-0.2 rounded font-bold">
+                      Soon
+                    </span>
+                  )}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMediaTab('cover')}
+                  className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+                    mediaTab === 'cover'
+                      ? 'bg-peach-500 text-white shadow-cozy-xs scale-[1.02]'
+                      : 'bg-white text-ink-700 border border-tan-200 hover:bg-peach-50'
+                  }`}
+                >
+                  <ImageIcon className="w-3.5 h-3.5" />
+                  <span>Cover Artwork</span>
+                </button>
+              </div>
+
+              <span
+                className="pill text-cream-50 text-[11px] shadow-cozy-xs category-accent-pill hidden sm:inline-block"
+                style={{ backgroundColor: 'var(--theme-accent)' }}
+              >
+                {game.category}
+              </span>
+            </div>
+
+            {/* Active Media Display */}
+            {mediaTab === 'trailer' ? (
+              game.video === 'placeholder' ? (
+                <div className="p-8 sm:p-12 bg-gradient-to-b from-peach-50 to-cream-100 flex flex-col items-center justify-center text-center relative overflow-hidden">
+                  <div className="w-16 h-16 rounded-2xl bg-peach-500 text-white flex items-center justify-center mb-4 shadow-cozy-sm">
+                    <Film className="w-8 h-8" />
+                  </div>
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-peach-200 text-peach-800 text-xs font-bold uppercase tracking-wider mb-2">
+                    <span className="w-2 h-2 rounded-full bg-peach-500 animate-pulse" />
+                    Official Gameplay Trailer In Production
+                  </span>
+                  <h3 className="font-display font-bold text-xl sm:text-2xl text-ink-900 mb-2">
+                    {game.videoTitle || `${game.title} Gameplay Overview`}
+                  </h3>
+                  <p className="text-xs sm:text-sm text-ink-600 max-w-lg leading-relaxed mb-4">
+                    The official gameplay overview video and walkthrough trailer is currently being recorded and edited. Explore the comprehensive step-by-step guide below in the meantime!
+                  </p>
+                  <div className="flex items-center gap-2 text-xs font-semibold text-tan-500">
+                    <span>⚡ Crystal Clear 60FPS</span>
+                    <span>•</span>
+                    <span>Lossless WebM VP9</span>
+                    <span>•</span>
+                    <span>Full Guide Below</span>
+                  </div>
+                </div>
+              ) : (
+                <div className="relative bg-ink-950 flex flex-col items-center justify-center w-full aspect-video max-h-[520px]">
+                  <div className="absolute top-3 left-3 z-10 pointer-events-none">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-ink-900/85 backdrop-blur-md text-xs font-bold text-cream-100 shadow-sm border border-white/10">
+                      <Film className="w-3.5 h-3.5 text-peach-400" />
+                      <span>{game.videoTitle || `${game.title} Gameplay Overview Trailer`}</span>
+                    </span>
+                  </div>
+                  <video
+                    controls
+                    playsInline
+                    preload="metadata"
+                    poster={game.videoPoster || getOptimizedImageUrl(game.coverImage, { width: 1200, quality: 80, format: 'webp' })}
+                    className="w-full h-full object-contain bg-black"
+                  >
+                    <source src={game.video} type={game.video.endsWith('.webm') ? 'video/webm' : 'video/mp4'} />
+                    Your browser does not support the video tag.
+                  </video>
+                </div>
+              )
+            ) : (
+              <div className="h-56 sm:h-72 relative overflow-hidden">
+                <img
+                  src={getOptimizedImageUrl(game.coverImage, { width: 1200, quality: 80, format: 'webp' })}
+                  alt={game.coverAlt}
+                  loading="lazy"
+                  decoding="async"
+                  className="w-full h-full object-cover"
+                />
+                <div
+                  className="absolute inset-0"
+                  style={{
+                    background: `linear-gradient(180deg, transparent 30%, var(--theme-accent)33 100%)`,
+                  }}
+                />
+              </div>
+            )}
+          </div>
+        ) : (
+          <div 
+            className="h-48 sm:h-56 relative overflow-hidden"
             style={{
               borderTopLeftRadius: 'calc(1.2rem - 0.16rem)',
               borderTopRightRadius: 'calc(0.7rem - 0.16rem)',
             }}
-          />
-          <div
-            className="absolute inset-0"
-            style={{
-              background: `linear-gradient(180deg, transparent 30%, var(--theme-accent)33 100%)`,
-            }}
-          />
-          <span
-            className="absolute bottom-4 left-4 pill text-cream-50 shadow-cozy-sm backdrop-blur-sm category-accent-pill"
-            style={{ backgroundColor: 'var(--theme-accent)' }}
           >
-            {game.category}
-          </span>
-        </div>
+            <img
+              src={getOptimizedImageUrl(game.coverImage, { width: 1200, quality: 80, format: 'webp' })}
+              alt={game.coverAlt}
+              loading="lazy"
+              decoding="async"
+              className="w-full h-full object-cover"
+              style={{
+                borderTopLeftRadius: 'calc(1.2rem - 0.16rem)',
+                borderTopRightRadius: 'calc(0.7rem - 0.16rem)',
+              }}
+            />
+            <div
+              className="absolute inset-0"
+              style={{
+                background: `linear-gradient(180deg, transparent 30%, var(--theme-accent)33 100%)`,
+              }}
+            />
+            <span
+              className="absolute bottom-4 left-4 pill text-cream-50 shadow-cozy-sm backdrop-blur-sm category-accent-pill"
+              style={{ backgroundColor: 'var(--theme-accent)' }}
+            >
+              {game.category}
+            </span>
+          </div>
+        )}
         <div className="p-6">
           <h2 className="page-title font-display text-2xl sm:text-3xl font-700 text-ink-900 mb-1">
             {game.title}
@@ -275,6 +385,7 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
           <p className="text-base text-ink-700 leading-relaxed">
             {game.description}
           </p>
+
           <div className="mt-5 border-t border-tan-200 pt-4">
             <div className="flex flex-wrap items-center gap-2">
               <span className="mr-1 inline-flex items-center gap-2 text-sm font-bold text-ink-900">
@@ -627,6 +738,53 @@ function WalkthroughSectionCard({
           }`}
         />
       </button>
+
+      {/* Section Video or Placeholder */}
+      {isExpanded && section.video && (
+        <div className="px-4 sm:px-5 pb-4 animate-fade-in">
+          <div className="h-px bg-cream-200 mb-3" />
+          {section.video === 'placeholder' ? (
+            <div className="rounded-2xl border-2 border-dashed border-peach-300 bg-peach-50/70 p-4 sm:p-5 flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
+              <div className="w-12 h-12 rounded-2xl bg-peach-500 text-white flex items-center justify-center flex-shrink-0 shadow-cozy-sm">
+                <Film className="w-6 h-6" />
+              </div>
+              <div className="flex-1">
+                <span className="inline-block text-[11px] font-bold uppercase tracking-wider text-peach-700 bg-peach-200/80 px-2 py-0.5 rounded-full mb-1">
+                  Section Video Guide Coming Soon
+                </span>
+                <h4 className="font-display font-bold text-ink-900 text-base">
+                  {section.title} Walkthrough Video
+                </h4>
+                <p className="text-xs text-ink-600 mt-0.5">
+                  A high-definition, cozy walkthrough video for this section is currently being recorded and edited.
+                </p>
+              </div>
+            </div>
+          ) : (
+            <div className="rounded-2xl overflow-hidden border-2 border-peach-200 bg-ink-950 shadow-cozy-sm">
+              <div className="p-3 bg-peach-500/10 border-b border-peach-200/30 flex items-center justify-between">
+                <span className="text-xs font-bold text-peach-300 flex items-center gap-1.5">
+                  <Film className="w-3.5 h-3.5 text-peach-400" />
+                  <span>{section.title} — Section Walkthrough</span>
+                </span>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-cream-200 bg-ink-900/60 px-2 py-0.5 rounded-full">
+                  WebM VP9
+                </span>
+              </div>
+              <video
+                src={section.video}
+                poster={section.videoPoster}
+                controls
+                playsInline
+                preload="metadata"
+                className="w-full max-h-[420px] object-contain bg-black"
+              >
+                Your browser does not support the video tag.
+              </video>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Steps */}
       {isExpanded && hasSteps && (

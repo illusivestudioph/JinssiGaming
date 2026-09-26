@@ -54,6 +54,12 @@ export function GameCard({ game, onClick, completedCount = 0 }: GameCardProps) {
           height={338}
           className="relative z-10 w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
         />
+        {game.video && (
+          <span className="absolute bottom-2 right-2 z-20 px-2 py-0.5 rounded-md bg-ink-900/85 backdrop-blur-md text-cream-100 text-[10px] font-bold flex items-center gap-1 shadow-sm border border-white/10">
+            <span>🎬</span>
+            <span>{game.video === 'placeholder' ? 'Trailer Soon' : 'Video Preview'}</span>
+          </span>
+        )}
       </div>
 
       {/* Card body */}

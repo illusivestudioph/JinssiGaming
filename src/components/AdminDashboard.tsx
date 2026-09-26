@@ -324,6 +324,17 @@ export function AdminDashboard() {
     setEditingGame({ ...editingGame, walkthrough: newWalkthrough });
   };
 
+  const updateSectionField = (
+    sectionIndex: number,
+    field: 'title' | 'video' | 'videoPoster' | 'videoTitle',
+    value: string
+  ) => {
+    if (!editingGame) return;
+    const newWalkthrough = [...editingGame.walkthrough];
+    newWalkthrough[sectionIndex] = { ...newWalkthrough[sectionIndex], [field]: value };
+    setEditingGame({ ...editingGame, walkthrough: newWalkthrough });
+  };
+
   const removeSection = (sectionIndex: number) => {
     if (!editingGame) return;
     const newWalkthrough = editingGame.walkthrough.filter((_, idx) => idx !== sectionIndex);
@@ -452,6 +463,191 @@ export function AdminDashboard() {
         setVideoProgressMap((prev) => {
           const next = { ...prev };
           delete next[stepKey];
+          return next;
+        });
+      }, 5000);
+    }
+  };
+
+  const handleGameVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const rawFile = e.target.files?.[0];
+    if (!rawFile || !editingGame) return;
+
+    const uploadKey = 'game-video';
+    setUploadedKey(null);
+    setUploadingKey(uploadKey);
+
+    try {
+      // 1. Auto-convert and compress video to web-optimized WebM directly in browser
+      const result = await convertVideoToWebFormat(rawFile, {
+        maxWidth: 1280,
+        maxHeight: 720,
+        targetFps: 30,
+        videoBitsPerSecond: 2_200_000,
+        onProgress: (p) => {
+          setVideoProgressMap((prev) => ({ ...prev, [uploadKey]: p }));
+        },
+      });
+
+      if (result.savedPercent > 0) {
+        setVideoStatsMap((prev) => ({
+          ...prev,
+          [uploadKey]: {
+            originalSize: result.originalSize,
+            optimizedSize: result.optimizedSize,
+            savedPercent: result.savedPercent,
+          },
+        }));
+      }
+
+      // 2. Upload optimized video to storage
+      setVideoProgressMap((prev) => ({
+        ...prev,
+        [uploadKey]: {
+          stage: 'finalizing',
+          percent: 96,
+          statusText: 'Uploading web-optimized video to storage...',
+        },
+      }));
+
+      const { publicUrl: videoUrl } = await uploadWalkthroughMedia(result.videoFile, 'game-videos');
+
+      // 3. Upload poster thumbnail if present
+      let posterUrl = '';
+      if (result.posterFile) {
+        const { publicUrl: posterPublicUrl } = await uploadWalkthroughMedia(result.posterFile, 'game-posters');
+        posterUrl = posterPublicUrl;
+      }
+
+      setEditingGame({
+        ...editingGame,
+        video: videoUrl,
+        videoPoster: posterUrl || editingGame.videoPoster,
+      });
+
+      // 4. Save to walkthrough_videos table
+      await saveWalkthroughVideoRecord({
+        id: `vid-${Date.now()}`,
+        game_id: editingGame.id,
+        title: `${editingGame.title} Walkthrough Video`,
+        video_url: videoUrl,
+        poster_url: posterUrl || undefined,
+        mime_type: result.mimeType,
+        original_filename: rawFile.name,
+        original_size_bytes: result.originalSize,
+        optimized_size_bytes: result.optimizedSize,
+        compression_ratio: result.savedPercent,
+        duration_seconds: result.duration ? Number(result.duration.toFixed(2)) : undefined,
+        width: result.width,
+        height: result.height,
+        is_placeholder: false,
+      });
+
+      setUploadedKey(uploadKey);
+    } catch (err: any) {
+      console.error('Game video upload failed:', err);
+      alert(`Could not process video upload: ${err?.message || 'Unknown error'}`);
+    } finally {
+      setUploadingKey(null);
+      setTimeout(() => {
+        setVideoProgressMap((prev) => {
+          const next = { ...prev };
+          delete next[uploadKey];
+          return next;
+        });
+      }, 5000);
+    }
+  };
+
+  const handleSectionVideoUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    sIndex: number
+  ) => {
+    const rawFile = e.target.files?.[0];
+    if (!rawFile || !editingGame) return;
+
+    const sectionKey = `section-video-${sIndex}`;
+    const section = editingGame.walkthrough[sIndex];
+    const sectionId = section?.id || `section-${Date.now()}`;
+
+    setUploadedKey(null);
+    setUploadingKey(sectionKey);
+
+    try {
+      // 1. Auto-convert and compress video to web-optimized WebM directly in browser
+      const result = await convertVideoToWebFormat(rawFile, {
+        maxWidth: 1280,
+        maxHeight: 720,
+        targetFps: 30,
+        videoBitsPerSecond: 2_200_000,
+        onProgress: (p) => {
+          setVideoProgressMap((prev) => ({ ...prev, [sectionKey]: p }));
+        },
+      });
+
+      if (result.savedPercent > 0) {
+        setVideoStatsMap((prev) => ({
+          ...prev,
+          [sectionKey]: {
+            originalSize: result.originalSize,
+            optimizedSize: result.optimizedSize,
+            savedPercent: result.savedPercent,
+          },
+        }));
+      }
+
+      // 2. Upload to storage
+      setVideoProgressMap((prev) => ({
+        ...prev,
+        [sectionKey]: {
+          stage: 'finalizing',
+          percent: 96,
+          statusText: 'Uploading web-optimized video to storage...',
+        },
+      }));
+
+      const { publicUrl: videoUrl } = await uploadWalkthroughMedia(result.videoFile, 'section-videos');
+
+      // 3. Upload poster thumbnail if present
+      let posterUrl = '';
+      if (result.posterFile) {
+        const { publicUrl: posterPublicUrl } = await uploadWalkthroughMedia(result.posterFile, 'section-posters');
+        posterUrl = posterPublicUrl;
+        updateSectionField(sIndex, 'videoPoster', posterUrl);
+      }
+
+      // 4. Update the section in editing game
+      updateSectionField(sIndex, 'video', videoUrl);
+
+      // 5. Save to walkthrough_videos table
+      await saveWalkthroughVideoRecord({
+        id: `vid-${Date.now()}`,
+        game_id: editingGame.id,
+        section_id: sectionId,
+        title: section?.title ? `${section.title} Section Video` : 'Walkthrough Section Video',
+        video_url: videoUrl,
+        poster_url: posterUrl || undefined,
+        mime_type: result.mimeType,
+        original_filename: rawFile.name,
+        original_size_bytes: result.originalSize,
+        optimized_size_bytes: result.optimizedSize,
+        compression_ratio: result.savedPercent,
+        duration_seconds: result.duration ? Number(result.duration.toFixed(2)) : undefined,
+        width: result.width,
+        height: result.height,
+        is_placeholder: false,
+      });
+
+      setUploadedKey(sectionKey);
+    } catch (err: any) {
+      console.error('Section video upload failed:', err);
+      alert(`Could not process video upload: ${err?.message || 'Unknown error'}`);
+    } finally {
+      setUploadingKey(null);
+      setTimeout(() => {
+        setVideoProgressMap((prev) => {
+          const next = { ...prev };
+          delete next[sectionKey];
           return next;
         });
       }, 5000);
@@ -680,6 +876,167 @@ export function AdminDashboard() {
                 {uploadedKey === 'game-cover' && <span className="self-center text-sm font-bold text-sage-600" role="status">✓ Complete</span>}
               </div>
             </div>
+
+            {/* Game Store Trailer & Gameplay Overview Video (WebM / MP4 or Video Placeholder) */}
+            <div className="md:col-span-2 p-5 rounded-2xl bg-peach-50/60 border-2 border-peach-200">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
+                <div>
+                  <label className="block font-bold text-ink-900 flex items-center gap-2 text-base">
+                    <Film size={20} className="text-peach-500" />
+                    <span>Gameplay Overview / Store Trailer Video</span>
+                  </label>
+                  <p className="text-xs text-ink-600 mt-0.5">
+                    Official gameplay preview showcase for this game (just like Steam &amp; Nintendo eShop store pages). Videos auto-convert to lightweight WebM VP9 in browser for seamless, fast playback.
+                  </p>
+                </div>
+                {editingGame.video === 'placeholder' ? (
+                  <span className="self-start sm:self-auto text-xs font-bold text-peach-700 bg-peach-100 px-3 py-1 rounded-full border border-peach-300 shadow-sm whitespace-nowrap">
+                    🎬 Trailer Placeholder Active
+                  </span>
+                ) : editingGame.video ? (
+                  <span className="self-start sm:self-auto text-xs font-bold text-sage-700 bg-sage-50 px-3 py-1 rounded-full border border-sage-200 shadow-sm whitespace-nowrap">
+                    ✓ Gameplay Trailer Attached
+                  </span>
+                ) : null}
+              </div>
+
+              <div className="mt-3 flex flex-wrap sm:flex-nowrap gap-2">
+                <input 
+                  value={editingGame.video || ''}
+                  onChange={(e) => setEditingGame({...editingGame, video: e.target.value})}
+                  className="flex-1 px-4 py-3 rounded-xl border-2 border-tan-200 focus:border-peach-400 focus:outline-none bg-white font-medium text-sm"
+                  placeholder="Paste video URL, or click 'Upload Gameplay Video', or 'Set Trailer Placeholder'..."
+                />
+                
+                {/* Upload Video Button with Auto WebM Conversion */}
+                <label className="flex items-center justify-center px-4 py-3 bg-peach-500 text-white font-bold rounded-xl cursor-pointer hover:bg-peach-600 transition-colors whitespace-nowrap shadow-cozy-xs">
+                  {uploadingKey === 'game-video' ? (
+                    <>
+                      <Loader2 size={18} className="mr-2 animate-spin" />
+                      <span>Converting to WebM...</span>
+                    </>
+                  ) : uploadedKey === 'game-video' ? (
+                    <>
+                      <CheckCircle size={18} className="mr-2" />
+                      <span>Uploaded</span>
+                    </>
+                  ) : (
+                    <>
+                      <Upload size={18} className="mr-2" />
+                      <span>Upload Gameplay Video</span>
+                    </>
+                  )}
+                  <input 
+                    type="file" 
+                    accept="video/*" 
+                    className="hidden" 
+                    disabled={uploadingKey === 'game-video'}
+                    onChange={handleGameVideoUpload} 
+                  />
+                </label>
+
+                {/* Video Placeholder Toggle */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (editingGame.video === 'placeholder') {
+                      setEditingGame({ ...editingGame, video: '' });
+                    } else {
+                      setEditingGame({ 
+                        ...editingGame, 
+                        video: 'placeholder', 
+                        videoTitle: editingGame.videoTitle || `${editingGame.title} Gameplay Overview Trailer` 
+                      });
+                    }
+                  }}
+                  className={`px-4 py-3 rounded-xl font-bold transition-colors whitespace-nowrap border-2 ${
+                    editingGame.video === 'placeholder'
+                      ? 'bg-peach-100 text-peach-700 border-peach-300'
+                      : 'bg-white text-ink-800 border-tan-200 hover:bg-peach-50 hover:text-peach-600 hover:border-peach-300'
+                  }`}
+                >
+                  {editingGame.video === 'placeholder' ? '✕ Remove Placeholder' : '🎬 Set Trailer Placeholder'}
+                </button>
+              </div>
+
+              {/* Optional Trailer Title / Badge */}
+              <div className="mt-2.5">
+                <input 
+                  value={editingGame.videoTitle || ''}
+                  onChange={(e) => setEditingGame({...editingGame, videoTitle: e.target.value})}
+                  className="w-full px-3.5 py-2 rounded-lg border border-tan-200 focus:border-peach-400 focus:outline-none bg-white text-xs text-ink-800"
+                  placeholder="Trailer title / badge (e.g. Official Gameplay Overview Trailer, 4K Cozy Preview)..."
+                />
+              </div>
+
+              {/* Video conversion progress bar */}
+              {uploadingKey === 'game-video' && videoProgressMap['game-video'] && (
+                <div className="mt-3 p-3.5 rounded-xl bg-peach-50 border border-peach-200 animate-fade-in text-xs space-y-2">
+                  <div className="flex items-center justify-between text-peach-800 font-bold">
+                    <span className="flex items-center gap-2">
+                      <Loader2 size={14} className="animate-spin text-peach-600" />
+                      {videoProgressMap['game-video'].statusText}
+                    </span>
+                    <span>{videoProgressMap['game-video'].percent}%</span>
+                  </div>
+                  <div className="w-full bg-peach-200/70 h-2.5 rounded-full overflow-hidden">
+                    <div 
+                      className="bg-peach-500 h-full transition-all duration-300 rounded-full"
+                      style={{ width: `${videoProgressMap['game-video'].percent}%` }}
+                    />
+                  </div>
+                  <p className="text-[11px] text-peach-700">
+                    ⚡ Automatically converting to WebM VP9 in browser to minimize file size by 70–90% while maintaining high visual quality.
+                  </p>
+                </div>
+              )}
+
+              {/* Compression stats banner */}
+              {videoStatsMap['game-video'] && (
+                <div className="mt-2.5 px-4 py-2 rounded-xl bg-sage-50 border border-sage-200 text-sage-800 text-xs flex items-center justify-between animate-fade-in font-medium">
+                  <span>
+                    🎉 Converted to WebM! Saved {videoStatsMap['game-video'].savedPercent}% (
+                    {formatBytes(videoStatsMap['game-video'].originalSize)} ➔ {formatBytes(videoStatsMap['game-video'].optimizedSize)})
+                  </span>
+                  <span className="text-[10px] uppercase font-bold text-sage-600 bg-sage-100 px-1.5 py-0.5 rounded">Lossless Fidelity</span>
+                </div>
+              )}
+
+              {/* Video Preview or Placeholder Notice */}
+              {editingGame.video === 'placeholder' ? (
+                <div className="mt-3 p-4 rounded-xl border-2 border-dashed border-peach-300 bg-peach-50/60 flex items-center gap-3 text-xs text-peach-800">
+                  <div className="w-10 h-10 rounded-xl bg-peach-200/80 text-peach-600 flex items-center justify-center flex-shrink-0">
+                    <Film size={22} />
+                  </div>
+                  <div className="flex-1">
+                    <strong className="block font-bold text-sm text-peach-900 mb-0.5">Gameplay Trailer Placeholder Active:</strong>
+                    Visitors to this game page will see a cozy store-style &quot;Gameplay Overview Video In Production&quot; showcase at the top of the guide until you upload the finished gameplay video!
+                  </div>
+                </div>
+              ) : editingGame.video ? (
+                <div className="mt-3 relative rounded-xl overflow-hidden border-2 border-tan-200 bg-ink-950 p-2 flex flex-col items-center">
+                  <video
+                    src={editingGame.video}
+                    poster={editingGame.videoPoster}
+                    controls
+                    className="max-h-56 max-w-full rounded-lg object-contain bg-black"
+                  />
+                  <div className="flex items-center justify-between w-full px-3 py-2 text-cream-200 text-xs">
+                    <span className="font-semibold flex items-center gap-1.5">
+                      <Film size={14} className="text-peach-400" />
+                      <span>{editingGame.videoTitle || 'Gameplay Overview Trailer'} Preview</span>
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setEditingGame({ ...editingGame, video: '', videoPoster: '' })}
+                      className="text-peach-400 hover:text-peach-300 font-bold hover:underline"
+                    >
+                      Remove Video
+                    </button>
+                  </div>
+                </div>
+              ) : null}
+            </div>
           </div>
 
           <h3 className="text-2xl font-display font-bold text-ink-900 mb-4">Walkthrough Guides</h3>
@@ -703,6 +1060,145 @@ export function AdminDashboard() {
                     onChange={(e) => updateSectionTitle(sIndex, e.target.value)}
                     className="w-full px-4 py-2 rounded-lg border-2 border-tan-200 focus:border-peach-400 focus:outline-none font-bold text-lg"
                   />
+                </div>
+
+                {/* Section Walkthrough Video (WebM / MP4) */}
+                <div className="mb-6 p-4 bg-cream-50/80 rounded-xl border border-tan-200">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 mb-2">
+                    <label className="text-xs font-bold text-tan-600 flex items-center gap-1.5 uppercase tracking-wider">
+                      <Film size={14} className="text-peach-500" />
+                      <span>Section {sIndex + 1} Video Guide (Auto-Converts to WebM)</span>
+                    </label>
+                    {section.video === 'placeholder' ? (
+                      <span className="self-start sm:self-auto text-[11px] font-bold text-peach-600 bg-peach-100 px-2 py-0.5 rounded-full">
+                        🎬 Placeholder Active
+                      </span>
+                    ) : section.video ? (
+                      <span className="self-start sm:self-auto text-[11px] font-bold text-sage-600 bg-sage-50 px-2 py-0.5 rounded-full">
+                        ✓ Video Attached
+                      </span>
+                    ) : null}
+                  </div>
+
+                  <div className="flex flex-wrap sm:flex-nowrap gap-2">
+                    <input 
+                      value={section.video || ''}
+                      onChange={(e) => updateSectionField(sIndex, 'video', e.target.value)}
+                      className="flex-1 px-3 py-2 rounded-lg border border-tan-200 focus:border-peach-400 focus:outline-none text-sm bg-white"
+                      placeholder="https://... or 'placeholder' or click Upload Video"
+                    />
+
+                    {/* Upload Video Button with Auto WebM Conversion */}
+                    <label className="px-3.5 py-2 bg-peach-500 text-white font-bold rounded-lg cursor-pointer hover:bg-peach-600 transition-colors text-xs flex items-center gap-1.5 whitespace-nowrap shadow-cozy-xs">
+                      {uploadingKey === `section-video-${sIndex}` ? (
+                        <>
+                          <Loader2 size={14} className="animate-spin" />
+                          <span>Converting...</span>
+                        </>
+                      ) : uploadedKey === `section-video-${sIndex}` ? (
+                        <>
+                          <CheckCircle size={14} />
+                          <span>Uploaded</span>
+                        </>
+                      ) : (
+                        <>
+                          <Upload size={14} />
+                          <span>Upload Video</span>
+                        </>
+                      )}
+                      <input 
+                        type="file" 
+                        accept="video/*" 
+                        className="hidden" 
+                        disabled={uploadingKey === `section-video-${sIndex}`}
+                        onChange={(e) => handleSectionVideoUpload(e, sIndex)}
+                      />
+                    </label>
+
+                    {/* Quick Placeholder Toggle */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (section.video === 'placeholder') {
+                          updateSectionField(sIndex, 'video', '');
+                        } else {
+                          updateSectionField(sIndex, 'video', 'placeholder');
+                        }
+                      }}
+                      className={`px-3 py-2 rounded-lg text-xs font-bold transition-colors whitespace-nowrap border ${
+                        section.video === 'placeholder'
+                          ? 'bg-peach-100 text-peach-700 border-peach-300'
+                          : 'bg-white text-ink-800 border-tan-200 hover:bg-peach-50 hover:text-peach-600'
+                      }`}
+                    >
+                      {section.video === 'placeholder' ? '✕ Remove Placeholder' : '🎬 Set Video Placeholder'}
+                    </button>
+                  </div>
+
+                  {/* Section Video conversion progress bar */}
+                  {uploadingKey === `section-video-${sIndex}` && videoProgressMap[`section-video-${sIndex}`] && (
+                    <div className="mt-2.5 p-3 rounded-lg bg-peach-50 border border-peach-200 animate-fade-in text-xs space-y-1.5">
+                      <div className="flex items-center justify-between text-peach-800 font-bold">
+                        <span className="flex items-center gap-1.5">
+                          <Loader2 size={13} className="animate-spin text-peach-600" />
+                          {videoProgressMap[`section-video-${sIndex}`].statusText}
+                        </span>
+                        <span>{videoProgressMap[`section-video-${sIndex}`].percent}%</span>
+                      </div>
+                      <div className="w-full bg-peach-200/70 h-2 rounded-full overflow-hidden">
+                        <div 
+                          className="bg-peach-500 h-full transition-all duration-300 rounded-full"
+                          style={{ width: `${videoProgressMap[`section-video-${sIndex}`].percent}%` }}
+                        />
+                      </div>
+                      <p className="text-[10px] text-peach-700">
+                        ⚡ Converting in browser to WebM VP9 (~70–90% smaller, lossless quality).
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Section Video Compression stats banner */}
+                  {videoStatsMap[`section-video-${sIndex}`] && (
+                    <div className="mt-2 px-3 py-1.5 rounded-lg bg-sage-50 border border-sage-200 text-sage-800 text-xs flex items-center justify-between animate-fade-in font-medium">
+                      <span>
+                        🎉 Converted to WebM! Saved {videoStatsMap[`section-video-${sIndex}`].savedPercent}% (
+                        {formatBytes(videoStatsMap[`section-video-${sIndex}`].originalSize)} ➔ {formatBytes(videoStatsMap[`section-video-${sIndex}`].optimizedSize)})
+                      </span>
+                      <span className="text-[10px] uppercase font-bold text-sage-600 bg-sage-100 px-1 py-0.5 rounded">High Quality</span>
+                    </div>
+                  )}
+
+                  {/* Section Video Preview or Placeholder Notice */}
+                  {section.video === 'placeholder' ? (
+                    <div className="mt-2.5 p-3 rounded-lg border border-dashed border-peach-300 bg-peach-50/60 flex items-center gap-2.5 text-xs text-peach-800">
+                      <Film size={18} className="text-peach-500 flex-shrink-0" />
+                      <div>
+                        <span className="font-bold text-peach-900">Section Video Placeholder Active:</span> Readers will see a cozy video placeholder banner for this section until video is uploaded.
+                      </div>
+                    </div>
+                  ) : section.video ? (
+                    <div className="mt-2.5 relative rounded-lg overflow-hidden border border-tan-200 bg-ink-950 p-2 flex flex-col items-center">
+                      <video
+                        src={section.video}
+                        poster={section.videoPoster}
+                        controls
+                        className="max-h-40 max-w-full rounded object-contain bg-black"
+                      />
+                      <div className="flex items-center justify-between w-full px-2 py-1 text-cream-200 text-xs">
+                        <span>🎬 Section {sIndex + 1} Video Preview</span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            updateSectionField(sIndex, 'video', '');
+                            updateSectionField(sIndex, 'videoPoster', '');
+                          }}
+                          className="text-peach-400 hover:text-peach-300 font-bold hover:underline"
+                        >
+                          Remove Video
+                        </button>
+                      </div>
+                    </div>
+                  ) : null}
                 </div>
 
                 <div className="flex flex-col gap-4 pl-4 border-l-4 border-tan-200">

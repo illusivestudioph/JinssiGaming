@@ -14,6 +14,9 @@ export interface WalkthroughStep {
 export interface WalkthroughSection {
   id: string;
   title: string;
+  video?: string;          // Direct video URL or 'placeholder'
+  videoPoster?: string;    // Poster image URL
+  videoTitle?: string;     // Title for section video
   steps: WalkthroughStep[];
 }
 
@@ -28,6 +31,9 @@ export interface Game {
   accentColor: string;
   coverImage: string;
   coverAlt: string;
+  video?: string;          // Direct video URL or 'placeholder'
+  videoPoster?: string;    // Poster image URL
+  videoTitle?: string;     // Title or badge for the walkthrough video
   walkthrough: WalkthroughSection[];
 }
 

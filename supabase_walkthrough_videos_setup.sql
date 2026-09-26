@@ -2,6 +2,11 @@
 -- Jinssi Gaming: Walkthrough Videos & Media Storage Setup
 -- Run this in your Supabase SQL Editor:
 -- https://supabase.com/dashboard/project/esjwkwgjnesyvnvuonmd/sql/new
+--
+-- Security Model:
+-- - READ (SELECT): Public (all site visitors can stream and watch videos)
+-- - WRITE (INSERT, UPDATE, DELETE): Strictly ADMIN ONLY (mjhanesultancruz1514@gmail.com)
+--   Regular users who sign in to chat or comment CANNOT upload or edit videos.
 -- ==============================================================================
 
 -- 1. Create walkthrough_videos table
@@ -27,7 +32,7 @@ CREATE TABLE IF NOT EXISTS public.walkthrough_videos (
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
--- 2. Indexes for lightning-fast retrieval by game and walkthrough step
+-- 2. Indexes for fast retrieval by game and walkthrough step
 CREATE INDEX IF NOT EXISTS idx_walkthrough_videos_game 
 ON public.walkthrough_videos(game_id);
 
@@ -40,30 +45,44 @@ ON public.walkthrough_videos(created_at DESC);
 -- 3. Enable Row Level Security (RLS)
 ALTER TABLE public.walkthrough_videos ENABLE ROW LEVEL SECURITY;
 
--- 4. Allow public read access to videos
+-- 4. Public READ access: Anyone (visitors & players) can watch walkthrough videos
 DROP POLICY IF EXISTS "Allow public read walkthrough_videos" ON public.walkthrough_videos;
 CREATE POLICY "Allow public read walkthrough_videos"
 ON public.walkthrough_videos FOR SELECT
 USING (true);
 
--- 5. Allow inserting video records
+-- 5. ADMIN ONLY INSERT: Strictly restricted to the verified site admin / creator email
 DROP POLICY IF EXISTS "Allow insert walkthrough_videos" ON public.walkthrough_videos;
-CREATE POLICY "Allow insert walkthrough_videos"
+DROP POLICY IF EXISTS "Admin only insert walkthrough_videos" ON public.walkthrough_videos;
+CREATE POLICY "Admin only insert walkthrough_videos"
 ON public.walkthrough_videos FOR INSERT
-WITH CHECK (true);
+TO authenticated
+WITH CHECK (
+    auth.jwt() ->> 'email' = 'mjhanesultancruz1514@gmail.com'
+);
 
--- 6. Allow updating video records
+-- 6. ADMIN ONLY UPDATE: Strictly restricted to the verified site admin / creator email
 DROP POLICY IF EXISTS "Allow update walkthrough_videos" ON public.walkthrough_videos;
-CREATE POLICY "Allow update walkthrough_videos"
+DROP POLICY IF EXISTS "Admin only update walkthrough_videos" ON public.walkthrough_videos;
+CREATE POLICY "Admin only update walkthrough_videos"
 ON public.walkthrough_videos FOR UPDATE
-USING (true)
-WITH CHECK (true);
+TO authenticated
+USING (
+    auth.jwt() ->> 'email' = 'mjhanesultancruz1514@gmail.com'
+)
+WITH CHECK (
+    auth.jwt() ->> 'email' = 'mjhanesultancruz1514@gmail.com'
+);
 
--- 7. Allow deleting video records
+-- 7. ADMIN ONLY DELETE: Strictly restricted to the verified site admin / creator email
 DROP POLICY IF EXISTS "Allow delete walkthrough_videos" ON public.walkthrough_videos;
-CREATE POLICY "Allow delete walkthrough_videos"
+DROP POLICY IF EXISTS "Admin only delete walkthrough_videos" ON public.walkthrough_videos;
+CREATE POLICY "Admin only delete walkthrough_videos"
 ON public.walkthrough_videos FOR DELETE
-USING (true);
+TO authenticated
+USING (
+    auth.jwt() ->> 'email' = 'mjhanesultancruz1514@gmail.com'
+);
 
 -- ==============================================================================
 -- 8. Storage Bucket Setup (site-videos)
@@ -82,27 +101,43 @@ ON CONFLICT (id) DO UPDATE SET
     file_size_limit = 104857600,
     allowed_mime_types = ARRAY['video/webm', 'video/mp4', 'video/quicktime', 'image/webp', 'image/jpeg', 'image/png'];
 
--- Storage Access Policies
+-- Storage Access Policies:
+-- READ: Public (Anyone can load and stream videos & posters)
 DROP POLICY IF EXISTS "Anyone can read walkthrough videos" ON storage.objects;
 CREATE POLICY "Anyone can read walkthrough videos"
 ON storage.objects FOR SELECT
 TO anon, authenticated
 USING (bucket_id IN ('site-videos', 'site-images'));
 
+-- WRITE (UPLOAD): Strictly ADMIN ONLY (mjhanesultancruz1514@gmail.com)
 DROP POLICY IF EXISTS "Anyone can upload walkthrough videos" ON storage.objects;
-CREATE POLICY "Anyone can upload walkthrough videos"
+DROP POLICY IF EXISTS "Admin only upload walkthrough videos" ON storage.objects;
+CREATE POLICY "Admin only upload walkthrough videos"
 ON storage.objects FOR INSERT
-TO anon, authenticated
-WITH CHECK (bucket_id IN ('site-videos', 'site-images'));
+TO authenticated
+WITH CHECK (
+    bucket_id IN ('site-videos', 'site-images')
+    AND auth.jwt() ->> 'email' = 'mjhanesultancruz1514@gmail.com'
+);
 
+-- WRITE (UPDATE): Strictly ADMIN ONLY (mjhanesultancruz1514@gmail.com)
 DROP POLICY IF EXISTS "Anyone can update walkthrough videos" ON storage.objects;
-CREATE POLICY "Anyone can update walkthrough videos"
+DROP POLICY IF EXISTS "Admin only update walkthrough videos" ON storage.objects;
+CREATE POLICY "Admin only update walkthrough videos"
 ON storage.objects FOR UPDATE
-TO anon, authenticated
-USING (bucket_id IN ('site-videos', 'site-images'));
+TO authenticated
+USING (
+    bucket_id IN ('site-videos', 'site-images')
+    AND auth.jwt() ->> 'email' = 'mjhanesultancruz1514@gmail.com'
+);
 
+-- WRITE (DELETE): Strictly ADMIN ONLY (mjhanesultancruz1514@gmail.com)
 DROP POLICY IF EXISTS "Anyone can delete walkthrough videos" ON storage.objects;
-CREATE POLICY "Anyone can delete walkthrough videos"
+DROP POLICY IF EXISTS "Admin only delete walkthrough videos" ON storage.objects;
+CREATE POLICY "Admin only delete walkthrough videos"
 ON storage.objects FOR DELETE
-TO anon, authenticated
-USING (bucket_id IN ('site-videos', 'site-images'));
+TO authenticated
+USING (
+    bucket_id IN ('site-videos', 'site-images')
+    AND auth.jwt() ->> 'email' = 'mjhanesultancruz1514@gmail.com'
+);
