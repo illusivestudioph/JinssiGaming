@@ -100,27 +100,27 @@ export function ArticleEditor({
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8 animate-fade-in">
+    <div className="max-w-4xl mx-auto px-3 sm:px-4 py-6 sm:py-8 animate-fade-in pb-24 sm:pb-8">
       {/* Top Bar */}
       <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
         <button
           type="button"
           onClick={onCancel}
-          className="flex items-center gap-2 text-tan-500 hover:text-ink-900 font-bold transition-colors"
+          className="flex items-center gap-2 text-tan-500 hover:text-ink-900 font-bold transition-colors text-sm"
         >
-          <ChevronLeft size={20} /> Back to Articles List
+          <ChevronLeft size={18} /> Back to Articles
         </button>
 
         <button
           type="button"
           onClick={handleSubmit}
-          className="site-button bg-peach-500 text-white hover:bg-peach-600 flex items-center gap-2 text-sm shadow-cozy-sm"
+          className="site-button bg-peach-500 text-white hover:bg-peach-600 flex items-center gap-2 text-xs sm:text-sm shadow-cozy-sm"
         >
           <Save size={16} /> {isNew ? 'Publish Article' : 'Save Changes'}
         </button>
       </div>
 
-      <form onSubmit={handleSubmit} className="notepad-card p-6 sm:p-10 shadow-cozy-lg">
+      <form onSubmit={handleSubmit} className="notepad-card p-4 sm:p-8 md:p-10 shadow-cozy-lg">
         <div className="border-b-2 border-tan-100 pb-4 mb-8">
           <h2 className="text-2xl sm:text-3xl font-display font-bold text-ink-900">
             {isNew ? 'Write New Cozy Article' : 'Edit Cozy Article'}
@@ -372,7 +372,7 @@ export function ArticleEditor({
                 <label className="block text-xs font-bold text-tan-600 mb-1">
                   Image URL or Uploaded Link
                 </label>
-                <div className="flex gap-2">
+                <div className="flex flex-col sm:flex-row gap-2">
                   <input
                     type="url"
                     value={formData.coverImage}
@@ -382,7 +382,7 @@ export function ArticleEditor({
                     required
                   />
                   <label
-                    className={`cursor-pointer px-4 py-2.5 rounded-xl font-bold text-xs flex items-center gap-1.5 transition-colors whitespace-nowrap shadow-cozy-sm ${
+                    className={`cursor-pointer px-4 py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition-colors whitespace-nowrap shadow-cozy-sm ${
                       uploadingKey === 'cover'
                         ? 'bg-tan-300 text-white animate-pulse'
                         : 'bg-cream-200 hover:bg-peach-100 text-ink-900 hover:text-peach-700'
@@ -549,15 +549,15 @@ export function ArticleEditor({
                       </button>
                     )}
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex flex-col sm:flex-row gap-2">
                     <input
                       type="url"
                       value={section.image || ''}
                       onChange={(e) => updateSectionField(idx, 'image', e.target.value)}
                       placeholder="Image URL (https://...)"
-                      className="flex-1 px-3 py-1.5 rounded-lg border border-tan-300 text-xs bg-white"
+                      className="flex-1 px-3 py-2 rounded-lg border border-tan-300 text-xs bg-white"
                     />
-                    <label className="cursor-pointer px-3 py-1.5 rounded-lg font-bold text-xs bg-cream-200 hover:bg-peach-100 text-ink-900 flex items-center gap-1">
+                    <label className="cursor-pointer px-3 py-2 rounded-lg font-bold text-xs bg-cream-200 hover:bg-peach-100 text-ink-900 flex items-center justify-center gap-1 whitespace-nowrap">
                       <Upload size={13} />
                       <span>Upload</span>
                       <input
@@ -688,6 +688,23 @@ export function ArticleEditor({
             className="site-button bg-peach-500 text-white hover:bg-peach-600 shadow-cozy-sm"
           >
             <Save size={18} /> {isNew ? 'Publish Article' : 'Save Changes'}
+          </button>
+        </div>
+
+        {/* Mobile Sticky Action Bar */}
+        <div className="sm:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-tan-200 p-3 px-4 flex items-center justify-between gap-3 shadow-cozy-lg">
+          <button
+            type="button"
+            onClick={onCancel}
+            className="px-3.5 py-2 rounded-xl text-xs font-bold text-tan-700 bg-tan-100 hover:bg-tan-200 active:scale-95 transition-all"
+          >
+            ← Cancel
+          </button>
+          <button
+            type="submit"
+            className="flex-1 py-2.5 px-4 rounded-xl text-xs font-bold text-white bg-peach-500 hover:bg-peach-600 active:scale-95 shadow-cozy-sm flex items-center justify-center gap-1.5"
+          >
+            <Save size={15} /> {isNew ? 'Publish Article' : 'Save Changes'}
           </button>
         </div>
       </form>

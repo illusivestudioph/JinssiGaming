@@ -229,21 +229,21 @@ export function StoryEditor({
   const totalWords = story.chapters.reduce((sum, ch) => sum + ch.wordCount, 0);
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-8 animate-fade-in">
+    <div className="max-w-5xl mx-auto px-3 sm:px-4 py-6 sm:py-8 animate-fade-in pb-24 sm:pb-8">
       {/* Top Bar with Return & Auto-Save status */}
-      <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <button
           type="button"
           onClick={onCancel}
-          className="flex items-center gap-2 text-tan-600 hover:text-ink-900 font-bold transition-colors"
+          className="flex items-center gap-2 text-tan-600 hover:text-ink-900 font-bold transition-colors text-sm"
         >
-          <ChevronLeft size={20} /> Back to Bookshelf
+          <ChevronLeft size={18} /> Back to Bookshelf
         </button>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto">
           {autoSaveStatus === 'saving' ? (
             <span className="flex items-center gap-1.5 text-xs font-bold text-earth-700 bg-earth-100 px-3 py-1.5 rounded-full animate-pulse">
-              <RefreshCw size={13} className="animate-spin" /> Auto-saving draft...
+              <RefreshCw size={13} className="animate-spin" /> Auto-saving...
             </span>
           ) : (
             <span className="flex items-center gap-1.5 text-xs font-bold text-sage-700 bg-sage-100 px-3 py-1.5 rounded-full">
@@ -254,7 +254,7 @@ export function StoryEditor({
           <button
             type="button"
             onClick={handleSubmit}
-            className="site-button bg-peach-500 hover:bg-peach-600 text-ink-900 font-bold flex items-center gap-2 text-sm shadow-cozy-sm"
+            className="site-button bg-peach-500 hover:bg-peach-600 text-ink-900 font-bold flex items-center gap-2 text-xs sm:text-sm shadow-cozy-sm"
           >
             <Save size={16} /> Save & Return
           </button>
@@ -390,7 +390,7 @@ export function StoryEditor({
             <label className="block text-xs font-bold uppercase tracking-wider text-tan-600 mb-2">
               Cover Image URL
             </label>
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               <input
                 type="text"
                 value={story.coverImage}
@@ -445,7 +445,7 @@ export function StoryEditor({
         </div>
 
         {/* Chapters Section */}
-        <div className="notepad-card p-6 sm:p-8 space-y-6">
+        <div className="notepad-card p-4 sm:p-6 md:p-8 space-y-6">
           <div className="flex flex-wrap items-center justify-between gap-4 border-b border-tan-200 pb-4">
             <div>
               <div className="flex items-center gap-2">
@@ -469,13 +469,13 @@ export function StoryEditor({
           </div>
 
           {/* Chapter Tabs & Selector */}
-          <div className="flex flex-wrap gap-2 border-b border-tan-200 pb-3">
+          <div className="flex gap-2 border-b border-tan-200 pb-3 overflow-x-auto no-scrollbar whitespace-nowrap">
             {story.chapters.map((ch, idx) => (
               <button
                 key={ch.id}
                 type="button"
                 onClick={() => setActiveChapterIndex(idx)}
-                className={`px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+                className={`px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 shrink-0 ${
                   activeChapterIndex === idx
                     ? 'bg-peach-400 text-ink-900 shadow-cozy-sm'
                     : 'bg-cream-100 hover:bg-cream-200 text-tan-600'
@@ -489,7 +489,7 @@ export function StoryEditor({
 
           {/* Active Chapter Details */}
           {activeChapter && (
-            <div className="space-y-6 bg-cream-50 p-6 rounded-2xl border border-tan-200">
+            <div className="space-y-6 bg-cream-50 p-4 sm:p-6 rounded-2xl border border-tan-200">
               <div className="flex flex-wrap items-center justify-between gap-4 border-b border-tan-200 pb-4">
                 <h4 className="font-display font-bold text-lg text-ink-900">
                   Editing Chapter {activeChapter.chapterNumber}
@@ -671,6 +671,23 @@ export function StoryEditor({
             className="site-button bg-peach-500 hover:bg-peach-600 text-ink-900 font-bold flex items-center gap-2 text-sm shadow-cozy-sm"
           >
             <Save size={16} /> Save All Changes
+          </button>
+        </div>
+
+        {/* Mobile Sticky Action Bar */}
+        <div className="sm:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-tan-200 p-3 px-4 flex items-center justify-between gap-3 shadow-cozy-lg">
+          <button
+            type="button"
+            onClick={onCancel}
+            className="px-3.5 py-2 rounded-xl text-xs font-bold text-tan-700 bg-tan-100 hover:bg-tan-200 active:scale-95 transition-all"
+          >
+            ← Bookshelf
+          </button>
+          <button
+            type="submit"
+            className="flex-1 py-2.5 px-4 rounded-xl text-xs font-bold text-ink-900 bg-peach-400 hover:bg-peach-500 active:scale-95 shadow-cozy-sm flex items-center justify-center gap-1.5"
+          >
+            <Save size={15} /> Save & Return
           </button>
         </div>
       </form>

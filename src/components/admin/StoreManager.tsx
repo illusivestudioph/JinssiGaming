@@ -219,11 +219,11 @@ export function StoreManager({
   // --- PRODUCT EDIT MODAL / INLINE VIEW ---
   if (editingProduct) {
     return (
-      <div className="space-y-6 animate-fade-in max-w-4xl mx-auto">
+      <div className="space-y-6 animate-fade-in max-w-4xl mx-auto px-3 sm:px-4 py-4 sm:py-6 pb-24 sm:pb-6">
         <div className="flex items-center justify-between border-b-2 border-tan-200 pb-4">
           <div>
-            <h3 className="text-2xl font-display font-bold text-ink-900 flex items-center gap-2">
-              <ShoppingBag className="w-6 h-6 text-peach-500" />
+            <h3 className="text-xl sm:text-2xl font-display font-bold text-ink-900 flex items-center gap-2">
+              <ShoppingBag className="w-5 sm:w-6 h-5 sm:h-6 text-peach-500" />
               <span>{isNew ? 'Create New Store Product' : 'Edit Store Product'}</span>
             </h3>
             <p className="text-xs text-tan-600 mt-1 font-medium">
@@ -242,7 +242,7 @@ export function StoreManager({
           </button>
         </div>
 
-        <form onSubmit={handleSaveForm} className="notepad-card p-6 sm:p-8 space-y-6">
+        <form onSubmit={handleSaveForm} className="notepad-card p-4 sm:p-6 md:p-8 space-y-6">
           {/* Gumroad URL Callout Box */}
           <div className="bg-peach-50 border-2 border-peach-200 rounded-2xl p-5 shadow-cozy-xs space-y-3">
             <div className="flex items-center justify-between gap-2">
@@ -553,7 +553,7 @@ export function StoreManager({
             <label className="block text-xs font-bold text-tan-600 uppercase tracking-wider mb-1.5">
               Cover Artwork / Preview Image
             </label>
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               <input
                 type="text"
                 required
@@ -613,6 +613,26 @@ export function StoreManager({
               className="site-button bg-peach-500 hover:bg-peach-600 text-white font-bold text-xs px-6 py-2.5 rounded-xl shadow-cozy-sm"
             >
               {isNew ? 'Create Product' : 'Save Product Changes'}
+            </button>
+          </div>
+
+          {/* Mobile Sticky Action Bar */}
+          <div className="sm:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-tan-200 p-3 px-4 flex items-center justify-between gap-3 shadow-cozy-lg">
+            <button
+              type="button"
+              onClick={() => {
+                setEditingProduct(null);
+                setIsNew(false);
+              }}
+              className="px-3.5 py-2 rounded-xl text-xs font-bold text-tan-700 bg-tan-100 hover:bg-tan-200 active:scale-95 transition-all"
+            >
+              ← Cancel
+            </button>
+            <button
+              type="submit"
+              className="flex-1 py-2.5 px-4 rounded-xl text-xs font-bold text-white bg-peach-500 hover:bg-peach-600 active:scale-95 shadow-cozy-sm flex items-center justify-center gap-1.5"
+            >
+              <ShoppingBag size={15} /> {isNew ? 'Create Product' : 'Save Product'}
             </button>
           </div>
         </form>
@@ -809,7 +829,7 @@ export function StoreManager({
               </div>
 
               {/* Actions & Ordering */}
-              <div className="flex items-center gap-2 self-end sm:self-center flex-shrink-0">
+              <div className="flex items-center justify-between sm:justify-end gap-2 w-full sm:w-auto pt-2 sm:pt-0 border-t sm:border-t-0 border-tan-100 flex-shrink-0">
                 {/* Reordering */}
                 <div className="flex flex-col gap-0.5">
                   <button

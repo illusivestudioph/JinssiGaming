@@ -200,9 +200,13 @@ function normalizeContent(parsed: Partial<SavedContent> | null | undefined): Sav
         ...existing,
         walkthrough: baseGame.walkthrough,
         coverImage: existing.coverImage || baseGame.coverImage,
+        coverImages: existing.coverImages || baseGame.coverImages,
       };
     }
-    return existing;
+    return {
+      ...existing,
+      coverImages: existing.coverImages || baseGame.coverImages,
+    };
   });
 
   // Preserve any additional games added by wife or admin

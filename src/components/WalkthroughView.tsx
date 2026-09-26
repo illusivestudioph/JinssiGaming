@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import type { Game, WalkthroughSection } from '@/data/games';
 import { useProgress } from '@/hooks/useProgress';
 import { useMusic } from '@/context/MusicContext';
@@ -16,6 +16,8 @@ import {
   BookOpen,
   ExternalLink,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   X,
   Share2,
   Copy,
@@ -56,6 +58,37 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
   const [linkCopied, setLinkCopied] = useState(false);
   const tuturoRef = useRef<HTMLDivElement | null>(null);
   const [mediaTab, setMediaTab] = useState<'trailer' | 'cover'>(() => game.video ? 'trailer' : 'cover');
+
+  // Multi-cover carousel state
+  const allCovers = useMemo(() => {
+    const list = Array.isArray(game.coverImages) && game.coverImages.length > 0
+      ? game.coverImages.filter((c): c is string => typeof c === 'string' && c.trim().length > 0)
+      : [];
+    if (list.length === 0 && game.coverImage) {
+      list.push(game.coverImage);
+    }
+    return list;
+  }, [game.coverImages, game.coverImage]);
+
+  const [activeCoverIndex, setActiveCoverIndex] = useState(0);
+  const [isCarouselHovered, setIsCarouselHovered] = useState(false);
+
+  // Auto-next loop: cycles every 4.5 seconds when multiple covers are available
+  useEffect(() => {
+    if (allCovers.length <= 1 || isCarouselHovered) return;
+    const interval = setInterval(() => {
+      setActiveCoverIndex((prev) => (prev + 1) % allCovers.length);
+    }, 4500);
+    return () => clearInterval(interval);
+  }, [allCovers.length, isCarouselHovered]);
+
+  const handlePrevCover = useCallback(() => {
+    setActiveCoverIndex((prev) => (prev === 0 ? allCovers.length - 1 : prev - 1));
+  }, [allCovers.length]);
+
+  const handleNextCover = useCallback(() => {
+    setActiveCoverIndex((prev) => (prev + 1) % allCovers.length);
+  }, [allCovers.length]);
 
   // Table of Contents navigation state
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>(() =>
@@ -222,6 +255,106 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
     triggerConfettiBurst();
   }, [showCongratulations, triggerConfettiBurst]);
 
+  const currentCover = allCovers[activeCoverIndex] || game.coverImage;
+
+  const renderCoverCarousel = () => (
+    <div
+      className="relative w-full aspect-[16/9] sm:aspect-[21/9] min-h-[260px] sm:min-h-[380px] md:min-h-[440px] max-h-[520px] overflow-hidden bg-ink-950 flex items-center justify-center select-none group"
+      onMouseEnter={() => setIsCarouselHovered(true)}
+      onMouseLeave={() => setIsCarouselHovered(false)}
+    >
+      {/* Ambient blurred backdrop to eliminate empty black bars without cropping the main artwork */}
+      {currentCover && (
+        <img
+          src={getOptimizedImageUrl(currentCover, { width: 400, quality: 50, format: 'webp' })}
+          alt=""
+          aria-hidden="true"
+          className="absolute inset-0 w-full h-full object-cover blur-3xl scale-125 brightness-50 opacity-60 pointer-events-none transition-all duration-700"
+        />
+      )}
+      <div className="absolute inset-0 bg-gradient-to-t from-ink-950/80 via-transparent to-ink-950/40 pointer-events-none" />
+
+      {/* Main Crisp Artwork - Full uncropped view */}
+      {currentCover ? (
+        <img
+          key={currentCover}
+          src={getOptimizedImageUrl(currentCover, { width: 1400, quality: 85, format: 'webp' })}
+          alt={game.coverAlt || `${game.title} cover slide ${activeCoverIndex + 1}`}
+          loading="eager"
+          decoding="async"
+          className="relative z-10 max-h-full max-w-full w-auto h-auto object-contain mx-auto transition-opacity duration-500 ease-in-out drop-shadow-2xl"
+        />
+      ) : (
+        <div className="relative z-10 text-cream-200 text-sm font-medium">No cover image available</div>
+      )}
+
+      {/* Carousel navigation controls (when 2 or more covers exist) */}
+      {allCovers.length > 1 && (
+        <>
+          {/* Previous Button */}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              handlePrevCover();
+            }}
+            className="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-ink-900/80 hover:bg-peach-500 text-cream-100 flex items-center justify-center shadow-lg backdrop-blur-md border border-white/10 transition-all opacity-85 group-hover:opacity-100 hover:scale-110 active:scale-95 focus:outline-none"
+            aria-label="Previous cover artwork"
+          >
+            <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
+          </button>
+
+          {/* Next Button */}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleNextCover();
+            }}
+            className="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-ink-900/80 hover:bg-peach-500 text-cream-100 flex items-center justify-center shadow-lg backdrop-blur-md border border-white/10 transition-all opacity-85 group-hover:opacity-100 hover:scale-110 active:scale-95 focus:outline-none"
+            aria-label="Next cover artwork"
+          >
+            <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
+          </button>
+
+          {/* Dots Indicator */}
+          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-ink-950/70 backdrop-blur-md border border-white/10 shadow-sm">
+            {allCovers.map((_, idx) => (
+              <button
+                key={idx}
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setActiveCoverIndex(idx);
+                }}
+                className={`transition-all duration-300 rounded-full ${
+                  idx === activeCoverIndex
+                    ? 'w-6 h-2 bg-peach-500 shadow-sm'
+                    : 'w-2 h-2 bg-white/40 hover:bg-white/90'
+                }`}
+                aria-label={`Go to cover slide ${idx + 1}`}
+              />
+            ))}
+          </div>
+
+          {/* Counter Badge */}
+          <span className="absolute top-3 right-3 z-20 px-2.5 py-1 rounded-md bg-ink-950/75 backdrop-blur-md text-[11px] font-bold text-cream-200 border border-white/10 shadow-sm flex items-center gap-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-peach-400 animate-pulse" />
+            {activeCoverIndex + 1} / {allCovers.length}
+          </span>
+        </>
+      )}
+
+      {/* Category Pill */}
+      <span
+        className="absolute bottom-3 left-3 sm:bottom-4 sm:left-4 z-20 pill text-cream-50 text-xs shadow-cozy-sm backdrop-blur-md category-accent-pill border border-white/10"
+        style={{ backgroundColor: 'var(--theme-accent)' }}
+      >
+        {game.category}
+      </span>
+    </div>
+  );
+
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Back button */}
@@ -267,7 +400,7 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
                   }`}
                 >
                   <ImageIcon className="w-3.5 h-3.5" />
-                  <span>Cover Artwork</span>
+                  <span>Cover Artwork {allCovers.length > 1 ? `(${allCovers.length})` : ''}</span>
                 </button>
               </div>
 
@@ -325,55 +458,11 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
                 </div>
               )
             ) : (
-              <div className="h-56 sm:h-72 relative overflow-hidden">
-                <img
-                  src={getOptimizedImageUrl(game.coverImage, { width: 1200, quality: 80, format: 'webp' })}
-                  alt={game.coverAlt}
-                  loading="lazy"
-                  decoding="async"
-                  className="w-full h-full object-cover"
-                />
-                <div
-                  className="absolute inset-0"
-                  style={{
-                    background: `linear-gradient(180deg, transparent 30%, var(--theme-accent)33 100%)`,
-                  }}
-                />
-              </div>
+              renderCoverCarousel()
             )}
           </div>
         ) : (
-          <div 
-            className="h-48 sm:h-56 relative overflow-hidden"
-            style={{
-              borderTopLeftRadius: 'calc(1.2rem - 0.16rem)',
-              borderTopRightRadius: 'calc(0.7rem - 0.16rem)',
-            }}
-          >
-            <img
-              src={getOptimizedImageUrl(game.coverImage, { width: 1200, quality: 80, format: 'webp' })}
-              alt={game.coverAlt}
-              loading="lazy"
-              decoding="async"
-              className="w-full h-full object-cover"
-              style={{
-                borderTopLeftRadius: 'calc(1.2rem - 0.16rem)',
-                borderTopRightRadius: 'calc(0.7rem - 0.16rem)',
-              }}
-            />
-            <div
-              className="absolute inset-0"
-              style={{
-                background: `linear-gradient(180deg, transparent 30%, var(--theme-accent)33 100%)`,
-              }}
-            />
-            <span
-              className="absolute bottom-4 left-4 pill text-cream-50 shadow-cozy-sm backdrop-blur-sm category-accent-pill"
-              style={{ backgroundColor: 'var(--theme-accent)' }}
-            >
-              {game.category}
-            </span>
-          </div>
+          renderCoverCarousel()
         )}
         <div className="p-6">
           <h2 className="page-title font-display text-2xl sm:text-3xl font-700 text-ink-900 mb-1">

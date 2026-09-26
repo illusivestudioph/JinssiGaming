@@ -234,6 +234,7 @@ export function AdminDashboard() {
       description: 'Add a description for this game.',
       editorNote: '',
       coverImage: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&q=80',
+      coverImages: ['https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&q=80'],
       coverAlt: 'Placeholder cover',
       accentColor: '#E2A88D',
       walkthrough: []
@@ -245,7 +246,15 @@ export function AdminDashboard() {
   const handleSaveGame = (e: React.FormEvent) => {
     e.preventDefault();
     if (editingGame) {
-      updateGame(editingGame);
+      const covers = Array.isArray(editingGame.coverImages) && editingGame.coverImages.length > 0
+        ? editingGame.coverImages.filter((c) => typeof c === 'string' && c.trim().length > 0)
+        : (editingGame.coverImage ? [editingGame.coverImage] : []);
+      const gameToSave: Game = {
+        ...editingGame,
+        coverImages: covers.length > 0 ? covers : undefined,
+        coverImage: covers[0] || editingGame.coverImage || '',
+      };
+      updateGame(gameToSave);
       try {
         localStorage.removeItem(DRAFT_STORAGE_KEY);
       } catch {
@@ -257,7 +266,15 @@ export function AdminDashboard() {
 
   const handleBackToDashboard = () => {
     if (editingGame) {
-      updateGame(editingGame);
+      const covers = Array.isArray(editingGame.coverImages) && editingGame.coverImages.length > 0
+        ? editingGame.coverImages.filter((c) => typeof c === 'string' && c.trim().length > 0)
+        : (editingGame.coverImage ? [editingGame.coverImage] : []);
+      const gameToSave: Game = {
+        ...editingGame,
+        coverImages: covers.length > 0 ? covers : undefined,
+        coverImage: covers[0] || editingGame.coverImage || '',
+      };
+      updateGame(gameToSave);
       try {
         localStorage.removeItem(DRAFT_STORAGE_KEY);
       } catch {
@@ -369,6 +386,66 @@ export function AdminDashboard() {
       [field]: value 
     };
     setEditingGame({ ...editingGame, walkthrough: newWalkthrough });
+  };
+
+  const handleUpdateCoverImage = (index: number, url: string) => {
+    if (!editingGame) return;
+    const current = Array.isArray(editingGame.coverImages) && editingGame.coverImages.length > 0
+      ? [...editingGame.coverImages]
+      : [editingGame.coverImage || ''];
+    current[index] = url;
+    setEditingGame({
+      ...editingGame,
+      coverImages: current,
+      coverImage: current[0] || url,
+    });
+  };
+
+  const handleAddCoverImage = (url: string = '') => {
+    if (!editingGame) return;
+    const current = Array.isArray(editingGame.coverImages) && editingGame.coverImages.length > 0
+      ? [...editingGame.coverImages]
+      : [editingGame.coverImage || ''];
+    current.push(url);
+    setEditingGame({
+      ...editingGame,
+      coverImages: current,
+      coverImage: current[0] || url,
+    });
+  };
+
+  const handleRemoveCoverImage = (index: number) => {
+    if (!editingGame) return;
+    const current = Array.isArray(editingGame.coverImages) && editingGame.coverImages.length > 0
+      ? [...editingGame.coverImages]
+      : [editingGame.coverImage || ''];
+    if (current.length <= 1) {
+      current[0] = '';
+    } else {
+      current.splice(index, 1);
+    }
+    setEditingGame({
+      ...editingGame,
+      coverImages: current,
+      coverImage: current[0] || '',
+    });
+  };
+
+  const handleMoveCoverImage = (index: number, direction: 'up' | 'down') => {
+    if (!editingGame) return;
+    const current = Array.isArray(editingGame.coverImages) && editingGame.coverImages.length > 0
+      ? [...editingGame.coverImages]
+      : [editingGame.coverImage || ''];
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= current.length) return;
+    const temp = current[index];
+    current[index] = current[targetIndex];
+    current[targetIndex] = temp;
+    setEditingGame({
+      ...editingGame,
+      coverImages: current,
+      coverImage: current[0] || '',
+    });
   };
 
   const handleVideoUpload = async (
@@ -713,18 +790,18 @@ export function AdminDashboard() {
   // --- GAME EDITOR VIEW ---
   if (editingGame) {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-10 animate-fade-in">
-        <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+      <div className="max-w-4xl mx-auto px-3 sm:px-6 py-6 sm:py-10 pb-28 sm:pb-10 animate-fade-in">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
           <button 
             type="button"
             onClick={handleBackToDashboard} 
-            className="flex items-center gap-2 text-tan-500 hover:text-ink-900 font-bold transition-colors"
+            className="flex items-center gap-1.5 text-tan-600 hover:text-ink-900 font-bold transition-colors text-sm self-start"
           >
-            <ChevronLeft size={20} /> Back to Dashboard
+            <ChevronLeft size={18} /> Back to Dashboard
           </button>
 
           {/* Auto-save & Sync status pills */}
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             {autoSaveStatus === 'saving' ? (
               <span className="flex items-center gap-1.5 text-xs font-bold text-earth-700 bg-earth-100 px-3 py-1.5 rounded-full animate-pulse">
                 <RefreshCw size={13} className="animate-spin" /> Auto-saving draft...
@@ -748,17 +825,17 @@ export function AdminDashboard() {
           </div>
         </div>
 
-        <form onSubmit={handleSaveGame} className="notepad-card p-8">
-          <div className="flex flex-wrap items-center justify-between gap-4 border-b-2 border-tan-100 pb-4 mb-6">
+        <form onSubmit={handleSaveGame} className="notepad-card p-4 sm:p-6 md:p-8 shadow-cozy-lg">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b-2 border-tan-100 pb-4 mb-6">
             <div>
-              <h2 className="text-3xl font-display font-bold text-ink-900">Edit Game</h2>
+              <h2 className="text-2xl sm:text-3xl font-display font-bold text-ink-900">Edit Game</h2>
               <p className="text-xs font-semibold text-tan-500 mt-1">
                 All changes auto-save continuously to protect against sudden PC shutdown or browser close.
               </p>
             </div>
             <button 
               type="submit" 
-              className="site-button bg-earth-500 text-white hover:bg-earth-600 flex items-center gap-2 text-sm"
+              className="site-button bg-earth-500 text-white hover:bg-earth-600 flex items-center justify-center gap-2 text-sm w-full sm:w-auto"
             >
               <Save size={16} /> Save & Return
             </button>
@@ -861,24 +938,148 @@ export function AdminDashboard() {
                 />
               </div>
             </div>
-            <div className="md:col-span-2">
-              <label className="block font-bold text-ink-900 mb-2">Cover Image URL</label>
-              <div className="flex gap-2">
-                <input 
-                  value={editingGame.coverImage}
-                  onChange={(e) => setEditingGame({...editingGame, coverImage: e.target.value})}
-                  className="flex-1 px-4 py-3 rounded-xl border-2 border-tan-200 focus:border-peach-400 focus:outline-none bg-cream-50"
+            {/* Multi-Cover Showcase & Carousel Manager */}
+            <div className="md:col-span-2 p-4 sm:p-5 rounded-2xl bg-cream-100/70 border-2 border-tan-300">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
+                <div>
+                  <label className="block font-bold text-ink-900 flex items-center gap-2 text-base">
+                    <ImageIcon size={20} className="text-peach-500" />
+                    <span>Game Cover Artworks (Auto-Loop Carousel)</span>
+                  </label>
+                  <p className="text-xs text-ink-600 mt-0.5">
+                    Upload 1 or more cover images. When 2 or more covers are added, the walkthrough page displays an automatic, smooth looping carousel with previous/next controls.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => handleAddCoverImage('')}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-peach-500 text-white font-bold text-xs hover:bg-peach-600 transition-colors shadow-sm self-start sm:self-auto"
+                >
+                  <Plus size={15} />
+                  <span>Add Another Cover</span>
+                </button>
+              </div>
+
+              {/* List of cover slides */}
+              <div className="space-y-3">
+                {((Array.isArray(editingGame.coverImages) && editingGame.coverImages.length > 0)
+                  ? editingGame.coverImages
+                  : [editingGame.coverImage || '']
+                ).map((coverUrl, cIndex, arr) => (
+                  <div
+                    key={cIndex}
+                    className="p-3 sm:p-4 rounded-xl bg-white border border-tan-200 shadow-sm flex flex-col md:flex-row items-stretch md:items-center gap-3"
+                  >
+                    {/* Cover thumbnail / badge */}
+                    <div className="flex items-center gap-3">
+                      <div className="w-16 h-12 rounded-lg bg-cream-100 border border-tan-200 overflow-hidden flex-shrink-0 flex items-center justify-center relative">
+                        {coverUrl ? (
+                          <img
+                            src={coverUrl}
+                            alt={`Cover ${cIndex + 1}`}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              (e.currentTarget as HTMLImageElement).style.display = 'none';
+                            }}
+                          />
+                        ) : (
+                          <ImageIcon className="w-5 h-5 text-tan-400" />
+                        )}
+                        <span className="absolute bottom-0 right-0 bg-ink-900/80 text-cream-100 text-[10px] font-bold px-1 rounded-tl">
+                          #{cIndex + 1}
+                        </span>
+                      </div>
+                      <div className="min-w-[90px]">
+                        <span className="text-xs font-bold text-ink-800 block">
+                          {cIndex === 0 ? 'Primary Cover' : `Slide ${cIndex + 1}`}
+                        </span>
+                        {cIndex === 0 && (
+                          <span className="text-[10px] font-semibold text-peach-600 bg-peach-50 px-1.5 py-0.5 rounded border border-peach-200">
+                            Main Card
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* URL Input */}
+                    <div className="flex-1 flex flex-col sm:flex-row gap-2">
+                      <input
+                        value={coverUrl}
+                        onChange={(e) => handleUpdateCoverImage(cIndex, e.target.value)}
+                        placeholder="Paste image URL or upload below..."
+                        className="flex-1 w-full px-3 py-2 rounded-lg border border-tan-300 focus:border-peach-400 focus:outline-none bg-cream-50 text-xs font-medium"
+                      />
+                      <label className="flex items-center justify-center px-3 py-2 bg-earth-100 text-earth-800 font-bold text-xs rounded-lg cursor-pointer hover:bg-earth-200 transition-colors whitespace-nowrap">
+                        {uploadingKey === `game-cover-${cIndex}` ? (
+                          'Optimizing...'
+                        ) : uploadedKey === `game-cover-${cIndex}` ? (
+                          '✓ Uploaded'
+                        ) : (
+                          <>
+                            <Upload size={14} className="mr-1.5" />
+                            Upload WebP
+                          </>
+                        )}
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) =>
+                            handleImageUpload(e, `game-cover-${cIndex}`, (base64) =>
+                              handleUpdateCoverImage(cIndex, base64)
+                            )
+                          }
+                        />
+                      </label>
+                    </div>
+
+                    {/* Actions: Reorder & Delete */}
+                    <div className="flex items-center gap-1 self-end md:self-center">
+                      <button
+                        type="button"
+                        disabled={cIndex === 0}
+                        onClick={() => handleMoveCoverImage(cIndex, 'up')}
+                        title="Move Up"
+                        className="p-1.5 rounded-lg border border-tan-200 text-ink-600 hover:bg-cream-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                      >
+                        <ChevronUp size={16} />
+                      </button>
+                      <button
+                        type="button"
+                        disabled={cIndex === arr.length - 1}
+                        onClick={() => handleMoveCoverImage(cIndex, 'down')}
+                        title="Move Down"
+                        className="p-1.5 rounded-lg border border-tan-200 text-ink-600 hover:bg-cream-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                      >
+                        <ChevronDown size={16} />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveCoverImage(cIndex)}
+                        title="Delete this cover"
+                        className="p-1.5 rounded-lg border border-red-200 text-red-500 hover:bg-red-50 transition-colors"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Alt text field for accessibility */}
+              <div className="mt-3 pt-3 border-t border-tan-200 flex flex-col sm:flex-row sm:items-center gap-2">
+                <label className="text-xs font-bold text-ink-700 whitespace-nowrap">Cover Alt Text:</label>
+                <input
+                  value={editingGame.coverAlt || ''}
+                  onChange={(e) => setEditingGame({ ...editingGame, coverAlt: e.target.value })}
+                  placeholder="Descriptive text for accessibility / SEO..."
+                  className="flex-1 px-3 py-1.5 rounded-lg border border-tan-300 focus:border-peach-400 focus:outline-none bg-white text-xs"
                 />
-                <label className="flex items-center justify-center px-4 py-3 bg-earth-100 text-earth-700 font-bold rounded-xl cursor-pointer hover:bg-earth-200 transition-colors whitespace-nowrap">
-                  {uploadingKey === 'game-cover' ? 'Uploading...' : uploadedKey === 'game-cover' ? 'Uploaded' : <><Upload size={18} className="mr-2" /> Upload</>}
-                  <input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(e, 'game-cover', (base64) => setEditingGame({...editingGame, coverImage: base64}))} />
-                </label>
-                {uploadedKey === 'game-cover' && <span className="self-center text-sm font-bold text-sage-600" role="status">✓ Complete</span>}
               </div>
             </div>
 
             {/* Game Store Trailer & Gameplay Overview Video (WebM / MP4 or Video Placeholder) */}
-            <div className="md:col-span-2 p-5 rounded-2xl bg-peach-50/60 border-2 border-peach-200">
+            <div className="md:col-span-2 p-4 sm:p-5 rounded-2xl bg-peach-50/60 border-2 border-peach-200">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
                 <div>
                   <label className="block font-bold text-ink-900 flex items-center gap-2 text-base">
@@ -900,16 +1101,16 @@ export function AdminDashboard() {
                 ) : null}
               </div>
 
-              <div className="mt-3 flex flex-wrap sm:flex-nowrap gap-2">
+              <div className="mt-3 flex flex-col sm:flex-row gap-2">
                 <input 
                   value={editingGame.video || ''}
                   onChange={(e) => setEditingGame({...editingGame, video: e.target.value})}
-                  className="flex-1 px-4 py-3 rounded-xl border-2 border-tan-200 focus:border-peach-400 focus:outline-none bg-white font-medium text-sm"
+                  className="flex-1 w-full px-4 py-3 rounded-xl border-2 border-tan-200 focus:border-peach-400 focus:outline-none bg-white font-medium text-sm"
                   placeholder="Paste video URL, or click 'Upload Gameplay Video', or 'Set Trailer Placeholder'..."
                 />
                 
                 {/* Upload Video Button with Auto WebM Conversion */}
-                <label className="flex items-center justify-center px-4 py-3 bg-peach-500 text-white font-bold rounded-xl cursor-pointer hover:bg-peach-600 transition-colors whitespace-nowrap shadow-cozy-xs">
+                <label className="flex items-center justify-center px-4 py-3 bg-peach-500 text-white font-bold rounded-xl cursor-pointer hover:bg-peach-600 transition-colors whitespace-nowrap shadow-cozy-xs w-full sm:w-auto text-sm">
                   {uploadingKey === 'game-video' ? (
                     <>
                       <Loader2 size={18} className="mr-2 animate-spin" />
@@ -949,7 +1150,7 @@ export function AdminDashboard() {
                       });
                     }
                   }}
-                  className={`px-4 py-3 rounded-xl font-bold transition-colors whitespace-nowrap border-2 ${
+                  className={`px-4 py-3 rounded-xl font-bold transition-colors whitespace-nowrap border-2 text-center justify-center w-full sm:w-auto text-sm ${
                     editingGame.video === 'placeholder'
                       ? 'bg-peach-100 text-peach-700 border-peach-300'
                       : 'bg-white text-ink-800 border-tan-200 hover:bg-peach-50 hover:text-peach-600 hover:border-peach-300'
@@ -1043,27 +1244,30 @@ export function AdminDashboard() {
           
           <div className="flex flex-col gap-8">
             {editingGame.walkthrough.map((section, sIndex) => (
-              <div key={sIndex} className="notepad-card p-6 relative">
-                <button 
-                  type="button" 
-                  onClick={() => removeSection(sIndex)}
-                  className="absolute top-4 right-4 text-red-400 hover:text-red-600 bg-white p-2 rounded-lg shadow-sm border border-tan-200"
-                  title="Delete Section"
-                >
-                  <Trash2 size={18} />
-                </button>
-
-                <div className="mb-6 mr-12">
-                  <label className="block font-bold text-tan-600 mb-2 text-sm uppercase tracking-wider">Section {sIndex + 1} Title</label>
-                  <input 
-                    value={section.title}
-                    onChange={(e) => updateSectionTitle(sIndex, e.target.value)}
-                    className="w-full px-4 py-2 rounded-lg border-2 border-tan-200 focus:border-peach-400 focus:outline-none font-bold text-lg"
-                  />
+              <div key={sIndex} className="notepad-card p-4 sm:p-6 relative shadow-cozy-sm">
+                <div className="flex items-start justify-between gap-3 mb-4 sm:mb-6">
+                  <div className="flex-1 min-w-0">
+                    <label className="block font-bold text-tan-600 mb-1.5 text-xs sm:text-sm uppercase tracking-wider">
+                      Section {sIndex + 1} Title
+                    </label>
+                    <input 
+                      value={section.title}
+                      onChange={(e) => updateSectionTitle(sIndex, e.target.value)}
+                      className="w-full px-3.5 sm:px-4 py-2 rounded-lg border-2 border-tan-200 focus:border-peach-400 focus:outline-none font-bold text-base sm:text-lg"
+                    />
+                  </div>
+                  <button 
+                    type="button" 
+                    onClick={() => removeSection(sIndex)}
+                    className="mt-6 p-2 rounded-lg border border-tan-200 bg-white text-red-400 hover:text-red-600 hover:bg-red-50 transition-colors shadow-sm shrink-0"
+                    title="Delete Section"
+                  >
+                    <Trash2 size={18} />
+                  </button>
                 </div>
 
                 {/* Section Walkthrough Video (WebM / MP4) */}
-                <div className="mb-6 p-4 bg-cream-50/80 rounded-xl border border-tan-200">
+                <div className="mb-6 p-3.5 sm:p-4 bg-cream-50/80 rounded-xl border border-tan-200">
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 mb-2">
                     <label className="text-xs font-bold text-tan-600 flex items-center gap-1.5 uppercase tracking-wider">
                       <Film size={14} className="text-peach-500" />
@@ -1080,16 +1284,16 @@ export function AdminDashboard() {
                     ) : null}
                   </div>
 
-                  <div className="flex flex-wrap sm:flex-nowrap gap-2">
+                  <div className="flex flex-col sm:flex-row gap-2">
                     <input 
                       value={section.video || ''}
                       onChange={(e) => updateSectionField(sIndex, 'video', e.target.value)}
-                      className="flex-1 px-3 py-2 rounded-lg border border-tan-200 focus:border-peach-400 focus:outline-none text-sm bg-white"
+                      className="flex-1 w-full px-3 py-2 rounded-lg border border-tan-200 focus:border-peach-400 focus:outline-none text-sm bg-white"
                       placeholder="https://... or 'placeholder' or click Upload Video"
                     />
 
                     {/* Upload Video Button with Auto WebM Conversion */}
-                    <label className="px-3.5 py-2 bg-peach-500 text-white font-bold rounded-lg cursor-pointer hover:bg-peach-600 transition-colors text-xs flex items-center gap-1.5 whitespace-nowrap shadow-cozy-xs">
+                    <label className="w-full sm:w-auto px-3.5 py-2.5 bg-peach-500 text-white font-bold rounded-lg cursor-pointer hover:bg-peach-600 transition-colors text-xs flex items-center justify-center gap-1.5 whitespace-nowrap shadow-cozy-xs">
                       {uploadingKey === `section-video-${sIndex}` ? (
                         <>
                           <Loader2 size={14} className="animate-spin" />
@@ -1125,7 +1329,7 @@ export function AdminDashboard() {
                           updateSectionField(sIndex, 'video', 'placeholder');
                         }
                       }}
-                      className={`px-3 py-2 rounded-lg text-xs font-bold transition-colors whitespace-nowrap border ${
+                      className={`w-full sm:w-auto px-3 py-2.5 rounded-lg text-xs font-bold transition-colors whitespace-nowrap border text-center justify-center ${
                         section.video === 'placeholder'
                           ? 'bg-peach-100 text-peach-700 border-peach-300'
                           : 'bg-white text-ink-800 border-tan-200 hover:bg-peach-50 hover:text-peach-600'
@@ -1201,23 +1405,30 @@ export function AdminDashboard() {
                   ) : null}
                 </div>
 
-                <div className="flex flex-col gap-4 pl-4 border-l-4 border-tan-200">
+                <div className="flex flex-col gap-4 pl-2 sm:pl-4 border-l-2 sm:border-l-4 border-tan-200">
                   {section.steps.map((step, stepIndex) => (
-                    <div key={stepIndex} className="notepad-step p-4 flex flex-col gap-3 relative group">
-                      <button 
-                        type="button"
-                        onClick={() => removeStep(sIndex, stepIndex)}
-                        className="absolute -right-3 -top-3 bg-red-100 text-red-500 hover:bg-red-500 hover:text-white p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-all shadow-sm"
-                      >
-                        <Trash2 size={14} />
-                      </button>
+                    <div key={stepIndex} className="notepad-step p-3.5 sm:p-4 flex flex-col gap-3 relative group shadow-cozy-xs">
+                      <div className="flex items-center justify-between gap-2 border-b border-tan-100 pb-2">
+                        <label className="text-xs font-bold text-tan-600 uppercase tracking-wider">
+                          Step {stepIndex + 1}
+                        </label>
+                        <button 
+                          type="button" 
+                          onClick={() => removeStep(sIndex, stepIndex)}
+                          className="text-red-400 hover:text-red-600 hover:bg-red-50 p-1.5 rounded-lg border border-tan-200 bg-white transition-all shadow-sm flex items-center gap-1 text-xs"
+                          title="Delete Step"
+                        >
+                          <Trash2 size={13} />
+                          <span className="sm:hidden font-medium">Delete</span>
+                        </button>
+                      </div>
                       
                       <div>
-                        <label className="text-xs font-bold text-tan-500 mb-1 block">Step {stepIndex + 1} Title</label>
+                        <label className="text-xs font-bold text-tan-500 mb-1 block">Step Title</label>
                         <input
                           value={step.title}
                           onChange={(e) => updateStep(sIndex, stepIndex, 'title', e.target.value)}
-                          className="w-full px-3 py-2 rounded-lg border border-tan-200 focus:border-peach-400 focus:outline-none mb-3"
+                          className="w-full px-3 py-2 rounded-lg border border-tan-200 focus:border-peach-400 focus:outline-none mb-3 text-sm"
                           placeholder="Step title"
                           required
                         />
@@ -1225,7 +1436,7 @@ export function AdminDashboard() {
                         <textarea 
                           value={step.description}
                           onChange={(e) => updateStep(sIndex, stepIndex, 'description', e.target.value)}
-                          className="w-full px-3 py-2 rounded-lg border border-tan-200 focus:border-peach-400 focus:outline-none min-h-[80px]"
+                          className="w-full px-3 py-2 rounded-lg border border-tan-200 focus:border-peach-400 focus:outline-none min-h-[80px] text-sm"
                           required
                         />
                       </div>
@@ -1258,26 +1469,28 @@ export function AdminDashboard() {
 
                       <div>
                         <label className="text-xs font-bold text-tan-500 mb-1 block">Step Image (URL or Upload)</label>
-                        <div className="flex gap-2">
+                        <div className="flex flex-col sm:flex-row gap-2">
                           <input 
                             value={step.image || ''}
                             onChange={(e) => updateStep(sIndex, stepIndex, 'image', e.target.value)}
                             className="flex-1 px-3 py-2 rounded-lg border border-tan-200 focus:border-peach-400 focus:outline-none text-sm"
                             placeholder="https:// or upload..."
                           />
-                          <label className="px-3 py-2 bg-earth-100 text-earth-700 font-bold rounded-lg cursor-pointer hover:bg-earth-200 transition-colors text-xs flex items-center gap-1 whitespace-nowrap">
-                            {uploadingKey === `step-${sIndex}-${stepIndex}` ? 'Uploading...' : uploadedKey === `step-${sIndex}-${stepIndex}` ? 'Uploaded' : <><Upload size={14} /> Upload</>}
-                            <input 
-                              type="file" 
-                              accept="image/*" 
-                              className="hidden" 
-                              onChange={(e) => handleImageUpload(e, `step-${sIndex}-${stepIndex}`, (base64) => updateStep(sIndex, stepIndex, 'image', base64))}
-                            />
-                          </label>
-                          {uploadedKey === `step-${sIndex}-${stepIndex}` && <span className="self-center text-xs font-bold text-sage-600" role="status">✓ Complete</span>}
+                          <div className="flex items-center gap-2 w-full sm:w-auto">
+                            <label className="flex-1 sm:flex-initial px-3 py-2 bg-earth-100 text-earth-700 font-bold rounded-lg cursor-pointer hover:bg-earth-200 transition-colors text-xs flex items-center justify-center gap-1 whitespace-nowrap">
+                              {uploadingKey === `step-${sIndex}-${stepIndex}` ? 'Uploading...' : uploadedKey === `step-${sIndex}-${stepIndex}` ? 'Uploaded' : <><Upload size={14} /> Upload</>}
+                              <input 
+                                type="file" 
+                                accept="image/*" 
+                                className="hidden" 
+                                onChange={(e) => handleImageUpload(e, `step-${sIndex}-${stepIndex}`, (base64) => updateStep(sIndex, stepIndex, 'image', base64))}
+                              />
+                            </label>
+                            {uploadedKey === `step-${sIndex}-${stepIndex}` && <span className="text-xs font-bold text-sage-600 whitespace-nowrap" role="status">✓ Done</span>}
+                          </div>
                         </div>
                         {step.image && (
-                          <img src={step.image} alt="Step preview" className="mt-2 h-20 w-full object-cover rounded-lg border border-tan-200" />
+                          <img src={step.image} alt="Step preview" className="mt-2 h-24 w-full object-cover rounded-lg border border-tan-200" />
                         )}
                       </div>
 
@@ -1299,7 +1512,7 @@ export function AdminDashboard() {
                           ) : null}
                         </div>
 
-                        <div className="flex flex-wrap sm:flex-nowrap gap-2">
+                        <div className="flex flex-col sm:flex-row gap-2">
                           <input 
                             value={step.video || ''}
                             onChange={(e) => updateStep(sIndex, stepIndex, 'video', e.target.value)}
@@ -1307,54 +1520,56 @@ export function AdminDashboard() {
                             placeholder="https://... or 'placeholder' or upload video"
                           />
 
-                          {/* Upload Video Button with Auto WebM Conversion */}
-                          <label className="px-3 py-2 bg-peach-500 text-white font-bold rounded-lg cursor-pointer hover:bg-peach-600 transition-colors text-xs flex items-center gap-1.5 whitespace-nowrap shadow-cozy-xs">
-                            {uploadingKey === `step-video-${sIndex}-${stepIndex}` ? (
-                              <>
-                                <Loader2 size={14} className="animate-spin" />
-                                <span>Converting...</span>
-                              </>
-                            ) : uploadedKey === `step-video-${sIndex}-${stepIndex}` ? (
-                              <>
-                                <CheckCircle size={14} />
-                                <span>Uploaded</span>
-                              </>
-                            ) : (
-                              <>
-                                <Upload size={14} />
-                                <span>Upload Video</span>
-                              </>
-                            )}
-                            <input 
-                              type="file" 
-                              accept="video/*" 
-                              className="hidden" 
-                              disabled={uploadingKey === `step-video-${sIndex}-${stepIndex}`}
-                              onChange={(e) => handleVideoUpload(e, sIndex, stepIndex)}
-                            />
-                          </label>
+                          <div className="flex items-center gap-2 w-full sm:w-auto">
+                            {/* Upload Video Button with Auto WebM Conversion */}
+                            <label className="flex-1 sm:flex-initial px-3 py-2 bg-peach-500 text-white font-bold rounded-lg cursor-pointer hover:bg-peach-600 transition-colors text-xs flex items-center justify-center gap-1.5 whitespace-nowrap shadow-cozy-xs">
+                              {uploadingKey === `step-video-${sIndex}-${stepIndex}` ? (
+                                <>
+                                  <Loader2 size={14} className="animate-spin" />
+                                  <span>Converting...</span>
+                                </>
+                              ) : uploadedKey === `step-video-${sIndex}-${stepIndex}` ? (
+                                <>
+                                  <CheckCircle size={14} />
+                                  <span>Uploaded</span>
+                                </>
+                              ) : (
+                                <>
+                                  <Upload size={14} />
+                                  <span>Upload Video</span>
+                                </>
+                              )}
+                              <input 
+                                type="file" 
+                                accept="video/*" 
+                                className="hidden" 
+                                disabled={uploadingKey === `step-video-${sIndex}-${stepIndex}`}
+                                onChange={(e) => handleVideoUpload(e, sIndex, stepIndex)}
+                              />
+                            </label>
 
-                          {/* Quick Placeholder Toggle */}
-                          <button
-                            type="button"
-                            onClick={() => {
-                              if (step.video === 'placeholder') {
-                                updateStep(sIndex, stepIndex, 'video', '');
-                              } else {
-                                updateStep(sIndex, stepIndex, 'video', 'placeholder');
-                                if (!step.videoTitle) {
-                                  updateStep(sIndex, stepIndex, 'videoTitle', 'Walkthrough Video Clip');
+                            {/* Quick Placeholder Toggle */}
+                            <button
+                              type="button"
+                              onClick={() => {
+                                if (step.video === 'placeholder') {
+                                  updateStep(sIndex, stepIndex, 'video', '');
+                                } else {
+                                  updateStep(sIndex, stepIndex, 'video', 'placeholder');
+                                  if (!step.videoTitle) {
+                                    updateStep(sIndex, stepIndex, 'videoTitle', 'Walkthrough Video Clip');
+                                  }
                                 }
-                              }
-                            }}
-                            className={`px-3 py-2 rounded-lg text-xs font-bold transition-colors whitespace-nowrap border ${
-                              step.video === 'placeholder'
-                                ? 'bg-peach-100 text-peach-700 border-peach-300'
-                                : 'bg-tan-50 text-tan-600 border-tan-200 hover:bg-peach-50 hover:text-peach-600 hover:border-peach-200'
-                            }`}
-                          >
-                            {step.video === 'placeholder' ? '✕ Remove Placeholder' : '🎬 Set Placeholder'}
-                          </button>
+                              }}
+                              className={`flex-1 sm:flex-initial px-3 py-2 rounded-lg text-xs font-bold transition-colors whitespace-nowrap border text-center ${
+                                step.video === 'placeholder'
+                                  ? 'bg-peach-100 text-peach-700 border-peach-300'
+                                  : 'bg-tan-50 text-tan-600 border-tan-200 hover:bg-peach-50 hover:text-peach-600 hover:border-peach-200'
+                              }`}
+                            >
+                              {step.video === 'placeholder' ? '✕ Remove' : '🎬 Placeholder'}
+                            </button>
+                          </div>
                         </div>
 
                         {/* Video conversion progress bar */}
@@ -1454,6 +1669,27 @@ export function AdminDashboard() {
               <Save size={18} /> Save Changes
             </button>
           </div>
+
+          {/* Mobile Sticky Action Bar */}
+          <div className="sm:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-tan-200 p-3 px-4 flex items-center justify-between gap-3 shadow-cozy-lg">
+            <button
+              type="button"
+              onClick={() => {
+                if (window.confirm("Any unsaved edits remain in local auto-draft. Close editor?")) {
+                  setEditingGame(null);
+                }
+              }}
+              className="px-3.5 py-2 rounded-xl text-xs font-bold text-tan-700 bg-tan-100 hover:bg-tan-200 active:scale-95 transition-all"
+            >
+              ← Back
+            </button>
+            <button
+              type="submit"
+              className="flex-1 py-2.5 px-4 rounded-xl text-xs font-bold text-white bg-earth-500 hover:bg-earth-600 active:scale-95 shadow-cozy-sm flex items-center justify-center gap-1.5"
+            >
+              <Save size={15} /> Save & Return
+            </button>
+          </div>
         </form>
       </div>
     );
@@ -1461,7 +1697,7 @@ export function AdminDashboard() {
 
   // --- MAIN DASHBOARD VIEW ---
   return (
-    <div className="max-w-5xl mx-auto px-4 py-10 animate-fade-in">
+    <div className="max-w-5xl mx-auto px-3 sm:px-4 py-6 sm:py-10 animate-fade-in">
       {/* Draft Recovery Alert (Shown if a crash or power outage occurred while editing) */}
       {savedDraft && !editingGame && (
         <div className="mb-6 p-4 rounded-2xl bg-amber-50 border-2 border-amber-300 shadow-cozy-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 animate-fade-in">
@@ -1495,17 +1731,17 @@ export function AdminDashboard() {
         </div>
       )}
 
-      <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 sm:mb-8">
         <div>
-          <h2 className="text-4xl font-display font-bold text-ink-900 mb-2">Admin Dashboard</h2>
-          <p className="text-tan-600 font-semibold">Manage your site's content. Changes auto-save continuously to protect against sudden PC shutdown.</p>
+          <h2 className="text-2xl sm:text-4xl font-display font-bold text-ink-900 mb-1 sm:mb-2">Admin Dashboard</h2>
+          <p className="text-tan-600 font-semibold text-xs sm:text-base">Manage your site's content. Changes auto-save continuously to protect against sudden PC shutdown.</p>
         </div>
 
         {/* Global Cloud Sync Status Badge & Manual Trigger */}
-        <div className="flex items-center gap-3 bg-white px-4 py-2 rounded-2xl border border-tan-200 shadow-cozy-xs">
+        <div className="flex items-center justify-between sm:justify-start gap-3 bg-white px-3 sm:px-4 py-2 rounded-2xl border border-tan-200 shadow-cozy-xs w-full sm:w-auto">
           {syncStatus === 'saving' && (
             <span className="flex items-center gap-1.5 text-xs font-bold text-earth-700 animate-pulse">
-              <RefreshCw size={14} className="animate-spin" /> Syncing to cloud...
+              <RefreshCw size={14} className="animate-spin" /> Syncing...
             </span>
           )}
           {syncStatus === 'synced' && (
@@ -1515,19 +1751,19 @@ export function AdminDashboard() {
           )}
           {syncStatus === 'error' && (
             <span className="flex items-center gap-1.5 text-xs font-bold text-red-700">
-              <AlertCircle size={14} /> Cloud sync error (Saved on PC)
+              <AlertCircle size={14} /> Sync error (Saved locally)
             </span>
           )}
           {syncStatus === 'offline' && (
             <span className="flex items-center gap-1.5 text-xs font-bold text-tan-700">
-              <WifiOff size={14} /> Offline mode (Saved on PC)
+              <WifiOff size={14} /> Offline mode (Saved locally)
             </span>
           )}
           <button
             type="button"
             onClick={() => void forceCloudSync()}
             disabled={syncStatus === 'saving'}
-            className="text-xs font-bold px-3 py-1.5 rounded-lg border border-tan-300 bg-cream-50 hover:bg-cream-100 text-ink-900 transition-colors flex items-center gap-1.5 disabled:opacity-50"
+            className="text-xs font-bold px-3 py-1.5 rounded-lg border border-tan-300 bg-cream-50 hover:bg-cream-100 text-ink-900 transition-colors flex items-center gap-1.5 disabled:opacity-50 shrink-0"
             title="Force cloud synchronization now"
           >
             <Cloud size={14} /> Sync Now
@@ -1535,64 +1771,68 @@ export function AdminDashboard() {
         </div>
       </div>
 
-      <div className="flex gap-4 mb-6 border-b-2 border-tan-200 pb-2">
-        <button onClick={() => setActiveTab('assets')} className={`font-bold pb-2 ${activeTab === 'assets' ? 'text-peach-500 border-b-2 border-peach-500' : 'text-tan-500 hover:text-ink-900'}`}>Site Assets</button>
-        <button onClick={() => setActiveTab('games')} className={`font-bold pb-2 ${activeTab === 'games' ? 'text-peach-500 border-b-2 border-peach-500' : 'text-tan-500 hover:text-ink-900'}`}>Manage Games ({games.length})</button>
-        <button onClick={() => setActiveTab('articles')} className={`font-bold pb-2 ${activeTab === 'articles' ? 'text-peach-500 border-b-2 border-peach-500' : 'text-tan-500 hover:text-ink-900'}`}>Cozy Journal ({articles.length})</button>
-        <button onClick={() => setActiveTab('stories')} className={`font-bold pb-2 ${activeTab === 'stories' ? 'text-peach-500 border-b-2 border-peach-500' : 'text-tan-500 hover:text-ink-900'}`}>Cozy Bookshelf ({stories.length})</button>
-        <button onClick={() => setActiveTab('store')} className={`font-bold pb-2 ${activeTab === 'store' ? 'text-peach-500 border-b-2 border-peach-500' : 'text-tan-500 hover:text-ink-900'}`}>Store ({products.length})</button>
+      <div className="flex gap-2 sm:gap-4 mb-6 border-b-2 border-tan-200 pb-2 overflow-x-auto no-scrollbar whitespace-nowrap text-sm sm:text-base">
+        <button onClick={() => setActiveTab('assets')} className={`font-bold pb-2 shrink-0 transition-colors ${activeTab === 'assets' ? 'text-peach-500 border-b-2 border-peach-500' : 'text-tan-500 hover:text-ink-900'}`}>Site Assets</button>
+        <button onClick={() => setActiveTab('games')} className={`font-bold pb-2 shrink-0 transition-colors ${activeTab === 'games' ? 'text-peach-500 border-b-2 border-peach-500' : 'text-tan-500 hover:text-ink-900'}`}>Manage Games ({games.length})</button>
+        <button onClick={() => setActiveTab('articles')} className={`font-bold pb-2 shrink-0 transition-colors ${activeTab === 'articles' ? 'text-peach-500 border-b-2 border-peach-500' : 'text-tan-500 hover:text-ink-900'}`}>Cozy Journal ({articles.length})</button>
+        <button onClick={() => setActiveTab('stories')} className={`font-bold pb-2 shrink-0 transition-colors ${activeTab === 'stories' ? 'text-peach-500 border-b-2 border-peach-500' : 'text-tan-500 hover:text-ink-900'}`}>Cozy Bookshelf ({stories.length})</button>
+        <button onClick={() => setActiveTab('store')} className={`font-bold pb-2 shrink-0 transition-colors ${activeTab === 'store' ? 'text-peach-500 border-b-2 border-peach-500' : 'text-tan-500 hover:text-ink-900'}`}>Store ({products.length})</button>
       </div>
 
       {activeTab === 'assets' && (
-        <div className="notepad-card p-6 flex flex-col gap-6">
+        <div className="notepad-card p-4 sm:p-6 flex flex-col gap-6">
           <div>
             <label className="block font-bold text-ink-900 mb-2 flex items-center gap-2"><ImageIcon size={18}/> Hero Banner</label>
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               <input 
                 value={heroImage} 
                 onChange={(e) => setHeroImage(e.target.value)}
-                className="flex-1 px-4 py-3 rounded-xl border-2 border-tan-200 focus:border-peach-400 bg-cream-50 focus:outline-none"
+                className="flex-1 px-4 py-3 rounded-xl border-2 border-tan-200 focus:border-peach-400 bg-cream-50 focus:outline-none text-sm"
               />
-              <label className="flex items-center justify-center px-4 py-3 bg-earth-100 text-earth-700 font-bold rounded-xl cursor-pointer hover:bg-earth-200 transition-colors whitespace-nowrap">
-                {uploadingKey === 'hero' ? 'Uploading...' : uploadedKey === 'hero' ? 'Uploaded' : <><Upload size={18} className="mr-2" /> Upload</>}
-                <input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(e, 'hero', setHeroImage)} />
-              </label>
-              {uploadedKey === 'hero' && <span className="self-center text-sm font-bold text-sage-600" role="status">✓ Complete</span>}
+              <div className="flex items-center gap-2 w-full sm:w-auto">
+                <label className="flex-1 sm:flex-initial flex items-center justify-center px-4 py-3 bg-earth-100 text-earth-700 font-bold rounded-xl cursor-pointer hover:bg-earth-200 transition-colors whitespace-nowrap text-xs">
+                  {uploadingKey === 'hero' ? 'Uploading...' : uploadedKey === 'hero' ? 'Uploaded' : <><Upload size={16} className="mr-1.5" /> Upload</>}
+                  <input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(e, 'hero', setHeroImage)} />
+                </label>
+                {uploadedKey === 'hero' && <span className="text-xs font-bold text-sage-600 whitespace-nowrap" role="status">✓ Done</span>}
+              </div>
             </div>
             {heroImage && <img src={heroImage} className="mt-3 h-32 w-full max-w-xl object-cover rounded-lg border border-tan-200" alt="Hero preview" />}
           </div>
           
           <div className="pb-6 border-b-2 border-tan-100">
             <label className="block font-bold text-ink-900 mb-2 flex items-center gap-2"><ImageIcon size={18}/> Logo Image</label>
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               <input 
                 value={logoImage} 
                 onChange={(e) => setLogoImage(e.target.value)}
-                className="flex-1 px-4 py-3 rounded-xl border-2 border-tan-200 focus:border-peach-400 bg-cream-50 focus:outline-none"
+                className="flex-1 px-4 py-3 rounded-xl border-2 border-tan-200 focus:border-peach-400 bg-cream-50 focus:outline-none text-sm"
               />
-              <label className="flex items-center justify-center px-4 py-3 bg-earth-100 text-earth-700 font-bold rounded-xl cursor-pointer hover:bg-earth-200 transition-colors whitespace-nowrap">
-                {uploadingKey === 'logo' ? 'Uploading...' : uploadedKey === 'logo' ? 'Uploaded' : <><Upload size={18} className="mr-2" /> Upload</>}
-                <input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(e, 'logo', setLogoImage)} />
-              </label>
-              {uploadedKey === 'logo' && <span className="self-center text-sm font-bold text-sage-600" role="status">✓ Complete</span>}
+              <div className="flex items-center gap-2 w-full sm:w-auto">
+                <label className="flex-1 sm:flex-initial flex items-center justify-center px-4 py-3 bg-earth-100 text-earth-700 font-bold rounded-xl cursor-pointer hover:bg-earth-200 transition-colors whitespace-nowrap text-xs">
+                  {uploadingKey === 'logo' ? 'Uploading...' : uploadedKey === 'logo' ? 'Uploaded' : <><Upload size={16} className="mr-1.5" /> Upload</>}
+                  <input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(e, 'logo', setLogoImage)} />
+                </label>
+                {uploadedKey === 'logo' && <span className="text-xs font-bold text-sage-600 whitespace-nowrap" role="status">✓ Done</span>}
+              </div>
             </div>
             {logoImage && <img src={logoImage} className="mt-3 h-16 w-16 object-cover rounded-full border border-tan-200" alt="Logo preview" />}
           </div>
 
-          <div className="flex flex-wrap items-center justify-end gap-3 border-t-2 border-tan-100 pt-5">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-t-2 border-tan-100 pt-5">
             {assetSaveMessage && <span className="text-sm font-bold text-sage-600" role="status">{assetSaveMessage}</span>}
-            <button type="button" onClick={handleSaveAssets} className="site-button bg-earth-500 text-white hover:bg-earth-600">
+            <button type="button" onClick={handleSaveAssets} className="w-full sm:w-auto site-button bg-earth-500 text-white hover:bg-earth-600 justify-center">
               <Save size={18} /> Save & Sync Assets
             </button>
           </div>
 
           {/* CTA LINKS & PERMANENT MULTI-WALLET CONFIGURATOR */}
           <div>
-            <label className="block font-bold text-ink-900 mb-4 text-xl">Footer Call-to-Action Buttons & Payment Modals</label>
+            <label className="block font-bold text-ink-900 mb-4 text-lg sm:text-xl">Footer Call-to-Action Buttons & Payment Modals</label>
             <div className="flex flex-col gap-6">
               {ctaLinks?.map((link, index) => (
-                <div key={link.id} className="notepad-card p-5 flex flex-col gap-4">
-                  <div className="flex gap-3 items-center">
+                <div key={link.id} className="notepad-card p-4 sm:p-5 flex flex-col gap-4">
+                  <div className="flex flex-col sm:flex-row gap-2 sm:items-center">
                     <input 
                       value={link.label}
                       onChange={(e) => {
@@ -1601,30 +1841,33 @@ export function AdminDashboard() {
                         setCtaLinks(newLinks);
                       }}
                       placeholder="Button Label (e.g. Buy me coffee ($5))"
-                      className="w-1/3 px-3 py-2 rounded-lg border border-tan-200 focus:border-peach-400 focus:outline-none font-bold"
+                      className="w-full sm:w-1/3 px-3 py-2 rounded-lg border border-tan-200 focus:border-peach-400 focus:outline-none font-bold text-sm"
                     />
-                    <input 
-                      value={link.url}
-                      onChange={(e) => {
-                        const newLinks = [...ctaLinks];
-                        newLinks[index].url = e.target.value;
-                        setCtaLinks(newLinks);
-                      }}
-                      placeholder="Fallback URL..."
-                      className="flex-1 px-3 py-2 rounded-lg border border-tan-200 focus:border-peach-400 focus:outline-none"
-                    />
-                    <button 
-                      onClick={() => setCtaLinks(ctaLinks.filter((_, i) => i !== index))}
-                      className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                      title="Delete Button"
-                    >
-                      <Trash2 size={18} />
-                    </button>
+                    <div className="flex items-center gap-2 flex-1">
+                      <input 
+                        value={link.url}
+                        onChange={(e) => {
+                          const newLinks = [...ctaLinks];
+                          newLinks[index].url = e.target.value;
+                          setCtaLinks(newLinks);
+                        }}
+                        placeholder="Fallback URL..."
+                        className="flex-1 px-3 py-2 rounded-lg border border-tan-200 focus:border-peach-400 focus:outline-none text-sm"
+                      />
+                      <button 
+                        onClick={() => setCtaLinks(ctaLinks.filter((_, i) => i !== index))}
+                        className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors shrink-0"
+                        title="Delete Button"
+                        aria-label="Delete button"
+                      >
+                        <Trash2 size={18} />
+                      </button>
+                    </div>
                   </div>
 
                   {/* Toggle Button to Turn ANY Button into a Payment Popup */}
-                  <div className="notepad-step flex items-center justify-between px-4 py-3">
-                    <div className="flex items-center gap-2">
+                  <div className="notepad-step flex items-center justify-between p-3 sm:px-4">
+                    <div className="flex items-start sm:items-center gap-2">
                       <input 
                         type="checkbox"
                         id={`enable-payment-${link.id}`}
@@ -1645,9 +1888,9 @@ export function AdminDashboard() {
                           }
                           setCtaLinks(newLinks);
                         }}
-                        className="w-4 h-4 accent-peach-500 cursor-pointer"
+                        className="w-4 h-4 accent-peach-500 cursor-pointer mt-0.5 sm:mt-0 shrink-0"
                       />
-                      <label htmlFor={`enable-payment-${link.id}`} className="text-sm font-bold text-ink-900 cursor-pointer">
+                      <label htmlFor={`enable-payment-${link.id}`} className="text-xs sm:text-sm font-bold text-ink-900 cursor-pointer leading-tight">
                         Open Multi-Wallet Payment Popup (GCash, Maya, PayPal, Wise) when clicked
                       </label>
                     </div>
@@ -1688,8 +1931,8 @@ export function AdminDashboard() {
 
                       <div className="flex flex-col gap-3">
                         {link.wallets.map((wallet, wIndex) => (
-                          <div key={wIndex} className="notepad-step p-4 flex flex-col gap-3">
-                            <div className="flex gap-2 items-center">
+                          <div key={wIndex} className="notepad-step p-3 sm:p-4 flex flex-col gap-3">
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                               <input 
                                 value={wallet.name}
                                 onChange={(e) => {
@@ -1697,8 +1940,8 @@ export function AdminDashboard() {
                                   newLinks[index].wallets![wIndex].name = e.target.value;
                                   setCtaLinks(newLinks);
                                 }}
-                                placeholder="Wallet Name"
-                                className="w-1/4 px-2 py-1.5 text-sm rounded border border-tan-200 font-bold"
+                                placeholder="Wallet Name (e.g. GCash)"
+                                className="px-2.5 py-2 text-sm rounded-lg border border-tan-200 font-bold bg-white"
                               />
                               <input 
                                 value={wallet.accountName}
@@ -1708,34 +1951,38 @@ export function AdminDashboard() {
                                   setCtaLinks(newLinks);
                                 }}
                                 placeholder="Account Name"
-                                className="w-1/4 px-2 py-1.5 text-sm rounded border border-tan-200"
+                                className="px-2.5 py-2 text-sm rounded-lg border border-tan-200 bg-white"
                               />
-                              <input 
-                                value={wallet.accountNumber}
-                                onChange={(e) => {
-                                  const newLinks = [...ctaLinks];
-                                  newLinks[index].wallets![wIndex].accountNumber = e.target.value;
-                                  setCtaLinks(newLinks);
-                                }}
-                                placeholder="Number / Email ID"
-                                className="flex-1 px-2 py-1.5 text-sm rounded border border-tan-200 font-mono"
-                              />
-                              <button 
-                                type="button"
-                                onClick={() => {
-                                  const newLinks = [...ctaLinks];
-                                  newLinks[index].wallets = newLinks[index].wallets!.filter((_, i) => i !== wIndex);
-                                  setCtaLinks(newLinks);
-                                }}
-                                className="text-red-400 hover:text-red-600 p-1"
-                              >
-                                <Trash2 size={16} />
-                              </button>
+                              <div className="flex items-center gap-1.5">
+                                <input 
+                                  value={wallet.accountNumber}
+                                  onChange={(e) => {
+                                    const newLinks = [...ctaLinks];
+                                    newLinks[index].wallets![wIndex].accountNumber = e.target.value;
+                                    setCtaLinks(newLinks);
+                                  }}
+                                  placeholder="Number / Email ID"
+                                  className="flex-1 px-2.5 py-2 text-sm rounded-lg border border-tan-200 font-mono bg-white"
+                                />
+                                <button 
+                                  type="button" 
+                                  onClick={() => {
+                                    const newLinks = [...ctaLinks];
+                                    newLinks[index].wallets = newLinks[index].wallets!.filter((_, i) => i !== wIndex);
+                                    setCtaLinks(newLinks);
+                                  }}
+                                  className="text-red-400 hover:text-red-600 p-2 rounded-lg hover:bg-red-50 shrink-0"
+                                  title="Delete Wallet"
+                                  aria-label="Delete wallet"
+                                >
+                                  <Trash2 size={16} />
+                                </button>
+                              </div>
                             </div>
 
                             {/* QR Code Upload per Wallet */}
-                            <div className="flex items-center gap-2 pt-2 border-t border-tan-100 text-xs">
-                              <span className="text-tan-500 font-bold">QR Image:</span>
+                            <div className="flex flex-col sm:flex-row sm:items-center gap-2 pt-2 border-t border-tan-100 text-xs">
+                              <span className="text-tan-500 font-bold shrink-0">QR Image:</span>
                               <input 
                                 value={wallet.qrCode || ''}
                                 onChange={(e) => {
@@ -1744,24 +1991,26 @@ export function AdminDashboard() {
                                   setCtaLinks(newLinks);
                                 }}
                                 placeholder="Paste QR image URL or upload..."
-                                className="flex-1 px-2 py-1 rounded border border-tan-200 bg-cream-50"
+                                className="flex-1 px-2 py-1.5 rounded-lg border border-tan-200 bg-cream-50"
                               />
-                              <label className="px-2 py-1 bg-earth-100 text-earth-700 font-bold rounded cursor-pointer hover:bg-earth-200 whitespace-nowrap">
-                                Upload QR
-                                <input 
-                                  type="file" 
-                                  accept="image/*" 
-                                  className="hidden" 
-                                  onChange={(e) => handleImageUpload(e, `wallet-${index}-${wIndex}`, (base64) => {
-                                    const newLinks = [...ctaLinks];
-                                    newLinks[index].wallets![wIndex].qrCode = base64;
-                                    setCtaLinks(newLinks);
-                                  })} 
-                                />
-                              </label>
-                              {wallet.qrCode && (
-                                <img src={wallet.qrCode} alt="QR Preview" className="w-8 h-8 object-cover rounded border border-tan-300" />
-                              )}
+                              <div className="flex items-center gap-2">
+                                <label className="px-3 py-1.5 bg-earth-100 text-earth-700 font-bold rounded-lg cursor-pointer hover:bg-earth-200 whitespace-nowrap">
+                                  Upload QR
+                                  <input 
+                                    type="file" 
+                                    accept="image/*" 
+                                    className="hidden" 
+                                    onChange={(e) => handleImageUpload(e, `wallet-${index}-${wIndex}`, (base64) => {
+                                      const newLinks = [...ctaLinks];
+                                      newLinks[index].wallets![wIndex].qrCode = base64;
+                                      setCtaLinks(newLinks);
+                                    })} 
+                                  />
+                                </label>
+                                {wallet.qrCode && (
+                                  <img src={wallet.qrCode} alt="QR Preview" className="w-8 h-8 object-cover rounded border border-tan-300" />
+                                )}
+                              </div>
                             </div>
                           </div>
                         ))}
@@ -1772,7 +2021,7 @@ export function AdminDashboard() {
               ))}
               <button 
                 onClick={() => setCtaLinks([...(ctaLinks || []), { id: `link-${Date.now()}`, label: 'New Link', url: '' }])}
-                className="self-start mt-2 px-4 py-2 bg-peach-50 text-peach-600 font-bold rounded-lg flex items-center gap-2 hover:bg-peach-100 transition-colors"
+                className="self-start mt-2 px-4 py-2 bg-peach-50 text-peach-600 font-bold rounded-lg flex items-center gap-2 hover:bg-peach-100 transition-colors text-sm"
               >
                 <Plus size={16} /> Add Footer Button
               </button>
@@ -1784,60 +2033,61 @@ export function AdminDashboard() {
       {activeTab === 'games' && (
         <div className="flex flex-col gap-4">
           {games.map((game, idx) => (
-            <div key={game.id} className="notepad-card p-5 flex justify-between items-center gap-3">
-              {/* Reorder arrows */}
-              <div className="flex flex-col gap-1 shrink-0">
-                <button
-                  onClick={() => reorderGame(game.id, 'up')}
-                  disabled={idx === 0}
-                  className="p-1.5 rounded-lg border border-tan-200 bg-cream-50 hover:bg-peach-50 hover:border-peach-300 disabled:opacity-25 disabled:cursor-not-allowed transition-colors"
-                  title="Move up"
-                  aria-label="Move game up"
-                >
-                  <ChevronUp size={16} className="text-ink-700" />
-                </button>
-                <button
-                  onClick={() => reorderGame(game.id, 'down')}
-                  disabled={idx === games.length - 1}
-                  className="p-1.5 rounded-lg border border-tan-200 bg-cream-50 hover:bg-peach-50 hover:border-peach-300 disabled:opacity-25 disabled:cursor-not-allowed transition-colors"
-                  title="Move down"
-                  aria-label="Move game down"
-                >
-                  <ChevronDown size={16} className="text-ink-700" />
-                </button>
-              </div>
+            <div key={game.id} className="notepad-card p-4 sm:p-5 flex flex-col sm:flex-row justify-between sm:items-center gap-3">
+              <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
+                {/* Reorder arrows */}
+                <div className="flex sm:flex-col gap-1 shrink-0">
+                  <button
+                    onClick={() => reorderGame(game.id, 'up')}
+                    disabled={idx === 0}
+                    className="p-1.5 rounded-lg border border-tan-200 bg-cream-50 hover:bg-peach-50 hover:border-peach-300 disabled:opacity-25 disabled:cursor-not-allowed transition-colors"
+                    title="Move up"
+                    aria-label="Move game up"
+                  >
+                    <ChevronUp size={16} className="text-ink-700" />
+                  </button>
+                  <button
+                    onClick={() => reorderGame(game.id, 'down')}
+                    disabled={idx === games.length - 1}
+                    className="p-1.5 rounded-lg border border-tan-200 bg-cream-50 hover:bg-peach-50 hover:border-peach-300 disabled:opacity-25 disabled:cursor-not-allowed transition-colors"
+                    title="Move down"
+                    aria-label="Move game down"
+                  >
+                    <ChevronDown size={16} className="text-ink-700" />
+                  </button>
+                </div>
 
-              <div className="flex items-center gap-4 flex-1 min-w-0">
                 <div 
-                  className="w-16 h-16 rounded-xl object-cover shadow-sm bg-cover bg-center border border-tan-200 shrink-0"
+                  className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl object-cover shadow-sm bg-cover bg-center border border-tan-200 shrink-0"
                   style={{ backgroundImage: `url(${game.coverImage})`}} 
                 />
-                <div className="min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <h3 className="font-bold text-xl text-ink-900">{game.title}</h3>
-                    <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-peach-100 text-peach-700 border border-peach-200">
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                    <h3 className="font-bold text-lg sm:text-xl text-ink-900 truncate">{game.title}</h3>
+                    <span className="text-[11px] sm:text-xs font-bold px-2 py-0.5 rounded-full bg-peach-100 text-peach-700 border border-peach-200">
                       {game.category || 'Cozy Games'}
                     </span>
                   </div>
-                  <span className="text-sm font-semibold text-tan-500 bg-tan-100 px-2 py-1 rounded-md mt-1 inline-block">
+                  <span className="text-xs sm:text-sm font-semibold text-tan-500 bg-tan-100 px-2 py-0.5 sm:py-1 rounded-md mt-1 inline-block">
                     {game.walkthrough.length} Walkthrough Sections
                   </span>
                 </div>
               </div>
 
-              <div className="flex gap-3 shrink-0">
+              <div className="flex items-center justify-end gap-2 sm:gap-3 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-tan-100">
                 <button 
                   onClick={() => setEditingGame(game)} 
-                  className="p-3 text-earth-600 bg-earth-50 hover:bg-earth-100 font-bold rounded-xl flex items-center gap-2 transition-colors"
+                  className="flex-1 sm:flex-initial justify-center p-2.5 sm:p-3 text-earth-700 bg-earth-100 hover:bg-earth-200 font-bold rounded-xl flex items-center gap-1.5 sm:gap-2 transition-colors text-sm"
                 >
-                  <Edit2 size={18} /> Edit
+                  <Edit2 size={16} /> Edit Game
                 </button>
                 <button 
                   onClick={() => handleDeleteGame(game.id)} 
-                  className="p-3 text-red-500 bg-red-50 hover:bg-red-100 hover:text-red-700 rounded-xl transition-colors"
+                  className="p-2.5 sm:p-3 text-red-500 bg-red-50 hover:bg-red-100 hover:text-red-700 rounded-xl transition-colors"
                   title="Delete Game"
+                  aria-label="Delete Game"
                 >
-                  <Trash2 size={20} />
+                  <Trash2 size={18} />
                 </button>
               </div>
             </div>
@@ -1952,15 +2202,15 @@ export function AdminDashboard() {
             {stories.map((story) => {
               const totalWords = story.chapters.reduce((sum, ch) => sum + ch.wordCount, 0);
               return (
-                <div key={story.id} className="notepad-card p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                  <div className="flex items-center gap-4">
+                <div key={story.id} className="notepad-card p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                  <div className="flex items-start sm:items-center gap-3 sm:gap-4 flex-1 min-w-0">
                     <img
                       src={story.coverImage}
                       alt={story.coverAlt}
-                      className="w-16 h-20 object-cover rounded-xl border border-tan-200 shadow-cozy-sm"
+                      className="w-14 h-18 sm:w-16 sm:h-20 object-cover rounded-xl border border-tan-200 shadow-cozy-sm shrink-0"
                     />
-                    <div>
-                      <div className="flex items-center gap-2 mb-1">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-1.5 sm:gap-2 mb-1 flex-wrap">
                         <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-peach-100 text-peach-700">
                           {story.genre}
                         </span>
@@ -1973,14 +2223,14 @@ export function AdminDashboard() {
                           </span>
                         )}
                       </div>
-                      <h4 className="font-display font-bold text-base text-ink-900">{story.title}</h4>
+                      <h4 className="font-display font-bold text-base text-ink-900 truncate">{story.title}</h4>
                       <p className="text-xs text-tan-600 font-sans mt-0.5">
                         By {story.author} • {story.chapters.length} Chapters • ~{totalWords.toLocaleString()} words
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2 self-end sm:self-center">
+                  <div className="flex items-center gap-2 w-full sm:w-auto justify-end border-t sm:border-t-0 pt-2 sm:pt-0 border-tan-100">
                     <button
                       onClick={() => {
                         setEditingStory(story);

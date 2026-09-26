@@ -45,7 +45,7 @@ export function ArticleManager({
   return (
     <div className="space-y-6 animate-fade-in">
       {/* Top Action Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-cream-50 p-6 rounded-2xl border-2 border-tan-200 shadow-cozy-sm">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-cream-50 p-4 sm:p-6 rounded-2xl border-2 border-tan-200 shadow-cozy-sm">
         <div>
           <h3 className="font-display font-bold text-xl text-ink-900 flex items-center gap-2">
             <BookOpen className="w-5 h-5 text-peach-500" />
@@ -98,13 +98,13 @@ export function ArticleManager({
           {filtered.map((article) => (
             <div
               key={article.id}
-              className="notepad-card p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-cozy-sm hover:shadow-cozy-md transition-shadow"
+              className="notepad-card p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-cozy-sm hover:shadow-cozy-md transition-shadow"
             >
-              <div className="flex items-start gap-4">
+              <div className="flex items-start gap-3 sm:gap-4 flex-1 min-w-0">
                 <img
                   src={article.coverImage}
                   alt={article.coverAlt}
-                  className="w-20 h-20 rounded-xl object-cover border border-tan-200 shrink-0 bg-cream-200"
+                  className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl object-cover border border-tan-200 shrink-0 bg-cream-200"
                 />
                 <div className="space-y-1">
                   <div className="flex flex-wrap items-center gap-2">

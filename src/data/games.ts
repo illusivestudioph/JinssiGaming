@@ -30,6 +30,7 @@ export interface Game {
   editorNote?: string;
   accentColor: string;
   coverImage: string;
+  coverImages?: string[];  // Multiple cover images for automatic looping carousel
   coverAlt: string;
   video?: string;          // Direct video URL or 'placeholder'
   videoPoster?: string;    // Poster image URL
@@ -54,6 +55,10 @@ export const games: Game[] = [
     "gameLink": "https://store.steampowered.com/app/4197610/Librarian_Tidy_Up_the_Arcane_Library/",
     "developer": " ArtRising",
     "coverImage": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/b992ec68-feab-4042-8897-a46f4bdd6d1a-afjhaisluefglsd.jpg_2K_202609090013.jpeg",
+    "coverImages": [
+      "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/b992ec68-feab-4042-8897-a46f4bdd6d1a-afjhaisluefglsd.jpg_2K_202609090013.jpeg",
+      "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/2667192b-5b84-403b-80b5-c343ef3c65e2-chaos.jpeg"
+    ],
     "editorNote": "Restoring this library has been such a satisfying journey from start to finish. What began as overwhelming chaos — books scattered everywhere, shelves empty and rooms in disarray — slowly transformed into something beautiful, one book and one shelf at a time. There’s a quiet, wonderful joy in carefully matching each volume to its proper room, watching the spines line up perfectly by color and subject, and seeing the grand hall slowly come back to life.\nThis game isn’t just about sorting books. It’s about the satisfaction of patience, the pleasure of organization, and that wonderful feeling when everything finally clicks into place. It proves that with care and attention, even the greatest mess can become something truly perfect.\nFrom the first book picked up to the very last one placed on the shelf, it was a relaxing, rewarding experience. The Arcane Library stands whole and beautiful once again — and that feeling of turning chaos into perfection? I highly recommend this game to anyone. If you love cozy, satisfying sorting games that leave you feeling peaceful and proud, this one is absolutely worth playing. ✨📚",
     "accentColor": "#cc5c28",
     "description": "Librarian: Tidy Up the Arcane Library! is a single-player simulation. You need return scattered books to proper places in an Arcane Library. As completed rows of bookshelves, you can learn ability to improve your efficiency. Use your skills and strategies to shelve 3,072 books as quick as you can.",
