@@ -356,7 +356,7 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
   );
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="w-full max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8 min-w-0">
       {/* Back button */}
       <button
         onClick={onBack}
@@ -367,12 +367,12 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
       </button>
 
       {/* Game store style media hero showcase */}
-      <div className="cozy-card notepad-card mb-8 animate-fade-in overflow-hidden">
+      <div className="cozy-card notepad-card mb-8 animate-fade-in overflow-hidden w-full max-w-full">
         {game.video ? (
           <div>
             {/* Store-style media tabs */}
-            <div className="flex items-center justify-between px-4 sm:px-6 pt-4 pb-2 bg-cream-100/70 border-b border-tan-200">
-              <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center justify-center sm:justify-between px-3 sm:px-6 pt-3 sm:pt-4 pb-2 bg-cream-100/70 border-b border-tan-200 gap-2">
+              <div className="flex items-center justify-center gap-2 flex-wrap">
                 <button
                   type="button"
                   onClick={() => setMediaTab('trailer')}
@@ -464,19 +464,19 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
         ) : (
           renderCoverCarousel()
         )}
-        <div className="p-6">
+        <div className="p-4 sm:p-6 text-center sm:text-left">
           <h2 className="page-title font-display text-2xl sm:text-3xl font-700 text-ink-900 mb-1">
             {game.title}
           </h2>
           <p className="text-sm text-tan-400 font-semibold mb-3">
             by {game.developer}
           </p>
-          <p className="text-base text-ink-700 leading-relaxed">
+          <p className="text-sm sm:text-base text-ink-700 leading-relaxed max-w-3xl mx-auto sm:mx-0">
             {game.description}
           </p>
 
           <div className="mt-5 border-t border-tan-200 pt-4">
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
               <span className="mr-1 inline-flex items-center gap-2 text-sm font-bold text-ink-900">
                 <Share2 className="h-4 w-4 text-peach-500" aria-hidden="true" />
                 Share this walkthrough
@@ -507,7 +507,7 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
                 Email
               </a>
             </div>
-            <div className="mt-3 flex flex-wrap gap-2" aria-label="Social sharing options">
+            <div className="mt-3 flex flex-wrap justify-center sm:justify-start gap-2" aria-label="Social sharing options">
               {socialLinks.map((social) => (
                 <a
                   key={social.label}
@@ -521,7 +521,7 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
               ))}
             </div>
           </div>
-          <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-3 border-t border-tan-200 pt-4 text-sm">
+          <div className="mt-5 flex flex-wrap items-center justify-center sm:justify-start gap-x-6 gap-y-3 border-t border-tan-200 pt-4 text-sm">
             <div>
               <span className="font-bold text-tan-500">Developer</span>
               <p className="font-semibold text-ink-900">{game.developer}</p>
@@ -541,15 +541,15 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
       </div>
 
       {/* Progress overview */}
-      <div className="cozy-card notepad-card p-5 mb-6">
+      <div className="cozy-card notepad-card p-4 sm:p-5 mb-6">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <BookOpen className="w-5 h-5 theme-accent-color progress-accent-icon" style={{ color: 'var(--theme-accent)' }} />
-            <h3 className="font-display text-lg font-600 text-ink-900">
+            <h3 className="font-display text-base sm:text-lg font-600 text-ink-900">
               Your Progress
             </h3>
           </div>
-          <span className="text-sm font-bold text-tan-500">
+          <span className="text-xs sm:text-sm font-bold text-tan-500">
             {completedCount} / {totalSteps} steps
           </span>
         </div>
@@ -571,16 +571,18 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
       </div>
 
       {/* Controls bar: Table of Contents + Spoiler toggle + Reset */}
-      <div className="flex items-center justify-between mb-8 gap-4 flex-wrap">
-        <TableOfContents
-          sections={game.walkthrough}
-          accentColor={game.accentColor}
-          completedSteps={completedSteps}
-          onSelectStep={handleSelectStep}
-          onSelectSection={handleSelectSection}
-        />
+      <div className="flex flex-col sm:flex-row items-center justify-between mb-8 gap-3 sm:gap-4 w-full">
+        <div className="w-full sm:w-auto flex justify-center sm:justify-start">
+          <TableOfContents
+            sections={game.walkthrough}
+            accentColor={game.accentColor}
+            completedSteps={completedSteps}
+            onSelectStep={handleSelectStep}
+            onSelectSection={handleSelectSection}
+          />
+        </div>
 
-        <div className="flex items-center gap-3 flex-wrap">
+        <div className="flex items-center justify-center gap-2.5 sm:gap-3 flex-wrap w-full sm:w-auto">
           <button
             onClick={toggleSpoilers}
             className="site-button spoilers-toggle-button bg-cream-50 text-ink-900 border-cream-300 hover:border-peach-300"

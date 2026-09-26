@@ -945,7 +945,11 @@
   }
 
   .notepad-card.overflow-hidden {
-    overflow: visible !important;
+    overflow: hidden !important;
+  }
+
+  .notepad-card.overflow-hidden::before {
+    display: none;
   }
 
   .notepad-card::before {
