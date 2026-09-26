@@ -16,6 +16,7 @@ import {
   StreamlinePause,
   StreamlineVolume,
   StreamlineVolumeMute,
+  StreamlineMessageSquare,
 } from '@/components/StreamlineIcons';
 import { isCreatorEmail, CREATOR_EMAIL } from '@/types/profile';
 
@@ -175,18 +176,6 @@ export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View)
               )}
             </div>
 
-            {/* Game Chat Button */}
-            <button
-              type="button"
-              onClick={() => setIsChatOpen(true)}
-              className="flex items-center gap-1.5 bg-cream-50/90 hover:bg-cream-100 border border-tan-300/80 hover:border-peach-400 rounded-full px-2 sm:px-2.5 py-1 shadow-cozy-sm transition-all text-xs font-bold text-ink-800 hover:text-peach-600 select-none cursor-pointer"
-              title="Open Cozy Game Chat (World & DMs)"
-              aria-label="Open chat"
-            >
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="hidden md:inline">Chat</span>
-            </button>
-
             {/* Cozy Member Profile Chip */}
             <button
               type="button"
@@ -204,11 +193,11 @@ export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View)
                   bannerText: profile.bannerText,
                 });
               }}
-              className="flex items-center gap-1.5 sm:gap-2 bg-cream-50/90 hover:bg-cream-100 border border-tan-300/80 hover:border-peach-400 rounded-full pl-1 pr-1.5 sm:pl-1.5 sm:pr-3 py-0.5 sm:py-1 shadow-cozy-sm transition-all text-xs font-bold text-ink-900 group select-none cursor-pointer"
+              className="flex items-center gap-1.5 sm:gap-2 bg-cream-50/90 hover:bg-cream-100 border border-tan-300/80 hover:border-peach-400 rounded-full p-1 sm:pl-1.5 sm:pr-3 sm:py-1 shadow-cozy-sm transition-all text-xs font-bold text-ink-900 group select-none cursor-pointer"
               title="View Public Profile Card & Banner"
               aria-label="Open member profile"
             >
-              <CozyAvatar config={profile.avatarConfig} size={26} showBorder={false} />
+              <CozyAvatar config={profile.avatarConfig} size={28} showBorder={false} />
               <span className="hidden sm:inline max-w-[90px] truncate text-ink-800 group-hover:text-peach-600">
                 {user ? `@${profile.username}` : 'Guest'}
               </span>
@@ -221,14 +210,14 @@ export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View)
                 </span>
               )}
               <span
-                className={`w-2 h-2 rounded-full ${user ? 'bg-emerald-500 ring-2 ring-emerald-200' : 'bg-amber-400'}`}
+                className={`hidden sm:inline-block w-2 h-2 rounded-full ${user ? 'bg-emerald-500 ring-2 ring-emerald-200' : 'bg-amber-400'}`}
                 title={user ? 'Signed in with Google' : 'Browsing as Guest'}
               />
             </button>
 
             <button
               type="button"
-              className="rounded-xl border-2 border-tan-200 bg-cream-50 p-2 text-tan-600 shadow-cozy-sm transition-colors hover:border-peach-300 hover:text-peach-500 md:hidden"
+              className="rounded-xl border-2 border-tan-200 bg-cream-50 p-2 text-tan-600 shadow-cozy-sm transition-colors hover:border-peach-300 hover:text-peach-500 md:hidden flex items-center justify-center h-9 w-9"
               onClick={() => {
                 playDropdownSfx();
                 setMobileMenuOpen((open) => !open);
@@ -284,6 +273,17 @@ export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View)
               <button aria-current={view === 'stories' ? 'page' : undefined} onClick={() => handleNavigate('stories')} className={`site-nav-link text-left ${view === 'stories' ? 'text-peach-500' : 'text-tan-600'}`}>Stories</button>
               <button aria-current={view === 'store' ? 'page' : undefined} onClick={() => handleNavigate('store')} className={`site-nav-link text-left ${view === 'store' ? 'text-peach-500' : 'text-tan-600'}`}>Store</button>
               <button aria-current={view === 'about' ? 'page' : undefined} onClick={() => handleNavigate('about')} className={`site-nav-link text-left ${view === 'about' ? 'text-peach-500' : 'text-tan-600'}`}>About</button>
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  setIsChatOpen(true);
+                }}
+                className="site-nav-link text-left text-ink-800 hover:text-peach-600 flex items-center gap-2"
+              >
+                <StreamlineMessageSquare className="w-4 h-4 text-peach-500" />
+                <span>Cozy Chat (World & DMs)</span>
+              </button>
               {profile.isCreator && isCreatorEmail(user?.email) && (
                 <button
                   aria-current={view === 'admin' ? 'page' : undefined}
