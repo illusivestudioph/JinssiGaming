@@ -20,6 +20,9 @@ import {
   Share2,
   Copy,
   Mail,
+  Play,
+  Film,
+  Image as ImageIcon,
 } from '@/components/StreamlineIcons';
 
 interface WalkthroughViewProps {
@@ -641,6 +644,9 @@ function WalkthroughSectionCard({
                 description={step.description}
                 image={step.image}
                 imageAlt={step.imageAlt || `Step ${idx + 1}`}
+                video={step.video}
+                videoPoster={step.videoPoster}
+                videoTitle={step.videoTitle}
                 hasSpoiler={step.hasSpoiler}
                 spoilerText={step.spoilerText}
                 isDone={isDone}
@@ -664,6 +670,9 @@ interface WikiHowStepProps {
   description: string;
   image?: string;
   imageAlt?: string;
+  video?: string;
+  videoPoster?: string;
+  videoTitle?: string;
   hasSpoiler?: boolean;
   spoilerText?: string;
   isDone: boolean;
@@ -680,6 +689,9 @@ function WikiHowStep({
   description,
   image,
   imageAlt,
+  video,
+  videoPoster,
+  videoTitle,
   hasSpoiler,
   spoilerText,
   isDone,
@@ -688,6 +700,16 @@ function WikiHowStep({
   isHighlighted = false,
 }: WikiHowStepProps) {
   const [spoilerRevealed, setSpoilerRevealed] = useState(false);
+  
+  const isVideoPlaceholder = video === 'placeholder';
+  const hasRealVideo = Boolean(video && video !== 'placeholder');
+  const hasImage = Boolean(image && image.trim().length > 0);
+  
+  // If both real video and image exist, default to video tab
+  const [activeMediaTab, setActiveMediaTab] = useState<'video' | 'image'>(() => {
+    if (hasRealVideo) return 'video';
+    return 'image';
+  });
 
   return (
     <div
@@ -730,22 +752,103 @@ function WikiHowStep({
         </button>
       </div>
 
-      {/* Step image — Changed from object-cover to object-contain with a neutral background container to preserve aspect ratio */}
-      {image && (
+      {/* Media Container: Video, Placeholder, or Image */}
+      {(hasRealVideo || isVideoPlaceholder || hasImage) && (
         <div className="px-4 pb-3">
-          <div className="rounded-2xl overflow-hidden shadow-cozy-sm bg-cream-200/50 flex items-center justify-center min-h-[220px] sm:min-h-[280px] max-h-[400px] w-full">
-            <img
-              src={getOptimizedImageUrl(image, { width: 800, quality: 80, format: 'webp' })}
-              alt={imageAlt || ""}
-              loading="lazy"
-              decoding="async"
-              width={640}
-              height={360}
-              className={`w-full h-auto max-h-[400px] object-contain transition-all duration-500 ${
-                isDone ? 'opacity-60 grayscale' : 'opacity-100'
-              }`}
-            />
-          </div>
+          {/* Tab selector if both video and image are available */}
+          {hasRealVideo && hasImage && (
+            <div className="flex items-center gap-2 mb-2">
+              <button
+                type="button"
+                onClick={() => setActiveMediaTab('video')}
+                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold transition-all ${
+                  activeMediaTab === 'video'
+                    ? 'bg-peach-500 text-cream-50 shadow-cozy-xs'
+                    : 'bg-cream-200/80 text-ink-700 hover:bg-cream-300/80'
+                }`}
+              >
+                <Play className="w-3 h-3 fill-current" />
+                <span>Video Guide</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveMediaTab('image')}
+                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold transition-all ${
+                  activeMediaTab === 'image'
+                    ? 'bg-peach-500 text-cream-50 shadow-cozy-xs'
+                    : 'bg-cream-200/80 text-ink-700 hover:bg-cream-300/80'
+                }`}
+              >
+                <ImageIcon className="w-3 h-3" />
+                <span>Screenshot</span>
+              </button>
+            </div>
+          )}
+
+          {/* 1. Video Placeholder */}
+          {isVideoPlaceholder && (
+            <div className="rounded-2xl border-2 border-dashed border-peach-300/80 bg-peach-50/70 p-5 sm:p-6 text-center flex flex-col items-center justify-center relative overflow-hidden transition-all hover:border-peach-400 group mb-3 shadow-cozy-xs">
+              <div className="w-12 h-12 rounded-2xl bg-peach-200/80 text-peach-600 flex items-center justify-center mb-3 shadow-cozy-xs group-hover:scale-105 transition-transform">
+                <Film className="w-6 h-6" />
+              </div>
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-peach-200/60 text-peach-700 text-[11px] font-bold uppercase tracking-wider mb-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-peach-500 animate-pulse" />
+                Video Walkthrough In Production
+              </div>
+              <h5 className="font-display font-bold text-sm sm:text-base text-ink-900 mb-1">
+                {videoTitle || 'Gameplay Video Clip Placeholder'}
+              </h5>
+              <p className="text-xs sm:text-sm text-ink-600 max-w-md leading-relaxed">
+                A lightweight, web-optimized video walkthrough is being prepared for this step. Follow the screenshot and guide notes below!
+              </p>
+              <div className="mt-3 flex items-center gap-2 text-[11px] font-semibold text-tan-500">
+                <span>⚡ WebM VP9 High Fidelity</span>
+                <span>•</span>
+                <span>Ultra-fast 60FPS</span>
+              </div>
+            </div>
+          )}
+
+          {/* 2. Real Video Player */}
+          {hasRealVideo && activeMediaTab === 'video' && (
+            <div className="relative rounded-2xl overflow-hidden shadow-cozy-sm bg-ink-950 flex flex-col items-center justify-center min-h-[220px] sm:min-h-[280px] max-h-[460px] w-full border border-tan-300/40">
+              <div className="absolute top-3 left-3 z-10 pointer-events-none">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-ink-900/85 backdrop-blur-md text-[11px] font-bold text-cream-100 shadow-sm border border-white/10">
+                  <Film className="w-3.5 h-3.5 text-peach-400" />
+                  {videoTitle || 'Walkthrough Video Clip'}
+                </span>
+              </div>
+              <video
+                controls
+                playsInline
+                preload="metadata"
+                poster={videoPoster || (image ? getOptimizedImageUrl(image, { width: 800, quality: 80, format: 'webp' }) : undefined)}
+                className={`w-full h-auto max-h-[460px] object-contain transition-all duration-500 ${
+                  isDone ? 'opacity-70' : 'opacity-100'
+                }`}
+              >
+                <source src={video} type={video?.endsWith('.webm') ? 'video/webm' : 'video/mp4'} />
+                Your browser does not support the video tag.
+              </video>
+            </div>
+          )}
+
+          {/* 3. Step image */}
+          {hasImage && (!hasRealVideo || activeMediaTab === 'image' || isVideoPlaceholder) && (
+            <div className="rounded-2xl overflow-hidden shadow-cozy-sm bg-cream-200/50 flex items-center justify-center min-h-[220px] sm:min-h-[280px] max-h-[400px] w-full">
+              <img
+                src={getOptimizedImageUrl(image, { width: 800, quality: 80, format: 'webp' })}
+                alt={imageAlt || ""}
+                loading="lazy"
+                decoding="async"
+                width={640}
+                height={360}
+                className={`w-full h-auto max-h-[400px] object-contain transition-all duration-500 ${
+                  isDone ? 'opacity-60 grayscale' : 'opacity-100'
+                }`}
+              />
+            </div>
+          )}
         </div>
       )}
 

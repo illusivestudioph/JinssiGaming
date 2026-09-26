@@ -4,6 +4,9 @@ export interface WalkthroughStep {
   description: string;
   image: string;
   imageAlt: string;
+  video?: string;
+  videoPoster?: string;
+  videoTitle?: string;
   hasSpoiler?: boolean;
   spoilerText?: string;
 }
@@ -1097,6 +1100,8 @@ export const games: Game[] = [
             "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/989424c9-a5b5-4425-a9d8-d0869ec52d14-controls.webp",
             "title": "Learn the Controls & Skills",
             "imageAlt": "Step illustration",
+            "video": "placeholder",
+            "videoTitle": "Watch: Sorting Controls & Skill Demo",
             "hasSpoiler": false,
             "description": "Pick up tapes, check their labels, and place them on the matching shelf. As you sort, earn points to unlock skills:\n\n•Sort Numerically — auto-orders tapes in your hand by number\n•Highlight Shelf — lights up exactly where your top tape belongs\n•Highlight Tapes — marks all matching tapes of the same type\n•Auto-Placement — sets tapes correctly on the shelf automatically\n•Auto-Collect — instantly gathers matching tapes from around the room",
             "spoilerText": ""

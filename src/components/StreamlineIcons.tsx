@@ -1427,6 +1427,23 @@ export function StreamlineImage({ className = 'w-4 h-4', size, ...props }: Strea
   );
 }
 
+export function StreamlineFilm({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <rect x="2" y="4" width="20" height="16" rx="2.5" stroke="currentColor" strokeWidth="2.2" />
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" d="M7 4v16M17 4v16M2 8h5M2 12h5M2 16h5M17 8h5M17 12h5M17 16h5" />
+    </svg>
+  );
+}
+
+export function StreamlineVideo({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
+      <path stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+    </svg>
+  );
+}
+
 export function StreamlineEye({ className = 'w-4 h-4', size, ...props }: StreamlineIconProps) {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={size} height={size} className={className} {...props}>
@@ -1662,6 +1679,8 @@ export {
   StreamlineLibrary as Library,
   StreamlineFileText as FileText,
   StreamlineImage as Image,
+  StreamlineFilm as Film,
+  StreamlineVideo as Video,
   StreamlineEye as Eye,
   StreamlineEyeOff as EyeOff,
   StreamlineShoppingBag as ShoppingBag,

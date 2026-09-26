@@ -10,6 +10,15 @@ import type { Story } from '@/data/stories';
 import { supabase } from '@/lib/supabase';
 import { convertImageToWebp } from '@/utils/imageOptimization';
 import { 
+  convertVideoToWebFormat, 
+  formatBytes, 
+  type VideoOptimizationProgress 
+} from '@/utils/videoOptimization';
+import { 
+  uploadWalkthroughMedia, 
+  saveWalkthroughVideoRecord 
+} from '@/services/videoService';
+import { 
   Trash2, 
   Plus, 
   Image as ImageIcon, 
@@ -31,6 +40,10 @@ import {
   ExternalLink,
   ShoppingBag,
   Lock,
+  Film,
+  Video,
+  Play,
+  Loader2,
 } from '@/components/StreamlineIcons';
 import { useAuth } from '@/context/AuthContext';
 import { isCreatorEmail, CREATOR_EMAIL } from '@/types/profile';
@@ -116,6 +129,8 @@ export function AdminDashboard() {
   const [uploadingKey, setUploadingKey] = useState<string | null>(null);
   const [uploadedKey, setUploadedKey] = useState<string | null>(null);
   const [assetSaveMessage, setAssetSaveMessage] = useState('');
+  const [videoProgressMap, setVideoProgressMap] = useState<Record<string, VideoOptimizationProgress>>({});
+  const [videoStatsMap, setVideoStatsMap] = useState<Record<string, { originalSize: number; optimizedSize: number; savedPercent: number }>>({});
   
   // Auto-save & draft recovery states
   const [autoSaveStatus, setAutoSaveStatus] = useState<'saved' | 'saving'>('saved');
@@ -333,7 +348,7 @@ export function AdminDashboard() {
   const updateStep = (
     sectionIndex: number, 
     stepIndex: number, 
-    field: 'title' | 'description' | 'image' | 'hasSpoiler' | 'spoilerText', 
+    field: 'title' | 'description' | 'image' | 'video' | 'videoPoster' | 'videoTitle' | 'hasSpoiler' | 'spoilerText', 
     value: string | boolean
   ) => {
     if (!editingGame) return;
@@ -343,6 +358,104 @@ export function AdminDashboard() {
       [field]: value 
     };
     setEditingGame({ ...editingGame, walkthrough: newWalkthrough });
+  };
+
+  const handleVideoUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    sIndex: number,
+    stepIndex: number
+  ) => {
+    const rawFile = e.target.files?.[0];
+    if (!rawFile || !editingGame) return;
+
+    const stepKey = `step-video-${sIndex}-${stepIndex}`;
+    const step = editingGame.walkthrough[sIndex]?.steps[stepIndex];
+    const stepId = step?.id || `step-${Date.now()}`;
+    const sectionId = editingGame.walkthrough[sIndex]?.id;
+
+    setUploadedKey(null);
+    setUploadingKey(stepKey);
+
+    try {
+      // 1. Auto-convert and compress video to web-optimized WebM directly in browser
+      const result = await convertVideoToWebFormat(rawFile, {
+        maxWidth: 1280,
+        maxHeight: 720,
+        targetFps: 30,
+        videoBitsPerSecond: 2_200_000,
+        onProgress: (p) => {
+          setVideoProgressMap((prev) => ({ ...prev, [stepKey]: p }));
+        },
+      });
+
+      if (result.savedPercent > 0) {
+        setVideoStatsMap((prev) => ({
+          ...prev,
+          [stepKey]: {
+            originalSize: result.originalSize,
+            optimizedSize: result.optimizedSize,
+            savedPercent: result.savedPercent,
+          },
+        }));
+      }
+
+      // 2. Upload optimized video to Supabase Storage (site-videos, or fallback to site-images)
+      setVideoProgressMap((prev) => ({
+        ...prev,
+        [stepKey]: {
+          stage: 'finalizing',
+          percent: 96,
+          statusText: 'Uploading web-optimized video to storage...',
+        },
+      }));
+
+      const { publicUrl: videoUrl } = await uploadWalkthroughMedia(result.videoFile, 'walkthrough-videos');
+
+      // 3. Upload poster thumbnail if present
+      let posterUrl = '';
+      if (result.posterFile) {
+        const { publicUrl: posterPublicUrl } = await uploadWalkthroughMedia(result.posterFile, 'walkthrough-posters');
+        posterUrl = posterPublicUrl;
+        updateStep(sIndex, stepIndex, 'videoPoster', posterUrl);
+      }
+
+      // 4. Update the step in editing game
+      updateStep(sIndex, stepIndex, 'video', videoUrl);
+
+      // 5. Store record in walkthrough_videos table
+      await saveWalkthroughVideoRecord({
+        id: `vid-${Date.now()}`,
+        game_id: editingGame.id,
+        section_id: sectionId,
+        step_id: stepId,
+        title: step?.title || 'Walkthrough Step Video',
+        video_url: videoUrl,
+        poster_url: posterUrl || undefined,
+        mime_type: result.mimeType,
+        original_filename: rawFile.name,
+        original_size_bytes: result.originalSize,
+        optimized_size_bytes: result.optimizedSize,
+        compression_ratio: result.savedPercent,
+        duration_seconds: result.duration ? Number(result.duration.toFixed(2)) : undefined,
+        width: result.width,
+        height: result.height,
+        is_placeholder: false,
+      });
+
+      setUploadedKey(stepKey);
+    } catch (err: any) {
+      console.error('Video upload failed:', err);
+      alert(`Could not process video upload: ${err?.message || 'Unknown error'}`);
+    } finally {
+      setUploadingKey(null);
+      setTimeout(() => {
+        setVideoProgressMap((prev) => {
+          const next = { ...prev };
+          delete next[stepKey];
+          return next;
+        });
+      }, 5000);
+    }
   };
 
   const removeStep = (sectionIndex: number, stepIndex: number) => {
@@ -670,6 +783,149 @@ export function AdminDashboard() {
                         {step.image && (
                           <img src={step.image} alt="Step preview" className="mt-2 h-20 w-full object-cover rounded-lg border border-tan-200" />
                         )}
+                      </div>
+
+                      {/* Step Video Walkthrough (WebM / MP4) */}
+                      <div className="pt-2 border-t border-tan-100">
+                        <div className="flex items-center justify-between mb-1">
+                          <label className="text-xs font-bold text-tan-500 flex items-center gap-1.5">
+                            <Film size={13} className="text-peach-500" />
+                            <span>Step Video (Auto-Converts to WebM)</span>
+                          </label>
+                          {step.video === 'placeholder' ? (
+                            <span className="text-[11px] font-bold text-peach-600 bg-peach-100 px-2 py-0.5 rounded-full">
+                              🎬 Placeholder Active
+                            </span>
+                          ) : step.video ? (
+                            <span className="text-[11px] font-bold text-sage-600 bg-sage-50 px-2 py-0.5 rounded-full">
+                              ✓ Video Attached
+                            </span>
+                          ) : null}
+                        </div>
+
+                        <div className="flex flex-wrap sm:flex-nowrap gap-2">
+                          <input 
+                            value={step.video || ''}
+                            onChange={(e) => updateStep(sIndex, stepIndex, 'video', e.target.value)}
+                            className="flex-1 px-3 py-2 rounded-lg border border-tan-200 focus:border-peach-400 focus:outline-none text-sm"
+                            placeholder="https://... or 'placeholder' or upload video"
+                          />
+
+                          {/* Upload Video Button with Auto WebM Conversion */}
+                          <label className="px-3 py-2 bg-peach-500 text-white font-bold rounded-lg cursor-pointer hover:bg-peach-600 transition-colors text-xs flex items-center gap-1.5 whitespace-nowrap shadow-cozy-xs">
+                            {uploadingKey === `step-video-${sIndex}-${stepIndex}` ? (
+                              <>
+                                <Loader2 size={14} className="animate-spin" />
+                                <span>Converting...</span>
+                              </>
+                            ) : uploadedKey === `step-video-${sIndex}-${stepIndex}` ? (
+                              <>
+                                <CheckCircle size={14} />
+                                <span>Uploaded</span>
+                              </>
+                            ) : (
+                              <>
+                                <Upload size={14} />
+                                <span>Upload Video</span>
+                              </>
+                            )}
+                            <input 
+                              type="file" 
+                              accept="video/*" 
+                              className="hidden" 
+                              disabled={uploadingKey === `step-video-${sIndex}-${stepIndex}`}
+                              onChange={(e) => handleVideoUpload(e, sIndex, stepIndex)}
+                            />
+                          </label>
+
+                          {/* Quick Placeholder Toggle */}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (step.video === 'placeholder') {
+                                updateStep(sIndex, stepIndex, 'video', '');
+                              } else {
+                                updateStep(sIndex, stepIndex, 'video', 'placeholder');
+                                if (!step.videoTitle) {
+                                  updateStep(sIndex, stepIndex, 'videoTitle', 'Walkthrough Video Clip');
+                                }
+                              }
+                            }}
+                            className={`px-3 py-2 rounded-lg text-xs font-bold transition-colors whitespace-nowrap border ${
+                              step.video === 'placeholder'
+                                ? 'bg-peach-100 text-peach-700 border-peach-300'
+                                : 'bg-tan-50 text-tan-600 border-tan-200 hover:bg-peach-50 hover:text-peach-600 hover:border-peach-200'
+                            }`}
+                          >
+                            {step.video === 'placeholder' ? '✕ Remove Placeholder' : '🎬 Set Placeholder'}
+                          </button>
+                        </div>
+
+                        {/* Video conversion progress bar */}
+                        {uploadingKey === `step-video-${sIndex}-${stepIndex}` && videoProgressMap[`step-video-${sIndex}-${stepIndex}`] && (
+                          <div className="mt-2.5 p-3 rounded-xl bg-peach-50 border border-peach-200 animate-fade-in text-xs space-y-1.5">
+                            <div className="flex items-center justify-between text-peach-800 font-bold">
+                              <span className="flex items-center gap-1.5">
+                                <Loader2 size={13} className="animate-spin text-peach-600" />
+                                {videoProgressMap[`step-video-${sIndex}-${stepIndex}`].statusText}
+                              </span>
+                              <span>{videoProgressMap[`step-video-${sIndex}-${stepIndex}`].percent}%</span>
+                            </div>
+                            <div className="w-full bg-peach-200/70 h-2 rounded-full overflow-hidden">
+                              <div 
+                                className="bg-peach-500 h-full transition-all duration-300 rounded-full"
+                                style={{ width: `${videoProgressMap[`step-video-${sIndex}-${stepIndex}`].percent}%` }}
+                              />
+                            </div>
+                            <p className="text-[11px] text-peach-700">
+                              ⚡ Compressing to WebM VP9 in browser to minimize bandwidth without losing visual sharpness.
+                            </p>
+                          </div>
+                        )}
+
+                        {/* Compression stats banner */}
+                        {videoStatsMap[`step-video-${sIndex}-${stepIndex}`] && (
+                          <div className="mt-2 px-3 py-1.5 rounded-lg bg-sage-50 border border-sage-200 text-sage-800 text-xs flex items-center justify-between animate-fade-in font-medium">
+                            <span>
+                              🎉 Converted to WebM! Saved {videoStatsMap[`step-video-${sIndex}-${stepIndex}`].savedPercent}% (
+                              {formatBytes(videoStatsMap[`step-video-${sIndex}-${stepIndex}`].originalSize)} ➔ {formatBytes(videoStatsMap[`step-video-${sIndex}-${stepIndex}`].optimizedSize)})
+                            </span>
+                            <span className="text-[10px] uppercase font-bold text-sage-600 bg-sage-100 px-1.5 py-0.5 rounded">Lossless Fidelity</span>
+                          </div>
+                        )}
+
+                        {/* Video preview / placeholder notice */}
+                        {step.video === 'placeholder' ? (
+                          <div className="mt-2 p-3 rounded-lg border border-dashed border-peach-300 bg-peach-50/50 flex items-center gap-2.5 text-xs text-peach-800">
+                            <Film size={18} className="text-peach-500 flex-shrink-0" />
+                            <div>
+                              <strong className="block font-bold">Placeholder Active:</strong>
+                              Readers will see a cozy &quot;Video Walkthrough In Production&quot; card until a video is uploaded.
+                            </div>
+                          </div>
+                        ) : step.video ? (
+                          <div className="mt-2 relative rounded-lg overflow-hidden border border-tan-200 bg-ink-950 p-1 flex flex-col items-center">
+                            <video
+                              src={step.video}
+                              poster={step.videoPoster}
+                              controls
+                              className="h-32 max-w-full rounded object-contain"
+                            />
+                            <div className="flex items-center justify-between w-full px-2 py-1 text-cream-200 text-[11px]">
+                              <span>Web Video Preview</span>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  updateStep(sIndex, stepIndex, 'video', '');
+                                  updateStep(sIndex, stepIndex, 'videoPoster', '');
+                                }}
+                                className="text-peach-400 hover:text-peach-300 font-bold hover:underline"
+                              >
+                                Remove Video
+                              </button>
+                            </div>
+                          </div>
+                        ) : null}
                       </div>
                     </div>
                   ))}

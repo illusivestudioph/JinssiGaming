@@ -13,6 +13,7 @@ export interface AdventurerConfig {
   glasses: string;
   features: string;
   earrings?: string;
+  ears?: string;
   backgroundColor: string;
   useGooglePhoto?: boolean;
   googleAvatarUrl?: string;
