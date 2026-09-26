@@ -2369,7 +2369,7 @@ button[type="submit"].site-button:hover,
     width: 100% !important;
   }
 
-  .cozy-card, .notepad-card, .notepad-step {
+  .cozy-card, .notepad-card, .notepad-step, .game-doodle-card {
     max-width: 100% !important;
     box-sizing: border-box !important;
   }

@@ -110,7 +110,7 @@ export function GameDirectory({
 
       {/* Game grid: Exactly matching 3-column grid of Bookshelf and Journal */}
       {displayedGames.length > 0 ? (
-        <div className="game-catalog-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
+        <div className="game-catalog-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in justify-items-center w-full">
           {displayedGames.map((game) => (
             <GameCard
               key={game.id}

@@ -26,7 +26,7 @@ export function GameCard({ game, onClick, completedCount = 0 }: GameCardProps) {
   return (
     <button
       onClick={onClick}
-      className="game-doodle-card text-left w-full group focus:outline-none focus-visible:ring-2 focus-visible:ring-peach-300"
+      className="game-doodle-card text-left w-full max-w-full mx-auto group focus:outline-none focus-visible:ring-2 focus-visible:ring-peach-300"
       style={{ '--game-accent': game.accentColor } as React.CSSProperties}
     >
       <span className="game-doodle game-doodle-swirl" aria-hidden="true">〰</span>

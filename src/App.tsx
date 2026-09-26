@@ -561,7 +561,7 @@ function WalkthroughsPage({
   }, [games, selectedCategory, searchQuery]);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 animate-fade-in">
+    <div className="w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-8 sm:py-12 animate-fade-in min-w-0">
       {/* Header Banner */}
       <div className="text-center max-w-2xl mx-auto mb-10">
         <div>
@@ -634,7 +634,7 @@ function WalkthroughsPage({
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pt-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pt-3 justify-items-center w-full">
           {filteredGames.map((game) => (
             <GameCard
               key={game.id}
