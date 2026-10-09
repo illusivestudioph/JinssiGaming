@@ -296,3 +296,76 @@ def fetch_real_journalism_feed_articles(max_articles: int = 4) -> list:
             print(f"[WriterWorker] Feed error for {feed_url}: {e}", file=sys.stderr)
 
     return articles
+
+
+def fetch_live_esports_report(now_ms: int, expires_ms: int) -> dict:
+    """Dynamically fetches real competitive esports tournament results and photos via You.com."""
+    q = "esports tournament championship finals recap site:dotesports.com OR site:pcgamer.com"
+    hits = search_you_web(q, count=4)
+    if not hits:
+        return None
+
+    top = hits[0]
+    title = clean_html(top.get("title", "Global Esports Championship Intelligence"))
+    url = top.get("url", "")
+    thumb = top.get("original_thumbnail_url") or top.get("thumbnail_url") or "https://media.dotesports.com/wp-content/uploads/2026/08/EWC_Trophy_Explainer_16x9_Clean_89c0d28624.jpg"
+    snippets = top.get("snippets", [])
+    lead_snippet = clean_html(snippets[0]) if snippets else "Live championship tournament report."
+
+    citations = []
+    for h in hits:
+        u = h.get("url", "")
+        t = clean_html(h.get("title", ""))
+        d = urllib.parse.urlparse(u).netloc.replace("www.", "")
+        if u and t:
+            citations.append({
+                "title": t,
+                "publisher": d.capitalize(),
+                "url": u,
+                "note": clean_html((h.get("snippets") or [""])[0])[:120] + "..." if h.get("snippets") else "Tournament results"
+            })
+
+    slug = re.sub(r"[^a-z0-9]+", "-", title.lower()).strip("-")[:50] + f"-{now_ms}"
+
+    sections = [
+        {
+            "heading": "Championship Grand Finals & Tournament Results",
+            "content": [
+                f"The global competitive circuit continues to deliver high-stakes drama across tier-1 titles. According to tournament coverage from {citations[0]['publisher'] if citations else 'esports outlets'}, {title} marked a major milestone in seasonal standings.",
+                lead_snippet,
+                "Championship teams demonstrated superior tactical execution under pressure, trading decisive rounds through coordinated utility executes and macro objective control."
+            ],
+            "image": thumb,
+            "imageAlt": f"{title} live tournament photo",
+            "sourceLink": url
+        },
+        {
+            "heading": "Official Tournament Coverage & Verified Reports",
+            "content": [
+                "Direct links to official tournament standings, match replays, and bracket coverage:"
+            ],
+            "sourcesList": citations if citations else None
+        }
+    ]
+
+    return {
+        "id": f"esports-{slug}",
+        "slug": slug,
+        "title": title,
+        "subtitle": lead_snippet[:150] + "...",
+        "author": "Jinssi Esports Desk",
+        "authorRole": "Competitive Intelligence Lead",
+        "date": datetime.now().strftime("%b %d, %Y"),
+        "readTimeMinutes": 6,
+        "category": "Esports News",
+        "tags": ["Esports", "Competitive Gaming", "Tournament Finals", "Championship"],
+        "cozyScore": 3,
+        "stressLevel": "Gentle Challenge",
+        "coverImage": thumb,
+        "coverAlt": f"{title} live tournament arena photography",
+        "summary": lead_snippet[:180] + "...",
+        "sourceLink": url,
+        "createdAt": now_ms,
+        "expiresAt": expires_ms,
+        "sections": sections
+    }

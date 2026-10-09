@@ -30,9 +30,11 @@ from scraper_worker import (
 def build_dynamic_laptop_guide(now_ms: int, expires_ms: int) -> dict:
     """Produces the Laptop Guide dynamically from live Amazon search and You.com research."""
     print("  [GuideWorker] Searching Amazon live for top budget gaming laptop & multi-angle gallery...")
-    laptop_prod = search_amazon_live_product("gaming laptop budget RTX")
+    laptop_prod = search_amazon_live_product("HP Victus OR Lenovo LOQ OR ASUS TUF gaming laptop RTX")
     if not laptop_prod:
-        laptop_prod = search_amazon_live_product("budget gaming laptop")
+        laptop_prod = search_amazon_live_product("Lenovo LOQ gaming laptop RTX")
+    if not laptop_prod:
+        laptop_prod = search_amazon_live_product("budget gaming laptop RTX")
 
     laptop_title = laptop_prod.get("title", "Modern Budget Gaming Laptop") if laptop_prod else "Modern Budget Gaming Laptop"
     laptop_price = laptop_prod.get("price", "$699.99") if laptop_prod else "$699.99"

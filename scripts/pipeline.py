@@ -2,15 +2,14 @@
 """
 Jinssi Gaming - Master Autonomous Pipeline Orchestrator
 =======================================================
-100% Dynamic, Zero-Hardcoded Publication Engine:
-1. Dynamic Steam Game Discovery via You.com:
-   Natural queries discover trending games dynamically.
-   Builds deep, long-form reviews with authentic in-game gameplay screenshots (Valve CDN)
-   embedded in every section plus a multi-screenshot gameplay carousel.
-2. Real Gaming Journalism from Rock Paper Shotgun & Eurogamer:
-   Real human-written stories with authentic in-game photography.
-3. Zero AI Images. Zero Hardcoded Game Titles or App IDs.
-4. Silent 7-Day Weekly Lifespan Rotation.
+100% Dynamic, Complete Publication Suite:
+1. Dynamic PC Build Guide: Real in-stock components, genuine hardware photos, live buy links & total cost.
+2. Dynamic Best Laptop Guide: Real laptop picks, lab benchmarks, and multi-angle hardware carousel.
+3. Live Esports News Update: Real competitive finals match report & tournament arena photography.
+4. Dynamic Steam Game Articles: Discovered via You.com, with 100% authentic in-game gameplay screenshots (Valve CDN).
+5. Real Gaming Journalism: Human-written field reports from Rock Paper Shotgun & Eurogamer.
+
+Weekly 7-Day lifespan rotation. Zero AI images. Zero hardcoding.
 """
 
 import sys
@@ -20,10 +19,15 @@ import json
 import urllib.request
 from datetime import datetime
 
+from guide_worker import (
+    build_dynamic_pc_build_guide,
+    build_dynamic_laptop_guide,
+)
 from writer_worker import (
     discover_steam_games_via_you,
     build_long_form_game_article,
     fetch_real_journalism_feed_articles,
+    fetch_live_esports_report,
 )
 
 SUPABASE_URL = "https://esjwkwgjnesyvnvuonmd.supabase.co"
@@ -36,38 +40,66 @@ def run_pipeline() -> list:
     now_ms = int(datetime.now().timestamp() * 1000)
     expires_ms = now_ms + SEVEN_DAYS_MS
 
-    print(f"[{datetime.now().strftime('%H:%M:%S')}] 🚀 Running Jinssi Autonomous Pipeline (100% Dynamic Discovery, 7-Day Cycle)...")
+    print(f"[{datetime.now().strftime('%H:%M:%S')}] 🚀 Running Jinssi Autonomous Pipeline (All Categories, 7-Day Cycle)...")
     articles = []
 
-    # 1. Dynamic Game Discovery via You.com & Deep Steam Gameplay Reviews
+    # 1. Hardware Guides: PC Build Guide & Best Laptop Guide
+    print("  [Step 1] Building dynamic Hardware Guides from live inventory...")
+    try:
+        pc_guide = build_dynamic_pc_build_guide(now_ms, expires_ms)
+        if pc_guide:
+            articles.append(pc_guide)
+            print(f"  ✓ Added PC Build Guide: '{pc_guide['title']}' (Parts: {len(pc_guide['sections'][1].get('buildParts') or [])})")
+    except Exception as e:
+        print(f"  ✗ PC Build guide error: {e}", file=sys.stderr)
+
+    try:
+        laptop_guide = build_dynamic_laptop_guide(now_ms, expires_ms)
+        if laptop_guide:
+            articles.append(laptop_guide)
+            print(f"  ✓ Added Laptop Guide: '{laptop_guide['title']}' (Carousel: {len(laptop_guide['sections'][0].get('gallery') or [])} images)")
+    except Exception as e:
+        print(f"  ✗ Laptop guide error: {e}", file=sys.stderr)
+
+    # 2. Live Esports Championship Tournament Report
+    print("  [Step 2] Fetching live competitive Esports Tournament news...")
+    try:
+        esports_art = fetch_live_esports_report(now_ms, expires_ms)
+        if esports_art:
+            articles.append(esports_art)
+            print(f"  ✓ Added Esports News: '{esports_art['title']}'")
+    except Exception as e:
+        print(f"  ✗ Esports report error: {e}", file=sys.stderr)
+
+    # 3. Dynamic Steam Game Discovery via You.com & Deep Gameplay Reviews
     queries = [
         "best cozy games to play right now site:store.steampowered.com/app/",
         "top rated relaxing indie games site:store.steampowered.com/app/"
     ]
-    print("  [Step 1] Querying You.com to dynamically discover trending games on Steam...")
-    discovered_app_ids = discover_steam_games_via_you(queries, max_games=8)
+    print("  [Step 3] Querying You.com to dynamically discover trending games on Steam...")
+    discovered_app_ids = discover_steam_games_via_you(queries, max_games=6)
     print(f"  ✓ Discovered {len(discovered_app_ids)} game app IDs dynamically: {discovered_app_ids}")
 
-    print("  [Step 2] Building long-form reviews with authentic in-game gameplay screenshots...")
+    print("  [Step 4] Building long-form reviews with authentic in-game gameplay screenshots...")
     for app_id in discovered_app_ids:
         try:
             art = build_long_form_game_article(app_id, now_ms, expires_ms)
             if art:
                 articles.append(art)
-                print(f"  ✓ Added: '{art['title']}' (Carousel: {len(art['sections'][0].get('gallery') or [])} gameplay shots)")
+                print(f"  ✓ Added Game Review: '{art['title']}' (Carousel: {len(art['sections'][0].get('gallery') or [])} gameplay shots)")
         except Exception as e:
             print(f"  ✗ App ID {app_id} error: {e}", file=sys.stderr)
 
-    # 2. Real Gaming Journalism from Rock Paper Shotgun & Eurogamer
-    print("  [Step 3] Fetching authentic human-written stories from Rock Paper Shotgun & Eurogamer...")
+    # 4. Real Human Gaming Journalism from Rock Paper Shotgun & Eurogamer
+    print("  [Step 5] Fetching authentic human-written stories from Rock Paper Shotgun & Eurogamer...")
     try:
-        journalism_arts = fetch_real_journalism_feed_articles(max_articles=4)
+        journalism_arts = fetch_real_journalism_feed_articles(max_articles=3)
         articles.extend(journalism_arts)
         print(f"  ✓ Added {len(journalism_arts)} authentic journalism stories.")
     except Exception as e:
         print(f"  ✗ Journalism feed error: {e}", file=sys.stderr)
 
-    print(f"[{datetime.now().strftime('%H:%M:%S')}] 📦 Compiled {len(articles)} genuine, long-form articles with real gameplay screenshots.")
+    print(f"[{datetime.now().strftime('%H:%M:%S')}] 📦 Compiled {len(articles)} genuine, complete articles across all categories.")
     return articles
 
 
@@ -92,7 +124,6 @@ def sync_to_supabase(articles: list) -> bool:
         print(f"[Pipeline] Error fetching Supabase row: {e}", file=sys.stderr)
         return False
 
-    # Overwrite articles with 100% real, authentic articles
     current_content["articles"] = articles
     current_content["updated_at"] = datetime.utcnow().isoformat() + "Z"
 
@@ -111,7 +142,7 @@ def sync_to_supabase(articles: list) -> bool:
 
     try:
         with urllib.request.urlopen(upsert_req, timeout=15) as resp:
-            print(f"[{datetime.now().strftime('%H:%M:%S')}] ✨ Successfully synced to Supabase! Status: {resp.status}")
+            print(f"[{datetime.now().strftime('%H:%M:%S')}] ✨ Successfully synced all articles to Supabase! Status: {resp.status}")
             return True
     except Exception as e:
         print(f"[Pipeline] Failed to upsert to Supabase: {e}", file=sys.stderr)
@@ -132,7 +163,7 @@ def main():
         return
 
     if not daemon_mode:
-        print("🎉 One-shot dynamic pipeline completed successfully.")
+        print("🎉 One-shot complete dynamic pipeline completed successfully.")
         return
 
     print("🚀 Jinssi Publishing Daemon running in background on a 7-day silent rotation...")

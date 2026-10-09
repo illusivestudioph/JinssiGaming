@@ -24,6 +24,7 @@ YDC_API_KEY = "ydc-sk-38b879a9076b26a9-0S9IUejsmjmyAbnbGJZMb8bnyXksPQEg-7ae94ca6
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
     "Accept-Language": "en-US,en;q=0.9",
+    "Cookie": "i18n-prefs=USD; lc-main=en_US",
 }
 
 
@@ -79,7 +80,7 @@ def search_amazon_live_product(search_query: str) -> dict:
                         if not title_m:
                             continue
                         raw_title = clean_html(title_m.group(1))
-                        if len(raw_title) < 5:
+                        if len(raw_title) < 5 or "s1 pro" in raw_title.lower():
                             continue
 
                         # Extract ALL high-res gallery images for multi-angle inspection carousel
@@ -102,6 +103,20 @@ def search_amazon_live_product(search_query: str) -> dict:
                             any_price = re.search(r'\$([0-9]{1,3}(?:,[0-9]{3})*\.[0-9]{2})', dp_html)
                             if any_price:
                                 price = f"${any_price.group(1).replace(',', '')}"
+
+                        # Price validation to prevent glitches and handle localized currencies
+                        try:
+                            price_num = float(price.replace("$", "").replace(",", "").strip())
+                            if price_num > 10000:
+                                # Amazon localized to PHP (~58 PHP per USD)
+                                price_num = round(price_num / 58.0, 2)
+                                price = f"${price_num:.2f}"
+                            if "laptop" in search_query.lower() and (price_num < 400 or price_num > 1800):
+                                continue
+                            if "console" in search_query.lower() and (price_num < 250 or price_num > 900):
+                                continue
+                        except Exception:
+                            pass
 
                         # Build multi-angle gallery objects
                         gallery = []
