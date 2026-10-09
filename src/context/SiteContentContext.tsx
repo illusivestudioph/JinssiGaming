@@ -4,7 +4,6 @@ import { articles as initialArticles, type Article } from '@/data/articles';
 import { stories as initialStories, CHILDREN_OF_MU_STORY, type Story } from '@/data/stories';
 import { initialProducts, type StoreProduct } from '@/data/store';
 import { supabase } from '@/lib/supabase';
-import { ensureTodayJournalEntry } from '@/services/dailyJournalService';
 
 export interface WalletOption {
   name: string;
@@ -378,17 +377,6 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  // Automated Daily Journal: Automatically check You.com and publish today's cozy gaming news for all visitors
-  useEffect(() => {
-    if (!remoteLoaded) return;
-    void ensureTodayJournalEntry(content.articles, (newArticle) => {
-      setContent((c) => ({
-        ...c,
-        articles: [newArticle, ...c.articles.filter((a) => a.id !== newArticle.id)],
-        updated_at: new Date().toISOString(),
-      }));
-    });
-  }, [remoteLoaded]);
 
   // Live real-time sync across devices: when wife or any admin updates content, sync immediately
   useEffect(() => {
