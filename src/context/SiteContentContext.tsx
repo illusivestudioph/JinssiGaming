@@ -118,11 +118,24 @@ function normalizeContent(parsed: Partial<SavedContent> | null | undefined): Sav
       }))
     : defaultContent.ctaLinks;
 
-  let normalizedArticles = initialArticles;
+  let normalizedArticles: Article[] = [];
+
+  // Strictly filter out any legacy hardcoded mock articles from local storage
+  const legacyMockArticleIds = new Set([
+    'fields-of-mistria-roadmap-update',
+    'tea-and-foliage-cozy-rpg-recommendations-2026',
+    'silent-living-room-handheld-gaming-peace',
+    'tiny-glade-building-without-conflict',
+    'retro-nostalgia-pixel-art-renaissance',
+    'soundscapes-of-solitude-ambient-audio-cozy-games',
+    'radical-gentleness-no-fail-gaming',
+  ]);
 
   // Use live / dynamic Supabase articles directly without overriding with static mock data
   if (Array.isArray(parsed?.articles) && parsed.articles.length > 0) {
-    normalizedArticles = parsed.articles;
+    normalizedArticles = parsed.articles.filter(
+      (a) => a && a.id && !legacyMockArticleIds.has(a.id) && !legacyMockArticleIds.has(a.slug)
+    );
   }
 
   let normalizedStories: Story[] = [];
@@ -293,9 +306,16 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
           // Safety: ensure a stale local cache cannot accidentally wipe games or stories present in remote
           if (localTimestamp > remoteTimestamp) {
             setSyncStatus('saving');
+            const payload = {
+              ...contentRef.current,
+              // Strictly preserve the live articles written by the Python scraper daemon
+              articles: remoteNormalized.articles && remoteNormalized.articles.length > 0
+                ? remoteNormalized.articles
+                : contentRef.current.articles,
+            };
             const { error: pushError } = await supabase.from('site_content').upsert({
               id: 'default',
-              content: contentRef.current,
+              content: payload,
               updated_at: contentRef.current.updated_at,
             });
             if (pushError) {
