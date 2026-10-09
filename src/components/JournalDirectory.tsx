@@ -14,30 +14,6 @@ export function JournalDirectory({ onSelectArticle }: JournalDirectoryProps) {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
-  const [timeLeft, setTimeLeft] = useState<string>('');
-
-  // Calculate 24-hr lifespan countdown
-  useEffect(() => {
-    const updateCountdown = () => {
-      const activeArticle = articles.find((a) => typeof a.expiresAt === 'number');
-      if (!activeArticle || !activeArticle.expiresAt) {
-        setTimeLeft('24h cycle active');
-        return;
-      }
-      const diff = activeArticle.expiresAt - Date.now();
-      if (diff <= 0) {
-        setTimeLeft('Auto-refreshing...');
-      } else {
-        const hours = Math.floor(diff / (1000 * 60 * 60));
-        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        setTimeLeft(`Next refresh in ${hours}h ${minutes}m`);
-      }
-    };
-
-    updateCountdown();
-    const interval = setInterval(updateCountdown, 60000);
-    return () => clearInterval(interval);
-  }, [articles]);
 
 
   const categories = useMemo(() => {
@@ -90,21 +66,6 @@ export function JournalDirectory({ onSelectArticle }: JournalDirectoryProps) {
           Take a deep breath, grab your favorite warm drink, and discover gentle reads celebrating peaceful, stress-free gaming.
         </p>
 
-        {/* 24-Hour Rotating Lifespan Badge & Live Tools */}
-        <div className="flex flex-wrap items-center justify-center gap-2.5 pt-1">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cream-100 border border-tan-300 text-xs font-bold text-earth-800 shadow-cozy-xs">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span>24h Community Digest • {timeLeft}</span>
-          </div>
-
-          <button
-            onClick={() => setIsSearchModalOpen(true)}
-            className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-peach-500 hover:bg-peach-600 text-white text-xs font-bold transition-all shadow-cozy-sm hover:scale-105 active:scale-95"
-          >
-            <span>🎮 Search PC Games Database</span>
-          </button>
-
-        </div>
       </div>
 
       {/* Search & Filter Controls */}

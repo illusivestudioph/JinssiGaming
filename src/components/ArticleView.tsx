@@ -581,6 +581,139 @@ export function ArticleView({
                     </div>
                   )}
 
+                  {/* PC Build Interactive Parts List with Direct Retailer Links */}
+                  {section.buildParts && section.buildParts.length > 0 && (
+                    <div className="pc-build-card my-8 rounded-2xl overflow-hidden border-2 border-tan-300 bg-white shadow-cozy-sm">
+                      <div className="bg-ink-900 text-cream-50 px-5 py-3.5 flex flex-wrap items-center justify-between gap-3">
+                        <div className="flex items-center gap-2.5">
+                          <span className="text-xl">🖥️</span>
+                          <div>
+                            <h3 className="font-display font-bold text-sm sm:text-base text-cream-50 uppercase tracking-wide">
+                              Component Selection & Verified Pricing
+                            </h3>
+                            <p className="text-[11px] text-tan-400">
+                              Real part photos, live specs & direct merchant buy links
+                            </p>
+                          </div>
+                        </div>
+                        {section.totalBuildCost && (
+                          <div className="px-3.5 py-1.5 rounded-xl bg-peach-500 text-white font-display font-extrabold text-sm sm:text-base shadow-cozy-xs">
+                            Total Build: {section.totalBuildCost}
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="divide-y divide-tan-200">
+                        {section.buildParts.map((part, pIdx) => {
+                          const isAmazon = part.merchant?.toLowerCase().includes('amazon');
+                          const isEbay = part.merchant?.toLowerCase().includes('ebay');
+                          const isNewegg = part.merchant?.toLowerCase().includes('newegg');
+
+                          return (
+                            <div
+                              key={pIdx}
+                              className="p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 hover:bg-cream-50/70 transition-colors"
+                            >
+                              {/* Left: Part Image + Category + Name */}
+                              <div className="flex items-center gap-4 flex-1 min-w-0">
+                                <div
+                                  onClick={() =>
+                                    setLightboxImage({
+                                      url: part.imageUrl,
+                                      caption: `${part.category}: ${part.name}`,
+                                      alt: part.name,
+                                      angle: part.category,
+                                    })
+                                  }
+                                  className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden bg-cream-100 border border-tan-300 shrink-0 cursor-zoom-in relative group"
+                                >
+                                  <img
+                                    src={part.imageUrl}
+                                    alt={part.name}
+                                    className="w-full h-full object-contain p-1 group-hover:scale-105 transition-transform"
+                                    loading="lazy"
+                                    onError={(e) => {
+                                      const target = e.currentTarget as HTMLImageElement;
+                                      target.src = 'https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?w=300&q=80';
+                                    }}
+                                  />
+                                  <div className="absolute inset-0 bg-ink-900/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                </div>
+
+                                <div className="min-w-0 flex-1">
+                                  <div className="flex items-center gap-2 mb-1">
+                                    <span className="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider bg-earth-100 text-earth-800 border border-earth-200">
+                                      {part.category}
+                                    </span>
+                                    {part.specs && (
+                                      <span className="text-[11px] text-tan-600 font-mono hidden sm:inline-block truncate">
+                                        {part.specs}
+                                      </span>
+                                    )}
+                                  </div>
+                                  <h4 className="font-display font-bold text-sm sm:text-base text-ink-900 truncate">
+                                    {part.name}
+                                  </h4>
+                                  {part.notes && (
+                                    <p className="text-xs text-tan-600 mt-0.5 line-clamp-1">
+                                      {part.notes}
+                                    </p>
+                                  )}
+                                  {part.specs && (
+                                    <span className="text-[11px] text-tan-600 font-mono sm:hidden block mt-0.5">
+                                      {part.specs}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+
+                              {/* Right: Price + Merchant Buy Button */}
+                              <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-tan-200">
+                                <div className="text-left sm:text-right">
+                                  <div className="font-display font-extrabold text-base sm:text-lg text-ink-950">
+                                    {part.price}
+                                  </div>
+                                  <div className="text-[10px] uppercase font-bold tracking-wider text-tan-500">
+                                    via {part.merchant || 'Retailer'}
+                                  </div>
+                                </div>
+
+                                <a
+                                  href={part.buyUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-all shadow-cozy-xs hover:scale-105 active:scale-95 ${
+                                    isAmazon
+                                      ? 'bg-amber-500 hover:bg-amber-600 text-ink-950'
+                                      : isEbay
+                                      ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                                      : isNewegg
+                                      ? 'bg-orange-600 hover:bg-orange-700 text-white'
+                                      : 'bg-peach-500 hover:bg-peach-600 text-white'
+                                  }`}
+                                >
+                                  <span>{isAmazon ? 'Amazon' : isEbay ? 'eBay' : isNewegg ? 'Newegg' : 'Buy Now'}</span>
+                                  <ExternalLink size={12} />
+                                </a>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+
+                      {section.totalBuildCost && (
+                        <div className="bg-cream-100 p-4 border-t border-tan-300 flex flex-wrap items-center justify-between gap-3 text-xs sm:text-sm">
+                          <span className="text-ink-700 font-medium">
+                            💡 All links point directly to current in-stock listings with the lowest verified retail price.
+                          </span>
+                          <span className="font-bold text-ink-900">
+                            Estimated Total: <span className="text-peach-600 text-base">{section.totalBuildCost}</span>
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
                   {/* Multi-Angle Hardware / Image Carousel for this Section */}
                   {section.gallery && section.gallery.length > 0 && (
                     <PhotoCarousel

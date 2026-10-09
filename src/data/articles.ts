@@ -28,6 +28,17 @@ export interface ArticleImage {
   angle?: string;
 }
 
+export interface BuildPartItem {
+  category: 'CPU' | 'GPU' | 'Motherboard' | 'Memory (RAM)' | 'Storage' | 'Power Supply' | 'Case' | 'Cooler' | string;
+  name: string;
+  price: string;
+  merchant: 'Amazon' | 'eBay' | 'Newegg' | 'Best Buy' | string;
+  buyUrl: string;
+  imageUrl: string;
+  specs?: string;
+  notes?: string;
+}
+
 export interface ArticleSection {
   heading?: string;
   content: string[]; // array of paragraphs
@@ -47,6 +58,9 @@ export interface ArticleSection {
   specSheet?: SpecCategory[];
   comparisonTable?: ComparisonTableData;
   sourcesList?: SourceCitationItem[];
+  // PC Build Guide Components
+  buildParts?: BuildPartItem[];
+  totalBuildCost?: string;
 }
 
 export interface Article {
