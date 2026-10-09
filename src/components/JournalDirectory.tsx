@@ -1,9 +1,8 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useSiteContent } from '@/context/SiteContentContext';
 import { articleCategories, type Article } from '@/data/articles';
-import { BookOpen, Clock, Search, Tag, Coffee, ArrowRight, ExternalLink, Sparkles, RefreshCw } from '@/components/StreamlineIcons';
+import { BookOpen, Clock, Search, Tag, Coffee, ArrowRight, ExternalLink, RefreshCw } from '@/components/StreamlineIcons';
 import { getOptimizedImageUrl } from '@/utils/imageOptimization';
-import { LiveGameSearchModal } from '@/components/LiveGameSearchModal';
 import { syncLiveJournalFeed } from '@/services/liveJournalFeed';
 
 interface JournalDirectoryProps {
@@ -14,7 +13,6 @@ export function JournalDirectory({ onSelectArticle }: JournalDirectoryProps) {
   const { articles, setArticles } = useSiteContent();
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState('');
-  const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [timeLeft, setTimeLeft] = useState<string>('');
 
@@ -81,12 +79,6 @@ export function JournalDirectory({ onSelectArticle }: JournalDirectoryProps) {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 animate-fade-in">
-      {/* Live Game Search Modal */}
-      <LiveGameSearchModal
-        isOpen={isSearchModalOpen}
-        onClose={() => setIsSearchModalOpen(false)}
-      />
-
       {/* Header Banner */}
       <div className="text-center max-w-3xl mx-auto mb-10">
         <div className="library-badge inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold mb-3 shadow-cozy-sm">
@@ -106,25 +98,17 @@ export function JournalDirectory({ onSelectArticle }: JournalDirectoryProps) {
         <div className="flex flex-wrap items-center justify-center gap-2.5 pt-1">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cream-100 border border-tan-300 text-xs font-bold text-earth-800 shadow-cozy-xs">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span>24h Live Feed • {timeLeft}</span>
+            <span>24h Community Digest • {timeLeft}</span>
           </div>
-
-          <button
-            onClick={() => setIsSearchModalOpen(true)}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-peach-500 hover:bg-peach-600 text-white text-xs font-bold transition-all shadow-cozy-xs hover:scale-105"
-          >
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Search Any Game Live</span>
-          </button>
 
           <button
             onClick={handleManualSync}
             disabled={isRefreshing}
-            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-cream-200 hover:bg-cream-300 text-tan-600 text-xs font-semibold transition-colors disabled:opacity-50"
-            title="Refresh latest Steam announcements"
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-cream-200 hover:bg-cream-300 text-tan-700 text-xs font-semibold transition-colors disabled:opacity-50"
+            title="Refresh latest community news"
           >
             <RefreshCw className={`w-3 h-3 ${isRefreshing ? 'animate-spin' : ''}`} />
-            <span>{isRefreshing ? 'Syncing...' : 'Sync Now'}</span>
+            <span>{isRefreshing ? 'Refreshing...' : 'Refresh Digest'}</span>
           </button>
         </div>
       </div>

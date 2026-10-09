@@ -101,7 +101,127 @@ export async function generateLiveArticles(): Promise<Article[]> {
 
   const generatedArticles: Article[] = [];
 
-  for (const game of COZY_STEAM_MONITOR_LIST.slice(0, 10)) {
+  // 1. Hardware Guide: Best Budget Gaming PC Build for 2026
+  generatedArticles.push({
+    id: `budget-build-2026-${now}`,
+    slug: `best-budget-gaming-pc-build-guide-2026-${now}`,
+    title: 'The Best Budget Gaming PC Build for 2026: 1080p & 1440p Sweet Spot Under $750',
+    subtitle: "Building a high-performance gaming rig in 2026 doesn't require thousands of dollars. Here is our curated component roadmap balancing quiet thermals, high FPS, and future upgradeability.",
+    author: 'Jinssi Tech Desk',
+    authorRole: 'Hardware & Rig Builder',
+    date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+    readTimeMinutes: 7,
+    category: 'Guide',
+    tags: ['PC Build', 'Budget Gaming', 'Hardware', '1080p 60FPS', 'Tech Guide'],
+    cozyScore: 5,
+    stressLevel: 'Zero Stress',
+    coverImage: 'https://cdn.mos.cms.futurecdn.net/a3quUa9iwfyVBFUNvFDeeJ-1280-80.png',
+    coverAlt: 'Clean budget PC build aesthetic with illuminated components',
+    summary: "Building a high-performance gaming rig in 2026 doesn't require thousands of dollars. Here is our curated component roadmap balancing quiet thermals, high FPS, and future upgradeability.",
+    sourceLink: 'https://www.tomshardware.com/best-picks/best-pc-builds-gaming',
+    createdAt: now,
+    expiresAt: expiresAt,
+    sections: [
+      {
+        heading: '1. The 2026 Budget Build Philosophy: Maximizing Price-to-Performance',
+        content: [
+          "In 2026, PC gaming has matured to a point where budget and mid-tier silicon delivers breathtaking visuals without demanding flagship $1,500 GPUs. Modern architectural gains mean games like Fields of Mistria, Tiny Glade, Baldur's Gate 3, and Cyberpunk 2077 can run silky smooth at 1080p High or 1440p Balanced.",
+          'Our goal for this build is simple: silence, low power draw, zero unnecessary RGB tax, and component longevity. Whether you are playing serene indie titles or jumping into competitive lobbies with friends, this machine delivers consistent frame pacing without thermal throttling.',
+        ],
+        image: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2198150/library_hero.jpg',
+        imageAlt: 'Smooth 1080p High gaming visual test',
+        sourceLink: 'https://www.tomshardware.com/best-picks/best-pc-builds-gaming',
+        callout: {
+          title: 'Community Price Target',
+          text: 'Total expected build budget: $680 – $740 USD depending on regional sales, featuring 16GB–32GB DDR5 and a PCIe 4.0 NVMe SSD.',
+        },
+      },
+      {
+        heading: '2. Curated Parts List Breakdown',
+        content: [
+          '• CPU: AMD Ryzen 5 7600 or Intel Core i5-13400F — Exceptional 6-core multi-threading with low thermal wattage, handling modern game logic with ease.',
+          '• GPU: AMD Radeon RX 7600 XT (16GB) or Nvidia RTX 4060 — High VRAM capacity prevents modern texture pop-in, delivering reliable 80+ FPS at 1080p Ultra.',
+          '• Memory & Storage: 32GB (2x16GB) DDR5-6000MHz RAM paired with a 1TB Kingston/Crucial Gen4 NVMe M.2 drive for instant load times.',
+          '• Power Supply: 650W 80+ Bronze/Gold certified PSU providing clean headroom for future graphics card swaps over the next 5 years.',
+        ],
+        image: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2666510/library_hero.jpg',
+        imageAlt: 'Component assembly and clean cable management',
+        sourceLink: 'https://www.tomshardware.com/best-picks/best-pc-builds-gaming',
+      },
+    ],
+  });
+
+  // 2. Handheld Guide: Steam Deck vs ROG Ally in 2026
+  generatedArticles.push({
+    id: `handheld-guide-2026-${now}`,
+    slug: `steam-deck-vs-rog-ally-handheld-gaming-guide-2026-${now}`,
+    title: 'Steam Deck vs ROG Ally in 2026: Which Handheld Wins for Value & Cozy Gaming?',
+    subtitle: "Portable PC gaming has completely transformed how we play. We pit Valve's ergonomic champion against Asus's high-refresh powerhouse to help you choose the right companion for your couch and travels.",
+    author: 'Jinssi Hardware Correspondent',
+    authorRole: 'Handheld & Mobile Specialist',
+    date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+    readTimeMinutes: 6,
+    category: 'Review',
+    tags: ['Steam Deck', 'ROG Ally', 'Handheld PC', 'Hardware Comparison', 'Portable Gaming'],
+    cozyScore: 5,
+    stressLevel: 'Zero Stress',
+    coverImage: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2113850/library_hero.jpg',
+    coverAlt: 'Steam Deck and portable handheld gaming setup',
+    summary: "Portable PC gaming has completely transformed how we play. We pit Valve's ergonomic champion against Asus's high-refresh powerhouse to help you choose the right companion for your couch and travels.",
+    sourceLink: 'https://tech-insider.org/steam-deck-vs-rog-ally-2026/',
+    steamLink: 'https://store.steampowered.com/steamdeck',
+    createdAt: now,
+    expiresAt: expiresAt,
+    sections: [
+      {
+        heading: '1. SteamOS Ergonomics vs Pure Raw Windows Power',
+        content: [
+          "In 2026, handheld gaming PCs are no longer niche experiments—they are full-fledged daily drivers for millions of gamers. Valve's Steam Deck OLED remains the gold standard for pure pick-up-and-play simplicity. The instantaneous suspend/resume feature and custom touchpads make playing mouse-driven organizing games and indie gems feel effortless.",
+          'On the other side of the ring, the Asus ROG Ally offers superior raw compute power with its Z1 Extreme processor and 120Hz VRR panel, making it a stronger choice for players wanting native Xbox Game Pass support and heavier 3D blockbusters.',
+        ],
+        image: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2113850/capsule_616x353.jpg',
+        imageAlt: 'Cozy handheld gaming in a warm, relaxed environment',
+        sourceLink: 'https://tech-insider.org/steam-deck-vs-rog-ally-2026/',
+        steamLink: 'https://store.steampowered.com/steamdeck',
+      },
+    ],
+  });
+
+  // 3. Gaming News & Releases in 2026
+  generatedArticles.push({
+    id: `gaming-news-2026-${now}`,
+    slug: `top-gaming-news-and-releases-2026-${now}`,
+    title: 'Gaming in 2026: The Biggest Releases & Community Trends to Watch',
+    subtitle: 'From breakout indie simulators to groundbreaking PC adventures, 2026 is celebrating depth, handcrafted worlds, and player-first game loops.',
+    author: 'Jinssi News Desk',
+    authorRole: 'Gaming Community Editorial',
+    date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+    readTimeMinutes: 5,
+    category: 'Review',
+    tags: ['Gaming News', '2026 Releases', 'PC Gamer', 'Indie Highlights', 'Trending'],
+    cozyScore: 5,
+    stressLevel: 'Zero Stress',
+    coverImage: 'https://cdn.mos.cms.futurecdn.net/TQYdAbodP3uRF5Co7X7o2Y-1920-80.jpg',
+    coverAlt: '2026 gaming release showcase',
+    summary: 'The biggest upcoming titles and indie gems to add to your wishlist this year.',
+    sourceLink: 'https://www.pcgamer.com/games/new-pc-games-2026/',
+    createdAt: now,
+    expiresAt: expiresAt,
+    sections: [
+      {
+        heading: '1. What to Expect from PC & Indie Gaming This Season',
+        content: [
+          '2026 is shaping up to be one of the most vibrant years in modern gaming history. Rather than relying on repetitive formulaic sequels, both independent studios and major publishers are investing deeply into mechanical depth, handcrafted worlds, and player-first progression.',
+          'From atmospheric life simulators to inventive puzzle adventures, community sentiment is celebrating titles that respect player time and offer rich cooperative and solo experiences.',
+        ],
+        image: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1819460/library_hero.jpg',
+        imageAlt: "Mika and The Witch's Mountain soaring scenery",
+        sourceLink: 'https://www.pcgamer.com/games/new-pc-games-2026/',
+      },
+    ],
+  });
+
+  for (const game of COZY_STEAM_MONITOR_LIST.slice(0, 8)) {
     try {
       // 1. Fetch latest news
       const newsData = await callSteamProxy('news', { appId: game.appId });
