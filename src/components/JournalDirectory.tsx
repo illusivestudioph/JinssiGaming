@@ -35,9 +35,9 @@ export function JournalDirectory({ onSelectArticle }: JournalDirectoryProps) {
       const q = searchQuery.toLowerCase().trim();
       const matchesSearch =
         !q ||
-        article.title.toLowerCase().includes(q) ||
-        article.subtitle.toLowerCase().includes(q) ||
-        article.tags.some((tag) => tag.toLowerCase().includes(q));
+        article.title?.toLowerCase().includes(q) ||
+        article.subtitle?.toLowerCase().includes(q) ||
+        (article.tags && Array.isArray(article.tags) && article.tags.some((tag) => tag.toLowerCase().includes(q)));
 
       return matchesCategory && matchesSearch;
     });
@@ -196,14 +196,14 @@ export function JournalDirectory({ onSelectArticle }: JournalDirectoryProps) {
                   </div>
                   <div className="absolute top-3 right-3 flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-cream-50/90 backdrop-blur-sm text-ink-800 text-xs font-bold shadow-cozy-sm">
                     <Clock className="w-3.5 h-3.5 text-peach-500" />
-                    <span>{article.readTimeMinutes} min read</span>
+                    <span>{article.readTimeMinutes || 6} min read</span>
                   </div>
                 </div>
 
                 {/* Article Header & Excerpt */}
                 <div className="p-6 sm:p-7">
                   <div className="flex items-center gap-2 text-xs font-bold text-tan-500 mb-2.5">
-                    <span>{article.date}</span>
+                    <span>{article.date || (article as any).publishedAt || 'Recent'}</span>
                     <span>•</span>
                     <span className="text-peach-600 font-semibold">{article.author}</span>
                   </div>
@@ -246,7 +246,7 @@ export function JournalDirectory({ onSelectArticle }: JournalDirectoryProps) {
 
                   {/* Tags */}
                   <div className="flex flex-wrap gap-1.5">
-                    {article.tags.slice(0, 3).map((tag) => (
+                    {(article.tags || []).slice(0, 3).map((tag) => (
                       <span
                         key={tag}
                         className="inline-flex items-center gap-1 text-[11px] font-medium bg-cream-200 text-ink-800 px-2 py-0.5 rounded-md"
@@ -263,7 +263,7 @@ export function JournalDirectory({ onSelectArticle }: JournalDirectoryProps) {
               <div className="px-6 sm:px-7 pb-6 pt-3 border-t border-tan-200/60 flex items-center justify-between">
                 <div className="flex items-center gap-1.5 text-xs text-earth-700 font-bold">
                   <Coffee className="w-3.5 h-3.5 text-peach-600" />
-                  <span>Cozy Rating: {article.cozyScore}/5 🍵</span>
+                  <span>Cozy Rating: {article.cozyScore || 5}/5 🍵</span>
                 </div>
 
                 <span className="inline-flex items-center gap-1.5 text-xs font-bold text-peach-600 group-hover:translate-x-1 transition-transform">

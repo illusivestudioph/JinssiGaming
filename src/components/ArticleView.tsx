@@ -260,11 +260,11 @@ export function ArticleView({
             </span>
             <div className="flex items-center gap-1.5 text-xs font-semibold text-tan-500">
               <Clock className="w-3.5 h-3.5 text-peach-500" />
-              <span>{article.readTimeMinutes} min read</span>
+              <span>{article.readTimeMinutes || 6} min read</span>
             </div>
             <div className="flex items-center gap-1.5 text-xs font-semibold text-tan-500">
               <Calendar className="w-3.5 h-3.5 text-earth-500" />
-              <span>{article.date}</span>
+              <span>{article.date || (article as any).publishedAt || 'Recent'}</span>
             </div>
           </div>
 
@@ -291,10 +291,10 @@ export function ArticleView({
             <div className="flex items-center gap-4 text-xs font-bold">
               <div className="bg-cream-200/80 px-3 py-1.5 rounded-xl text-earth-700 flex items-center gap-1.5">
                 <Coffee className="w-3.5 h-3.5 text-peach-600" />
-                <span>Cozy Score: {article.cozyScore}/5 🍵</span>
+                <span>Cozy Score: {article.cozyScore || 5}/5 🍵</span>
               </div>
               <div className="bg-cream-200/80 px-3 py-1.5 rounded-xl text-sage-600">
-                <span>{article.stressLevel}</span>
+                <span>{article.stressLevel || 'Zero Stress'}</span>
               </div>
               {article.steamLink && (
                 <a
@@ -876,7 +876,7 @@ export function ArticleView({
           <div className="mt-12 pt-6 border-t-2 border-tan-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex flex-wrap items-center gap-1.5">
               <Tag className="w-4 h-4 text-tan-400 mr-1" />
-              {article.tags.map((tag) => (
+              {(article.tags || []).map((tag) => (
                 <span
                   key={tag}
                   className="px-2.5 py-1 rounded-lg bg-cream-200 text-ink-800 text-xs font-medium"
