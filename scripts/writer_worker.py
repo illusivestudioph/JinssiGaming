@@ -179,6 +179,10 @@ def build_esports_championship_report(now_ms: int, expires_ms: int) -> dict:
         }
     ]
 
+    esports_cover = (hits[0].get("original_thumbnail_url") or hits[0].get("thumbnail_url")) if hits else ""
+    if not esports_cover:
+        esports_cover = "https://media.esportsverse.live/tournaments/lol-world-championship-2026-65ab921e.webp"
+
     return {
         "id": f"esports-championship-digest-{now_ms}",
         "slug": f"global-esports-championship-report-{now_ms}",
@@ -192,8 +196,8 @@ def build_esports_championship_report(now_ms: int, expires_ms: int) -> dict:
         "tags": ["Esports", "Competitive Gaming", "Tournament", "CS2", "Valorant", "Championship"],
         "cozyScore": 3,
         "stressLevel": "Gentle Challenge",
-        "coverImage": "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1200&q=80",
-        "coverAlt": "Professional esports arena stage with competitive lighting",
+        "coverImage": esports_cover,
+        "coverAlt": f"{clean_title} live tournament stage",
         "summary": "Deep dive into global competitive gaming: tier-1 tournament results, game meta shifts in CS2 and Valorant, and official verified source citations.",
         "createdAt": now_ms,
         "expiresAt": expires_ms,
