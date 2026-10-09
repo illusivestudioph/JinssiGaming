@@ -315,7 +315,13 @@ export function ArticleView({
                   className="bg-earth-600 hover:bg-earth-700 text-cream-50 px-3 py-1.5 rounded-xl flex items-center gap-1.5 transition-colors shadow-cozy-xs"
                 >
                   <ExternalLink size={13} className="text-cream-200" />
-                  <span>Source Article</span>
+                  <span>
+                    {article.sourceLink.includes('amazon.com')
+                      ? 'View on Amazon'
+                      : article.sourceLink.includes('steampowered.com')
+                      ? 'Steam Store'
+                      : 'Source Article'}
+                  </span>
                 </a>
               )}
               {article.playStoreLink && (
@@ -813,7 +819,13 @@ export function ArticleView({
                         className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-earth-500 hover:bg-earth-600 text-cream-50 text-xs font-bold transition-all hover:scale-[1.02] shadow-cozy-xs"
                       >
                         <ExternalLink size={13} className="text-cream-200" />
-                        <span>Original Source Announcement</span>
+                        <span>
+                          {section.sourceLink.includes('amazon.com')
+                            ? 'Check Price on Amazon'
+                            : section.sourceLink.includes('steampowered.com')
+                            ? 'View on Steam'
+                            : 'Read Original Article'}
+                        </span>
                       </a>
                     )}
 
