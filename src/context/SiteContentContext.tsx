@@ -183,40 +183,13 @@ function normalizeContent(parsed: Partial<SavedContent> | null | undefined): Sav
     : [];
   const normalizedProducts: StoreProduct[] = cleanProducts.length > 0 ? cleanProducts : initialProducts;
 
-  const rawGames = Array.isArray(parsed?.games) ? parsed.games : initialGames;
-  
-  // Guarantee the 4 completed manual games are NEVER lost or truncated.
-  // For TV Archive (which wife is actively writing), always use her live edits unconditionally.
-  const baseGames = initialGames.map((baseGame) => {
-    const existing = rawGames.find((g) => g.id === baseGame.id);
-    if (!existing) return baseGame;
-    if (baseGame.id === 'game-1789682891873') {
-      return existing;
-    }
-    const existingSteps = existing.walkthrough?.reduce((acc, s) => acc + (s.steps?.length || 0), 0) || 0;
-    const baseSteps = baseGame.walkthrough?.reduce((acc, s) => acc + (s.steps?.length || 0), 0) || 0;
-    if (existingSteps < baseSteps) {
-      return {
-        ...existing,
-        walkthrough: baseGame.walkthrough,
-        coverImage: existing.coverImage || baseGame.coverImage,
-        coverImages: existing.coverImages || baseGame.coverImages,
-      };
-    }
-    return {
-      ...existing,
-      coverImages: existing.coverImages || baseGame.coverImages,
-    };
-  });
-
-  // Preserve any additional games added by wife or admin
-  const baseGameIds = new Set(initialGames.map((g) => g.id));
-  const userAddedGames = rawGames.filter((g) => g && g.id && !baseGameIds.has(g.id));
-
-  const finalGames = [...baseGames, ...userAddedGames];
+  // All games are manually managed by the user. Never delete, filter, or overwrite them with static mock data.
+  const normalizedGames = Array.isArray(parsed?.games) && parsed.games.length > 0
+    ? parsed.games
+    : initialGames;
 
   return {
-    games: finalGames.length > 0 ? finalGames : initialGames,
+    games: normalizedGames,
     articles: normalizedArticles,
     stories: finalStories,
     products: normalizedProducts,
@@ -240,11 +213,9 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
 
   const [content, setContent] = useState<SavedContent>(() => {
     try {
-      // Purge legacy storage versions so old corrupted states do not persist
-      localStorage.removeItem('jinssi-site-content');
-      localStorage.removeItem('jinssi-site-content-v2');
-
-      const saved = localStorage.getItem(storageKey);
+      const saved = localStorage.getItem(storageKey) 
+        || localStorage.getItem('jinssi-site-content-v2') 
+        || localStorage.getItem('jinssi-site-content');
       if (!saved) return defaultContent;
       const parsed = JSON.parse(saved) as Partial<SavedContent>;
       return normalizeContent(parsed);
@@ -349,8 +320,28 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
               setLastSyncedAt(new Date().toLocaleTimeString());
             }
           } else {
-            // Remote is newer or equal -> sync local
-            setContent(remoteNormalized);
+            // Remote is newer or equal -> safely merge so local additions or richer walkthrough steps are never lost
+            const localGames = contentRef.current.games || [];
+            const remoteGames = remoteNormalized.games || [];
+            const gameMap = new Map<string, Game>();
+            remoteGames.forEach((g) => gameMap.set(g.id, g));
+            localGames.forEach((lg) => {
+              if (!gameMap.has(lg.id)) {
+                gameMap.set(lg.id, lg);
+              } else {
+                const rg = gameMap.get(lg.id)!;
+                const localSteps = lg.walkthrough?.reduce((acc, s) => acc + (s.steps?.length || 0), 0) || 0;
+                const remoteSteps = rg.walkthrough?.reduce((acc, s) => acc + (s.steps?.length || 0), 0) || 0;
+                if (localSteps > remoteSteps) {
+                  gameMap.set(lg.id, { ...rg, walkthrough: lg.walkthrough });
+                }
+              }
+            });
+
+            setContent({
+              ...remoteNormalized,
+              games: Array.from(gameMap.values()),
+            });
             setSyncStatus('synced');
             setLastSyncedAt(new Date().toLocaleTimeString());
           }
