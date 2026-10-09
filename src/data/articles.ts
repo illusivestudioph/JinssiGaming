@@ -21,11 +21,19 @@ export interface SourceCitationItem {
   note?: string;
 }
 
+export interface ArticleImage {
+  url: string;
+  caption?: string;
+  alt?: string;
+  angle?: string;
+}
+
 export interface ArticleSection {
   heading?: string;
   content: string[]; // array of paragraphs
   image?: string;
   imageAlt?: string;
+  gallery?: ArticleImage[]; // Multiple photos / angle inspection cards for this section
   steamLink?: string;
   sourceLink?: string;
   playStoreLink?: string;
@@ -58,6 +66,7 @@ export interface Article {
   coverAlt: string;
   summary: string;
   sections: ArticleSection[];
+  gallery?: ArticleImage[]; // Article-wide photo inspection gallery
   relatedGameId?: string;
   steamLink?: string;
   sourceLink?: string;

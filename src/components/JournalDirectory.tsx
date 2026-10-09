@@ -1,21 +1,19 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useSiteContent } from '@/context/SiteContentContext';
 import { articleCategories, type Article } from '@/data/articles';
-import { BookOpen, Clock, Search, Tag, Coffee, ArrowRight, ExternalLink, RefreshCw } from '@/components/StreamlineIcons';
+import { BookOpen, Clock, Search, Tag, Coffee, ArrowRight, ExternalLink } from '@/components/StreamlineIcons';
 import { getOptimizedImageUrl } from '@/utils/imageOptimization';
 import { LiveGameSearchModal } from '@/components/LiveGameSearchModal';
-import { syncLiveJournalFeed } from '@/services/liveJournalFeed';
 
 interface JournalDirectoryProps {
   onSelectArticle: (article: Article) => void;
 }
 
 export function JournalDirectory({ onSelectArticle }: JournalDirectoryProps) {
-  const { articles, setArticles } = useSiteContent();
+  const { articles } = useSiteContent();
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
-  const [isRefreshing, setIsRefreshing] = useState(false);
   const [timeLeft, setTimeLeft] = useState<string>('');
 
   // Calculate 24-hr lifespan countdown
@@ -41,16 +39,6 @@ export function JournalDirectory({ onSelectArticle }: JournalDirectoryProps) {
     return () => clearInterval(interval);
   }, [articles]);
 
-  const handleManualSync = async () => {
-    setIsRefreshing(true);
-    try {
-      await syncLiveJournalFeed(articles, (fresh) => {
-        setArticles(fresh);
-      }, true);
-    } finally {
-      setIsRefreshing(false);
-    }
-  };
 
   const categories = useMemo(() => {
     const list = ['All'];
@@ -116,15 +104,6 @@ export function JournalDirectory({ onSelectArticle }: JournalDirectoryProps) {
             <span>🎮 Search PC Games Database</span>
           </button>
 
-          <button
-            onClick={handleManualSync}
-            disabled={isRefreshing}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-cream-200 hover:bg-cream-300 text-tan-700 text-xs font-semibold transition-colors disabled:opacity-50"
-            title="Refresh latest community news"
-          >
-            <RefreshCw className={`w-3 h-3 ${isRefreshing ? 'animate-spin' : ''}`} />
-            <span>{isRefreshing ? 'Refreshing...' : 'Refresh Digest'}</span>
-          </button>
         </div>
       </div>
 

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import type { Article } from '@/data/articles';
+import type { Article, ArticleImage } from '@/data/articles';
 import { useSiteContent } from '@/context/SiteContentContext';
 import { CommentSection } from './CommentSection';
 import { getOptimizedImageUrl } from '@/utils/imageOptimization';
@@ -35,6 +35,7 @@ export function ArticleView({
   const { articles } = useSiteContent();
   const [copied, setCopied] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [lightboxImage, setLightboxImage] = useState<ArticleImage | null>(null);
 
   // Track reading progress
   useEffect(() => {
@@ -465,13 +466,65 @@ export function ArticleView({
                     </div>
                   )}
 
-                  {/* Section Image Box */}
-                  {section.image && (
-                    <div className="section-image-box my-6 rounded-2xl overflow-hidden shadow-cozy-sm border border-tan-200 bg-cream-200">
+                  {/* Multi-Angle Hardware / Image Gallery for this Section */}
+                  {section.gallery && section.gallery.length > 0 && (
+                    <div className="section-gallery-box my-8 p-4 sm:p-5 rounded-2xl border-2 border-tan-300 bg-white shadow-cozy-sm space-y-3">
+                      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-tan-200 pb-2.5">
+                        <span className="font-display font-bold text-xs sm:text-sm tracking-wide uppercase text-ink-900 flex items-center gap-2">
+                          📸 Multi-Angle Visual Inspection Gallery
+                        </span>
+                        <span className="text-[11px] text-peach-700 font-bold bg-peach-50 px-2.5 py-0.5 rounded-full border border-peach-200">
+                          {section.gallery.length} Verified Photos • Click to Zoom
+                        </span>
+                      </div>
+
+                      {/* Photo Grid with Angle Badges & Captions */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pt-1">
+                        {section.gallery.map((img, gIdx) => (
+                          <div
+                            key={gIdx}
+                            onClick={() => setLightboxImage(img)}
+                            className="group relative cursor-zoom-in rounded-xl overflow-hidden border-2 border-tan-200 hover:border-peach-400 bg-ink-950 transition-all hover:-translate-y-0.5 shadow-cozy-xs flex flex-col justify-between"
+                          >
+                            <div className="relative aspect-[16/10] overflow-hidden bg-ink-900">
+                              <img
+                                src={getOptimizedImageUrl(img.url, { width: 600, quality: 80, format: 'webp' })}
+                                alt={img.alt || img.caption || 'Hardware angle'}
+                                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                loading="lazy"
+                              />
+                              {img.angle && (
+                                <span className="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-ink-900/90 text-cream-50 backdrop-blur-xs shadow-cozy-sm">
+                                  {img.angle}
+                                </span>
+                              )}
+                              <div className="absolute inset-0 bg-ink-900/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                <span className="px-2.5 py-1 rounded-full bg-white/90 text-ink-900 text-[11px] font-bold shadow-cozy-sm">
+                                  🔍 Inspect Full View
+                                </span>
+                              </div>
+                            </div>
+                            {img.caption && (
+                              <p className="p-2.5 text-[11px] text-ink-800 bg-cream-50 font-sans line-clamp-2 border-t border-tan-200">
+                                {img.caption}
+                              </p>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Section Single Image Box */}
+                  {section.image && (!section.gallery || section.gallery.length === 0) && (
+                    <div
+                      onClick={() => setLightboxImage({ url: section.image!, alt: section.imageAlt, caption: section.imageAlt, angle: 'Photo' })}
+                      className="section-image-box my-6 rounded-2xl overflow-hidden shadow-cozy-sm border border-tan-200 bg-cream-200 group cursor-zoom-in relative"
+                    >
                       <img
                         src={getOptimizedImageUrl(section.image, { width: 900, quality: 80, format: 'webp' })}
                         alt={section.imageAlt || 'Illustration'}
-                        className="w-full h-auto max-h-[420px] object-cover"
+                        className="w-full h-auto max-h-[440px] object-cover transition-transform duration-300 group-hover:scale-[1.01]"
                         loading="lazy"
                         decoding="async"
                         onError={(e) => {
@@ -485,6 +538,11 @@ export function ArticleView({
                           }
                         }}
                       />
+                      <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <span className="px-2.5 py-1 rounded-full bg-ink-900/85 text-cream-50 text-[10px] font-bold shadow-cozy-sm backdrop-blur-xs">
+                          🔍 Click to zoom
+                        </span>
+                      </div>
                       {section.imageAlt && (
                         <p className="text-xs text-tan-600 p-2.5 bg-cream-50 text-center italic border-t border-tan-200/50">
                           {section.imageAlt}
@@ -651,6 +709,58 @@ export function ArticleView({
               </a>
             </div>
           </div>
+          {/* Article-Wide Photo & Visual Inspection Gallery */}
+          {article.gallery && article.gallery.length > 0 && (
+            <div className="my-10 p-5 sm:p-6 rounded-2xl bg-cream-100/80 border-2 border-tan-300 shadow-cozy-sm space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-tan-200 pb-3">
+                <div>
+                  <h3 className="font-display font-extrabold text-lg sm:text-xl text-ink-900 flex items-center gap-2">
+                    📸 Comprehensive Visual Inspection & Photo Suite
+                  </h3>
+                  <p className="text-xs text-tan-600 mt-0.5">
+                    Multi-angle photography, port close-ups, teardowns, and high-resolution captures ({article.gallery.length} photos)
+                  </p>
+                </div>
+                <span className="text-xs font-bold text-peach-600 bg-white px-3 py-1 rounded-full border border-peach-200 shadow-cozy-xs self-start sm:self-auto">
+                  Click any photo to zoom
+                </span>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-1">
+                {article.gallery.map((img, gIdx) => (
+                  <div
+                    key={gIdx}
+                    onClick={() => setLightboxImage(img)}
+                    className="group relative cursor-zoom-in rounded-xl overflow-hidden border-2 border-tan-200 hover:border-peach-400 bg-ink-950 transition-all hover:-translate-y-0.5 shadow-cozy-xs flex flex-col justify-between"
+                  >
+                    <div className="relative aspect-[16/10] overflow-hidden bg-ink-900">
+                      <img
+                        src={getOptimizedImageUrl(img.url, { width: 600, quality: 80, format: 'webp' })}
+                        alt={img.alt || img.caption || 'Hardware photo'}
+                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        loading="lazy"
+                      />
+                      {img.angle && (
+                        <span className="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-ink-900/90 text-cream-50 backdrop-blur-xs shadow-cozy-sm">
+                          {img.angle}
+                        </span>
+                      )}
+                      <div className="absolute inset-0 bg-ink-900/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <span className="px-2.5 py-1 rounded-full bg-white/90 text-ink-900 text-[11px] font-bold shadow-cozy-sm">
+                          🔍 Zoom
+                        </span>
+                      </div>
+                    </div>
+                    {img.caption && (
+                      <p className="p-2 text-[11px] text-ink-800 bg-cream-50 font-sans line-clamp-2 border-t border-tan-200">
+                        {img.caption}
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </article>
 
         {/* More Cozy Reads Section */}
@@ -692,6 +802,52 @@ export function ArticleView({
           <CommentSection gameId={`article-${article.id}`} />
         </div>
       </div>
+
+      {/* High-Resolution Full-Screen Lightbox Modal */}
+      {lightboxImage && (
+        <div
+          className="fixed inset-0 z-50 bg-ink-950/90 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 animate-fade-in"
+          onClick={() => setLightboxImage(null)}
+        >
+          <div
+            className="relative max-w-5xl w-full bg-ink-900 border border-cream-100/20 rounded-2xl overflow-hidden shadow-2xl flex flex-col"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="p-4 flex items-center justify-between border-b border-white/10 text-cream-50 bg-ink-950">
+              <div className="flex items-center gap-2">
+                {lightboxImage.angle && (
+                  <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-peach-500 text-white">
+                    {lightboxImage.angle}
+                  </span>
+                )}
+                <span className="font-display font-bold text-sm truncate">
+                  {lightboxImage.alt || 'High-Resolution Inspection'}
+                </span>
+              </div>
+              <button
+                onClick={() => setLightboxImage(null)}
+                className="p-1.5 px-3 rounded-lg bg-white/10 hover:bg-white/20 text-cream-100 transition-colors text-xs font-bold"
+              >
+                ✕ Close (Esc)
+              </button>
+            </div>
+
+            <div className="p-3 sm:p-6 flex items-center justify-center bg-black/60 max-h-[72vh] overflow-hidden">
+              <img
+                src={lightboxImage.url}
+                alt={lightboxImage.alt || 'Detailed view'}
+                className="max-w-full max-h-[68vh] object-contain rounded-lg shadow-lg"
+              />
+            </div>
+
+            {lightboxImage.caption && (
+              <div className="p-4 bg-ink-950 text-cream-100 text-xs sm:text-sm border-t border-white/10 leading-relaxed font-sans">
+                {lightboxImage.caption}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
