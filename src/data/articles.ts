@@ -50,7 +50,7 @@ export interface Article {
   authorRole: string;
   date: string;
   readTimeMinutes: number;
-  category: 'Curated List' | 'Review' | 'Guide' | 'Cozy Essay';
+  category: 'Curated List' | 'Review' | 'Guide' | 'Cozy Essay' | 'Esports News';
   tags: string[];
   cozyScore: number; // 1 to 5
   stressLevel: 'Zero Stress' | 'Very Low' | 'Gentle Challenge';
@@ -68,9 +68,10 @@ export interface Article {
 
 export const articleCategories = [
   'All',
-  'Curated List',
+  'Esports News',
   'Review',
   'Guide',
+  'Curated List',
   'Cozy Essay',
 ] as const;
 
