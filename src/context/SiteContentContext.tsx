@@ -4,6 +4,7 @@ import { articles as initialArticles, type Article } from '@/data/articles';
 import { stories as initialStories, CHILDREN_OF_MU_STORY, type Story } from '@/data/stories';
 import { initialProducts, type StoreProduct } from '@/data/store';
 import { supabase } from '@/lib/supabase';
+import { syncLiveJournalFeed, isJournalExpiredOrExpiring } from '@/services/liveJournalFeed';
 
 export interface WalletOption {
   name: string;
@@ -56,6 +57,7 @@ export interface SiteContentContextValue {
   addArticle: (article: Article) => void;
   updateArticle: (article: Article) => void;
   removeArticle: (articleId: string) => void;
+  setArticles: (articles: Article[]) => void;
   addStory: (story: Story) => void;
   updateStory: (story: Story) => void;
   removeStory: (storyId: string) => void;
@@ -118,26 +120,9 @@ function normalizeContent(parsed: Partial<SavedContent> | null | undefined): Sav
 
   let normalizedArticles = initialArticles;
 
+  // Use live / dynamic Supabase articles directly without overriding with static mock data
   if (Array.isArray(parsed?.articles) && parsed.articles.length > 0) {
-    const existingIds = new Set(parsed.articles.map((a) => a.id));
-    const upgradedExisting = parsed.articles.map((art) => {
-      const fresh = initialArticles.find((init) => init.id === art.id);
-      if (fresh) {
-        const hasOutdatedMedia =
-          art.coverImage?.includes('pexels.com') ||
-          art.coverImage?.includes('unsplash.com') ||
-          art.sections?.some((s) => s.image?.includes('pexels.com') || s.image?.includes('unsplash.com')) ||
-          (art.id === 'organizing-games-steam' && art.sections?.some((s) => s.heading?.includes('Librarian')));
-        if (hasOutdatedMedia) {
-          return fresh;
-        }
-      }
-      return art;
-    });
-
-    // Merge in any new default initial articles that are not yet in the user's saved list
-    const newDefaults = initialArticles.filter((init) => !existingIds.has(init.id));
-    normalizedArticles = [...upgradedExisting, ...newDefaults];
+    normalizedArticles = parsed.articles;
   }
 
   let normalizedStories: Story[] = [];
@@ -377,6 +362,27 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
+  // Autonomous 24-hour journal feed manager:
+  // Automatically repopulates 1 minute before expiration without requiring manual work
+  useEffect(() => {
+    if (!remoteLoaded) return;
+
+    const checkAndSync = () => {
+      if (isJournalExpiredOrExpiring(content.articles)) {
+        syncLiveJournalFeed(content.articles, (freshArticles) => {
+          setContent((prev) => ({
+            ...prev,
+            articles: freshArticles,
+          }));
+        });
+      }
+    };
+
+    checkAndSync();
+    // Heartbeat check every 30 seconds
+    const interval = setInterval(checkAndSync, 30000);
+    return () => clearInterval(interval);
+  }, [remoteLoaded, content.articles]);
 
   // Live real-time sync across devices: when wife or any admin updates content, sync immediately
   useEffect(() => {
@@ -523,6 +529,11 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
     removeArticle: (articleId) => setContent((c) => ({
       ...c,
       articles: c.articles.filter((a) => a.id !== articleId),
+      updated_at: new Date().toISOString(),
+    })),
+    setArticles: (articles) => setContent((c) => ({
+      ...c,
+      articles,
       updated_at: new Date().toISOString(),
     })),
     addStory: (story) => setContent((c) => ({ ...c, stories: [story, ...c.stories], updated_at: new Date().toISOString() })),

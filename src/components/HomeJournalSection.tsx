@@ -59,11 +59,18 @@ export function HomeJournalSection({
                 <img
                   src={getOptimizedImageUrl(article.coverImage, { width: 800, quality: 80, format: 'webp' })}
                   alt={article.coverAlt}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 filter saturate-90 group-hover:saturate-100"
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 filter saturate-95 group-hover:saturate-100"
                   loading="lazy"
                   decoding="async"
                   width={600}
                   height={400}
+                  onError={(e) => {
+                    const target = e.currentTarget as HTMLImageElement;
+                    if (!target.dataset.triedFallback) {
+                      target.dataset.triedFallback = 'true';
+                      target.src = 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2142790/header.jpg';
+                    }
+                  }}
                 />
                 <span className="absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-ink-900/80 backdrop-blur-sm text-cream-50 shadow-cozy-sm">
                   {article.category}
@@ -79,11 +86,18 @@ export function HomeJournalSection({
                   {article.title}
                 </h3>
                 <p className="text-xs text-tan-500 font-bold mb-2">
-                  {article.date} • By Jinssi
+                  {article.date} • {article.author}
                 </p>
-                <p className="text-xs sm:text-sm text-ink-700 font-sans line-clamp-2 leading-relaxed mb-4">
+                <p className="text-xs sm:text-sm text-ink-700 font-sans line-clamp-2 leading-relaxed mb-3">
                   {article.subtitle}
                 </p>
+                {article.steamLink && (
+                  <div className="flex gap-2">
+                    <span className="text-[11px] font-bold text-peach-600 bg-peach-50 px-2 py-0.5 rounded-md border border-peach-200">
+                      🎮 Steam Available
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
 

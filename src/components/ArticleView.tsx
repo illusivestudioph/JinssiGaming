@@ -172,12 +172,15 @@ export function ArticleView({
             <img
               src={getOptimizedImageUrl(article.coverImage, { width: 1200, quality: 80, format: 'webp' })}
               alt={article.coverAlt}
-              className="w-full h-auto max-h-[440px] object-cover"
+              className="w-full h-auto max-h-[460px] object-cover"
               loading="lazy"
               decoding="async"
               onError={(e) => {
-                // If cover image fails to load, gracefully hide it or replace with Steam default
-                (e.currentTarget as HTMLImageElement).src = 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2142790/header.jpg';
+                const target = e.currentTarget as HTMLImageElement;
+                if (!target.dataset.triedFallback) {
+                  target.dataset.triedFallback = 'true';
+                  target.src = 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2142790/header.jpg';
+                }
               }}
             />
             {article.coverAlt && (
@@ -187,49 +190,63 @@ export function ArticleView({
             )}
           </div>
 
-          {/* Body Sections */}
-          <div className="space-y-8 font-sans text-ink-800 leading-relaxed text-base sm:text-lg">
+          {/* Body Sections - Rich Blog Form */}
+          <div className="space-y-10 font-sans text-ink-800 leading-relaxed text-base sm:text-lg">
             {article.sections.map((section, idx) => (
               <section key={idx} className="space-y-4">
                 {section.heading && (
-                  <h2 className="font-display text-xl sm:text-2xl font-bold text-ink-900 pt-3 border-b border-tan-200/60 pb-2">
+                  <h2 className="font-display text-xl sm:text-2xl font-bold text-ink-900 pt-4 border-b border-tan-200/60 pb-2.5">
                     {section.heading}
                   </h2>
                 )}
 
                 {section.content.map((para, pIdx) => (
-                  <p key={pIdx} className="leading-relaxed font-sans text-ink-700">
+                  <p
+                    key={pIdx}
+                    className={`leading-relaxed font-sans text-ink-800 ${
+                      idx === 0 && pIdx === 0
+                        ? 'text-lg sm:text-xl font-medium text-ink-900 first-letter:text-4xl first-letter:font-bold first-letter:font-display first-letter:text-peach-600 first-letter:float-left first-letter:mr-2 first-letter:leading-none'
+                        : ''
+                    }`}
+                  >
                     {para}
                   </p>
                 ))}
 
                 {section.image && (
-                  <div className="my-6 rounded-xl overflow-hidden shadow-cozy-sm border border-tan-200 bg-cream-200">
+                  <div className="section-image-box my-6 rounded-2xl overflow-hidden shadow-cozy-sm border border-tan-200 bg-cream-200">
                     <img
                       src={getOptimizedImageUrl(section.image, { width: 900, quality: 80, format: 'webp' })}
                       alt={section.imageAlt || 'Illustration'}
-                      className="w-full h-auto max-h-96 object-cover"
+                      className="w-full h-auto max-h-[420px] object-cover"
                       loading="lazy"
                       decoding="async"
                       onError={(e) => {
-                        (e.currentTarget as HTMLImageElement).style.display = 'none';
+                        const target = e.currentTarget as HTMLImageElement;
+                        if (!target.dataset.triedFallback && article.coverImage && target.src !== article.coverImage) {
+                          target.dataset.triedFallback = 'true';
+                          target.src = article.coverImage;
+                        } else {
+                          const box = target.closest('.section-image-box') as HTMLElement;
+                          if (box) box.style.display = 'none';
+                        }
                       }}
                     />
                     {section.imageAlt && (
-                      <p className="text-xs text-tan-500 p-2 bg-cream-50 text-center italic">
+                      <p className="text-xs text-tan-600 p-2.5 bg-cream-50 text-center italic border-t border-tan-200/50">
                         {section.imageAlt}
                       </p>
                     )}
                   </div>
                 )}
 
-                <div className="pt-1 pb-2 flex flex-wrap items-center gap-3">
+                <div className="pt-2 pb-2 flex flex-wrap items-center gap-3">
                   {section.steamLink && (
                     <a
                       href={section.steamLink}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-ink-900 hover:bg-ink-800 text-cream-50 text-xs font-bold transition-all hover:scale-[1.02] shadow-cozy-xs"
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-ink-900 hover:bg-ink-800 text-cream-50 text-xs font-bold transition-all hover:scale-[1.02] shadow-cozy-xs"
                     >
                       <ExternalLink size={13} className="text-peach-400" />
                       <span>View on Steam Store</span>
@@ -241,10 +258,10 @@ export function ArticleView({
                       href={section.sourceLink}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-earth-500 hover:bg-earth-600 text-cream-50 text-xs font-bold transition-all hover:scale-[1.02] shadow-cozy-xs"
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-earth-500 hover:bg-earth-600 text-cream-50 text-xs font-bold transition-all hover:scale-[1.02] shadow-cozy-xs"
                     >
                       <ExternalLink size={13} className="text-cream-200" />
-                      <span>Original Source</span>
+                      <span>Original Source Announcement</span>
                     </a>
                   )}
 
