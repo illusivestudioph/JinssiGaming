@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { Article } from '@/data/articles';
+import type { Article } from '@/types/article';
 import { 
   Plus, 
   Edit2, 

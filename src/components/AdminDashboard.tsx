@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useSiteContent } from '@/context/SiteContentContext';
 import type { Game, WalkthroughSection } from '@/data/games';
-import type { Article } from '@/data/articles';
+import type { Article } from '@/types/article';
 import { ArticleManager } from './admin/ArticleManager';
 import { ArticleEditor } from './admin/ArticleEditor';
 import { StoryEditor } from './admin/StoryEditor';

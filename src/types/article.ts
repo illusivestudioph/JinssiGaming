@@ -41,10 +41,10 @@ export interface BuildPartItem {
 
 export interface ArticleSection {
   heading?: string;
-  content: string[]; // array of paragraphs
+  content: string[];
   image?: string;
   imageAlt?: string;
-  gallery?: ArticleImage[]; // Multiple photos / angle inspection cards for this section
+  gallery?: ArticleImage[];
   steamLink?: string;
   sourceLink?: string;
   playStoreLink?: string;
@@ -52,13 +52,11 @@ export interface ArticleSection {
     title: string;
     text: string;
   };
-  // GSMArena-style Hardware Review Components
   pros?: string[];
   cons?: string[];
   specSheet?: SpecCategory[];
   comparisonTable?: ComparisonTableData;
   sourcesList?: SourceCitationItem[];
-  // PC Build Guide Components
   buildParts?: BuildPartItem[];
   totalBuildCost?: string;
 }
@@ -70,17 +68,19 @@ export interface Article {
   subtitle: string;
   author: string;
   authorRole: string;
-  date: string;
-  readTimeMinutes: number;
-  category: 'Curated List' | 'Review' | 'Guide' | 'Cozy Essay' | 'Esports News';
-  tags: string[];
-  cozyScore: number; // 1 to 5
-  stressLevel: 'Zero Stress' | 'Very Low' | 'Gentle Challenge';
+  date?: string;
+  publishedAt?: string;
+  readTimeMinutes?: number;
+  readTime?: string;
+  category: 'Curated List' | 'Review' | 'Guide' | 'Cozy Essay' | 'Esports News' | string;
+  tags?: string[];
+  cozyScore?: number;
+  stressLevel?: 'Zero Stress' | 'Very Low' | 'Gentle Challenge' | string;
   coverImage: string;
-  coverAlt: string;
+  coverAlt?: string;
   summary: string;
   sections: ArticleSection[];
-  gallery?: ArticleImage[]; // Article-wide photo inspection gallery
+  gallery?: ArticleImage[];
   relatedGameId?: string;
   steamLink?: string;
   sourceLink?: string;
@@ -98,9 +98,4 @@ export const articleCategories = [
   'Cozy Essay',
 ] as const;
 
-/**
- * Zero hardcoded articles.
- * All journal articles are dynamically loaded from the live Python scraper daemon
- * via Supabase (scripts/grab_journal_feed.py).
- */
-export const articles: Article[] = [];
+export type ArticleCategory = typeof articleCategories[number];

@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { categories, type Game } from '@/data/games';
-import type { Article } from '@/data/articles';
+import type { Article } from '@/types/article';
 import type { Story } from '@/data/stories';
 import { GUTENBERG_ID_MAP } from '@/services/gutenberg';
 import { Header, type View } from '@/components/Header';

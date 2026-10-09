@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { Article, ArticleSection } from '@/data/articles';
+import type { Article, ArticleSection } from '@/types/article';
 import type { Game } from '@/data/games';
 import { 
   ChevronLeft, 

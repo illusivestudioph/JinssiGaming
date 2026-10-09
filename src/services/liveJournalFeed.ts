@@ -1,4 +1,4 @@
-import type { Article } from '@/data/articles';
+import type { Article } from '@/types/article';
 import { supabase } from '@/lib/supabase';
 
 /**

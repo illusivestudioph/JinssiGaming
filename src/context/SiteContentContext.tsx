@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { games as initialGames, type Game, type WalkthroughSection } from '@/data/games';
-import { articles as initialArticles, type Article } from '@/data/articles';
+import type { Article } from '@/types/article';
 import { stories as initialStories, CHILDREN_OF_MU_STORY, type Story } from '@/data/stories';
 import { initialProducts, type StoreProduct } from '@/data/store';
 import { supabase } from '@/lib/supabase';
@@ -73,7 +73,7 @@ const BROADCAST_CHANNEL_NAME = 'jinssi_site_content_channel';
 
 const defaultContent: SavedContent = {
   games: initialGames,
-  articles: initialArticles,
+  articles: [],
   stories: initialStories,
   products: initialProducts,
   heroImage: '/banner.webp',

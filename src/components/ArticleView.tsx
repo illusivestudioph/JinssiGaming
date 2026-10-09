@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import type { Article, ArticleImage } from '@/data/articles';
+import type { Article, ArticleImage } from '@/types/article';
 import { useSiteContent } from '@/context/SiteContentContext';
 import { CommentSection } from './CommentSection';
 import { getOptimizedImageUrl } from '@/utils/imageOptimization';

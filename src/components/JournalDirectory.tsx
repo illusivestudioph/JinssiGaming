@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useSiteContent } from '@/context/SiteContentContext';
-import { articleCategories, type Article } from '@/data/articles';
+import { articleCategories, type Article } from '@/types/article';
 import { BookOpen, Clock, Search, Tag, Coffee, ArrowRight, ExternalLink } from '@/components/StreamlineIcons';
 import { getOptimizedImageUrl } from '@/utils/imageOptimization';
 import { LiveGameSearchModal } from '@/components/LiveGameSearchModal';
