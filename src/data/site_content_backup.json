@@ -1080,24 +1080,797 @@
           "title": "Master List — All 20 Categories",
           "steps": [
             {
-              "id": "step-1789684417684",
+              "id": "step-tv-1-1789684400100",
+              "title": "1. ACTION MOVIES",
               "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/d8d9732b-fc2a-488f-8e9d-7288b228c04f-1---action-movies.webp",
-              "title": "ACTION MOVIES",
-              "imageAlt": "Step illustration",
+              "imageAlt": "ACTION MOVIES shelf videotapes",
               "hasSpoiler": false,
               "description": "•Assassins and Companions\n•Cowboy Westwood\n•Gladiator Maximus\n•Gold, Bold, and Uncle\n•Green Beret Veteran: Kill\n•Green Beret Veteran: Survive\n•Guardians of the Ocean\n•Hell Weapon I\n•Hell Weapon II\n•Hell Weapon III\n•Outlaw Westwood\n•Thieves of the Land\n•Utopia Priests I\n•Utopia Priests II\n•Utopia Priests III",
               "spoilerText": ""
             },
             {
-              "id": "step-1789685215451",
-              "image": "",
-              "title": "DRAMA MOVIES",
-              "imageAlt": "Step illustration",
+              "id": "step-tv-2-1789684400200",
+              "title": "2. DRAMA MOVIES",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/36c585b3-9b98-42d0-a1d7-6a14014a50b1-2---drama-movies.webp",
+              "imageAlt": "DRAMA MOVIES shelf videotapes",
               "hasSpoiler": false,
-              "description": "•",
+              "description": "•A Beautiful Mind\n•Cuckoo's Nest\n•Ghost Field\n•Hopeless Romantic\n•Immigrant Story\n•Orphan's Destiny\n•Rain Over Autumn\n•Shadows of Yesterday\n•The Pianist of Warsaw\n•The Silent River",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-tv-3-1789684400300",
+              "title": "3. TV SERIES",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/2e6fd3e3-0716-4b52-9a71-5fafe4761eee-3---tv-series.webp",
+              "imageAlt": "TV SERIES shelf videotapes",
+              "hasSpoiler": false,
+              "description": "•Detective Blue: Season 1-5\n•Hospital Central: Seasons 1-8\n•Midnight Dynasty\n•Office Confidential\n•The Coastal Town Mysteries\n•The Northern Crown\n•Undercover Metro",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-tv-4-1789684400400",
+              "title": "4. CARTOONS",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/7c8d06e7-504e-486d-9601-eb86f10e2db7-4--cartoons.webp",
+              "imageAlt": "CARTOONS shelf videotapes",
+              "hasSpoiler": false,
+              "description": "•Adventures of Bunny Bob\n•Cosmic Cat & Dog\n•Dino Squad Adventures\n•Fairy Forest Tales\n•Little Engine Sparks\n•Magic School bus Patrol\n•Space Rangers Academy",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-tv-5-1789684400500",
+              "title": "5. HORROR MOVIES",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/55fede71-5bd5-4b30-99e4-f1928c660f27-5---horror-movies.webp",
+              "imageAlt": "HORROR MOVIES shelf videotapes",
+              "hasSpoiler": false,
+              "description": "•Cabin by the Mire\n•Dark Descent\n•Haunted Basement Tape\n•Midnight Visitor\n•Night of the Scarecrow\n•The Attic Whispers\n•The Cursed Reel",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-tv-6-1789684400600",
+              "title": "6. COMEDY MOVIES",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/84740f83-6faf-4905-9f5b-71dcf0c95007-6---comedy-movies.webp",
+              "imageAlt": "COMEDY MOVIES shelf videotapes",
+              "hasSpoiler": false,
+              "description": "•Bad Luck Brothers\n•Crazy Family Reunion\n•Delivery Mayhem\n•Double Trouble Vacation\n•Goofy Golfers\n•Summer Camp Disaster\n•Uncle Bob's Dilemma",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-tv-7-1789684400700",
+              "title": "7. ATHLETIC GAMES",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/34a32b0f-52fb-496e-9f11-bf938e96df3c-7---athletic-games.webp",
+              "imageAlt": "ATHLETIC GAMES shelf videotapes",
+              "hasSpoiler": false,
+              "description": "•City Marathon Highlights\n•Decathlon Championship\n•Gold Sprint Final\n•High Jump Invitational\n•National Gymnastics Open\n•Track & Field Relays",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-tv-8-1789684400800",
+              "title": "8. FOOTBALL CUPS",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/2d7efabf-cb38-47ee-a1d5-fe9ed6f2e36a-8---football-cups.webp",
+              "imageAlt": "FOOTBALL CUPS shelf videotapes",
+              "hasSpoiler": false,
+              "description": "•All-Star Football League\n•Continental Champions Cup\n•Derby Cup Classics\n•Golden Boot Finals\n•Premier Cup Highlights\n•World Football Showdown",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-tv-9-1789684400900",
+              "title": "9. ROMANCE MOVIES",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/639c8604-ad04-48c0-8912-6949f7ec3a69-9---romance-movies.webp",
+              "imageAlt": "ROMANCE MOVIES shelf videotapes",
+              "hasSpoiler": false,
+              "description": "•A Kiss Under the Rain\n•Letters from Vienna\n•Love Across Time\n•Midnight Promenade\n•Sunset Harbor Romance\n•The Florist's Secret\n•Winter Whispers",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-tv-10-1789684401000",
+              "title": "10. SCI-FI MOVIES",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/1a0f2396-9c18-40af-af5e-1bcd5431ad05-10---sci-fi-movies.webp",
+              "imageAlt": "SCI-FI MOVIES shelf videotapes",
+              "hasSpoiler": false,
+              "description": "•Cyber Horizon 2099\n•Deep Cosmos Explorer\n•Neon City Fugitive\n•Orbital Protocol\n•Solar Storm Alert\n•The Quantum Gate\n•Time Loop Paradox",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-tv-11-1789684401100",
+              "title": "11. BASEBALL",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/1249e0a9-ae30-446c-b681-4e2866436f64-11---baseball.webp",
+              "imageAlt": "BASEBALL shelf videotapes",
+              "hasSpoiler": false,
+              "description": "•Championship Series 1994\n•Diamond Legends Showcase\n•Grand Slam Extravaganza\n•Home Run Derby Classics\n•Pitcher's Duel Golden Era\n•World Diamond Classic",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-tv-12-1789684401200",
+              "title": "12. TENNIS",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/a404afcc-7a0f-4ad2-b281-3b37700e294f-12---tennis.webp",
+              "imageAlt": "TENNIS shelf videotapes",
+              "hasSpoiler": false,
+              "description": "•Clay Court Masters\n•Grass Court Championship Final\n•Hardcourt Smash Open\n•Legendary Aces & Rallies\n•Silver Cup Doubles Classic",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-tv-13-1789684401300",
+              "title": "13. NEWS",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/8309df9a-ed6c-422a-bc13-b325d65b55fe-13---news.webp",
+              "imageAlt": "NEWS shelf videotapes",
+              "hasSpoiler": false,
+              "description": "•Evening Broadcast Archive\n•Global Morning Report\n•Historical Headlines Reel\n•Metro Daily Dispatch\n•Nightly World Review\n•Special Election Coverage",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-tv-14-1789684401400",
+              "title": "14. GAME SHOWS",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/a64f71bf-7bf5-4126-a0ec-fd71c09b4cca-14---game-shows.webp",
+              "imageAlt": "GAME SHOWS shelf videotapes",
+              "hasSpoiler": false,
+              "description": "•Fortune Wheel Spectacular\n•Million Dollar Quiz Hour\n•Puzzle Master Challenge\n•Spin & Win Jackpot\n•Trivia Champions Tournament",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-tv-15-1789684401500",
+              "title": "15. BASKETBALL",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/28f5d6a7-40be-4110-92d2-74a35ee749f8-15---basketball.webp",
+              "imageAlt": "BASKETBALL shelf videotapes",
+              "hasSpoiler": false,
+              "description": "•All-Star Slam Dunk Contest\n•Championship Game 7 Thriller\n•Courtside Classic Highlights\n•Fast Break Dynasty\n•Rookies Showcase Match",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-tv-16-1789684401600",
+              "title": "16. MOTORSPORTS",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/15cbd602-dce9-466a-a632-0d60a63b0eac-16---motorsports.webp",
+              "imageAlt": "MOTORSPORTS shelf videotapes",
+              "hasSpoiler": false,
+              "description": "•24-Hour Endurance Classic\n•Desert Rally Raid Cup\n•Grand Circuit GP Highlights\n•Night Speedway Drag\n•Turbo Cup Championship",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-tv-17-1789684401700",
+              "title": "17. COOKING SHOWS",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/8b8def26-0d81-4917-9967-a4072d78f749-17---cooking-shows.webp",
+              "imageAlt": "COOKING SHOWS shelf videotapes",
+              "hasSpoiler": false,
+              "description": "•Artisan Bakery Secrets\n•Chef's Kitchen Masterclass\n•Grand Pastry Showdown\n•Rustic Italian Flavors\n•Street Food World Tour",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-tv-18-1789684401800",
+              "title": "18. DOCUMENTARIES",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/5bad076d-d6a0-451e-b155-cc2d40a839f3-18---documentaries.webp",
+              "imageAlt": "DOCUMENTARIES shelf videotapes",
+              "hasSpoiler": false,
+              "description": "•Deep Ocean Mysteries\n•Kingdom of the Savanna\n•Lost Cities of the Sahara\n•Our Living Planet\n•Secrets of the Pyramids\n•The Cosmic Frontier",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-tv-19-1789684401900",
+              "title": "19. BOXING",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/7e51aa15-c149-4b05-b147-7a8ecebbff55-19---boxing.webp",
+              "imageAlt": "BOXING shelf videotapes",
+              "hasSpoiler": false,
+              "description": "•Golden Gloves Championship\n•Heavyweight Title Clash\n•Iron Fist Invitational\n•Legendary Knockouts Reel\n•Undisputed Round-by-Round",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-tv-20-1789684402000",
+              "title": "20. TALK SHOWS",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/07babf7d-c3b1-46fd-8c2a-a8d24c11e032-20---talk-showa.webp",
+              "imageAlt": "TALK SHOWS shelf videotapes",
+              "hasSpoiler": false,
+              "description": "•Celebrity Spotlight Live\n•Late Night Lounge Hour\n•Morning Coffee Chat\n•Prime Time Roundtable\n•Weekend Entertainment Special",
               "spoilerText": ""
             }
           ]
+        },
+        {
+          "id": "section-1789684499000",
+          "title": "Chaos Mode & Challenge",
+          "steps": [
+            {
+              "id": "step-1789684499001",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/30d042ba-0a36-4036-ab02-0e82a032d71f-chaos.webp",
+              "title": "Tackling Chaos Mode",
+              "imageAlt": "Chaos mode tapes scattered",
+              "hasSpoiler": false,
+              "description": "In Chaos Mode, dozens of unsorted tapes are strewn across the floor and counters. Prioritize unlocking Auto-Collect and Highlight Tapes to clear the floor systematically by room quadrant.",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-1789684499002",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/c2fe05e3-876e-42f2-ad6f-2bf9a59f9db5-after-chaos.webp",
+              "title": "After Chaos — Final Archive Completion",
+              "imageAlt": "Clean TV archive shelves completed",
+              "hasSpoiler": false,
+              "description": "Once all tapes are placed and shelves are filled, check each section sign to confirm 100% completion. Enjoy the pristine, fully organized TV archive room!",
+              "spoilerText": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "game-1791078132017",
+      "title": "Megastore: Tidy Up Together",
+      "category": "Cozy Games",
+      "coverAlt": "Placeholder cover",
+      "gameLink": "https://store.steampowered.com/app/5027520/Megastore_Tidy_Up_Together/",
+      "developer": "Yolo Games Studio",
+      "coverImage": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/7174bce3-2a92-4206-b057-c85454c85038-tite.webp",
+      "editorNote": "I’ve loved every minute with Megastore: Tidy Up Together, and I’m happy to say my experience was completely smooth — no bugs, no confusion, no mismatches at all. Every item lines up exactly with its shelf label; what you see is exactly where it goes. The scale is impressive too — from the cosy first store to the huge two-story Megastore, the variety never lets up. With over 1,350 unique products and a skill tree that lets you play your own way, it’s polished, reliable, and genuinely satisfying from start to finish.\n\nWhether you want a quiet solo tidy-up or something to share with friends, I highly recommend this one. It delivers exactly what it promises — and it does it beautifully.\n\nHave you played it? How did you find your favourite department? I’d love to hear your thoughts — feel free to share your experience in the comments below!",
+      "accentColor": "#4b607c",
+      "coverImages": [
+        "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/7174bce3-2a92-4206-b057-c85454c85038-tite.webp"
+      ],
+      "description": "Megastore: Tidy Up Together is a cozy sorting game for solo or online co-op play. Organize four stores of increasing scale: a Toy Store, an Electronics Store, a bustling Supermarket, and a massive two-story Megastore. Pick up, sort, and shelve thousands of items, and get ready to open!",
+      "walkthrough": [
+        {
+          "id": "section-1791078622241",
+          "steps": [
+            {
+              "id": "step-1791080308395",
+              "image": "",
+              "title": "Available Stores / Levels",
+              "imageAlt": "Step illustration",
+              "hasSpoiler": false,
+              "description": "The game currently features multiple stores that increase in size and difficulty:\n\n📍Toy Store\n\n•Smallest and easiest level.\n•Great for learning the sorting mechanics.\n•Mainly toys, pool items, and seasonal products.\n\n📍Supermarket\n\n•Larger store with many food and household products.\n•Requires more careful organisation because of the variety of departments.\n•A good step up in complexity from the Toy Store.\n\n📍Megastore\n\n•The biggest challenge.\n•Features a huge number of products spread across multiple departments and floors.\n•Best tackled with friends or by dividing sections into smaller tasks.\n\n🖇️Note: A newer Electronics Store level has also been added, featuring thousands of electronic products and appliances.",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-1791080372439",
+              "image": "",
+              "title": "Quick Walkthrough",
+              "imageAlt": "Step illustration",
+              "hasSpoiler": false,
+              "description": "1. Learn the Layout\n\nWhen entering a store, take a quick walk through each department. Shelf signs show where item categories belong.\n\n2. Sort by Category First\n\nInstead of placing items one at a time, gather similar products together. This makes shelving much faster.\n\n3. Start with Large Sections\n\nClear big piles near department entrances first. You'll create more space to move around and spot item groups easier.\n\n4. Use Teamwork\n\nIn multiplayer:\n\nAssign players to different departments.\nOne player can sort while another shelves items.\nCommunicate where uncommon products belong.\n\n5. Finish Shelf Organisation\n\nAfter everything is placed, tidy shelves so matching products are grouped neatly together for maximum efficiency.",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-1791080562525",
+              "image": "",
+              "title": "Beginner Tips",
+              "imageAlt": "Step illustration",
+              "hasSpoiler": false,
+              "description": "•Don't worry about perfection at the start; focus on getting items into the correct department.\n•Memorise common shelf locations to speed up future runs.\n•Large stores become much easier when tackled section by section.\n•Co-op significantly reduces completion time.",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-1791080620941",
+              "image": "",
+              "title": "Final Goal",
+              "imageAlt": "Step illustration",
+              "hasSpoiler": false,
+              "description": "By correctly sorting and shelving every item, you'll transform a chaotic store into a clean, organised shopping space ready for customers. The challenge grows from the simple Toy Store, through the Supermarket, and finally the massive Megastore, making each level feel bigger and more rewarding than the last.",
+              "spoilerText": ""
+            }
+          ],
+          "title": "Quick Game Guide"
+        },
+        {
+          "id": "section-1791080639253",
+          "steps": [
+            {
+              "id": "step-1791080912017",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/9cfbcc73-e3c5-45fc-910f-9d3370a35f68-bags.webp",
+              "title": "BAGS",
+              "imageAlt": "Step illustration",
+              "hasSpoiler": false,
+              "description": "•Butterfly Beach Bag\n•Hibiscus Beach Bag\n•Striped Surfboard Beach Bag\n•Summer Beach Bag\n•Sunset Beach Bag\n•Surf Beach Bag",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-1791081753869",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/01df3850-2529-4629-9a73-afe87898f8cb-balls.webp",
+              "title": "BALLS",
+              "imageAlt": "Step illustration",
+              "hasSpoiler": false,
+              "description": "•American Football\n•Blue Basketball\n•Blue Volleyball\n•Classic Basketball\n•Classic Football\n•Color Football\n•Color Volleyball\n•Kids Ball\n•Pink Basketball",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-1791082000817",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/2035f4d9-91de-450e-b994-928c4437208e-BEACH-UMBRELLAS.webp",
+              "title": "BEACH UMBRELLAS",
+              "imageAlt": "Step illustration",
+              "hasSpoiler": false,
+              "description": "•Aqua Stripe Umbrella\n•Blue Stripe Umbrella\n•Green Stripe Umbrella\n•Orange Stripe Umbrella\n•Purple Stripe Umbrella\n•Red Stripe Umbrella",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-1791082301872",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/487347c2-cd03-498b-abd1-fe02ff3a42fa-BOARD-GAMES.webp",
+              "title": "BOARD GAMES",
+              "imageAlt": "Step illustration",
+              "hasSpoiler": false,
+              "description": "•Ancient Egyptian Board Game\n•Battlestar Board Game\n•Blockout Board Games\n•Carnival Crazy Board Game\n•Cash in Hand Board Game\n•Classic Checkers Board Game\n•Classic Chess Board Game\n•Clumsy Board Game\n•Dangerous Diamonds Board Game\n•Detective Files Board Game\n•Enchanted Party Game\n•Fishing Board Game\n•Planet Zantibar Board Game\n•Terror Tower Board Game\n•Thunder Grid Board Game\n•Wooden Checkers Game Board",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-1791082996878",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/831df5f6-45e8-47ee-9755-a7f247ab4edd-dolls.webp",
+              "title": "DOLLS",
+              "imageAlt": "Step illustration",
+              "hasSpoiler": false,
+              "description": "•Baby Doll Set\n•Casual Set\n•Denim Outfit Set\n•Doodle Board\n•Fairy Dress Set\n•Glam Set\n•Night Out Set\n•Pink Dress Set\n•Ponies Pack\n•Summer Set\n•Red Dress Set\n•Twin Baby Dolls",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-1791083539924",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/b049bbf7-9f25-4f4c-9e2e-c6f4d1622163-educational-toys.webp",
+              "title": "EDUCATIONAL TOYS",
+              "imageAlt": "Step illustration",
+              "hasSpoiler": false,
+              "description": "•Blocks Crane\n•Eudcation Set\n•Educational Bead Maze\n•Hammer Game\n•Learning Laptop\n•Toolbox\n•Letter Puzzle (A-Z, 18 each)",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-1791083819957",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/e95db48e-d020-449e-a809-d4db0c3f28f7-flip-flops.webp",
+              "title": "FLIP-FLOPS",
+              "imageAlt": "Step illustration",
+              "hasSpoiler": false,
+              "description": "•Blue Flip-Flops\n•Coral Flip-Flops\n•Lime Flip-Flops\n•Pink Flip-Flops\n•Purple Flip-Flops\n•Purple Flip-Flops\n•Yellow Flip-Flops",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-1791084002205",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/52fea6f3-99c5-4ea3-bb63-459f52377e02-hats---caps.webp",
+              "title": "HATS & CAPS",
+              "imageAlt": "Step illustration",
+              "hasSpoiler": false,
+              "description": "•Flower Beach Hat\n•Happy Face Cap\n•Mint Spirit Cap\n•Ocean Blue Cap\n•Pineapple Sun Hat\n•Royal Vibe Cap\n•Shadow Camo Cap\n•Straw Summer Hat\n•Street Tag Cap\n•Travel Print Hat\n•Urban Hero Cap\n•Vintage Brown Cap",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-1791084601809",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/ea2679b5-a7ff-44e8-9862-7cf5894b6c80-MUSICAL-TOYS.webp",
+              "title": "MUSICAL TOYS",
+              "imageAlt": "Step illustration",
+              "hasSpoiler": false,
+              "description": "•Electric Guitar\n•Electric Piano\n•Instrumental Set\n•Toy Piano",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-1791084711973",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/c9a0659e-29b4-43b6-9563-efea19e59c8e-plushies-2.webp",
+              "title": "PLUSHIES",
+              "imageAlt": "Step illustration",
+              "hasSpoiler": false,
+              "description": "•Apple Plushie\n•Avocado Plushie (Big)\n•Avocado Plushie (Small)\n•Black Cat Keychain\n•Black Cat Plushie\n•Black Sheep Plushie\n•Black Shark Plushie\n•Calico Cat Keychain\n•Calico Cat Plushie\n•Camo Round Plushie\n•Clownfish Plushie\n•Dinosaur Plushie\n•Dotted Round Plushie\n•Elephant Plushie\n•Floppy-Ear Dog Plushie\n•Ginger Cat Keychain\n•Ginger Cat Plushie\n•Grey Cat Keychain\n•Grey Cat Plushie\n•Grey Round Plushie\n•Grey Shark Plushie\n•Green Apple Plushie\n•Honey Round Plushie\n•Lemon Plushie\n•Lemon Round Plushie\n•Leopard Cat Keychain\n•Leopard Cat Plushie\n•Party Frog Plushie\n•Patch Round Plushie\n•Pear Plushie\n•Penguin Plushie\n•Pink Shark Plushie\n•Red Apple Plushie\n•Round Seal Plushie\n•Round Shark Plushie\n•Siamese Cat Keychain\n•Siamese Cat Plushie\n•Smoky Cat Keychain\n•Smoky Cat Plushie\n•Splash Round Plushie\n•Spotted Cat Plushie\n•Starry Round Plushie\n•Striped Bee Plushie\n•Striped Cat Keychain\n•Striped Cat Plushie\n•Tiger Plushie\n•Tortoiseshell Cat Plushie\n•Turtle Plushie\n•Tuxedo Cat Keychain\n•Tuxedo Cat Plushie\n•White Sheep Plushie\n•White Tiger Plushie",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-1791100313879",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/1e70b4c0-455b-4d9e-86e4-984f3cd63848-pool-balls---noodles.webp",
+              "title": "POOL BALLS & NOODLES",
+              "imageAlt": "Step illustration",
+              "hasSpoiler": false,
+              "description": "•Blue Pool Noodle\n•Classic Beach Ball\n•Green Pool Noodle\n•Ocean Beach Ball\n•Red Pool Noodle\n•Turtle Beach Ball",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-1791100446336",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/3725bead-9f95-4e75-ab0b-136a043b36ea-pool-floats.webp",
+              "title": "POOL FLOATS",
+              "imageAlt": "Step illustration",
+              "hasSpoiler": false,
+              "description": "•Blue Flamingo Ring\n•Orange Air Mattress\n•Orange Flamingo Ring\n•Pink Flamingo Ring\n•Tropical Air Mattress\n•Vacation Air Mattress",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-1791100607030",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/e76cbb99-b8c7-428f-8b5a-a3f86bff0249-retro-toys.webp",
+              "title": "RETRO TOYS",
+              "imageAlt": "Step illustration",
+              "hasSpoiler": false,
+              "description": "•Retro Abacus\n•Retro Blue Lava Lamp\n•Retro Blue Yo-Yo\n•Retro Green Lava Lamp\n•Retro Green Yo-Yo\n•Retro Light-Up Memory Game\n•Retro Magnetic Drawing Board\n•Retro Maracas\n•Retro Purple Lava Lamp\n•Retro Ring Tower\n•Retro Xylophone\n•Retro Yellow Lava Lamp",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-1791101282095",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/958410f7-5c3e-41f6-8272-12c333826dc0-sun---swim.webp",
+              "title": "SUN & SWIM",
+              "imageAlt": "Step illustration",
+              "hasSpoiler": false,
+              "description": "•Bug Spray\n•Blue Swim Fins\n•Red Swim Fins\n•Spf 30 Lotion\n•Spf 50 Cream\n•Sun Spray\n•Tan Oil\n•Yellow Swim Fins",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-1791101671758",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/1f71dcaf-a036-41a4-a4cd-6ead03a1e2a5-swim-rings.webp",
+              "title": "SWIM RINGS",
+              "imageAlt": "Step illustration",
+              "hasSpoiler": false,
+              "description": "•Green Swim Rings\n•Large Blue Swim Ring\n•Large Colorful Swim Ring\n•Large Tropical Swim Ring\n•Sailor Swim Ring\n•Sea Life Swim Ring",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-1791101835126",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/b672e3f8-385e-4e58-8101-b8f4a6da7bfa-towels.webp",
+              "title": "TOWELS",
+              "imageAlt": "Step illustration",
+              "hasSpoiler": false,
+              "description": "•Aqua Striped Large Towel\n•Aqua Striped Medium Towel\n•Forest Green Large Towel\n•Forest Green Medium Towel\n•Rainbow Striped Large Towel\n•Red Striped Large Towel\n•Red Striped Medium Towel\n•Sunny Striped Medium Towel",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-1791102178731",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/9afffba9-bb5c-443b-9f66-c8ba53b63f33-toy-figures.webp",
+              "title": "TOY FIGURES",
+              "imageAlt": "Step illustration",
+              "hasSpoiler": false,
+              "description": "•Battle Axe Figure Accessory\n•Battle Shield Figure Accessory\n•Blaster Figure Accessory\n•Blue T-Rex Toy\n•Google Monkey Figure\n•Green Alien Figure\n•Green Monster Figure\n•Green T-Rex Toy\n•Hazmat Trooper Figure\n•Mad Scientist Figure\n•Masked Wrestler Figure\n•Police Officer Figure\n•Samurai Sword Figure Accessory\n•Space Ranger Figure\n•Space Robot Figure\n•Viking Warrior Figure",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-1791103092189",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/78f0af08-564a-4ddf-9bf1-1404e7f97507-toy-vehicle.webp",
+              "title": "TOY VEHICLE",
+              "imageAlt": "Step illustration",
+              "hasSpoiler": false,
+              "description": "•Army Toy Boat\n•Army Toy Helicopter\n•Beige Toy Van\n•Blue Sports Car (2)\n•Blue Toy Van\n•Blue Train Wagon\n•Blue Wooden Car\n•Camper Van\n•Galloper XL\n•Gray Sports Car\n•Green Wooden Car\n•Mini Remote Car\n•Mint Wooden Car\n•Orange Sports Car\n•Orange Toy Van\n•Orange Wooden Car\n•Pink Sports Car (2)\n•Pink Toy Van\n•Police Car\n•Purple Sports Car\n•Purple Wooden Car\n•Push Car\n•Red Sports Car (2)\n•Red Toy Locomotive\n•Red Wooden Car\n•Remote Control Truck\n•Ride-On Coupe\n•Sedan\n•Tank\n•Toy Train Station\n•Van 2\n•Yellow Train Wagon \n•Yellow Wooden Car",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-1791105488807",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/3bcadd1b-80e2-41e6-995b-7735d02d78ab-treats---accessories.webp",
+              "title": "TREATS & ACCESSORIES",
+              "imageAlt": "Step illustration",
+              "hasSpoiler": false,
+              "description": "•Blueberry Cotton Candy\n•Candy Bag - Blue\n•Candy Bag - Orange\n•Candy Bag - Pink\n•Candy Bag - Yellow\n•Choco Bites - Blue\n•Choco Bites - Brown\n•Choco Bites - Orange\n•Choco Bites - Purple\n•Cloud Cotton Candy\n•Energy Jelly - Lemon\n•Energy Jelly - Lime\n•Energy Jelly - Orange\n•Energy Jelly - Peach\n•Mint Cotton Candy\n•Necklace - Blue\n•Necklace - Green \n•Necklace - Orange\n•Necklace - Pink\n•Strawberry Cotton Candy\n•Sweeties - Green\n•Sweeties -Purple\n•Sweeties -Red\n•Sweeties -Yellow\n•Xylitol - Berry\n•Xylitol - Grape\n•Xylitol - Lemon\n•Xylitol - Original",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-1791106809478",
+              "image": "",
+              "title": "PRETEND PLAY",
+              "imageAlt": "Step illustration",
+              "hasSpoiler": false,
+              "description": "•Blue Toy Cup\n•Chestnut Toy Pony\n•Cream Toy Pony\n•Dream Mansion\n•Pink Toy Cup\n•Purple Toy Cup\n•Rainbow Toy Pony\n•Sweet Doll House\n•Toy Cooking Pot\n•Toy Fork\n•Toy Frying Fan\n•Toy Plate\n•Toy Rolling Pin\n•Toy Spatula\n•White Toy Cup\n•White Toy Pony",
+              "spoilerText": ""
+            }
+          ],
+          "title": "Toy Store (Single-story --- your starting location)",
+          "video": ""
+        },
+        {
+          "id": "section-1791107043703",
+          "steps": [
+            {
+              "id": "step-1791107072978",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/91be56eb-2bac-4a31-ae5b-cee311c96aab-bakery---bread.webp",
+              "title": "BAKERY - Bread",
+              "video": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-videos/walkthrough-videos/bbc1ed13-4149-46cd-8684-3f772055361d-bread.optimized.webm",
+              "imageAlt": "Step illustration",
+              "hasSpoiler": false,
+              "description": "•Chia Seed Bread\n•Ciabatta\n•Crispbread\n•Dark Multigrain Bread\n•Oatbread\n•Olive Bread\n•Plum Bread\n•Round Bread\n•Rustic Round Loaf\n•Sesame Ring Bread\n•Spelt Bread\n•Turkish Pide\n•Village Bread\n•Wheat Loaf (2)",
+              "spoilerText": "",
+              "videoPoster": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-videos/walkthrough-posters/aac2ae6a-4ea0-4ab5-abc9-990d805b4c74-bread-poster.webp"
+            },
+            {
+              "id": "step-1791107759351",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/00ce7633-9795-4bb3-bfc1-8cb64e6226a8-bakery---rolls---baguettes.webp",
+              "title": "BAKERY - Rolls & Baguettes",
+              "imageAlt": "Step illustration",
+              "hasSpoiler": false,
+              "description": "•Bagel\n•Baguette (Artisan)\n•Baguettes\n•Bread Roll\n•Breadstick\n•Chia Roll\n•Classic Baguette\n•Garlic Breadstick\n•Pumpkin Seed Roll\n•Rustic Roll\n•Seeded Roll\n•Vienna Roll",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-1791108211098",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/fa58da38-f8e6-49fe-98fa-31897dc4392c-bakery---sweet-bakes.webp",
+              "title": "BAKERY - Sweet Bakes",
+              "imageAlt": "Step illustration",
+              "hasSpoiler": false,
+              "description": "•Chocolate Drizzle Donut\n•Cupcake\n•Pink Frosted Donut\n•Plain Donuts\n•Powdered Donut\n•Waffle",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-1791108333510",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/6a225d0f-87a5-404b-ad3b-0e06bc168cc1-books.webp",
+              "title": "BOOKS",
+              "video": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-videos/walkthrough-videos/fee81466-3920-4017-8981-73c7ea31fbb6-books.optimized.webm",
+              "imageAlt": "Step illustration",
+              "hasSpoiler": false,
+              "description": "•A Dynamical Theory of the Electromagnetic Field\n•ABC Book\n•Colors\n•Donnyine\n•I Won't Share\n•Krok\n•Mother & Child\n•Once Upon A Time\n•Piticha\n•The Adventure of the Muddle-Headed Wombat\n•The Surprise Book\n•Vintage Story Book",
+              "spoilerText": "",
+              "videoPoster": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-videos/walkthrough-posters/4aba44d0-caac-44e4-9147-36f6793ed988-books-poster.webp"
+            },
+            {
+              "id": "step-1791108665925",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/79473935-299f-4f39-baf2-bced19309e7e-butchery---beef.webp",
+              "title": "BUTCHERY - Beef",
+              "imageAlt": "Step illustration",
+              "hasSpoiler": false,
+              "description": "•Beef Liver Slice\n•Beef Tongue Slice\n•Bone-in Short Ribs\n•Brisket Slices\n•Flank Steak\n•Packed Ground Beef 70/30\n•Packed Ground Beef 75/25\n•Packed Ground Beef 90/10\n•Packed Ground Beef 93/7\n•Ribeye steak\n•Tenderloin Steak\n•Tomahawk Steak",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-1791109157845",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/2dda2eaa-e5c4-4229-9cfe-643eb05ed347-BUTCHERY---chicken---turkey.webp",
+              "title": "BUTCHERY - Chicken & Turkey",
+              "imageAlt": "Step illustration",
+              "hasSpoiler": false,
+              "description": "•Packed Chicken Breasts\n•Packed Chicken Leg Quarters\n•Packed Chicken Tenderloins\n•Packed Ground Chicken\n•Packed Ground Turkey\n•Packed Whole Chicken",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-1791109340854",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/fbc71dfb-1397-4d3f-b583-900aa6d62bfe-butchery---lamb.webp",
+              "title": "BUTCHERY - Lamb",
+              "imageAlt": "Step illustration",
+              "hasSpoiler": false,
+              "description": "•Lamb Chops\n•Lamb Neck Slices\n•Lamb Shoulder Roast\n•Lamb Tenderloin Medallions\n•Packed Ground Lamb\n•Packed Lamb Shank",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-1791109520355",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/8b15d538-c9c6-4943-9ed4-b882495c8b54-butchery---wagyu.webp",
+              "title": "BUTCHERY - Wagyu",
+              "imageAlt": "Step illustration",
+              "hasSpoiler": false,
+              "description": "•Wagyu Beef Shank Slice\n•Wagyu Bone-in Ribeye Steak\n•Wagyu Brisket Slice\n•Wagyu Chuck Steak\n•Wagyu Oxtail Slice\n•Wagyu Picanha Steak\n•Wagyu Plate Short Rib Portion\n•Wagyu Porterhouse Steak\n•Wagyu Ribeye Steak\n•Wagyu Strip Steak\n•Wagyu T-Bone Steak\n•Wagyu Tomahawk Steak",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-1791109827254",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/832454ac-c319-470f-9534-d70ee4e19f5f-canned-goods.webp",
+              "title": "CANNED GOODS",
+              "imageAlt": "Step illustration",
+              "hasSpoiler": false,
+              "description": "•Albacore Tuna\n•Canned Peas\n•Canned Red Peas\n•Canned Tuna\n•Large Canned Tuna\n•Small Canned Peas\n•Small Canned Tuna\n•Tuna",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-1791110150622",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/c110adc0-b58b-4126-bffa-830aaef568ea-cereals.webp",
+              "title": "CEREAL",
+              "imageAlt": "Step illustration",
+              "hasSpoiler": false,
+              "description": "•Cereal (Chokopik)\n•Cereal (Pirate)\n•Chocolate Granola\n•Honey Corn Cereal",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-1791110262516",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/bc1a3245-09e3-4edc-b819-97e5ad570987-cleaning-supplies.webp",
+              "title": "CLEANING SUPPLIES",
+              "imageAlt": "Step illustration",
+              "hasSpoiler": false,
+              "description": "•All-Purpose Cleaner\n•Bathroom Cleaner\n•Bleach Cleaner\n•Bleach 1.5L\n•Bleach 4L\n•Cleaning Spray\n•Dishwasher Tablets (48 Tablets)\n•Dishwasher Tablets (60 Tablets)\n•Dishwasher Tablets (84 Tablets)\n•Dishwashing Liquid\n•Dishwashing Sponge\n•Dustpan\n•Eco Laundry Detergent\n•Laundry Detergent\n•Lemon Bleach 1.5L\n•Lemon Dishwashing Liquid\n•Multipurpose Cleaner\n•Ocean Fresh Bleach 1.5L\n•Orange Dishwashing Liquid\n•Rust & Limescale Remover\n•Soap Laundry Detergent\n•Sponge Pack\n•Squeegee\n•Toilet Cleaner",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-1791111526450",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/a9adb834-a77a-4aa1-988e-c0fad2e55d65-coffee---tea.webp",
+              "title": "COFFEE & TEA",
+              "imageAlt": "Step illustration",
+              "hasSpoiler": false,
+              "description": "•Black Tea Canister\n•Box of Tea\n•Ceylon Black Tea\n•Coffee\n•Coffee Beans\n•Dark Roast Coffee Beans\n•Earl Grey Tea\n•Green Tea Canister\n•Matcha Tea Tin\n•Medium Roast Coffee Beans\n•Rose Tea\n•White Tea Canister",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-1791111872482",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/b613ee52-3454-4046-bc1c-8dd3cb66c97b-cooking---baking.webp",
+              "title": "COOKING & BAKING",
+              "imageAlt": "Step illustration",
+              "hasSpoiler": false,
+              "description": "•All-Purpose Flour\n•Black Pepper Grinder\n•Brown Sugar\n•Cane Sugar\n•Chocolate Powder\n•Flour (Green Village)\n•Flour (Master Flour)\n•Mashed Potato\n•Olive Oil\n•Organic Cane Sugar\n•Organic White Sugar\n•Powdered Sugar (Boully)\n•Powdered Sugar (Pablo)\n•Powdered Sugar (Susu)\n•Salt\n•Sea Salt\n•Sugar\n•Sunflower Oil\n•Unrefined Brown Sugar\n•Whole Wheat Flour",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-1791112491095",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/53e3d8f3-1615-4685-97af-0af4b5ee76fd-fresh-produce---vegetables.webp",
+              "title": "FRESH PRODUCE - Vegetable",
+              "imageAlt": "Step illustration",
+              "hasSpoiler": false,
+              "description": "•Acorn Squash\n•Artichoke\n•Avocado\n•Butternut Squash\n•Cabbage\n•Carrot\n•Cucumber\n•Garlic\n•Lettuce\n•Mushroom\n•Onion\n•Potato\n•Pumpkin\n•Tomato\n•Zucchini",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-1791116967938",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/adcfa7ae-68fb-4cd6-b0bf-95d70a46933b-fresh-produce---fruits.webp",
+              "title": "FRESH PRODUCE - Fruits",
+              "imageAlt": "Step illustration",
+              "hasSpoiler": false,
+              "description": "•Apple\n•Banana\n•Grapefruit\n•Kiwi\n•Lemon\n•Mandarin\n•Mango\n•Melon\n•Pear\n•Pineapple\n•Red Apple\n•Watermelon",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-1791117265026",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/da75e672-8250-4eeb-b583-58e7de4605ce-frozen-fast-food-2.webp",
+              "title": "FROZEN FAST FOOD",
+              "imageAlt": "Step illustration",
+              "hasSpoiler": false,
+              "description": "•Angus Beef Patties\n•Beef Cheddar\n•Beef Sliders\n•Bolognese Pizza\n•Cheese Burger\n•Chicken Nuggets\n•Deluxe Rising-Crust Pizza\n•Flame-Grilled Sliders\n•Four Cheese Pizza\n•Frozen Onion Rings\n•Ham & Mushroom Pizza\n•Italian Sausage Stromboli\n•Mediterranean Vegetable & Cheese Pizza\n•Microwave Cheeseburger\n•Mini Cheeseburger\n•Mozzarella & Pesto Pizza\n•Parmesan Ranch Pepperoni Pizza\n•Pepperoni Party Pizza\n•Raclette Pizza\n•Thin-Crust Sausage Pizza",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-1791117965648",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/dca5ecf5-d499-4051-947e-b1806a337cc0-frozen-meat---seafood.webp",
+              "title": "FROZEN MEAT & SEAFOOD",
+              "imageAlt": "Step illustration",
+              "hasSpoiler": false,
+              "description": "•18-Pack Breaded Fish Fillets\n•Alaska Pollock Fillets\n•Beaf Steak\n•Breaded Fish Sticks\n•Breaded Hake Fillets\n•Chicken\n•Chicken Wings\n•Crispy Battered Fish Fillets\n•Crumbed Whiting Fillets\n•Cutlet\n•Frozen Whole Shrimp\n•Omega-3 Fish Fingers\n•Salmon Fillets\n•Sushi\n•Veal Chop",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-1791118616273",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/3de808ae-1604-44ef-8240-c0a5fa23a3d0-frozen-ready-meals.webp",
+              "title": "FROZEN READY MEALS",
+              "imageAlt": "Step illustration",
+              "hasSpoiler": false,
+              "description": "•Bolognese Lasagna\n•Breton Ham & Cheese Galettes\n•Cheese Phyllo\n•Fish & Chips Dinner\n•Gluten-Free Ham & Cheese Puff Patries\n•Ham & Cheese Galettes\n•Moussaka\n•Scallop, Leek & Potato Gratin\n•Seasoned Chicken Wings & Drummettes\n•Spinach & Cheese Phyllo",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-1791119028368",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/83742e33-4fab-4503-8e97-34fa3428bd85-froze-veg---potatoes.webp",
+              "title": "FROZEN VEG & POTATOES",
+              "imageAlt": "Step illustration",
+              "hasSpoiler": false,
+              "description": "•Boxed Frozen Peas\n•Crispy Potato Pops\n•Extra Thin Fries\n•Frozen Carrots\n•Frozen Garden Vegetable Mix\n•Frozen Green Bean & Mushroom Mix\n•Frozen Green Beans\n•Frozen Green Peas\n•Frozen Mixed Vegetables\n•Frozen Sweet Corn\n•Homestyle Chips\n•Large Frozen Green Beans\n•Straight-Cut Fries\n•Straight-Cut Oven Chips\n•Traditional Fries",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-1791119746017",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/dc27a979-17bc-4f00-a99f-d45c91517da3-home-decoration.webp",
+              "title": "HOME DECORATION",
+              "imageAlt": "Step illustration",
+              "hasSpoiler": false,
+              "description": "•Decorative Cookie Canister\n•Feather Wall Art\n•Large House Decoration\n•Medium Black Geometric Ceramic Vase\n•Medium Black & Wood Vase\n•Medium Bronze Vase\n•Medium Gold Bulb Vase\n•Medium House Decoration\n•Medium Silver Bulb Vase\n•Medium White Textured Ceramic Vase\n•Penguin Wall Art\n•Short Black Geometric Ceramic Vase\n•Short Bronze Vase\n•Short White Textured Ceramic Vase\n•Small Black & Wood Vase\n•Small Gold Bulb Vase\n•Small House Decoration\n•Small Silver Bulb vase\n•Tall Black Geometric Ceramic Vase\n•Tall Black & Wood Vase\n•Tall Bronze Vase\n•Tall Gold Bulb Vase\n•Tall Silver Bulb Vase\n•Tall White Textured Ceramic Vase",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-1791121081878",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/d48a8093-f171-489d-abac-affbd159c419-ice-cream.webp",
+              "title": "ICE CREAM",
+              "imageAlt": "Step illustration",
+              "hasSpoiler": false,
+              "description": "•Candy Coated Ice Cream Bars\n•Caramel Ice Cream Tub\n•Caramel Pizzelle Ice Cream Bars\n•Classic Ice Cream Collection\n•Coffee Ice Cream Tub\n•Ice Cream\n•Ice Cream Cones\n•Mini Caramel Double Chocolate Ice Cream\n•Orange Ice Cream Tub\n•Pink Strawberry Ice Cream Tub\n•Premium Caramel Ice Cream Tub\n•Rapsberry & Strawberry Ice Cream Cones\n•Stracciatella Ice Cream Tub\n•Strawberry Cheesecake Ice Cream Tub\n•Strawberry Ice Cream Tub\n•Strawberry Meringue Ice Cream Tub\n•Strawberry Swirl Ice Cream Tub\n•Toffee & Vodka Ice Cream Tub\n•Vanilla & Rapsberry Ice Cream Cones\n•Vanilla & Strawberry Ice Cream Cones",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-1791166928855",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/160afab2-aef8-470a-ae4c-ca874e4a4411-paper-goods.webp",
+              "title": "PAPER GOODS",
+              "imageAlt": "Step illustration",
+              "hasSpoiler": false,
+              "description": "•Floral Paper Towels\n•Soft White Paper Towels\n•Soft White Toilet Paper\n•Toilet Paper",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-1791167112398",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/eb984022-1195-4d85-afdd-14f57d88a4c3-pasta.webp",
+              "title": "PASTA",
+              "imageAlt": "Step illustration",
+              "hasSpoiler": false,
+              "description": "•Box Pasta\n•Elbow Pasta\n•Macaroni & Cheese\n•Noodles\n•Pasta\n•Penne Pasta\n•Spaghetti\n•Whole Grain Penne",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-1791167345413",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/f1292478-38bf-4ab3-8ffe-dfeab1824b2c-personal-care.webp",
+              "title": "PERSONAL CARE",
+              "imageAlt": "Step illustration",
+              "hasSpoiler": false,
+              "description": "•Argan Oil Shampoo\n•Avocado Shampoo\n•Baby Body & Hair Wash\n•Bubble Bath\n•Castor Oil & Maple Shampoo\n•Coconut Shampoo (blue)\n•Coconut Shampoo (orange)\n•Conditioning Shampoo\n•Curly Hair Shampoo\n•Gentle Shampoo\n•Hair Brush\n•Hand Soap\n•Honey & jojoba Shampoo\n•Hydrating Shampoo\n•Men's 3-in-1 Shower Gel\n•Men's Shampoo\n•Moisturizing Lotion\n•Regular Hold Hair Spray\n•Shampoo\n•Shaving Cream\n•Soap\n•Toothpaste\n•Ultra Hold Hair Spray\n•Wet Wipes",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-1791168812203",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/06c3366f-9e08-443b-a6b2-57447ce63863-pet-supplies.webp",
+              "title": "PET SUPPLIES",
+              "imageAlt": "Step illustration",
+              "hasSpoiler": false,
+              "description": "•Adult Dog Food\n•Beef Dog Food\n•Cat Food\n•Chicken & Veal Cat Food",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-1791168936090",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/f7bb6740-903d-44a2-8095-17eda1f272af-refrigerated---beers.webp",
+              "title": "REFRIGERATED - Beer",
+              "video": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-videos/walkthrough-videos/d2b8fd55-7948-4dcf-97ac-eacb95c03c01-beer.optimized.webm",
+              "imageAlt": "Step illustration",
+              "hasSpoiler": false,
+              "description": "•American Pale Ale\n•Blonde Beer\n•Czech Lager\n•IPA Beer\n•Maple-Aged Beer\n•Pilsner Beer\n•Premium Lager\n•Premium Pale Ale\n•Stout Beer\n•Trappist Beer",
+              "spoilerText": "",
+              "videoPoster": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-videos/walkthrough-posters/8fb6a976-3593-42e2-99f9-cc0ddc2fda6d-beer-poster.webp"
+            },
+            {
+              "id": "step-1791169241996",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/350a545a-70db-4dee-9b2c-2a460961f6b4-refrigerated---cheese---deli.webp",
+              "title": "REFRIGERATED - Cheese & Deli",
+              "imageAlt": "Step illustration",
+              "hasSpoiler": false,
+              "description": "•Comte Cheese\n•Grated Parmesan Cheese\n•Gruyere Cheese\n•Hard Cheese\n•Mimolette Cheese\n•Mozzarella Cheese\n•Parma Ham\n•Parmigiano Reggiano Cheese\n•Salami\n•Sliced Ham",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-1791169532884",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/9d392d58-37f7-4054-ad83-a1b4b5da5998-refrigerated---cold-drinks.webp",
+              "title": "REFRIGERATED - Cold Drinks",
+              "imageAlt": "Step illustration",
+              "hasSpoiler": false,
+              "description": "•Apple & Red Berry Soda \n•Black Cola\n•Bottled Soda\n•Cherry Cola\n•Cola\n•Cola (can)\n•Grapefruit-ling Soda\n•Juice\n•Lemon-Lime Soda\n•Lemon-Lime Soda (can)\n•Natural Mineral Water\n•Orange Soda\n•Orange Soda (can)\n•Purified Drinking Water\n•Soda\n•Water 1.5L\n•Zero-Sugar Cola\n•Zero-Sugar Grape Soda\n•Zero-Sugar Orange Soda\n•Zero-Sugar Peach Soda",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-1791170686560",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/d77ed8ec-9558-4f9d-a019-8d9abb6b704d-refrigerated---dairy---eggs.webp",
+              "title": "REFRIGERATED - Dairy & Eggs",
+              "imageAlt": "Step illustration",
+              "hasSpoiler": false,
+              "description": "•Butter\n•Creme Fraiche\n•Egg\n•Fruit Yogurt\n•Light Yogurt\n•Milk\n•Milk Bottle Six-Pack\n•Plain Yogurt\n•Pudding\n•Whipped Cream",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-1791171081651",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/29159fb5-bcf3-4dae-9267-ce0e8c804299-rice.webp",
+              "title": "RICE",
+              "imageAlt": "Step illustration",
+              "hasSpoiler": false,
+              "description": "•Basmati Rice\n•Long-Grain Rice\n•Rice\n•White Rice",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-1791171184794",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/b75a168d-2473-446e-a7a0-6b286706759d-sauces.webp",
+              "title": "SAUCES",
+              "imageAlt": "Step illustration",
+              "hasSpoiler": false,
+              "description": "•Mayonnaise\n•Mayonnaise (jar)\n•Mustard\n•Organic Ketchup",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-1791171280785",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/0650736d-8f6c-4a92-b25a-5adb4c019916-seafood---fish-cuts---oysters.webp",
+              "title": "SEAFOOD - Fish Cuts & Oysters",
+              "imageAlt": "Step illustration",
+              "hasSpoiler": false,
+              "description": "•Black Oyster\n•Herring Fillet\n•King Salmon Fillet\n•Red Snapper Fillet\n•Salmon Slice\n•Trout Fillet\n•Tuna Steak\n•White Oyster",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-1791171908646",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/25f7d749-4fe6-438a-94f7-61e31c80bbc3-seafood---fresh-fish.webp",
+              "title": "SEAFOOD - Fresh Fish",
+              "imageAlt": "Step illustration",
+              "hasSpoiler": false,
+              "description": "•Cleaned Carp\n•Cleaned Cod\n•Cleaned Sea Bass\n•Cleaned Sea Bream\n•Cleaned Trout\n•Herring\n•King Salmon\n•Mackerel\n•Perch\n•Red Snapper\n•Red Tilapia\n•Sardine\n•Sea Bass\n•Sea Bream\n•Small Mackerel\n•Trout",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-1791172378062",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/d4e5fa7f-1163-4e54-9c5f-6dc4edfb35df-snacks.webp",
+              "title": "SNACKS",
+              "imageAlt": "Step illustration",
+              "hasSpoiler": false,
+              "description": "•Box of Chocolates\n•Brazil Nuts\n•Cake\n•Candy Bar\n•Cheese Puffs\n•Chocolate Chips Madeleines\n•Chocolate Marble Cake (27)\n•Chocolate Marble Cake (30)\n•Classic Marble Cake\n•Cookie\n•Cookie Butter\n•Cookies & Cream Chocolate Bar\n•Creamy Bun\n•Crispy Chips\n•Crunchy Chocolate Bar\n•Dark Chocolate Bar\n•Fruit Gummies\n•Jelly Beans\n•Milk Chocolate Bites\n•Nacho Cheese Tortilla Chips\n•Peeled Peanuts\n•Salt Crackers\n•Strawberry Candy Bag\n•Sugar-Free Lemon Cakes",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-1791176130276",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/3c872f5a-61d8-4024-8142-a5dd6a4cc54c-spreads.webp",
+              "title": "SPREADS",
+              "imageAlt": "Step illustration",
+              "hasSpoiler": false,
+              "description": "•Hazelnut Chocolate Spread\n•Peanut Butter\n•Peanut Butter (orange jar)\n•Pure Honey",
+              "spoilerText": ""
+            },
+            {
+              "id": "step-1791176229162",
+              "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/d7a0015c-c22d-4236-8d5a-47787e4e7ce4-wine---spirits-2.webp",
+              "title": "WINE & SPIRITS",
+              "imageAlt": "Step illustration",
+              "hasSpoiler": false,
+              "description": "•Aged Scotch Whiskey\n•American Whiskey\n•Black Lager Six-Pack\n•Blonde Beer Keg\n•Blonde Beer Six-Pack\n•Bourbon Whiskey\n•Brandy Liqueur\n•Buttafuoco Wine\n•Champagne\n•Cherry Liqueur\n•Classic Lager Keg\n•Classic Lager Six-Pack\n•Cognac\n•Cognac Orange Liqueur\n•Dry Gin\n•Italian Red Blend\n•Japanese Single Malt Whiskey\n•Montevero Red Wine\n•Peach Schnapps\n•Piedmont Red Wine\n•Premium Lager Keg\n•Premium Vodka\n•Red Wine\n•Rose Wine\n•Rum Liqueur\n•Rye Whiskey\n•Tangerine Liqueur\n•Tennessee Whiskey",
+              "spoilerText": ""
+            }
+          ],
+          "title": "Supermarket"
+        },
+        {
+          "id": "section-1791179193627",
+          "steps": [],
+          "title": "The Megastore (Coming Soon)"
         }
       ]
     }

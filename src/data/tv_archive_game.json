@@ -28,8 +28,6 @@
           "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/989424c9-a5b5-4425-a9d8-d0869ec52d14-controls.webp",
           "title": "Learn the Controls & Skills",
           "imageAlt": "Step illustration",
-          "video": "placeholder",
-          "videoTitle": "Watch: Sorting Controls & Skill Demo",
           "hasSpoiler": false,
           "description": "Pick up tapes, check their labels, and place them on the matching shelf. As you sort, earn points to unlock skills:\n\n•Sort Numerically — auto-orders tapes in your hand by number\n•Highlight Shelf — lights up exactly where your top tape belongs\n•Highlight Tapes — marks all matching tapes of the same type\n•Auto-Placement — sets tapes correctly on the shelf automatically\n•Auto-Collect — instantly gathers matching tapes from around the room",
           "spoilerText": ""
@@ -50,21 +48,207 @@
       "title": "Master List — All 20 Categories",
       "steps": [
         {
-          "id": "step-1789684417684",
+          "id": "step-tv-1-1789684400100",
+          "title": "1. ACTION MOVIES",
           "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/d8d9732b-fc2a-488f-8e9d-7288b228c04f-1---action-movies.webp",
-          "title": "ACTION MOVIES",
-          "imageAlt": "Step illustration",
+          "imageAlt": "ACTION MOVIES shelf videotapes",
           "hasSpoiler": false,
           "description": "•Assassins and Companions\n•Cowboy Westwood\n•Gladiator Maximus\n•Gold, Bold, and Uncle\n•Green Beret Veteran: Kill\n•Green Beret Veteran: Survive\n•Guardians of the Ocean\n•Hell Weapon I\n•Hell Weapon II\n•Hell Weapon III\n•Outlaw Westwood\n•Thieves of the Land\n•Utopia Priests I\n•Utopia Priests II\n•Utopia Priests III",
           "spoilerText": ""
         },
         {
-          "id": "step-1789685215451",
-          "image": "",
-          "title": "DRAMA MOVIES",
-          "imageAlt": "Step illustration",
+          "id": "step-tv-2-1789684400200",
+          "title": "2. DRAMA MOVIES",
+          "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/36c585b3-9b98-42d0-a1d7-6a14014a50b1-2---drama-movies.webp",
+          "imageAlt": "DRAMA MOVIES shelf videotapes",
           "hasSpoiler": false,
-          "description": "•",
+          "description": "•A Beautiful Mind\n•Cuckoo's Nest\n•Ghost Field\n•Hopeless Romantic\n•Immigrant Story\n•Orphan's Destiny\n•Rain Over Autumn\n•Shadows of Yesterday\n•The Pianist of Warsaw\n•The Silent River",
+          "spoilerText": ""
+        },
+        {
+          "id": "step-tv-3-1789684400300",
+          "title": "3. TV SERIES",
+          "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/2e6fd3e3-0716-4b52-9a71-5fafe4761eee-3---tv-series.webp",
+          "imageAlt": "TV SERIES shelf videotapes",
+          "hasSpoiler": false,
+          "description": "•Detective Blue: Season 1-5\n•Hospital Central: Seasons 1-8\n•Midnight Dynasty\n•Office Confidential\n•The Coastal Town Mysteries\n•The Northern Crown\n•Undercover Metro",
+          "spoilerText": ""
+        },
+        {
+          "id": "step-tv-4-1789684400400",
+          "title": "4. CARTOONS",
+          "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/7c8d06e7-504e-486d-9601-eb86f10e2db7-4--cartoons.webp",
+          "imageAlt": "CARTOONS shelf videotapes",
+          "hasSpoiler": false,
+          "description": "•Adventures of Bunny Bob\n•Cosmic Cat & Dog\n•Dino Squad Adventures\n•Fairy Forest Tales\n•Little Engine Sparks\n•Magic School bus Patrol\n•Space Rangers Academy",
+          "spoilerText": ""
+        },
+        {
+          "id": "step-tv-5-1789684400500",
+          "title": "5. HORROR MOVIES",
+          "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/55fede71-5bd5-4b30-99e4-f1928c660f27-5---horror-movies.webp",
+          "imageAlt": "HORROR MOVIES shelf videotapes",
+          "hasSpoiler": false,
+          "description": "•Cabin by the Mire\n•Dark Descent\n•Haunted Basement Tape\n•Midnight Visitor\n•Night of the Scarecrow\n•The Attic Whispers\n•The Cursed Reel",
+          "spoilerText": ""
+        },
+        {
+          "id": "step-tv-6-1789684400600",
+          "title": "6. COMEDY MOVIES",
+          "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/84740f83-6faf-4905-9f5b-71dcf0c95007-6---comedy-movies.webp",
+          "imageAlt": "COMEDY MOVIES shelf videotapes",
+          "hasSpoiler": false,
+          "description": "•Bad Luck Brothers\n•Crazy Family Reunion\n•Delivery Mayhem\n•Double Trouble Vacation\n•Goofy Golfers\n•Summer Camp Disaster\n•Uncle Bob's Dilemma",
+          "spoilerText": ""
+        },
+        {
+          "id": "step-tv-7-1789684400700",
+          "title": "7. ATHLETIC GAMES",
+          "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/34a32b0f-52fb-496e-9f11-bf938e96df3c-7---athletic-games.webp",
+          "imageAlt": "ATHLETIC GAMES shelf videotapes",
+          "hasSpoiler": false,
+          "description": "•City Marathon Highlights\n•Decathlon Championship\n•Gold Sprint Final\n•High Jump Invitational\n•National Gymnastics Open\n•Track & Field Relays",
+          "spoilerText": ""
+        },
+        {
+          "id": "step-tv-8-1789684400800",
+          "title": "8. FOOTBALL CUPS",
+          "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/2d7efabf-cb38-47ee-a1d5-fe9ed6f2e36a-8---football-cups.webp",
+          "imageAlt": "FOOTBALL CUPS shelf videotapes",
+          "hasSpoiler": false,
+          "description": "•All-Star Football League\n•Continental Champions Cup\n•Derby Cup Classics\n•Golden Boot Finals\n•Premier Cup Highlights\n•World Football Showdown",
+          "spoilerText": ""
+        },
+        {
+          "id": "step-tv-9-1789684400900",
+          "title": "9. ROMANCE MOVIES",
+          "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/639c8604-ad04-48c0-8912-6949f7ec3a69-9---romance-movies.webp",
+          "imageAlt": "ROMANCE MOVIES shelf videotapes",
+          "hasSpoiler": false,
+          "description": "•A Kiss Under the Rain\n•Letters from Vienna\n•Love Across Time\n•Midnight Promenade\n•Sunset Harbor Romance\n•The Florist's Secret\n•Winter Whispers",
+          "spoilerText": ""
+        },
+        {
+          "id": "step-tv-10-1789684401000",
+          "title": "10. SCI-FI MOVIES",
+          "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/1a0f2396-9c18-40af-af5e-1bcd5431ad05-10---sci-fi-movies.webp",
+          "imageAlt": "SCI-FI MOVIES shelf videotapes",
+          "hasSpoiler": false,
+          "description": "•Cyber Horizon 2099\n•Deep Cosmos Explorer\n•Neon City Fugitive\n•Orbital Protocol\n•Solar Storm Alert\n•The Quantum Gate\n•Time Loop Paradox",
+          "spoilerText": ""
+        },
+        {
+          "id": "step-tv-11-1789684401100",
+          "title": "11. BASEBALL",
+          "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/1249e0a9-ae30-446c-b681-4e2866436f64-11---baseball.webp",
+          "imageAlt": "BASEBALL shelf videotapes",
+          "hasSpoiler": false,
+          "description": "•Championship Series 1994\n•Diamond Legends Showcase\n•Grand Slam Extravaganza\n•Home Run Derby Classics\n•Pitcher's Duel Golden Era\n•World Diamond Classic",
+          "spoilerText": ""
+        },
+        {
+          "id": "step-tv-12-1789684401200",
+          "title": "12. TENNIS",
+          "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/a404afcc-7a0f-4ad2-b281-3b37700e294f-12---tennis.webp",
+          "imageAlt": "TENNIS shelf videotapes",
+          "hasSpoiler": false,
+          "description": "•Clay Court Masters\n•Grass Court Championship Final\n•Hardcourt Smash Open\n•Legendary Aces & Rallies\n•Silver Cup Doubles Classic",
+          "spoilerText": ""
+        },
+        {
+          "id": "step-tv-13-1789684401300",
+          "title": "13. NEWS",
+          "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/8309df9a-ed6c-422a-bc13-b325d65b55fe-13---news.webp",
+          "imageAlt": "NEWS shelf videotapes",
+          "hasSpoiler": false,
+          "description": "•Evening Broadcast Archive\n•Global Morning Report\n•Historical Headlines Reel\n•Metro Daily Dispatch\n•Nightly World Review\n•Special Election Coverage",
+          "spoilerText": ""
+        },
+        {
+          "id": "step-tv-14-1789684401400",
+          "title": "14. GAME SHOWS",
+          "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/a64f71bf-7bf5-4126-a0ec-fd71c09b4cca-14---game-shows.webp",
+          "imageAlt": "GAME SHOWS shelf videotapes",
+          "hasSpoiler": false,
+          "description": "•Fortune Wheel Spectacular\n•Million Dollar Quiz Hour\n•Puzzle Master Challenge\n•Spin & Win Jackpot\n•Trivia Champions Tournament",
+          "spoilerText": ""
+        },
+        {
+          "id": "step-tv-15-1789684401500",
+          "title": "15. BASKETBALL",
+          "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/28f5d6a7-40be-4110-92d2-74a35ee749f8-15---basketball.webp",
+          "imageAlt": "BASKETBALL shelf videotapes",
+          "hasSpoiler": false,
+          "description": "•All-Star Slam Dunk Contest\n•Championship Game 7 Thriller\n•Courtside Classic Highlights\n•Fast Break Dynasty\n•Rookies Showcase Match",
+          "spoilerText": ""
+        },
+        {
+          "id": "step-tv-16-1789684401600",
+          "title": "16. MOTORSPORTS",
+          "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/15cbd602-dce9-466a-a632-0d60a63b0eac-16---motorsports.webp",
+          "imageAlt": "MOTORSPORTS shelf videotapes",
+          "hasSpoiler": false,
+          "description": "•24-Hour Endurance Classic\n•Desert Rally Raid Cup\n•Grand Circuit GP Highlights\n•Night Speedway Drag\n•Turbo Cup Championship",
+          "spoilerText": ""
+        },
+        {
+          "id": "step-tv-17-1789684401700",
+          "title": "17. COOKING SHOWS",
+          "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/8b8def26-0d81-4917-9967-a4072d78f749-17---cooking-shows.webp",
+          "imageAlt": "COOKING SHOWS shelf videotapes",
+          "hasSpoiler": false,
+          "description": "•Artisan Bakery Secrets\n•Chef's Kitchen Masterclass\n•Grand Pastry Showdown\n•Rustic Italian Flavors\n•Street Food World Tour",
+          "spoilerText": ""
+        },
+        {
+          "id": "step-tv-18-1789684401800",
+          "title": "18. DOCUMENTARIES",
+          "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/5bad076d-d6a0-451e-b155-cc2d40a839f3-18---documentaries.webp",
+          "imageAlt": "DOCUMENTARIES shelf videotapes",
+          "hasSpoiler": false,
+          "description": "•Deep Ocean Mysteries\n•Kingdom of the Savanna\n•Lost Cities of the Sahara\n•Our Living Planet\n•Secrets of the Pyramids\n•The Cosmic Frontier",
+          "spoilerText": ""
+        },
+        {
+          "id": "step-tv-19-1789684401900",
+          "title": "19. BOXING",
+          "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/7e51aa15-c149-4b05-b147-7a8ecebbff55-19---boxing.webp",
+          "imageAlt": "BOXING shelf videotapes",
+          "hasSpoiler": false,
+          "description": "•Golden Gloves Championship\n•Heavyweight Title Clash\n•Iron Fist Invitational\n•Legendary Knockouts Reel\n•Undisputed Round-by-Round",
+          "spoilerText": ""
+        },
+        {
+          "id": "step-tv-20-1789684402000",
+          "title": "20. TALK SHOWS",
+          "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/07babf7d-c3b1-46fd-8c2a-a8d24c11e032-20---talk-showa.webp",
+          "imageAlt": "TALK SHOWS shelf videotapes",
+          "hasSpoiler": false,
+          "description": "•Celebrity Spotlight Live\n•Late Night Lounge Hour\n•Morning Coffee Chat\n•Prime Time Roundtable\n•Weekend Entertainment Special",
+          "spoilerText": ""
+        }
+      ]
+    },
+    {
+      "id": "section-1789684499000",
+      "title": "Chaos Mode & Challenge",
+      "steps": [
+        {
+          "id": "step-1789684499001",
+          "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/30d042ba-0a36-4036-ab02-0e82a032d71f-chaos.webp",
+          "title": "Tackling Chaos Mode",
+          "imageAlt": "Chaos mode tapes scattered",
+          "hasSpoiler": false,
+          "description": "In Chaos Mode, dozens of unsorted tapes are strewn across the floor and counters. Prioritize unlocking Auto-Collect and Highlight Tapes to clear the floor systematically by room quadrant.",
+          "spoilerText": ""
+        },
+        {
+          "id": "step-1789684499002",
+          "image": "https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/c2fe05e3-876e-42f2-ad6f-2bf9a59f9db5-after-chaos.webp",
+          "title": "After Chaos — Final Archive Completion",
+          "imageAlt": "Clean TV archive shelves completed",
+          "hasSpoiler": false,
+          "description": "Once all tapes are placed and shelves are filled, check each section sign to confirm 100% completion. Enjoy the pristine, fully organized TV archive room!",
           "spoilerText": ""
         }
       ]
