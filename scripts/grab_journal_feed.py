@@ -119,49 +119,43 @@ def write_budget_laptop_article(now_ms, expires_ms):
     source_names = ", ".join([s["publisher"].replace(".com", "").capitalize() for s in sources[:4]]) or "Tom's Hardware, PCMag, and CNET"
 
     cover_img = "https://cdn.mos.cms.futurecdn.net/XEJEag3LmxWAajjYbZPq3V-1999-80.jpg"
-    loq_img = "https://media.wired.com/photos/6972afafba821e8a818a8aae/191:100/w_1280,c_limit/Review-%20Lenovo%20LOQ%2015.png"
-    cooling_img = "https://laptopmedia.com/wp-content/uploads/2026/06/1-55.jpg"
-    keyboard_img = "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=1200&auto=format&fit=crop&q=80"
-    ports_img = "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=1200&auto=format&fit=crop&q=80"
-    rear_img = "https://cdn.mos.cms.futurecdn.net/XEJEag3LmxWAajjYbZPq3V-1999-80.jpg"
-    testing_setup_img = "https://images.unsplash.com/photo-1603302576837-37561b2e2302?w=1200&auto=format&fit=crop&q=80"
+    loq_display = "https://media.wired.com/photos/6972afafba821e8a818a8aae/191:100/w_1280,c_limit/Review-%20Lenovo%20LOQ%2015.png"
+    loq_keyboard = "https://laptopmedia.com/wp-content/uploads/2023/07/2-51.jpg"
+    loq_ports_left = "https://laptopmedia.com/wp-content/uploads/2023/07/3-50.jpg"
+    loq_ports_right = "https://laptopmedia.com/wp-content/uploads/2023/07/4-46.jpg"
+    loq_rear_ports = "https://laptopmedia.com/wp-content/uploads/2023/07/5-46.jpg"
+    loq_cooling = "https://laptopmedia.com/wp-content/uploads/2026/06/1-55.jpg"
 
     laptop_gallery = [
         {
-            "url": loq_img,
-            "angle": "Front & Display",
-            "caption": "Lenovo LOQ 15 — 15.6-inch 144Hz IPS display with 100% sRGB color gamut and slim three-sided bezels.",
-            "alt": "Lenovo LOQ 15 front display and chassis"
+            "url": loq_display,
+            "angle": "144Hz IPS Display",
+            "alt": "Lenovo LOQ 15 144Hz IPS display front view"
         },
         {
-            "url": keyboard_img,
-            "angle": "Keyboard Deck & Ergonomics",
-            "caption": "Full-size ergonomic keyboard deck featuring 1.5mm key travel, dedicated numeric keypad, 100% anti-ghosting, and tactile switches.",
-            "alt": "Lenovo LOQ 15 keyboard deck, trackpad, and numpad"
+            "url": loq_keyboard,
+            "angle": "Keyboard & Numpad Deck",
+            "alt": "Lenovo LOQ TrueStrike keyboard deck and trackpad"
         },
         {
-            "url": ports_img,
-            "angle": "Side I/O Ports Profile",
-            "caption": "Side connectivity profile: USB-C 3.2 Gen 2 (140W PD & DisplayPort 1.4), high-speed USB-A ports, 3.5mm combo audio jack, and E-shutter switch.",
-            "alt": "Lenovo LOQ 15 side ports profile"
+            "url": loq_ports_left,
+            "angle": "Left I/O Ports Profile",
+            "alt": "Lenovo LOQ left side USB and audio ports"
         },
         {
-            "url": rear_img,
-            "angle": "Rear Thermal Exhaust",
-            "caption": "Rear-extended thermal deck housing HDMI 2.1, RJ-45 Gigabit Ethernet, power jack, and dual aerodynamic heat dissipation exhaust vents.",
-            "alt": "Lenovo LOQ 15 rear exhaust and ports"
+            "url": loq_ports_right,
+            "angle": "Right I/O & E-Shutter",
+            "alt": "Lenovo LOQ right side USB and camera privacy switch"
         },
         {
-            "url": cooling_img,
-            "angle": "Teardown & Internal Cooling",
-            "caption": "Teardown architecture: dual 85mm high-airflow fans, thick copper heatpipes, 2x DDR5 SODIMM slots, and 2x M.2 NVMe SSD expansion slots.",
-            "alt": "Lenovo LOQ 15 internal cooling heatpipes and upgrade slots"
+            "url": loq_rear_ports,
+            "angle": "Rear Thermal Exhaust & Ports",
+            "alt": "Lenovo LOQ rear I/O and dual exhaust vents"
         },
         {
-            "url": testing_setup_img,
-            "angle": "Benchmark Lab Setup",
-            "caption": "Standardized laboratory test environment comparing Lenovo LOQ 15, Acer Nitro V 15, and ASUS TUF Gaming A15 across sustained 1080p Ultra benchmarks.",
-            "alt": "Budget gaming laptops benchmark testing setup"
+            "url": loq_cooling,
+            "angle": "Teardown Dual-Fan Cooling",
+            "alt": "Lenovo LOQ internal cooling fans and copper heatpipes"
         }
     ]
 
@@ -307,7 +301,7 @@ def write_budget_laptop_article(now_ms, expires_ms):
                     f"To deliver an authoritative, GSMArena-grade breakdown, Jinssi Gaming synthesized laboratory benchmark runs, teardown analyses, and thermal logging from leading independent review publications ({source_names}).",
                     "Our findings confirm that the primary performance dividing line in 2026 is no longer just CPU core count, but dedicated GPU Total Graphics Power (TGP) and VRAM capacity. Modern AAA titles such as Cyberpunk 2077, Black Myth: Wukong, and Alan Wake 2 aggressively demand more than 6GB of VRAM for stable frametimes at 1080p High settings. An 8GB Nvidia GeForce RTX 4060 configured at full 105W–115W TGP delivers nearly 35% higher real-world frame rates compared to a power-constrained 45W variant."
                 ],
-                "image": loq_img,
+                "image": loq_display,
                 "imageAlt": "Lenovo LOQ 15 budget gaming laptop chassis and 144Hz display",
                 "gallery": laptop_gallery,
                 "sourceLink": primary_url,
@@ -321,8 +315,8 @@ def write_budget_laptop_article(now_ms, expires_ms):
                 "content": [
                     "Below is our lab-verified technical specification sheet for our top-ranked budget champion: the Lenovo LOQ 15 (2026 edition). Every parameter—from display color space coverage to peak charging wattages and sustained thermal ceilings—has been measured under standardized testing conditions."
                 ],
-                "image": keyboard_img,
-                "imageAlt": "Full-size tactile keyboard deck with 1.5mm travel and dedicated numpad",
+                "image": loq_keyboard,
+                "imageAlt": "Lenovo LOQ TrueStrike tactile keyboard deck and dedicated numeric keypad",
                 "specSheet": loq_spec_sheet,
                 "pros": [
                     "Full 115W TGP RTX 4060 delivers desktop-class 1080p Ultra frame rates (80+ FPS in modern AAA titles)",
@@ -355,8 +349,8 @@ def write_budget_laptop_article(now_ms, expires_ms):
                     "• Best Battery Life & Durability: ASUS TUF Gaming A15 — Engineered for students and nomadic gamers who need exceptional battery life. Its massive 90Wh internal battery delivers an astounding 7.5+ hours of productivity away from a power outlet, complemented by MIL-STD-810H shock and vibration drop protection.",
                     "• Giant-Screen Budget Alternative: Gigabyte Gaming A18 — Targeted at players who prefer a spacious 17.3-inch or 18-inch desktop replacement canvas. While bulkier to carry, the expansive display immersion is excellent for simulation and strategy titles."
                 ],
-                "image": cooling_img,
-                "imageAlt": "Budget gaming laptop thermal exhaust vents and cooling benchmarks",
+                "image": loq_cooling,
+                "imageAlt": "Lenovo LOQ internal dual cooling fans and copper heatpipe architecture teardown",
                 "sourceLink": primary_url
             },
             {
@@ -368,8 +362,8 @@ def write_budget_laptop_article(now_ms, expires_ms):
                     "• Competitive Esports (CS2 & Valorant): Both machines easily saturated their 144Hz display refresh rates, with the LOQ 15 sustaining 215+ FPS in smoke grenade firefights.",
                     "Thermal testing proved that elevating the rear feet of any budget chassis by just one inch with a stand reduces internal CPU die temperatures by 4°C to 7°C, eliminating thermal throttling entirely."
                 ],
-                "image": testing_setup_img,
-                "imageAlt": "1080p Ultra gaming benchmark testing and thermal logging setup",
+                "image": loq_rear_ports,
+                "imageAlt": "Lenovo LOQ rear thermal exhaust vents and dedicated ports",
                 "sourceLink": primary_url
             },
             {
@@ -379,8 +373,8 @@ def write_budget_laptop_article(now_ms, expires_ms):
                     "• If your hard financial limit is $700 to $750: Grab the Acer Nitro V 15. It delivers the highest raw graphical horsepower per dollar in the entire sub-$800 category.",
                     "• If you need all-day battery life for school or work: The ASUS TUF Gaming A15 with its 90Wh battery is the definitive recommendation."
                 ],
-                "image": ports_img,
-                "imageAlt": "Side profile connectivity: USB-C 140W Power Delivery and high-speed USB-A ports",
+                "image": loq_display,
+                "imageAlt": "Lenovo LOQ 15 Gaming Laptop front display and chassis",
                 "sourceLink": primary_url
             },
             {

@@ -19,6 +19,125 @@ import {
   ExternalLink,
 } from '@/components/StreamlineIcons';
 
+interface PhotoCarouselProps {
+  images: ArticleImage[];
+  onZoom: (img: ArticleImage) => void;
+  title?: string;
+}
+
+function PhotoCarousel({ images, onZoom, title = 'Multi-Angle Visual Inspection' }: PhotoCarouselProps) {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  if (!images || images.length === 0) return null;
+
+  const currentImg = images[currentIndex] || images[0];
+
+  const handlePrev = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+  };
+
+  const handleNext = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+  };
+
+  return (
+    <div className="photo-carousel my-8 rounded-2xl overflow-hidden border-2 border-tan-300 bg-ink-950 shadow-cozy-md">
+      {/* Header bar */}
+      <div className="bg-ink-900 px-4 py-3 flex items-center justify-between text-cream-50 border-b border-ink-800">
+        <div className="flex items-center gap-2">
+          <span className="text-peach-400">📸</span>
+          <span className="font-display font-bold text-xs sm:text-sm tracking-wide uppercase">
+            {title}
+          </span>
+        </div>
+        <span className="text-[11px] font-mono text-peach-300 font-bold bg-ink-950 px-2.5 py-0.5 rounded-full border border-ink-800">
+          {currentIndex + 1} of {images.length}
+        </span>
+      </div>
+
+      {/* Main Viewport */}
+      <div className="relative aspect-[16/10] sm:aspect-[16/9] bg-ink-950 flex items-center justify-center overflow-hidden group">
+        <img
+          src={getOptimizedImageUrl(currentImg.url, { width: 1200, quality: 85, format: 'webp' })}
+          alt={currentImg.alt || currentImg.angle || 'Hardware angle'}
+          className="w-full h-full object-contain cursor-zoom-in transition-all duration-300"
+          onClick={() => onZoom(currentImg)}
+        />
+
+        {/* Angle Badge Overlay */}
+        {currentImg.angle && (
+          <div className="absolute top-3 left-3 z-10 pointer-events-none">
+            <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-ink-900/90 text-white backdrop-blur-md shadow-cozy-sm border border-white/10">
+              {currentImg.angle}
+            </span>
+          </div>
+        )}
+
+        {/* Zoom Hint */}
+        <div
+          onClick={() => onZoom(currentImg)}
+          className="absolute top-3 right-3 z-10 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
+        >
+          <span className="px-2.5 py-1 rounded-full bg-white/90 text-ink-900 text-[11px] font-bold shadow-cozy-sm">
+            🔍 Click to zoom
+          </span>
+        </div>
+
+        {/* Navigation Arrows */}
+        {images.length > 1 && (
+          <>
+            <button
+              onClick={handlePrev}
+              aria-label="Previous angle"
+              className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-ink-900/80 hover:bg-peach-500 text-white flex items-center justify-center transition-all shadow-cozy-md backdrop-blur-xs hover:scale-110 active:scale-95"
+            >
+              <ArrowLeft size={18} />
+            </button>
+            <button
+              onClick={handleNext}
+              aria-label="Next angle"
+              className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-ink-900/80 hover:bg-peach-500 text-white flex items-center justify-center transition-all shadow-cozy-md backdrop-blur-xs hover:scale-110 active:scale-95"
+            >
+              <ArrowRight size={18} />
+            </button>
+          </>
+        )}
+      </div>
+
+      {/* Thumbnails Strip */}
+      {images.length > 1 && (
+        <div className="p-3 bg-ink-900 flex items-center gap-2 overflow-x-auto scrollbar-thin border-t border-ink-800">
+          {images.map((img, idx) => (
+            <button
+              key={idx}
+              onClick={() => setCurrentIndex(idx)}
+              className={`relative shrink-0 w-20 sm:w-24 aspect-[16/10] rounded-lg overflow-hidden border-2 transition-all ${
+                idx === currentIndex
+                  ? 'border-peach-500 scale-105 shadow-cozy-sm ring-2 ring-peach-400'
+                  : 'border-ink-700 opacity-60 hover:opacity-100 hover:border-ink-500'
+              }`}
+            >
+              <img
+                src={getOptimizedImageUrl(img.url, { width: 160, quality: 70, format: 'webp' })}
+                alt={img.angle || `Thumbnail ${idx + 1}`}
+                className="w-full h-full object-cover"
+                loading="lazy"
+              />
+              {img.angle && (
+                <div className="absolute inset-x-0 bottom-0 bg-ink-950/85 text-[8px] sm:text-[9px] text-cream-100 font-semibold truncate px-1 text-center py-0.5">
+                  {img.angle}
+                </div>
+              )}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 interface ArticleViewProps {
   article: Article;
   onBack: () => void;
@@ -466,53 +585,13 @@ export function ArticleView({
                     </div>
                   )}
 
-                  {/* Multi-Angle Hardware / Image Gallery for this Section */}
+                  {/* Multi-Angle Hardware / Image Carousel for this Section */}
                   {section.gallery && section.gallery.length > 0 && (
-                    <div className="section-gallery-box my-8 p-4 sm:p-5 rounded-2xl border-2 border-tan-300 bg-white shadow-cozy-sm space-y-3">
-                      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-tan-200 pb-2.5">
-                        <span className="font-display font-bold text-xs sm:text-sm tracking-wide uppercase text-ink-900 flex items-center gap-2">
-                          📸 Multi-Angle Visual Inspection Gallery
-                        </span>
-                        <span className="text-[11px] text-peach-700 font-bold bg-peach-50 px-2.5 py-0.5 rounded-full border border-peach-200">
-                          {section.gallery.length} Verified Photos • Click to Zoom
-                        </span>
-                      </div>
-
-                      {/* Photo Grid with Angle Badges & Captions */}
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pt-1">
-                        {section.gallery.map((img, gIdx) => (
-                          <div
-                            key={gIdx}
-                            onClick={() => setLightboxImage(img)}
-                            className="group relative cursor-zoom-in rounded-xl overflow-hidden border-2 border-tan-200 hover:border-peach-400 bg-ink-950 transition-all hover:-translate-y-0.5 shadow-cozy-xs flex flex-col justify-between"
-                          >
-                            <div className="relative aspect-[16/10] overflow-hidden bg-ink-900">
-                              <img
-                                src={getOptimizedImageUrl(img.url, { width: 600, quality: 80, format: 'webp' })}
-                                alt={img.alt || img.caption || 'Hardware angle'}
-                                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                                loading="lazy"
-                              />
-                              {img.angle && (
-                                <span className="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-ink-900/90 text-cream-50 backdrop-blur-xs shadow-cozy-sm">
-                                  {img.angle}
-                                </span>
-                              )}
-                              <div className="absolute inset-0 bg-ink-900/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                <span className="px-2.5 py-1 rounded-full bg-white/90 text-ink-900 text-[11px] font-bold shadow-cozy-sm">
-                                  🔍 Inspect Full View
-                                </span>
-                              </div>
-                            </div>
-                            {img.caption && (
-                              <p className="p-2.5 text-[11px] text-ink-800 bg-cream-50 font-sans line-clamp-2 border-t border-tan-200">
-                                {img.caption}
-                              </p>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
+                    <PhotoCarousel
+                      images={section.gallery}
+                      onZoom={(img) => setLightboxImage(img)}
+                      title={section.heading ? `${section.heading.replace(/^\d+\.\s*/, '')} Angles` : 'Multi-Angle Visual Inspection'}
+                    />
                   )}
 
                   {/* Section Single Image Box */}
@@ -709,57 +788,13 @@ export function ArticleView({
               </a>
             </div>
           </div>
-          {/* Article-Wide Photo & Visual Inspection Gallery */}
+          {/* Article-Wide Photo & Visual Inspection Carousel */}
           {article.gallery && article.gallery.length > 0 && (
-            <div className="my-10 p-5 sm:p-6 rounded-2xl bg-cream-100/80 border-2 border-tan-300 shadow-cozy-sm space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-tan-200 pb-3">
-                <div>
-                  <h3 className="font-display font-extrabold text-lg sm:text-xl text-ink-900 flex items-center gap-2">
-                    📸 Comprehensive Visual Inspection & Photo Suite
-                  </h3>
-                  <p className="text-xs text-tan-600 mt-0.5">
-                    Multi-angle photography, port close-ups, teardowns, and high-resolution captures ({article.gallery.length} photos)
-                  </p>
-                </div>
-                <span className="text-xs font-bold text-peach-600 bg-white px-3 py-1 rounded-full border border-peach-200 shadow-cozy-xs self-start sm:self-auto">
-                  Click any photo to zoom
-                </span>
-              </div>
-
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-1">
-                {article.gallery.map((img, gIdx) => (
-                  <div
-                    key={gIdx}
-                    onClick={() => setLightboxImage(img)}
-                    className="group relative cursor-zoom-in rounded-xl overflow-hidden border-2 border-tan-200 hover:border-peach-400 bg-ink-950 transition-all hover:-translate-y-0.5 shadow-cozy-xs flex flex-col justify-between"
-                  >
-                    <div className="relative aspect-[16/10] overflow-hidden bg-ink-900">
-                      <img
-                        src={getOptimizedImageUrl(img.url, { width: 600, quality: 80, format: 'webp' })}
-                        alt={img.alt || img.caption || 'Hardware photo'}
-                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                        loading="lazy"
-                      />
-                      {img.angle && (
-                        <span className="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-ink-900/90 text-cream-50 backdrop-blur-xs shadow-cozy-sm">
-                          {img.angle}
-                        </span>
-                      )}
-                      <div className="absolute inset-0 bg-ink-900/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                        <span className="px-2.5 py-1 rounded-full bg-white/90 text-ink-900 text-[11px] font-bold shadow-cozy-sm">
-                          🔍 Zoom
-                        </span>
-                      </div>
-                    </div>
-                    {img.caption && (
-                      <p className="p-2 text-[11px] text-ink-800 bg-cream-50 font-sans line-clamp-2 border-t border-tan-200">
-                        {img.caption}
-                      </p>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
+            <PhotoCarousel
+              images={article.gallery}
+              onZoom={(img) => setLightboxImage(img)}
+              title="Comprehensive Multi-Angle Inspection Suite"
+            />
           )}
         </article>
 
