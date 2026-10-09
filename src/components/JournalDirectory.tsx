@@ -3,6 +3,7 @@ import { useSiteContent } from '@/context/SiteContentContext';
 import { articleCategories, type Article } from '@/data/articles';
 import { BookOpen, Clock, Search, Tag, Coffee, ArrowRight, ExternalLink, RefreshCw } from '@/components/StreamlineIcons';
 import { getOptimizedImageUrl } from '@/utils/imageOptimization';
+import { LiveGameSearchModal } from '@/components/LiveGameSearchModal';
 import { syncLiveJournalFeed } from '@/services/liveJournalFeed';
 
 interface JournalDirectoryProps {
@@ -13,6 +14,7 @@ export function JournalDirectory({ onSelectArticle }: JournalDirectoryProps) {
   const { articles, setArticles } = useSiteContent();
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState('');
+  const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [timeLeft, setTimeLeft] = useState<string>('');
 
@@ -79,6 +81,12 @@ export function JournalDirectory({ onSelectArticle }: JournalDirectoryProps) {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 animate-fade-in">
+      {/* PC Game Search Modal */}
+      <LiveGameSearchModal
+        isOpen={isSearchModalOpen}
+        onClose={() => setIsSearchModalOpen(false)}
+      />
+
       {/* Header Banner */}
       <div className="text-center max-w-3xl mx-auto mb-10">
         <div className="library-badge inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold mb-3 shadow-cozy-sm">
@@ -100,6 +108,13 @@ export function JournalDirectory({ onSelectArticle }: JournalDirectoryProps) {
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
             <span>24h Community Digest • {timeLeft}</span>
           </div>
+
+          <button
+            onClick={() => setIsSearchModalOpen(true)}
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-peach-500 hover:bg-peach-600 text-white text-xs font-bold transition-all shadow-cozy-xs hover:scale-105"
+          >
+            <span>🎮 Search PC Games</span>
+          </button>
 
           <button
             onClick={handleManualSync}

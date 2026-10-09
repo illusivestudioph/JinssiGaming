@@ -54,8 +54,8 @@ export function LiveGameSearchModal({ isOpen, onClose }: LiveGameSearchModalProp
               <Sparkles className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="font-display font-bold text-lg text-ink-900 leading-tight">Live Steam Game Extractor</h2>
-              <p className="text-xs text-tan-500">Search any PC game to extract live screenshots, description, and metadata</p>
+              <h2 className="font-display font-bold text-lg text-ink-900 leading-tight">Search PC Games Library</h2>
+              <p className="text-xs text-tan-500">Explore official screenshots, descriptions, and direct Steam store links</p>
             </div>
           </div>
           <button
@@ -162,15 +162,15 @@ export function LiveGameSearchModal({ isOpen, onClose }: LiveGameSearchModalProp
             <div>
               {isLoadingDetails && (
                 <div className="p-8 text-center text-sm font-bold text-tan-500">
-                  Extracting live game data from Steam...
+                  Loading game showcase and official media...
                 </div>
               )}
 
               {!isLoadingDetails && results.length === 0 && !isSearching && (
                 <div className="p-10 text-center text-tan-400 text-sm">
                   <BookOpen className="w-8 h-8 mx-auto mb-2 text-tan-300" />
-                  <p className="font-bold text-ink-700">Live Game Data Search</p>
-                  <p className="text-xs text-tan-400 mt-1">Enter any game title to extract official assets and metadata.</p>
+                  <p className="font-bold text-ink-700">Explore PC Games Library</p>
+                  <p className="text-xs text-tan-400 mt-1">Search any title to view official screenshots, pricing, and Steam page.</p>
                 </div>
               )}
 
@@ -195,7 +195,7 @@ export function LiveGameSearchModal({ isOpen, onClose }: LiveGameSearchModalProp
                       </p>
                     </div>
                     <span className="text-xs font-bold text-peach-600 shrink-0 group-hover:translate-x-1 transition-transform">
-                      Extract →
+                      View Game →
                     </span>
                   </div>
                 ))}

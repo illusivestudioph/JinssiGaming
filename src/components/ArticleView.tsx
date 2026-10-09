@@ -49,6 +49,55 @@ export function ArticleView({
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Google SEO Meta & Schema.org JSON-LD Injection for High Google Search Ranking
+  useEffect(() => {
+    const prevTitle = document.title;
+    document.title = `${article.title} | Jinssi Gaming`;
+
+    let metaDesc = document.querySelector('meta[name="description"]') as HTMLMetaElement;
+    if (!metaDesc) {
+      metaDesc = document.createElement('meta');
+      metaDesc.name = 'description';
+      document.head.appendChild(metaDesc);
+    }
+    const prevDesc = metaDesc.content;
+    metaDesc.content = article.subtitle || article.summary;
+
+    const jsonLdScript = document.createElement('script');
+    jsonLdScript.type = 'application/ld+json';
+    jsonLdScript.id = 'article-json-ld';
+    jsonLdScript.text = JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'TechArticle',
+      headline: article.title,
+      description: article.subtitle || article.summary,
+      image: article.coverImage,
+      datePublished: new Date(article.createdAt || Date.now()).toISOString(),
+      dateModified: new Date().toISOString(),
+      author: {
+        '@type': 'Person',
+        name: article.author || 'Jinssi Tech Desk',
+      },
+      publisher: {
+        '@type': 'Organization',
+        name: 'Jinssi Gaming',
+        url: 'https://jinssicruise.space',
+      },
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': typeof window !== 'undefined' ? window.location.href : 'https://jinssicruise.space',
+      },
+    });
+    document.head.appendChild(jsonLdScript);
+
+    return () => {
+      document.title = prevTitle;
+      if (metaDesc) metaDesc.content = prevDesc;
+      const existingScript = document.getElementById('article-json-ld');
+      if (existingScript) existingScript.remove();
+    };
+  }, [article]);
+
   const shareUrl = typeof window !== 'undefined' ? window.location.href : '';
   const shareTitle = `${article.title} - Jinssi Cozy Journal`;
 
