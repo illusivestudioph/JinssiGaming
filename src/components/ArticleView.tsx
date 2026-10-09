@@ -142,6 +142,17 @@ export function ArticleView({
                   <span>Steam Store</span>
                 </a>
               )}
+              {article.sourceLink && (
+                <a
+                  href={article.sourceLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-earth-600 hover:bg-earth-700 text-cream-50 px-3 py-1.5 rounded-xl flex items-center gap-1.5 transition-colors shadow-cozy-xs"
+                >
+                  <ExternalLink size={13} className="text-cream-200" />
+                  <span>Source Article</span>
+                </a>
+              )}
               {article.playStoreLink && (
                 <a
                   href={article.playStoreLink}
@@ -157,13 +168,17 @@ export function ArticleView({
           </div>
 
           {/* Featured Cover Image */}
-          <div className="relative rounded-2xl overflow-hidden mb-10 shadow-cozy-md">
+          <div className="relative rounded-2xl overflow-hidden mb-10 shadow-cozy-md bg-cream-200">
             <img
               src={getOptimizedImageUrl(article.coverImage, { width: 1200, quality: 80, format: 'webp' })}
               alt={article.coverAlt}
               className="w-full h-auto max-h-[440px] object-cover"
               loading="lazy"
               decoding="async"
+              onError={(e) => {
+                // If cover image fails to load, gracefully hide it or replace with Steam default
+                (e.currentTarget as HTMLImageElement).src = 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2142790/header.jpg';
+              }}
             />
             {article.coverAlt && (
               <p className="text-xs text-tan-500 p-2.5 bg-cream-50/90 text-center italic border-t border-tan-200/50">
@@ -189,13 +204,16 @@ export function ArticleView({
                 ))}
 
                 {section.image && (
-                  <div className="my-6 rounded-xl overflow-hidden shadow-cozy-sm border border-tan-200">
+                  <div className="my-6 rounded-xl overflow-hidden shadow-cozy-sm border border-tan-200 bg-cream-200">
                     <img
                       src={getOptimizedImageUrl(section.image, { width: 900, quality: 80, format: 'webp' })}
                       alt={section.imageAlt || 'Illustration'}
                       className="w-full h-auto max-h-96 object-cover"
                       loading="lazy"
                       decoding="async"
+                      onError={(e) => {
+                        (e.currentTarget as HTMLImageElement).style.display = 'none';
+                      }}
                     />
                     {section.imageAlt && (
                       <p className="text-xs text-tan-500 p-2 bg-cream-50 text-center italic">
@@ -205,8 +223,8 @@ export function ArticleView({
                   </div>
                 )}
 
-                {section.steamLink && (
-                  <div className="pt-1 pb-2 flex justify-start">
+                <div className="pt-1 pb-2 flex flex-wrap items-center gap-3">
+                  {section.steamLink && (
                     <a
                       href={section.steamLink}
                       target="_blank"
@@ -216,11 +234,21 @@ export function ArticleView({
                       <ExternalLink size={13} className="text-peach-400" />
                       <span>View on Steam Store</span>
                     </a>
-                  </div>
-                )}
+                  )}
 
-                {section.playStoreLink && (
-                  <div className="pt-1 pb-2 flex justify-start">
+                  {section.sourceLink && (
+                    <a
+                      href={section.sourceLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-earth-500 hover:bg-earth-600 text-cream-50 text-xs font-bold transition-all hover:scale-[1.02] shadow-cozy-xs"
+                    >
+                      <ExternalLink size={13} className="text-cream-200" />
+                      <span>Original Source</span>
+                    </a>
+                  )}
+
+                  {section.playStoreLink && (
                     <a
                       href={section.playStoreLink}
                       target="_blank"
@@ -230,8 +258,8 @@ export function ArticleView({
                       <ExternalLink size={13} className="text-emerald-300" />
                       <span>Get on Google Play</span>
                     </a>
-                  </div>
-                )}
+                  )}
+                </div>
 
                 {section.callout && (
                   <div className="my-6 p-5 rounded-2xl bg-peach-50/80 border-2 border-dashed border-peach-300 relative">

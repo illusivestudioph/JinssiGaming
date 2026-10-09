@@ -4,6 +4,7 @@ export interface ArticleSection {
   image?: string;
   imageAlt?: string;
   steamLink?: string;
+  sourceLink?: string;
   playStoreLink?: string;
   callout?: {
     title: string;
@@ -30,7 +31,10 @@ export interface Article {
   sections: ArticleSection[];
   relatedGameId?: string;
   steamLink?: string;
+  sourceLink?: string;
   playStoreLink?: string;
+  createdAt?: number;
+  expiresAt?: number;
 }
 
 export const articleCategories = [
