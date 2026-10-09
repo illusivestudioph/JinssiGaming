@@ -22,10 +22,9 @@ import {
 interface PhotoCarouselProps {
   images: ArticleImage[];
   onZoom: (img: ArticleImage) => void;
-  title?: string;
 }
 
-function PhotoCarousel({ images, onZoom, title = 'Multi-Angle Visual Inspection' }: PhotoCarouselProps) {
+function PhotoCarousel({ images, onZoom }: PhotoCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   if (!images || images.length === 0) return null;
@@ -44,18 +43,6 @@ function PhotoCarousel({ images, onZoom, title = 'Multi-Angle Visual Inspection'
 
   return (
     <div className="photo-carousel my-8 rounded-2xl overflow-hidden border-2 border-tan-300 bg-ink-950 shadow-cozy-md">
-      {/* Header bar */}
-      <div className="bg-ink-900 px-4 py-3 flex items-center justify-between text-cream-50 border-b border-ink-800">
-        <div className="flex items-center gap-2">
-          <span className="text-peach-400">📸</span>
-          <span className="font-display font-bold text-xs sm:text-sm tracking-wide uppercase">
-            {title}
-          </span>
-        </div>
-        <span className="text-[11px] font-mono text-peach-300 font-bold bg-ink-950 px-2.5 py-0.5 rounded-full border border-ink-800">
-          {currentIndex + 1} of {images.length}
-        </span>
-      </div>
 
       {/* Main Viewport */}
       <div className="relative aspect-[16/10] sm:aspect-[16/9] bg-ink-950 flex items-center justify-center overflow-hidden group">
@@ -84,6 +71,15 @@ function PhotoCarousel({ images, onZoom, title = 'Multi-Angle Visual Inspection'
             🔍 Click to zoom
           </span>
         </div>
+
+        {/* Floating Slide Counter */}
+        {images.length > 1 && (
+          <div className="absolute bottom-3 right-3 z-10 pointer-events-none">
+            <span className="px-2.5 py-1 rounded-full text-[11px] font-mono font-bold bg-ink-900/80 text-white backdrop-blur-xs shadow-cozy-sm border border-white/10">
+              {currentIndex + 1} / {images.length}
+            </span>
+          </div>
+        )}
 
         {/* Navigation Arrows */}
         {images.length > 1 && (
@@ -590,7 +586,6 @@ export function ArticleView({
                     <PhotoCarousel
                       images={section.gallery}
                       onZoom={(img) => setLightboxImage(img)}
-                      title={section.heading ? `${section.heading.replace(/^\d+\.\s*/, '')} Angles` : 'Multi-Angle Visual Inspection'}
                     />
                   )}
 
@@ -793,7 +788,6 @@ export function ArticleView({
             <PhotoCarousel
               images={article.gallery}
               onZoom={(img) => setLightboxImage(img)}
-              title="Comprehensive Multi-Angle Inspection Suite"
             />
           )}
         </article>
