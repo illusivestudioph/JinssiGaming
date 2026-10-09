@@ -111,9 +111,9 @@ export function JournalDirectory({ onSelectArticle }: JournalDirectoryProps) {
 
           <button
             onClick={() => setIsSearchModalOpen(true)}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-peach-500 hover:bg-peach-600 text-white text-xs font-bold transition-all shadow-cozy-xs hover:scale-105"
+            className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-peach-500 hover:bg-peach-600 text-white text-xs font-bold transition-all shadow-cozy-sm hover:scale-105 active:scale-95"
           >
-            <span>🎮 Search PC Games</span>
+            <span>🎮 Search PC Games Database</span>
           </button>
 
           <button
@@ -130,12 +130,31 @@ export function JournalDirectory({ onSelectArticle }: JournalDirectoryProps) {
 
       {/* Search & Filter Controls */}
       <div className="mb-10 space-y-4 max-w-4xl mx-auto">
+        {/* Navigation Tabs between Articles and Live Game Search */}
+        <div className="flex justify-center gap-2 pb-2">
+          <div className="p-1 rounded-2xl bg-cream-100 border border-tan-200 shadow-cozy-xs inline-flex gap-1.5">
+            <button
+              onClick={() => setSelectedCategory('All')}
+              className="px-4 py-1.5 rounded-xl text-xs font-bold bg-white text-ink-900 shadow-cozy-xs flex items-center gap-1.5"
+            >
+              <BookOpen className="w-3.5 h-3.5 text-peach-500" />
+              <span>Journal & Guides</span>
+            </button>
+            <button
+              onClick={() => setIsSearchModalOpen(true)}
+              className="px-4 py-1.5 rounded-xl text-xs font-bold text-tan-600 hover:text-ink-900 hover:bg-cream-200 transition-colors flex items-center gap-1.5"
+            >
+              <span>🎮 Search PC Games</span>
+            </button>
+          </div>
+        </div>
+
         {/* Search Bar */}
         <div className="relative">
           <Search className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-tan-400 pointer-events-none" />
           <input
             type="text"
-            placeholder="Search cozy articles, reviews, or tags (e.g. Tiny Glade, Fields of Mistria)..."
+            placeholder="Search articles, hardware guides (e.g. Best Budget Laptop, Steam Deck, Tiny Glade)..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="bookshelf-search-input w-full pl-12 pr-4 py-3 rounded-2xl bg-cream-50 border-2 border-tan-200 text-ink-900 placeholder:text-tan-400 focus:outline-none focus:border-peach-400 transition-colors shadow-cozy-sm"
@@ -149,6 +168,18 @@ export function JournalDirectory({ onSelectArticle }: JournalDirectoryProps) {
             </button>
           )}
         </div>
+
+        {/* Quick PC Game Search Prompt when typing */}
+        {searchQuery.trim().length > 1 && (
+          <div className="flex justify-center">
+            <button
+              onClick={() => setIsSearchModalOpen(true)}
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-peach-50 border border-peach-200 text-xs font-bold text-peach-700 hover:bg-peach-100 transition-colors shadow-cozy-xs"
+            >
+              <span>🎮 Looking for a game? Search the PC Games Database for &ldquo;{searchQuery}&rdquo; &rarr;</span>
+            </button>
+          </div>
+        )}
 
         {/* Category Pill Filters */}
         <div className="flex flex-wrap gap-2 justify-center items-center">
@@ -171,17 +202,27 @@ export function JournalDirectory({ onSelectArticle }: JournalDirectoryProps) {
       {/* Articles Grid */}
       {filteredArticles.length === 0 ? (
         <div className="notepad-card p-12 text-center max-w-md mx-auto">
-          <p className="text-lg font-bold text-ink-800 mb-2">No cozy reads found</p>
-          <p className="text-sm text-tan-500 mb-4">Try adjusting your search terms or selecting another category.</p>
-          <button
-            onClick={() => {
-              setSelectedCategory('All');
-              setSearchQuery('');
-            }}
-            className="px-4 py-2 bg-peach-500 text-white text-xs font-bold rounded-xl shadow-cozy-sm hover:bg-peach-600 transition-colors"
-          >
-            Reset Filters
-          </button>
+          <p className="text-lg font-bold text-ink-800 mb-2">No journal articles found</p>
+          <p className="text-sm text-tan-500 mb-4">
+            Try adjusting your search terms or search the live PC Games library.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-2 justify-center">
+            <button
+              onClick={() => setIsSearchModalOpen(true)}
+              className="px-4 py-2 rounded-xl text-xs font-bold bg-peach-500 hover:bg-peach-600 text-white transition-colors shadow-cozy-xs"
+            >
+              🎮 Search PC Games Database
+            </button>
+            <button
+              onClick={() => {
+                setSelectedCategory('All');
+                setSearchQuery('');
+              }}
+              className="px-4 py-2 rounded-xl text-xs font-bold bg-cream-200 hover:bg-cream-300 text-ink-800 transition-colors"
+            >
+              Reset Filters
+            </button>
+          </div>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 pt-3">
