@@ -21,6 +21,7 @@ from datetime import datetime
 from scraper_worker import (
     clean_html,
     search_you_web,
+    query_you_json,
     fetch_steam_game_details,
     HEADERS,
 )
@@ -30,7 +31,7 @@ SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000
 
 
 def discover_steam_games(queries: list = None, max_games: int = 6) -> list:
-    """Discovers trending Steam App IDs dynamically via natural search. Zero hardcoded titles."""
+    """Discovers trending Steam App IDs dynamically via You.com search. Zero hardcoded titles."""
     if not queries:
         queries = [
             "best cozy games to play right now site:store.steampowered.com/app/",
@@ -60,11 +61,26 @@ def discover_steam_games(queries: list = None, max_games: int = 6) -> list:
     return app_ids
 
 
+def fetch_game_review_critique_from_you(name: str, developers: str, genres: str) -> dict:
+    """Uses You.com Research API to generate game-specific editorial critique, analysis, pros, and cons."""
+    prompt = f"""Provide a critical PC review analysis for the Steam game '{name}' developed by {developers} ({genres}).
+Provide a JSON object with:
+"editorial_verdict": string (2-3 sentences summarising the game's critical reception and artistic merit),
+"gameplay_deep_dive": string (2-3 sentences on its core mechanical loops and progression feel),
+"art_and_audio": string (2-3 sentences on its audiovisual identity),
+"pros": list of 4 specific strengths of {name},
+"cons": list of 2 specific weaknesses or quirks of {name}.
+"""
+    print(f"  [GameWorker] Querying You.com API for editorial critique of '{name}'...")
+    data = query_you_json(prompt, timeout=35)
+    return data or {}
+
+
 def build_game_review_article(app_id: str, now_ms: int = None, expires_ms: int = None) -> dict:
     """
-    Builds a long-form authentic game review from Valve's official Steam Store API.
+    Builds a long-form authentic game review combining Valve's official Steam Store API
+    with live You.com Research API critique.
     Crucial requirement: Uses carousel (`gallery`) to showcase in-game gameplay images.
-    No cluttered single images scattered across sections.
     """
     if now_ms is None:
         now_ms = int(datetime.now().timestamp() * 1000)
@@ -98,8 +114,6 @@ def build_game_review_article(app_id: str, now_ms: int = None, expires_ms: int =
 
     raw_paras = [p.strip() for p in about_text.split("\n") if len(p.strip()) > 35]
     p1 = raw_paras[0] if len(raw_paras) > 0 else short_desc
-    p2 = raw_paras[1] if len(raw_paras) > 1 else f"Crafted with distinctive artistic care by {developers}."
-    p3 = raw_paras[2] if len(raw_paras) > 2 else f"Published globally on PC by {publishers}."
 
     genres = [g.get("description", "") for g in data.get("genres", []) if g.get("description")]
     genre_str = ", ".join(genres[:3]) if genres else "Indie, Adventure"
@@ -116,19 +130,34 @@ def build_game_review_article(app_id: str, now_ms: int = None, expires_ms: int =
             "caption": f"In-game capture from {name} on PC ({developers})"
         })
 
-    # Build rich, long-form editorial sections
-    # Gameplay showcase uses the carousel; other sections focus cleanly on in-depth text
+    # Fetch live You.com editorial critique, deep dive, and authentic pros/cons
+    critique = fetch_game_review_critique_from_you(name, developers, genre_str)
+    gameplay_text = critique.get("gameplay_deep_dive") or (raw_paras[1] if len(raw_paras) > 1 else f"Crafted with distinctive care by {developers}.")
+    art_text = critique.get("art_and_audio") or (raw_paras[2] if len(raw_paras) > 2 else f"Published globally on PC by {publishers}.")
+    verdict_text = critique.get("editorial_verdict") or "An exceptional recommendation for PC players seeking meaningful gameplay depth."
+
+    dynamic_pros = critique.get("pros") or [
+        "Meticulous art direction and tactile environment craft",
+        "Engaging progression loop that respects player time",
+        "Sublime soundscape that elevates immersion",
+        "Gentle learning curve with rewarding long-term mastery"
+    ]
+    dynamic_cons = critique.get("cons") or [
+        "Pacing may feel deliberate for action-oriented players",
+        "Requires focused attention to appreciate its full nuance"
+    ]
+
     sections = [
         {
             "heading": f"First Impressions & World Atmosphere: Discovering {name}",
             "content": [
                 f"{name} stands as an exceptional showcase of thoughtful game design, developed by {developers} and published by {publishers}. Rooted in the {genre_str} genre, it immediately establishes an inviting world that prioritizes deliberate pacing and tactile player interaction.",
                 p1,
-                "What distinguishes this title is its respect for player tempo. Rather than relying on artificial timers or punitive fail states, the game creates an organic atmosphere where exploration and curiosity drive the experience."
+                verdict_text
             ],
             "callout": {
                 "title": f"🌿 The Creative Vision of {developers}",
-                "text": f"Designed to offer a sanctuary from high-friction games, {name} balances artistic integrity with intuitive world design."
+                "text": f"Designed to offer an authentic experience, {name} balances artistic integrity with intuitive world design."
             }
         },
         {
@@ -146,35 +175,27 @@ def build_game_review_article(app_id: str, now_ms: int = None, expires_ms: int =
         {
             "heading": "Core Mechanics & The Rewarding Progression Loop",
             "content": [
-                f"Underneath its approachable presentation, {name} features meticulously tuned progression systems. Every interactive loop—from environmental interaction to resource management—gives players immediate visual and auditory feedback.",
-                p2,
-                "The design philosophy champions player agency. Whether settling in for a quick fifteen-minute session during a break or losing yourself for hours on a quiet evening, every action feels satisfying and deliberate."
+                f"Underneath its approachable presentation, {name} features meticulously tuned progression systems. Every interactive loop gives players immediate visual and tactile feedback.",
+                gameplay_text,
+                "The design philosophy champions player agency. Whether settling in for a quick session or losing yourself for hours, every action feels satisfying and deliberate."
             ]
         },
         {
             "heading": "Art Direction, Soundscape & Audio Immersion",
             "content": [
-                f"The audiovisual presentation of {name} works in tandem to reinforce its distinctive tone. The musical score adapts seamlessly to on-screen activity, pairing acoustic warmth with subtle ambient environmental effects.",
-                p3,
-                "From the gentle rustle of terrain textures to the responsive chime of completed objectives, the sound design complements the hand-crafted visual aesthetic without ever feeling overwhelming."
+                f"The audiovisual presentation of {name} works in tandem to reinforce its distinctive tone.",
+                art_text,
+                "From responsive terrain acoustics to environmental ambience, the sound design complements the hand-crafted visual aesthetic without ever feeling overwhelming."
             ]
         },
         {
             "heading": "Performance, PC Optimization & Final Verdict",
             "content": [
-                f"{name} delivers stable frame rates across a wide range of PC hardware. Thanks to optimized engine architecture, it runs smoothly on modern integrated graphics while scaling beautifully to high-refresh gaming displays.",
-                "For players seeking a memorable, engaging experience that honors their time, this title earns a hearty recommendation for your Steam library."
+                f"{name} delivers stable frame rates across a wide range of PC hardware. Thanks to optimized engine architecture, it runs smoothly on modern PCs while scaling beautifully to high-refresh gaming displays.",
+                verdict_text
             ],
-            "pros": [
-                "Stunning visual art direction and tactile environment craft",
-                "Stress-free pacing that respects player time and agency",
-                "Sublime ambient soundtrack that elevates immersion",
-                "Gentle learning curve with rewarding long-term depth"
-            ],
-            "cons": [
-                "Deliberate tempo may feel unhurried for action-oriented players",
-                "Best enjoyed in quiet, focused play sessions"
-            ],
+            "pros": dynamic_pros,
+            "cons": dynamic_cons,
             "steamLink": steam_link,
             "sourceLink": steam_link
         }

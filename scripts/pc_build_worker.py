@@ -19,55 +19,42 @@ from datetime import datetime
 
 from scraper_worker import (
     search_amazon_live_product,
+    query_you_json,
     clean_html,
 )
 from supabase_client import upsert_task_articles
 
 SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000
 
-# Live search queries for building a balanced 1080p high-refresh gaming PC
-COMPONENT_QUERIES = [
-    {
-        "category": "Processor (CPU)",
-        "query": "AMD Ryzen 5 5600 desktop processor",
-        "role": "Six-core, twelve-thread computing backbone for high minimum frame rates."
-    },
-    {
-        "category": "Graphics Card (GPU)",
-        "query": "Radeon RX 6600 8GB GDDR6 graphics card",
-        "role": "Dedicated 8GB VRAM graphics engine delivering smooth 60-120 FPS at 1080p."
-    },
-    {
-        "category": "Motherboard",
-        "query": "ASRock B550M AM4 Micro ATX Motherboard",
-        "role": "Feature-packed micro-ATX foundation with dual M.2 slots and PCIe 4.0 support."
-    },
-    {
-        "category": "Memory (RAM)",
-        "query": "DDR4 16GB 3200MHz CL16 desktop memory kit 2x8GB",
-        "role": "Dual-channel 16GB kit ensuring responsive multitasking and stutter-free gaming."
-    },
-    {
-        "category": "Storage (SSD)",
-        "query": "1TB PCIe Gen4 NVMe M.2 internal SSD",
-        "role": "Lightning-fast solid state drive for instant Windows boot and rapid game loads."
-    },
-    {
-        "category": "Power Supply (PSU)",
-        "query": "600W 80 Plus Bronze certified ATX power supply",
-        "role": "Efficient, reliable clean power delivery with dedicated PCIe headroom."
-    },
-    {
-        "category": "Computer Case",
-        "query": "Micro ATX mesh airflow PC gaming case tempered glass",
-        "role": "High-ventilation chassis with mesh front intake and pre-installed cooling fans."
-    },
-    {
-        "category": "CPU Cooler",
-        "query": "Thermalright Assassin 120 SE CPU air cooler",
-        "role": "Whisper-quiet tower heatsink keeping CPU thermals well below 65°C under gaming loads."
-    }
-]
+
+def fetch_dynamic_pc_build_plan_from_you() -> dict:
+    """Uses You.com Research API to dynamically generate a balanced budget gaming PC build recommendation."""
+    prompt = """Generate a balanced 1080p high-refresh budget gaming PC build recommendation ($800-$900 budget).
+Provide a JSON object with:
+"build_title": string (e.g. "The 1080p High-Refresh Value Champion"),
+"target_budget": string (e.g. "$800 - $850"),
+"headline_summary": string (2-3 sentence overview of this build configuration),
+"components": list of 8 parts, each with:
+  "category": string (e.g. "Processor (CPU)", "Graphics Card (GPU)", "Motherboard", "Memory (RAM)", "Storage (SSD)", "Power Supply (PSU)", "Computer Case", "CPU Cooler"),
+  "component_name": string (e.g. "AMD Ryzen 5 5600" or "Intel Core i5-12400F"),
+  "amazon_search_query": string (precise search keyword to find on Amazon),
+  "role": string (1-sentence role/performance justification)
+"pros": list of 4 concise advantage strings,
+"cons": list of 2 concise compromise strings,
+"benchmarks": list of 3 strings detailing expected 1080p FPS in esports, AAA, and indie titles.
+"""
+    print("  [PCBuildWorker] Querying You.com API for dynamic PC build recommendations...")
+    data = query_you_json(prompt, timeout=40)
+    if data and data.get("components") and len(data.get("components")) >= 6:
+        print(f"  ✓ You.com returned dynamic build: '{data.get('build_title')}' with {len(data['components'])} components.")
+        return data
+
+    print("  [PCBuildWorker] Retrying You.com API for PC components...")
+    retry_data = query_you_json("List 8 PC gaming components for a $850 budget build in JSON format with key 'components' containing 'category', 'component_name', 'amazon_search_query', 'role'.", timeout=40)
+    if retry_data and retry_data.get("components"):
+        return retry_data
+
+    return data or {}
 
 
 def build_dynamic_pc_build_guide(now_ms: int = None, expires_ms: int = None) -> dict:
@@ -77,20 +64,28 @@ def build_dynamic_pc_build_guide(now_ms: int = None, expires_ms: int = None) -> 
     if expires_ms is None:
         expires_ms = now_ms + SEVEN_DAYS_MS
 
-    print(f"[{datetime.now().strftime('%H:%M:%S')}] 🛠️ Scraping Amazon live for verified PC build components...")
+    print(f"[{datetime.now().strftime('%H:%M:%S')}] 🛠️ Discovering PC build plan dynamically via You.com API...")
+    build_plan = fetch_dynamic_pc_build_plan_from_you()
+    components_to_search = build_plan.get("components", [])
+
+    if not components_to_search:
+        print("[PCBuildWorker] Error: Could not retrieve components from You.com API.", file=sys.stderr)
+        return None
+
+    print(f"  [PCBuildWorker] Scraping Amazon live for {len(components_to_search)} verified components...")
     parts = []
     total_cents = 0
 
-    for item in COMPONENT_QUERIES:
-        cat_name = item["category"]
-        query = item["query"]
-        role = item["role"]
+    for item in components_to_search:
+        cat_name = item.get("category", "Component")
+        query = item.get("amazon_search_query") or item.get("component_name")
+        role = item.get("role", "Essential system component.")
 
         print(f"  [PCBuildWorker] Searching Amazon for {cat_name}: '{query}'...")
         prod = search_amazon_live_product(query)
 
         if not prod or not prod.get("title"):
-            # Try a slightly broader query if specific model search missed
+            # Try simplified query if specific model search missed
             simplified_query = " ".join(query.split()[:4])
             print(f"  [PCBuildWorker] Retrying with broader query: '{simplified_query}'...")
             prod = search_amazon_live_product(simplified_query)
@@ -145,9 +140,26 @@ def build_dynamic_pc_build_guide(now_ms: int = None, expires_ms: int = None) -> 
     if not cover_image and parts:
         cover_image = parts[0].get("imageUrl")
 
+    dynamic_title = build_plan.get("build_title") or "Budget 1080p High-Refresh Gaming PC"
+    dynamic_pros = build_plan.get("pros") or [
+        f"Complete custom system for approximately {total_dollars}",
+        "100% modular, standard non-proprietary components",
+        "Whisper-quiet thermals with dedicated air cooling",
+        "Straightforward upgrade path for future generations"
+    ]
+    dynamic_cons = build_plan.get("cons") or [
+        "Requires basic screwdriver assembly and initial OS installation",
+        "Prices fluctuate based on live daily retail stock levels"
+    ]
+    bench_items = build_plan.get("benchmarks") or [
+        "Competitive Esports (Valorant, CS2, Overwatch 2): 200+ FPS on High settings for competitive refresh rates.",
+        "Open-World Action (Cyberpunk 2077, Black Myth Wukong): 60-75 FPS on High presets with FSR / XeSS enabled.",
+        "Simulation & Cozy Hits (Palworld, Rust, Stardew Valley): Flawless frame pacing with zero thermal throttling."
+    ]
+
     sections = [
         {
-            "heading": f"The Blueprint: 100% Live In-Stock PC Build Configuration ({total_dollars})",
+            "heading": f"The Blueprint: {dynamic_title} ({total_dollars})",
             "content": [
                 f"Building your own PC delivers unparalleled price-to-performance, zero OEM bloatware, and seamless upgradeability for years to come. Every single part in the interactive breakdown below has been dynamically verified and pulled live from current in-stock retail inventory on Amazon.",
                 f"This balanced budget build targets buttery-smooth 1080p high-refresh gaming across demanding modern titles while keeping the verified total cost at an affordable {total_dollars}."
@@ -175,32 +187,21 @@ def build_dynamic_pc_build_guide(now_ms: int = None, expires_ms: int = None) -> 
                 "• Step 5: Case Standoffs & PSU. Install the I/O shield, mount the motherboard into the chassis standoffs, and route the 24-pin and CPU 8-pin power leads.",
                 "• Step 6: GPU Latching & First Boot. Insert the graphics card into the top PCIe x16 slot until the lock clicks, connect the PCIe power cable, and boot into UEFI BIOS to enable XMP/DOCP."
             ],
-            "pros": [
-                f"Complete custom system for approximately {total_dollars}",
-                "100% modular, standard non-proprietary components",
-                "Whisper-quiet thermals with dedicated air cooling",
-                "Straightforward upgrade path for future generations"
-            ],
-            "cons": [
-                "Requires basic screwdriver assembly and initial OS installation",
-                "Prices fluctuate based on live daily retail stock levels"
-            ]
+            "pros": dynamic_pros,
+            "cons": dynamic_cons
         },
         {
             "heading": "Real-World 1080p Gaming Benchmark Expectations",
             "content": [
-                "Pairing a modern 6-core processor with a dedicated 8GB graphics card delivers exceptional 1080p rasterization performance across modern games:",
-                "• Competitive Esports (Valorant, CS2, Overwatch 2): 200+ FPS on High settings for competitive refresh rates.",
-                "• Open-World Action (Cyberpunk 2077, Black Myth Wukong): 60-75 FPS on High presets with FSR / XeSS enabled.",
-                "• Simulation & Cozy Hits (Palworld, Rust, Stardew Valley): Flawless frame pacing with zero thermal throttling."
-            ]
+                "Pairing a modern high-efficiency processor with a dedicated graphics card delivers exceptional 1080p rasterization performance across modern games:",
+            ] + [f"• {b}" for b in bench_items]
         }
     ]
 
     return {
         "id": f"pc-build-guide-{now_ms}",
         "slug": f"pc-build-guide-{datetime.now().strftime('%Y-%m')}",
-        "title": f"Ultimate Budget Gaming PC Build Guide: Live In-Stock Parts ({total_dollars})",
+        "title": f"{dynamic_title}: Live In-Stock Parts ({total_dollars})",
         "subtitle": f"Complete hands-on part list with real Amazon prices, hardware photos, and verified total cost.",
         "author": "Jinssi Hardware Lab",
         "authorRole": "Custom PC & Benchmarking Specialist",

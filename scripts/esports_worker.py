@@ -17,7 +17,7 @@ import urllib.request
 import urllib.parse
 from datetime import datetime
 
-from scraper_worker import clean_html, HEADERS
+from scraper_worker import clean_html, HEADERS, query_you_json
 from supabase_client import upsert_task_articles
 
 SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000
@@ -136,7 +136,76 @@ def fetch_live_esports_report(now_ms: int = None, expires_ms: int = None) -> dic
         except Exception as e:
             print(f"  [EsportsWorker] ✗ Error fetching feed {feed_url}: {e}", file=sys.stderr)
 
-    return None
+    # If RSS feed had no articles or timed out, dynamically query You.com API
+    return fetch_esports_report_from_you(now_ms, expires_ms)
+
+
+def fetch_esports_report_from_you(now_ms: int, expires_ms: int) -> dict:
+    """Uses You.com Research API to compile a comprehensive esports match report."""
+    print("  [EsportsWorker] Fetching esports championship match report via You.com API...")
+    prompt = """Provide a detailed tournament match report on the latest major esports championship final or major tournament match (League of Legends Worlds, CS2 Major, or Valorant Champions).
+Provide a JSON object with:
+"title": headline string,
+"tournament_name": string,
+"summary": 2-sentence match summary,
+"match_recap": list of 3 paragraphs on the decisive series games,
+"tactics": list of 2 paragraphs on map rotations and clutch plays,
+"standings": list of 2 paragraphs on championship bracket implications,
+"source_link": string URL
+"""
+    data = query_you_json(prompt, timeout=35)
+    if not data or not data.get("title"):
+        return None
+
+    raw_title = data.get("title")
+    slug_base = re.sub(r"[^a-z0-9]+", "-", raw_title.lower()).strip("-")[:50]
+    source_url = data.get("source_link") or "https://esportsinsider.com"
+
+    sections = [
+        {
+            "heading": "Championship Match Overview & Deciding Series",
+            "content": data.get("match_recap") or [data.get("summary", "")],
+            "callout": {
+                "title": "⚡ Live Competitive Breakdown",
+                "text": f"Synthesized from live tournament bracket data and broadcast coverage."
+            },
+            "sourceLink": source_url
+        },
+        {
+            "heading": "Tactical Execution, Map Control & Decisive Clutches",
+            "content": data.get("tactics") or ["Teams traded rounds with tactical discipline across the series."],
+            "sourceLink": source_url
+        },
+        {
+            "heading": "Bracket Standings & Championship Implications",
+            "content": data.get("standings") or ["This result sets the stage for the next round of tournament action."],
+            "sourceLink": source_url
+        }
+    ]
+
+    return {
+        "id": f"esports-{slug_base}-{now_ms}",
+        "slug": f"esports-{slug_base}",
+        "title": raw_title,
+        "subtitle": f"Live tournament coverage and series analysis.",
+        "author": "Jinssi Competitive Desk",
+        "authorRole": "Esports Tournament Analyst",
+        "date": datetime.now().strftime("%B %d, %Y"),
+        "publishedAt": datetime.now().strftime("%B %d, %Y"),
+        "readTimeMinutes": 5,
+        "readTime": "5 min read",
+        "category": "Esports News",
+        "tags": ["Esports", "Championship", "Tournament", "Match Report"],
+        "cozyScore": 4,
+        "stressLevel": "Gentle Challenge",
+        "coverImage": "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1600&q=80",
+        "coverAlt": f"{raw_title[:50]} Arena Action",
+        "summary": data.get("summary") or f"Live tournament coverage of {raw_title}.",
+        "sections": sections,
+        "sourceLink": source_url,
+        "createdAt": now_ms,
+        "expiresAt": expires_ms
+    }
 
 
 def run_esports_pipeline(sync_supabase: bool = True) -> dict:

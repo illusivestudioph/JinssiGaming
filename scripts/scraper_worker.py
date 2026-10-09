@@ -57,6 +57,49 @@ def search_you_web(query: str, count: int = 5) -> list:
         return []
 
 
+def query_you_research(prompt: str, timeout: int = 40) -> dict:
+    """Performs deep cited research synthesis using You.com Research API."""
+    url = "https://api.you.com/v1/research"
+    payload = json.dumps({"input": prompt}).encode("utf-8")
+    headers = dict(HEADERS)
+    headers["Authorization"] = f"Bearer {YDC_API_KEY}"
+    headers["Content-Type"] = "application/json"
+
+    req = urllib.request.Request(url, data=payload, headers=headers, method="POST")
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+            out = data.get("output", {})
+            content = out.get("content", "") if isinstance(out, dict) else str(out)
+            return {"content": content, "sources": out.get("sources", []) if isinstance(out, dict) else []}
+    except Exception as e:
+        print(f"[ScraperWorker] You.com research failed: {e}", file=sys.stderr)
+        return {}
+
+
+def query_you_json(prompt: str, timeout: int = 40) -> dict:
+    """Queries You.com Research API and cleanly extracts and parses the JSON response object."""
+    json_prompt = f"{prompt}\nIMPORTANT: Respond with ONLY a valid JSON object. Do not wrap in markdown quotes if possible, or use standard JSON format."
+    res = query_you_research(json_prompt, timeout=timeout)
+    content = res.get("content", "").strip()
+    if not content:
+        return {}
+    
+    # Try finding JSON object in output
+    m = re.search(r"(\{.*\})", content, re.DOTALL)
+    if m:
+        try:
+            return json.loads(m.group(1))
+        except Exception as e:
+            # Try cleaning trailing commas or bad escapes
+            cleaned = re.sub(r",\s*([\]\}])", r"\1", m.group(1))
+            try:
+                return json.loads(cleaned)
+            except Exception:
+                pass
+    return {}
+
+
 def search_amazon_live_product(search_query: str) -> dict:
     """Dynamically queries live Amazon search, selects the top organic result, and extracts its live details and multi-angle photo carousel."""
     search_url = f"https://www.amazon.com/s?k={urllib.parse.quote(search_query)}"
