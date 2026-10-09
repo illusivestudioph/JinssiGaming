@@ -2,180 +2,136 @@
 """
 Jinssi Gaming - Master Autonomous Pipeline Orchestrator
 =======================================================
-100% Dynamic, Complete Publication Suite:
-1. Dynamic PC Build Guide: Real in-stock components, genuine hardware photos, live buy links & total cost.
-2. Dynamic Best Laptop Guide: Real laptop picks, lab benchmarks, and multi-angle hardware carousel.
-3. Live Esports News Update: Real competitive finals match report & tournament arena photography.
-4. Dynamic Steam Game Articles: Discovered via You.com, with 100% authentic in-game gameplay screenshots (Valve CDN).
-5. Real Gaming Journalism: Human-written field reports from Rock Paper Shotgun & Eurogamer.
+Coordinates dedicated, modular task pipelines:
+1. game_worker.py:      Steam discovery, in-game gameplay carousel, rich reviews.
+2. pc_build_worker.py:  Amazon in-stock parts, genuine hardware cover, live pricing.
+3. laptop_worker.py:    Top budget gaming laptop, multi-angle Amazon carousel, verified specs.
+4. esports_worker.py:   Live competitive finals reports, full multi-paragraph coverage.
+5. journal_worker.py:   Full-length investigative gaming journalism from RPS & Eurogamer.
 
-Weekly 7-Day lifespan rotation. Zero AI images. Zero hardcoding.
+Usage:
+  python3 scripts/pipeline.py                 # Run all task pipelines
+  python3 scripts/pipeline.py --task=game     # Run dedicated game pipeline only
+  python3 scripts/pipeline.py --task=pc_build # Run dedicated PC build pipeline only
+  python3 scripts/pipeline.py --task=laptop   # Run dedicated laptop pipeline only
+  python3 scripts/pipeline.py --task=esports  # Run dedicated esports pipeline only
+  python3 scripts/pipeline.py --task=journal  # Run dedicated journalism pipeline only
+  python3 scripts/pipeline.py --daemon        # Run all pipelines on silent 7-day rotation
 """
 
 import sys
 import os
 import time
-import json
-import urllib.request
 from datetime import datetime
 
-from guide_worker import (
-    build_dynamic_pc_build_guide,
-    build_dynamic_laptop_guide,
-)
-from writer_worker import (
-    discover_steam_games_via_you,
-    build_long_form_game_article,
-    fetch_real_journalism_feed_articles,
-    fetch_live_esports_report,
-)
-
-SUPABASE_URL = "https://esjwkwgjnesyvnvuonmd.supabase.co"
-SUPABASE_KEY = "sb_publishable_AlvHUSVaBIQMqj6vRuNsww_Uokx0SsJ"
-
-SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000
+from game_worker import run_game_pipeline
+from pc_build_worker import run_pc_build_pipeline
+from laptop_worker import run_laptop_pipeline
+from esports_worker import run_esports_pipeline
+from journal_worker import run_journal_pipeline
+from supabase_client import sync_all_articles, fetch_current_articles
 
 
-def run_pipeline() -> list:
-    now_ms = int(datetime.now().timestamp() * 1000)
-    expires_ms = now_ms + SEVEN_DAYS_MS
-
-    print(f"[{datetime.now().strftime('%H:%M:%S')}] 🚀 Running Jinssi Autonomous Pipeline (All Categories, 7-Day Cycle)...")
+def run_full_pipeline() -> list:
+    """Executes each dedicated pipeline and compiles the complete dynamic publication suite."""
+    print(f"\n[{datetime.now().strftime('%H:%M:%S')}] 🚀 Running Jinssi Autonomous Master Pipeline (All Dedicated Tasks)...")
     articles = []
 
-    # 1. Hardware Guides: PC Build Guide & Best Laptop Guide
-    print("  [Step 1] Building dynamic Hardware Guides from live inventory...")
+    # 1. Dedicated PC Build Guide Pipeline
+    print("\n--- [Task 1/5] Dedicated PC Build Guide ---")
     try:
-        pc_guide = build_dynamic_pc_build_guide(now_ms, expires_ms)
+        pc_guide = run_pc_build_pipeline(sync_supabase=False)
         if pc_guide:
             articles.append(pc_guide)
-            print(f"  ✓ Added PC Build Guide: '{pc_guide['title']}' (Parts: {len(pc_guide['sections'][1].get('buildParts') or [])})")
+            print(f"  ✓ PC Build Guide ready: '{pc_guide['title']}'")
     except Exception as e:
-        print(f"  ✗ PC Build guide error: {e}", file=sys.stderr)
+        print(f"  ✗ PC Build Guide error: {e}", file=sys.stderr)
 
+    # 2. Dedicated Laptop Guide Pipeline
+    print("\n--- [Task 2/5] Dedicated Laptop Guide ---")
     try:
-        laptop_guide = build_dynamic_laptop_guide(now_ms, expires_ms)
+        laptop_guide = run_laptop_pipeline(sync_supabase=False)
         if laptop_guide:
             articles.append(laptop_guide)
-            print(f"  ✓ Added Laptop Guide: '{laptop_guide['title']}' (Carousel: {len(laptop_guide['sections'][0].get('gallery') or [])} images)")
+            print(f"  ✓ Laptop Guide ready: '{laptop_guide['title']}'")
     except Exception as e:
-        print(f"  ✗ Laptop guide error: {e}", file=sys.stderr)
+        print(f"  ✗ Laptop Guide error: {e}", file=sys.stderr)
 
-    # 2. Live Esports Championship Tournament Report
-    print("  [Step 2] Fetching live competitive Esports Tournament news...")
+    # 3. Dedicated Esports News Pipeline
+    print("\n--- [Task 3/5] Dedicated Esports Tournament News ---")
     try:
-        esports_art = fetch_live_esports_report(now_ms, expires_ms)
+        esports_art = run_esports_pipeline(sync_supabase=False)
         if esports_art:
             articles.append(esports_art)
-            print(f"  ✓ Added Esports News: '{esports_art['title']}'")
+            print(f"  ✓ Esports News ready: '{esports_art['title']}'")
     except Exception as e:
-        print(f"  ✗ Esports report error: {e}", file=sys.stderr)
+        print(f"  ✗ Esports News error: {e}", file=sys.stderr)
 
-    # 3. Dynamic Steam Game Discovery via You.com & Deep Gameplay Reviews
-    queries = [
-        "best cozy games to play right now site:store.steampowered.com/app/",
-        "top rated relaxing indie games site:store.steampowered.com/app/"
-    ]
-    print("  [Step 3] Querying You.com to dynamically discover trending games on Steam...")
-    discovered_app_ids = discover_steam_games_via_you(queries, max_games=6)
-    print(f"  ✓ Discovered {len(discovered_app_ids)} game app IDs dynamically: {discovered_app_ids}")
-
-    print("  [Step 4] Building long-form reviews with authentic in-game gameplay screenshots...")
-    for app_id in discovered_app_ids:
-        try:
-            art = build_long_form_game_article(app_id, now_ms, expires_ms)
-            if art:
-                articles.append(art)
-                print(f"  ✓ Added Game Review: '{art['title']}' (Carousel: {len(art['sections'][0].get('gallery') or [])} gameplay shots)")
-        except Exception as e:
-            print(f"  ✗ App ID {app_id} error: {e}", file=sys.stderr)
-
-    # 4. Real Human Gaming Journalism from Rock Paper Shotgun & Eurogamer
-    print("  [Step 5] Fetching authentic human-written stories from Rock Paper Shotgun & Eurogamer...")
+    # 4. Dedicated Game Review Pipeline (Carousel for Gameplay Images)
+    print("\n--- [Task 4/5] Dedicated Steam Game Reviews (Gameplay Carousels) ---")
     try:
-        journalism_arts = fetch_real_journalism_feed_articles(max_articles=3)
-        articles.extend(journalism_arts)
-        print(f"  ✓ Added {len(journalism_arts)} authentic journalism stories.")
+        game_arts = run_game_pipeline(max_games=5, sync_supabase=False)
+        articles.extend(game_arts)
+        print(f"  ✓ Game Reviews ready: {len(game_arts)} games compiled.")
     except Exception as e:
-        print(f"  ✗ Journalism feed error: {e}", file=sys.stderr)
+        print(f"  ✗ Game Reviews error: {e}", file=sys.stderr)
 
-    print(f"[{datetime.now().strftime('%H:%M:%S')}] 📦 Compiled {len(articles)} genuine, complete articles across all categories.")
+    # 5. Dedicated Human Gaming Journalism Pipeline
+    print("\n--- [Task 5/5] Dedicated Real Gaming Journalism ---")
+    try:
+        journal_arts = run_journal_pipeline(max_articles=3, sync_supabase=False)
+        articles.extend(journal_arts)
+        print(f"  ✓ Real Journalism ready: {len(journal_arts)} stories compiled.")
+    except Exception as e:
+        print(f"  ✗ Real Journalism error: {e}", file=sys.stderr)
+
+    print(f"\n[{datetime.now().strftime('%H:%M:%S')}] 📦 Compiled {len(articles)} total dynamic articles across all pipelines.")
     return articles
 
 
-def sync_to_supabase(articles: list) -> bool:
-    print(f"[{datetime.now().strftime('%H:%M:%S')}] 💾 Syncing articles to Supabase...")
-
-    get_req = urllib.request.Request(
-        f"{SUPABASE_URL}/rest/v1/site_content?id=eq.default&select=content",
-        headers={
-            "apikey": SUPABASE_KEY,
-            "Authorization": f"Bearer {SUPABASE_KEY}",
-        },
-    )
-
-    current_content = {}
-    try:
-        with urllib.request.urlopen(get_req, timeout=12) as resp:
-            rows = json.loads(resp.read().decode("utf-8"))
-            if rows and len(rows) > 0:
-                current_content = rows[0].get("content", {})
-    except Exception as e:
-        print(f"[Pipeline] Error fetching Supabase row: {e}", file=sys.stderr)
-        return False
-
-    current_content["articles"] = articles
-    current_content["updated_at"] = datetime.utcnow().isoformat() + "Z"
-
-    payload = json.dumps({"id": "default", "content": current_content}).encode("utf-8")
-    upsert_req = urllib.request.Request(
-        f"{SUPABASE_URL}/rest/v1/site_content",
-        data=payload,
-        headers={
-            "apikey": SUPABASE_KEY,
-            "Authorization": f"Bearer {SUPABASE_KEY}",
-            "Content-Type": "application/json",
-            "Prefer": "resolution=merge-duplicates",
-        },
-        method="POST",
-    )
-
-    try:
-        with urllib.request.urlopen(upsert_req, timeout=15) as resp:
-            print(f"[{datetime.now().strftime('%H:%M:%S')}] ✨ Successfully synced all articles to Supabase! Status: {resp.status}")
-            return True
-    except Exception as e:
-        print(f"[Pipeline] Failed to upsert to Supabase: {e}", file=sys.stderr)
-        return False
-
-
 def main():
+    task_arg = None
+    for arg in sys.argv:
+        if arg.startswith("--task="):
+            task_arg = arg.split("=", 1)[1].strip().lower()
+
     daemon_mode = "--daemon" in sys.argv or "--watch" in sys.argv
 
-    articles = run_pipeline()
+    # Selective task execution
+    if task_arg == "game":
+        run_game_pipeline(max_games=5, sync_supabase=True)
+        return
+    elif task_arg in ("pc", "pc_build", "build"):
+        run_pc_build_pipeline(sync_supabase=True)
+        return
+    elif task_arg == "laptop":
+        run_laptop_pipeline(sync_supabase=True)
+        return
+    elif task_arg in ("esports", "news"):
+        run_esports_pipeline(sync_supabase=True)
+        return
+    elif task_arg in ("journal", "journalism"):
+        run_journal_pipeline(max_articles=3, sync_supabase=True)
+        return
+
+    # Master full execution
+    articles = run_full_pipeline()
     if not articles:
         print("[Pipeline] No articles compiled.", file=sys.stderr)
         return
 
-    success = sync_to_supabase(articles)
-    if not success:
-        print("[Pipeline] Supabase sync failed.", file=sys.stderr)
-        return
+    sync_all_articles(articles)
 
     if not daemon_mode:
-        print("🎉 One-shot complete dynamic pipeline completed successfully.")
+        print("\n🎉 Master pipeline execution completed successfully.")
         return
 
-    print("🚀 Jinssi Publishing Daemon running in background on a 7-day silent rotation...")
+    print("\n🚀 Jinssi Publishing Daemon running in background on a 7-day silent rotation...")
     while True:
         time.sleep(6 * 3600)
-        now_ms = int(datetime.now().timestamp() * 1000)
-        expires_at = articles[0]["expiresAt"] if articles and "expiresAt" in articles[0] else now_ms
-        if now_ms >= expires_at - (3600 * 1000):
-            print("⏳ 7-day cycle expiring. Running dynamic publication rotation...")
-            articles = run_pipeline()
-            if articles:
-                sync_to_supabase(articles)
+        articles = run_full_pipeline()
+        if articles:
+            sync_all_articles(articles)
 
 
 if __name__ == "__main__":

@@ -145,6 +145,53 @@ def search_amazon_live_product(search_query: str) -> dict:
     except Exception as e:
         print(f"[ScraperWorker] Amazon search failed for '{search_query}': {e}", file=sys.stderr)
 
+    # Dynamic fallback: Query You.com to discover live Amazon product ASINs organically
+    print(f"  [ScraperWorker] Discovering Amazon ASIN via You.com search for '{search_query}'...")
+    you_hits = search_you_web(f"site:amazon.com/dp/ {search_query}", count=5)
+    asins = []
+    for hit in you_hits:
+        m = re.search(r"amazon\.com(?:/[^/]+)?/dp/([A-Z0-9]{10})", hit.get("url", ""))
+        if m and m.group(1) not in asins:
+            asins.append(m.group(1))
+
+    for asin in asins[:3]:
+        dp_url = f"https://www.amazon.com/dp/{asin}"
+        dp_req = urllib.request.Request(dp_url, headers=HEADERS)
+        try:
+            with urllib.request.urlopen(dp_req, timeout=10) as dp_resp:
+                dp_html = dp_resp.read().decode("utf-8", errors="ignore")
+                title_m = re.search(r'<span[^>]*id=\"productTitle\"[^>]*>(.*?)</span>', dp_html, re.DOTALL)
+                if not title_m:
+                    continue
+                raw_title = clean_html(title_m.group(1))
+                if len(raw_title) < 5:
+                    continue
+                hires_imgs = list(dict.fromkeys(re.findall(r'\"hiRes\":\"(https://m\.media-amazon\.com/images/I/[^\"]+)\"', dp_html)))
+                if not hires_imgs:
+                    hires_imgs = list(dict.fromkeys(re.findall(r'\"large\":\"(https://m\.media-amazon\.com/images/I/[^\"]+)\"', dp_html)))
+                if not hires_imgs:
+                    hires_imgs = list(dict.fromkeys(re.findall(r'https://m\.media-amazon\.com/images/I/[A-Za-z0-9%_\+\-]+\.jpg', dp_html)))
+                if not hires_imgs:
+                    continue
+                price = "$59.99"
+                price_m = re.search(r'<span[^>]*class=\"a-price-whole\"[^>]*>([0-9,]+)<span[^>]*class=\"a-price-decimal\"[^>]*>\.</span></span><span[^>]*class=\"a-price-fraction\"[^>]*>([0-9]+)</span>', dp_html)
+                if price_m:
+                    price = f"${price_m.group(1).replace(',', '')}.{price_m.group(2)}"
+                gallery = [{"url": u.replace("\\", ""), "alt": f"{raw_title[:60]} Angle {i+1}"} for i, u in enumerate(hires_imgs[:8])]
+                bullets = re.findall(r'<li[^>]*><span[^>]*class=\"a-list-item\"[^>]*>(.*?)</span></li>', dp_html, re.DOTALL)
+                clean_bullets = [clean_html(b) for b in bullets if len(clean_html(b)) > 20 and "sponsored" not in b.lower()]
+                return {
+                    "asin": asin,
+                    "title": raw_title,
+                    "price": price,
+                    "coverImage": hires_imgs[0].replace("\\", ""),
+                    "gallery": gallery,
+                    "buyUrl": dp_url,
+                    "bullets": clean_bullets[:4]
+                }
+        except Exception:
+            continue
+
     return {}
 
 
