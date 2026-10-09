@@ -1,3 +1,26 @@
+export interface SpecItem {
+  label: string;
+  value: string;
+}
+
+export interface SpecCategory {
+  category: string;
+  specs: SpecItem[];
+}
+
+export interface ComparisonTableData {
+  headers: string[];
+  rows: string[][];
+  highlightColIndex?: number;
+}
+
+export interface SourceCitationItem {
+  title: string;
+  publisher: string;
+  url: string;
+  note?: string;
+}
+
 export interface ArticleSection {
   heading?: string;
   content: string[]; // array of paragraphs
@@ -10,6 +33,12 @@ export interface ArticleSection {
     title: string;
     text: string;
   };
+  // GSMArena-style Hardware Review Components
+  pros?: string[];
+  cons?: string[];
+  specSheet?: SpecCategory[];
+  comparisonTable?: ComparisonTableData;
+  sourcesList?: SourceCitationItem[];
 }
 
 export interface Article {

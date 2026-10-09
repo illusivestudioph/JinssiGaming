@@ -239,107 +239,347 @@ export function ArticleView({
             )}
           </div>
 
-          {/* Body Sections - Rich Blog Form */}
-          <div className="space-y-10 font-sans text-ink-800 leading-relaxed text-base sm:text-lg">
-            {article.sections.map((section, idx) => (
-              <section key={idx} className="space-y-4">
-                {section.heading && (
-                  <h2 className="font-display text-xl sm:text-2xl font-bold text-ink-900 pt-4 border-b border-tan-200/60 pb-2.5">
-                    {section.heading}
-                  </h2>
-                )}
+          {/* Body Sections - Rich GSMArena-Style Architecture */}
+          <div className="space-y-12 font-sans text-ink-800 leading-relaxed text-base sm:text-lg">
+            {article.sections.map((section, idx) => {
+              // Helper to parse markdown links [label](url), bold **text**, and bullet items
+              const renderFormattedParagraph = (text: string, isFirstPara: boolean) => {
+                const isBullet = text.trim().startsWith('•') || text.trim().startsWith('-');
+                const cleanText = isBullet ? text.trim().replace(/^[•-]\s*/, '') : text;
 
-                {section.content.map((para, pIdx) => (
+                const parts: React.ReactNode[] = [];
+                const linkRegex = /\[(.*?)\]\((https?:\/\/.*?)\)/g;
+                let lastIndex = 0;
+                let match;
+
+                while ((match = linkRegex.exec(cleanText)) !== null) {
+                  if (match.index > lastIndex) {
+                    parts.push(cleanText.substring(lastIndex, match.index));
+                  }
+                  const label = match[1];
+                  const url = match[2];
+                  parts.push(
+                    <a
+                      key={`link-${match.index}`}
+                      href={url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-peach-600 hover:text-peach-700 underline font-semibold transition-colors inline-flex items-center gap-0.5"
+                    >
+                      <span>{label}</span>
+                      <ExternalLink size={11} className="inline-block" />
+                    </a>
+                  );
+                  lastIndex = linkRegex.lastIndex;
+                }
+
+                if (lastIndex < cleanText.length) {
+                  parts.push(cleanText.substring(lastIndex));
+                }
+
+                if (isBullet) {
+                  return (
+                    <li className="flex items-start gap-2.5 text-ink-800 leading-relaxed font-sans text-base sm:text-lg">
+                      <span className="w-1.5 h-1.5 rounded-full bg-peach-500 mt-2.5 shrink-0" />
+                      <span className="flex-1">{parts}</span>
+                    </li>
+                  );
+                }
+
+                return (
                   <p
-                    key={pIdx}
                     className={`leading-relaxed font-sans text-ink-800 ${
-                      idx === 0 && pIdx === 0
+                      isFirstPara
                         ? 'text-lg sm:text-xl font-medium text-ink-900 first-letter:text-4xl first-letter:font-bold first-letter:font-display first-letter:text-peach-600 first-letter:float-left first-letter:mr-2 first-letter:leading-none'
                         : ''
                     }`}
                   >
-                    {para}
+                    {parts}
                   </p>
-                ))}
+                );
+              };
 
-                {section.image && (
-                  <div className="section-image-box my-6 rounded-2xl overflow-hidden shadow-cozy-sm border border-tan-200 bg-cream-200">
-                    <img
-                      src={getOptimizedImageUrl(section.image, { width: 900, quality: 80, format: 'webp' })}
-                      alt={section.imageAlt || 'Illustration'}
-                      className="w-full h-auto max-h-[420px] object-cover"
-                      loading="lazy"
-                      decoding="async"
-                      onError={(e) => {
-                        const target = e.currentTarget as HTMLImageElement;
-                        if (!target.dataset.triedFallback && article.coverImage && target.src !== article.coverImage) {
-                          target.dataset.triedFallback = 'true';
-                          target.src = article.coverImage;
-                        } else {
-                          const box = target.closest('.section-image-box') as HTMLElement;
-                          if (box) box.style.display = 'none';
-                        }
-                      }}
-                    />
-                    {section.imageAlt && (
-                      <p className="text-xs text-tan-600 p-2.5 bg-cream-50 text-center italic border-t border-tan-200/50">
-                        {section.imageAlt}
-                      </p>
+              return (
+                <section key={idx} className="space-y-4">
+                  {section.heading && (
+                    <h2 className="font-display text-xl sm:text-2xl font-bold text-ink-900 pt-4 border-b border-tan-200/60 pb-2.5">
+                      {section.heading}
+                    </h2>
+                  )}
+
+                  {/* Paragraph Content & Bullet Parsing */}
+                  <div className="space-y-3">
+                    {section.content.map((para, pIdx) => (
+                      <div key={pIdx}>
+                        {renderFormattedParagraph(para, idx === 0 && pIdx === 0)}
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* GSMArena-Style Spec Sheet Table */}
+                  {section.specSheet && section.specSheet.length > 0 && (
+                    <div className="gsm-spec-sheet my-8 rounded-2xl overflow-hidden border-2 border-tan-300 bg-white shadow-cozy-sm">
+                      <div className="bg-ink-900 text-cream-50 px-5 py-3 flex items-center justify-between">
+                        <span className="font-display font-bold text-xs sm:text-sm tracking-wide uppercase flex items-center gap-2">
+                          📊 Technical Specifications Sheet (Lab Verified)
+                        </span>
+                        <span className="text-[11px] text-peach-300 font-mono">Jinssi Hardware DB</span>
+                      </div>
+                      <div className="divide-y divide-tan-200">
+                        {section.specSheet.map((cat, cIdx) => (
+                          <div key={cIdx} className="grid grid-cols-1 md:grid-cols-4 bg-cream-50/40">
+                            <div className="p-3.5 md:border-r border-tan-200 bg-cream-100/70 font-display font-bold text-xs uppercase tracking-wider text-earth-800 flex items-center">
+                              {cat.category}
+                            </div>
+                            <div className="col-span-3 p-0 divide-y divide-tan-100">
+                              {cat.specs.map((item, sIdx) => (
+                                <div
+                                  key={sIdx}
+                                  className="grid grid-cols-3 sm:grid-cols-4 p-2.5 text-xs sm:text-sm hover:bg-cream-100/50 transition-colors"
+                                >
+                                  <span className="font-semibold text-tan-600 col-span-1">{item.label}</span>
+                                  <span className="font-medium text-ink-900 col-span-2 sm:col-span-3">
+                                    {item.value}
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* GSMArena-Style Pros & Cons Comparison */}
+                  {((section.pros && section.pros.length > 0) || (section.cons && section.cons.length > 0)) && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-8">
+                      {section.pros && section.pros.length > 0 && (
+                        <div className="p-5 rounded-2xl bg-emerald-50/90 border-2 border-emerald-300 shadow-cozy-xs space-y-3">
+                          <div className="flex items-center gap-2 text-emerald-800 font-display font-extrabold text-xs sm:text-sm tracking-wide uppercase">
+                            <span className="w-5 h-5 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs font-bold">
+                              ✓
+                            </span>
+                            <span>PROS / ADVANTAGES</span>
+                          </div>
+                          <ul className="space-y-2 text-xs sm:text-sm text-emerald-950 font-medium">
+                            {section.pros.map((pro, pIdx) => (
+                              <li key={pIdx} className="flex items-start gap-2">
+                                <span className="text-emerald-600 font-bold mt-0.5">•</span>
+                                <span>{pro}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+
+                      {section.cons && section.cons.length > 0 && (
+                        <div className="p-5 rounded-2xl bg-rose-50/90 border-2 border-rose-300 shadow-cozy-xs space-y-3">
+                          <div className="flex items-center gap-2 text-rose-800 font-display font-extrabold text-xs sm:text-sm tracking-wide uppercase">
+                            <span className="w-5 h-5 rounded-full bg-rose-600 text-white flex items-center justify-center text-xs font-bold">
+                              ✕
+                            </span>
+                            <span>CONS / COMPROMISES</span>
+                          </div>
+                          <ul className="space-y-2 text-xs sm:text-sm text-rose-950 font-medium">
+                            {section.cons.map((con, cIdx) => (
+                              <li key={cIdx} className="flex items-start gap-2">
+                                <span className="text-rose-600 font-bold mt-0.5">•</span>
+                                <span>{con}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* GSMArena-Style Side-by-Side Comparison Table Matrix */}
+                  {section.comparisonTable && (
+                    <div className="my-8 rounded-2xl border-2 border-tan-300 overflow-hidden bg-white shadow-cozy-sm">
+                      <div className="bg-earth-900 text-white px-5 py-3 flex items-center justify-between">
+                        <span className="font-display font-bold text-xs sm:text-sm tracking-wide uppercase">
+                          ⚔️ Side-by-Side Lab Comparison Matrix
+                        </span>
+                        <span className="text-xs text-cream-200">Scroll horizontally ➔</span>
+                      </div>
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-left border-collapse text-xs sm:text-sm">
+                          <thead>
+                            <tr className="bg-cream-100 border-b border-tan-300">
+                              {section.comparisonTable.headers.map((h, hIdx) => {
+                                const isHighlight = hIdx === (section.comparisonTable?.highlightColIndex ?? 1);
+                                return (
+                                  <th
+                                    key={hIdx}
+                                    className={`p-3.5 font-display font-bold text-ink-900 ${
+                                      isHighlight
+                                        ? 'bg-peach-100 text-peach-900 border-x-2 border-peach-400'
+                                        : ''
+                                    }`}
+                                  >
+                                    {h}
+                                    {isHighlight && (
+                                      <span className="block text-[10px] uppercase font-sans text-peach-700 tracking-wider font-extrabold mt-0.5">
+                                        ★ Top Pick
+                                      </span>
+                                    )}
+                                  </th>
+                                );
+                              })}
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-tan-200">
+                            {section.comparisonTable.rows.map((row, rIdx) => (
+                              <tr
+                                key={rIdx}
+                                className={
+                                  rIdx % 2 === 0
+                                    ? 'bg-white'
+                                    : 'bg-cream-50/60 hover:bg-cream-100/50 transition-colors'
+                                }
+                              >
+                                {row.map((cell, cIdx) => {
+                                  const isHighlight = cIdx === (section.comparisonTable?.highlightColIndex ?? 1);
+                                  return (
+                                    <td
+                                      key={cIdx}
+                                      className={`p-3.5 ${
+                                        cIdx === 0
+                                          ? 'font-bold text-tan-700 bg-cream-100/40'
+                                          : 'text-ink-800 font-medium'
+                                      } ${
+                                        isHighlight
+                                          ? 'bg-peach-50/50 font-semibold text-ink-950 border-x-2 border-peach-300'
+                                          : ''
+                                      }`}
+                                    >
+                                      {cell}
+                                    </td>
+                                  );
+                                })}
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Section Image Box */}
+                  {section.image && (
+                    <div className="section-image-box my-6 rounded-2xl overflow-hidden shadow-cozy-sm border border-tan-200 bg-cream-200">
+                      <img
+                        src={getOptimizedImageUrl(section.image, { width: 900, quality: 80, format: 'webp' })}
+                        alt={section.imageAlt || 'Illustration'}
+                        className="w-full h-auto max-h-[420px] object-cover"
+                        loading="lazy"
+                        decoding="async"
+                        onError={(e) => {
+                          const target = e.currentTarget as HTMLImageElement;
+                          if (!target.dataset.triedFallback && article.coverImage && target.src !== article.coverImage) {
+                            target.dataset.triedFallback = 'true';
+                            target.src = article.coverImage;
+                          } else {
+                            const box = target.closest('.section-image-box') as HTMLElement;
+                            if (box) box.style.display = 'none';
+                          }
+                        }}
+                      />
+                      {section.imageAlt && (
+                        <p className="text-xs text-tan-600 p-2.5 bg-cream-50 text-center italic border-t border-tan-200/50">
+                          {section.imageAlt}
+                        </p>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Structured Multi-Source Cards */}
+                  {section.sourcesList && section.sourcesList.length > 0 && (
+                    <div className="my-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {section.sourcesList.map((src, sIdx) => (
+                        <a
+                          key={sIdx}
+                          href={src.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="p-4 rounded-xl bg-cream-50/80 border border-tan-300 hover:border-peach-400 hover:shadow-cozy-sm transition-all group flex flex-col justify-between"
+                        >
+                          <div>
+                            <div className="flex items-center justify-between gap-2 mb-1.5">
+                              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-cream-200 text-earth-800">
+                                {src.publisher}
+                              </span>
+                              <ExternalLink size={13} className="text-tan-400 group-hover:text-peach-600 transition-colors" />
+                            </div>
+                            <h4 className="font-display font-bold text-xs sm:text-sm text-ink-900 group-hover:text-peach-600 transition-colors line-clamp-2">
+                              {src.title}
+                            </h4>
+                            {src.note && (
+                              <p className="text-[11px] text-tan-500 mt-1 line-clamp-1">{src.note}</p>
+                            )}
+                          </div>
+                          <span className="text-[11px] font-bold text-peach-600 mt-2 inline-flex items-center gap-1">
+                            Read original report &rarr;
+                          </span>
+                        </a>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Section Links */}
+                  <div className="pt-2 pb-2 flex flex-wrap items-center gap-3">
+                    {section.steamLink && (
+                      <a
+                        href={section.steamLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-ink-900 hover:bg-ink-800 text-cream-50 text-xs font-bold transition-all hover:scale-[1.02] shadow-cozy-xs"
+                      >
+                        <ExternalLink size={13} className="text-peach-400" />
+                        <span>View on Steam Store</span>
+                      </a>
+                    )}
+
+                    {section.sourceLink && (
+                      <a
+                        href={section.sourceLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-earth-500 hover:bg-earth-600 text-cream-50 text-xs font-bold transition-all hover:scale-[1.02] shadow-cozy-xs"
+                      >
+                        <ExternalLink size={13} className="text-cream-200" />
+                        <span>Original Source Announcement</span>
+                      </a>
+                    )}
+
+                    {section.playStoreLink && (
+                      <a
+                        href={section.playStoreLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-emerald-800 hover:bg-emerald-700 text-cream-50 text-xs font-bold transition-all hover:scale-[1.02] shadow-cozy-xs"
+                      >
+                        <ExternalLink size={13} className="text-emerald-300" />
+                        <span>Get on Google Play</span>
+                      </a>
                     )}
                   </div>
-                )}
 
-                <div className="pt-2 pb-2 flex flex-wrap items-center gap-3">
-                  {section.steamLink && (
-                    <a
-                      href={section.steamLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-ink-900 hover:bg-ink-800 text-cream-50 text-xs font-bold transition-all hover:scale-[1.02] shadow-cozy-xs"
-                    >
-                      <ExternalLink size={13} className="text-peach-400" />
-                      <span>View on Steam Store</span>
-                    </a>
-                  )}
-
-                  {section.sourceLink && (
-                    <a
-                      href={section.sourceLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-earth-500 hover:bg-earth-600 text-cream-50 text-xs font-bold transition-all hover:scale-[1.02] shadow-cozy-xs"
-                    >
-                      <ExternalLink size={13} className="text-cream-200" />
-                      <span>Original Source Announcement</span>
-                    </a>
-                  )}
-
-                  {section.playStoreLink && (
-                    <a
-                      href={section.playStoreLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-emerald-800 hover:bg-emerald-700 text-cream-50 text-xs font-bold transition-all hover:scale-[1.02] shadow-cozy-xs"
-                    >
-                      <ExternalLink size={13} className="text-emerald-300" />
-                      <span>Get on Google Play</span>
-                    </a>
-                  )}
-                </div>
-
-                {section.callout && (
-                  <div className="my-6 p-5 rounded-2xl bg-peach-50/80 border-2 border-dashed border-peach-300 relative">
-                    <div className="flex items-center gap-2 text-peach-800 font-bold text-sm mb-1.5">
-                      <Bookmark className="w-4 h-4 text-peach-600" />
-                      <span>{section.callout.title}</span>
+                  {/* Callout Box */}
+                  {section.callout && (
+                    <div className="my-6 p-5 rounded-2xl bg-peach-50/80 border-2 border-dashed border-peach-300 relative">
+                      <div className="flex items-center gap-2 text-peach-800 font-bold text-sm mb-1.5">
+                        <Bookmark className="w-4 h-4 text-peach-600" />
+                        <span>{section.callout.title}</span>
+                      </div>
+                      <p className="text-sm text-ink-700 font-medium leading-relaxed">
+                        {section.callout.text}
+                      </p>
                     </div>
-                    <p className="text-sm text-ink-700 font-medium leading-relaxed">
-                      {section.callout.text}
-                    </p>
-                  </div>
-                )}
-              </section>
-            ))}
+                  )}
+                </section>
+              );
+            })}
           </div>
 
           {/* Related Walkthrough Link if applicable */}
