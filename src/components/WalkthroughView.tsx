@@ -344,14 +344,6 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
           </span>
         </>
       )}
-
-      {/* Category Pill */}
-      <span
-        className="absolute bottom-3 left-3 sm:bottom-4 sm:left-4 z-20 pill text-cream-50 text-xs shadow-cozy-sm backdrop-blur-md category-accent-pill border border-white/10"
-        style={{ backgroundColor: 'var(--theme-accent)' }}
-      >
-        {game.category}
-      </span>
     </div>
   );
 
@@ -403,13 +395,6 @@ export function WalkthroughView({ game, onBack }: WalkthroughViewProps) {
                   <span>Cover Artwork {allCovers.length > 1 ? `(${allCovers.length})` : ''}</span>
                 </button>
               </div>
-
-              <span
-                className="pill text-cream-50 text-[11px] shadow-cozy-xs category-accent-pill hidden sm:inline-block"
-                style={{ backgroundColor: 'var(--theme-accent)' }}
-              >
-                {game.category}
-              </span>
             </div>
 
             {/* Active Media Display */}

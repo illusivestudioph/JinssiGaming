@@ -527,38 +527,18 @@ function WalkthroughsPage({
   progressMap: Record<string, number>;
 }) {
   const { games } = useSiteContent(); 
-  const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState('');
 
-  const availableCategories = useMemo(() => {
-    const list = ['All'];
-    categories.forEach((c) => {
-      if (c !== 'All' && !list.includes(c)) list.push(c);
-    });
-    games.forEach((g) => {
-      if (g.category && !list.includes(g.category.trim())) {
-        list.push(g.category.trim());
-      }
-    });
-    return list;
-  }, [games]);
-
   const filteredGames = useMemo(() => {
-    return games.filter((game) => {
-      const matchesCategory =
-        selectedCategory === 'All' || game.category === selectedCategory;
-
-      const q = searchQuery.toLowerCase().trim();
-      const matchesSearch =
-        !q ||
-        game.title.toLowerCase().includes(q) ||
-        game.developer.toLowerCase().includes(q) ||
-        game.description.toLowerCase().includes(q) ||
-        (game.category && game.category.toLowerCase().includes(q));
-
-      return matchesCategory && matchesSearch;
-    });
-  }, [games, selectedCategory, searchQuery]);
+    const q = searchQuery.toLowerCase().trim();
+    if (!q) return games;
+    return games.filter((game) =>
+      game.title.toLowerCase().includes(q) ||
+      game.developer.toLowerCase().includes(q) ||
+      game.description.toLowerCase().includes(q) ||
+      (game.category && game.category.toLowerCase().includes(q))
+    );
+  }, [games, searchQuery]);
 
   return (
     <div className="w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-8 sm:py-12 animate-fade-in min-w-0">
@@ -578,9 +558,8 @@ function WalkthroughsPage({
         </p>
       </div>
 
-      {/* Search & Filter Controls */}
-      <div className="mb-10 space-y-4 max-w-4xl mx-auto">
-        {/* Search Bar */}
+      {/* Search Bar */}
+      <div className="mb-10 max-w-4xl mx-auto">
         <div className="relative">
           <StreamlineSearch className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-tan-400 pointer-events-none" />
           <input
@@ -599,38 +578,18 @@ function WalkthroughsPage({
             </button>
           )}
         </div>
-
-        {/* Category Pill Filters */}
-        <div className="flex flex-wrap gap-2 justify-center items-center">
-          {availableCategories.map((category) => (
-            <button
-              key={category}
-              onClick={() => setSelectedCategory(category)}
-              className={`category-filter-pill px-4 py-1.5 rounded-xl text-xs font-bold transition-all shadow-cozy-sm ${
-                selectedCategory === category
-                  ? 'category-filter-active bg-peach-500 text-white shadow-cozy-md scale-105'
-                  : 'category-filter-inactive bg-cream-100 text-tan-600 hover:bg-cream-200 hover:text-ink-900 border border-tan-200'
-              }`}
-            >
-              {category}
-            </button>
-          ))}
-        </div>
       </div>
 
       {/* Games Grid */}
       {filteredGames.length === 0 ? (
         <div className="notepad-card p-12 text-center max-w-md mx-auto">
           <p className="text-lg font-bold text-ink-800 mb-2">No walkthroughs found</p>
-          <p className="text-sm text-tan-500 mb-4">Try adjusting your search terms or selecting another category.</p>
+          <p className="text-sm text-tan-500 mb-4">Try adjusting your search terms.</p>
           <button
-            onClick={() => {
-              setSelectedCategory('All');
-              setSearchQuery('');
-            }}
+            onClick={() => setSearchQuery('')}
             className="px-4 py-2 bg-peach-500 text-white text-xs font-bold rounded-xl shadow-cozy-sm hover:bg-peach-600 transition-colors"
           >
-            Reset Filters
+            Clear Search
           </button>
         </div>
       ) : (

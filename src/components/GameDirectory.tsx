@@ -20,18 +20,6 @@ export function GameDirectory({
 }: GameDirectoryProps) {
   const { games } = useSiteContent(); 
   const [search, setSearch] = useState('');
-  const [activeCategory, setActiveCategory] = useState('All');
-
-  const availableCategories = useMemo(() => {
-    const set = new Set<string>();
-    categories.filter((c) => c !== 'All').forEach((c) => set.add(c));
-    games.forEach((g) => {
-      if (g.category && g.category.trim()) {
-        set.add(g.category.trim());
-      }
-    });
-    return ['All', ...Array.from(set)];
-  }, [games]);
 
   const filteredGames = useMemo(() => {
     return games.filter((game) => {
@@ -39,11 +27,9 @@ export function GameDirectory({
         game.title.toLowerCase().includes(search.toLowerCase()) ||
         game.developer.toLowerCase().includes(search.toLowerCase()) ||
         game.description.toLowerCase().includes(search.toLowerCase());
-      const matchesCategory =
-        activeCategory === 'All' || game.category === activeCategory;
-      return matchesSearch && matchesCategory;
+      return matchesSearch;
     });
-  }, [games, search, activeCategory]);
+  }, [games, search]);
 
   const displayedGames = limit ? filteredGames.slice(0, limit) : filteredGames;
 
@@ -76,9 +62,9 @@ export function GameDirectory({
         )}
       </div>
 
-      {/* Search and category controls (shown when browsing full directory) */}
+      {/* Search controls (shown when browsing full directory) */}
       {!limit && (
-        <div className="game-directory-tools mb-8">
+        <div className="game-directory-tools mb-8 max-w-3xl mx-auto">
           <div className="relative flex-1">
             <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-tan-400" />
             <input
@@ -88,22 +74,6 @@ export function GameDirectory({
               placeholder="Search games, developers, or keywords..."
               className="w-full pl-14 pr-6 py-4 rounded-full bg-cream-50 border-2 border-cream-300 text-ink-900 placeholder-tan-400 font-medium focus:outline-none focus:border-peach-300 shadow-cozy-sm transition-all duration-300"
             />
-          </div>
-          <div className="game-directory-filters">
-            <SlidersHorizontal className="w-4 h-4 text-tan-400" />
-            {availableCategories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setActiveCategory(cat)}
-                className={`pill transition-all duration-300 ${
-                  activeCategory === cat
-                    ? 'bg-peach-400 text-cream-50 shadow-cozy-sm scale-105 is-active'
-                    : 'bg-cream-200 text-tan-500 hover:bg-cream-300 hover:text-ink-900'
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
           </div>
         </div>
       )}
