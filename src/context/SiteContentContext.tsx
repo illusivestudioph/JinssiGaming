@@ -199,10 +199,35 @@ function normalizeContent(parsed: Partial<SavedContent> | null | undefined): Sav
     : [];
   const normalizedProducts: StoreProduct[] = cleanProducts.length > 0 ? cleanProducts : initialProducts;
 
-  // Requests normalization
-  const normalizedRequests: CommunityRequest[] = Array.isArray(parsed?.requests) && parsed.requests.length > 0
-    ? parsed.requests
-    : initialRequests;
+  // Requests normalization: strictly purge fake requests and retain The Children of Mu + user requests
+  const legacyFakeRequestIds = new Set(['req-1', 'req-2', 'req-4', 'req-5']);
+  const legacyFakeTitles = new Set([
+    'the great gatsby (f. scott fitzgerald)',
+    'the great gatsby',
+    'rusty\'s retirement - complete automation guide',
+    'rusty\'s retirement',
+    'fields of mistria - complete cooking & recipe guide',
+    'fields of mistria',
+    'dracula (bram stoker)',
+    'dracula',
+  ]);
+
+  let normalizedRequests: CommunityRequest[] = [];
+  if (Array.isArray(parsed?.requests) && parsed.requests.length > 0) {
+    normalizedRequests = parsed.requests.filter((r) => {
+      if (!r || !r.id) return false;
+      if (legacyFakeRequestIds.has(r.id)) return false;
+      const lowerTitle = String(r.title || '').toLowerCase().trim();
+      if (legacyFakeTitles.has(lowerTitle)) return false;
+      return true;
+    });
+  }
+
+  // Ensure The Children of Mu request is always present
+  const childrenOfMuReq = initialRequests[0];
+  if (childrenOfMuReq && !normalizedRequests.some((r) => r.id === 'req-3' || r.title.toLowerCase().includes('children of mu'))) {
+    normalizedRequests = [childrenOfMuReq, ...normalizedRequests];
+  }
 
   // All games are manually managed by the user. Never delete, filter, or overwrite them with static mock data.
   const normalizedGames = Array.isArray(parsed?.games) && parsed.games.length > 0
