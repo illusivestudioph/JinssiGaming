@@ -1,6 +1,8 @@
 import { useState, useMemo, useEffect } from 'react';
 import type { Story } from '@/data/stories';
+import { isRequestedStory } from '@/data/stories';
 import { useSiteContent } from '@/context/SiteContentContext';
+import { useAuth } from '@/context/AuthContext';
 import {
   searchGutenbergBooks,
   convertGutenbergToStory,
@@ -45,6 +47,7 @@ interface SavedProgress {
 
 export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
   const { stories } = useSiteContent();
+  const { user, triggerAuthPrompt } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState<string>('All Classics');
   const [books, setBooks] = useState<GutenbergBook[]>([]);
@@ -131,6 +134,13 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
 
   // Open book and parse full unabridged text
   const handleReadBook = async (book: GutenbergBook) => {
+    if ((book.id === 77375 || book.isPinned) && !user) {
+      triggerAuthPrompt(
+        `Sign in with your Jinssi account to read "${book.title}" and access all community-requested books!`
+      );
+      return;
+    }
+
     setLoadingBookId(book.id);
     setLoadingStatusText(`Connecting to Project Gutenberg archive (eBook #${book.id})...`);
     try {
@@ -465,6 +475,8 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pt-3">
               {matchingCustomStories.map((story) => {
                 const isSaved = isBookmarked(story.id);
+                const isRequested = isRequestedStory(story);
+
                 return (
                   <div
                     key={story.id}
@@ -496,6 +508,12 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
 
                       <div className="p-5">
                         <div className="flex items-center gap-1.5 flex-wrap mb-1.5">
+                          {isRequested && (
+                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-peach-500 text-white flex items-center gap-1 shadow-cozy-xs">
+                              <span>🔒</span>
+                              <span>Members Only</span>
+                            </span>
+                          )}
                           <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-peach-100 text-peach-800">
                             {story.genre}
                           </span>
@@ -519,7 +537,12 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
                         <h3 className="font-display font-bold text-base text-ink-900 line-clamp-1 mb-1">
                           {story.title}
                         </h3>
-                        <p className="text-xs text-tan-500 font-bold mb-2">By {story.author}</p>
+                        <p className="text-xs text-tan-500 font-bold mb-1">By {story.author}</p>
+                        {isRequested && story.requestedBy && (
+                          <p className="text-[11px] text-peach-700 font-semibold mb-2">
+                            Requested by: {story.requestedBy}
+                          </p>
+                        )}
                         <p className="text-xs text-ink-700 font-sans line-clamp-3 leading-relaxed mb-4">
                           {story.synopsis}
                         </p>
@@ -529,11 +552,29 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
                     <div className="px-5 pb-5 pt-2 border-t border-tan-200">
                       <button
                         type="button"
-                        onClick={() => onSelectStory(story, 1)}
-                        className="w-full site-button bg-peach-500 hover:bg-peach-600 text-white text-xs font-bold py-2.5 rounded-xl flex items-center justify-center gap-2 shadow-cozy-sm transition-all"
+                        onClick={() => {
+                          if (isRequested && !user) {
+                            triggerAuthPrompt(
+                              `Sign in with your Jinssi account to read "${story.title}" and access all community-requested books!`
+                            );
+                            return;
+                          }
+                          onSelectStory(story, 1);
+                        }}
+                        className={`w-full site-button ${
+                          isRequested && !user
+                            ? 'bg-peach-600 hover:bg-peach-700'
+                            : 'bg-peach-500 hover:bg-peach-600'
+                        } text-white text-xs font-bold py-2.5 rounded-xl flex items-center justify-center gap-2 shadow-cozy-sm transition-all`}
                       >
                         <StreamlineBookDuo className="w-4 h-4" />
-                        <span>{story.isPdfEbook ? 'Read PDF Edition' : 'Read Unabridged'}</span>
+                        <span>
+                          {isRequested && !user
+                            ? '🔒 Sign In to Read'
+                            : story.isPdfEbook
+                            ? 'Read PDF Edition'
+                            : 'Read Unabridged'}
+                        </span>
                         <ArrowRight className="w-3.5 h-3.5" />
                       </button>
                     </div>
@@ -568,6 +609,8 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {matchingCustomStories.map((story) => {
                   const isSaved = isBookmarked(story.id);
+                  const isRequested = isRequestedStory(story);
+
                   return (
                     <div
                       key={story.id}
@@ -599,6 +642,12 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
 
                         <div className="p-4">
                           <div className="flex items-center gap-1.5 flex-wrap mb-1.5">
+                            {isRequested && (
+                              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-peach-500 text-white flex items-center gap-1 shadow-cozy-xs">
+                                <span>🔒</span>
+                                <span>Members Only</span>
+                              </span>
+                            )}
                             <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-peach-100 text-peach-800">
                               {story.genre}
                             </span>
@@ -617,7 +666,12 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
                           <h4 className="font-display font-bold text-sm sm:text-base text-ink-900 line-clamp-1 mb-0.5">
                             {story.title}
                           </h4>
-                          <p className="text-xs text-tan-500 font-bold mb-2">By {story.author}</p>
+                          <p className="text-xs text-tan-500 font-bold mb-1">By {story.author}</p>
+                          {isRequested && story.requestedBy && (
+                            <p className="text-[11px] text-peach-700 font-semibold mb-1.5">
+                              Requested by: {story.requestedBy}
+                            </p>
+                          )}
                           <p className="text-xs text-ink-700 font-sans line-clamp-2 leading-relaxed mb-3">
                             {story.synopsis}
                           </p>
@@ -627,11 +681,29 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
                       <div className="px-4 pb-4 pt-2 border-t border-tan-100">
                         <button
                           type="button"
-                          onClick={() => onSelectStory(story, 1)}
-                          className="w-full site-button bg-peach-500 hover:bg-peach-600 text-white text-xs font-bold py-2 rounded-xl flex items-center justify-center gap-1.5 shadow-cozy-sm transition-all"
+                          onClick={() => {
+                            if (isRequested && !user) {
+                              triggerAuthPrompt(
+                                `Sign in with your Jinssi account to read "${story.title}" and access all community-requested books!`
+                              );
+                              return;
+                            }
+                            onSelectStory(story, 1);
+                          }}
+                          className={`w-full site-button ${
+                            isRequested && !user
+                              ? 'bg-peach-600 hover:bg-peach-700'
+                              : 'bg-peach-500 hover:bg-peach-600'
+                          } text-white text-xs font-bold py-2 rounded-xl flex items-center justify-center gap-1.5 shadow-cozy-sm transition-all`}
                         >
                           <StreamlineBookDuo className="w-3.5 h-3.5" />
-                          <span>{story.isPdfEbook ? 'Read PDF' : 'Read Now'}</span>
+                          <span>
+                            {isRequested && !user
+                              ? '🔒 Sign In to Read'
+                              : story.isPdfEbook
+                              ? 'Read PDF'
+                              : 'Read Now'}
+                          </span>
                           <ArrowRight className="w-3 h-3" />
                         </button>
                       </div>

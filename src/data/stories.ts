@@ -42,6 +42,29 @@ export interface Story {
   isPdfEbook?: boolean;
   pdfUrl?: string;
   pageCount?: number;
+  isRequestedBook?: boolean;
+  requestedBy?: string;
+  isMembersOnly?: boolean;
+}
+
+/**
+ * Helper to check whether a book was requested by the community and requires member sign-in to read.
+ */
+export function isRequestedStory(story: Story): boolean {
+  if (story.isRequestedBook || story.isMembersOnly || Boolean(story.requestedBy)) {
+    return true;
+  }
+  if (story.tags && Array.isArray(story.tags)) {
+    return story.tags.some((t) => {
+      const lower = t.toLowerCase();
+      return (
+        lower.includes('community request') ||
+        lower.includes('requested book') ||
+        lower.includes('member request')
+      );
+    });
+  }
+  return false;
 }
 
 export const storyGenres = [
@@ -67,6 +90,7 @@ export const CHILDREN_OF_MU_STORY: Story = {
   status: 'Completed',
   genre: 'Adventure & Sci-Fi',
   tags: [
+    'Community Request',
     'Pinned eBook',
     'Unabridged PDF',
     'Lost Continent of Mu',
@@ -80,6 +104,9 @@ export const CHILDREN_OF_MU_STORY: Story = {
   isPublicDomain: true,
   isPinned: true,
   isPdfEbook: true,
+  isRequestedBook: true,
+  requestedBy: 'ArchaeologyFan',
+  isMembersOnly: true,
   pdfUrl:
     'https://esjwkwgjnesyvnvuonmd.supabase.co/storage/v1/object/public/site-images/ebooks/childrenofmu0000chur.pdf',
   pageCount: 300,
@@ -100,11 +127,20 @@ export const THE_SECRET_GARDEN_STORY: Story = {
   coverAlt: 'Victorian edition cover for The Secret Garden',
   status: 'Completed',
   genre: 'Classic Literature',
-  tags: ['Nature & Gardens', 'Healing & Growth', 'Yorkshire Moors', 'Heartwarming Classic'],
+  tags: [
+    'Community Request',
+    'Nature & Gardens',
+    'Healing & Growth',
+    'Yorkshire Moors',
+    'Heartwarming Classic',
+  ],
   totalChapters: 3,
   rating: 5,
   readsCount: 89400,
   isPublicDomain: true,
+  isRequestedBook: true,
+  requestedBy: 'Aria M. (Community Wishlist)',
+  isMembersOnly: true,
   chapters: [
     {
       id: 'sg-ch-1',

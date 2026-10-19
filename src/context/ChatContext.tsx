@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback, use
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/lib/supabase';
 import { RealtimeChannel } from '@supabase/supabase-js';
-import { ChatMessage, ChatChannel, Friend, RedditUserProfileData } from '@/types/chat';
+import { ChatMessage, ChatChannel, Friend, RedditUserProfileData, PresenceUser } from '@/types/chat';
 import {
   getLocalMessages,
   saveMessageLocally,
@@ -11,6 +11,7 @@ import {
   cleanOldSupabaseMessages,
   getStoredFriends,
   saveStoredFriends,
+  isDmForPartner,
 } from '@/utils/chatStorage';
 
 interface ChatContextType {
@@ -32,6 +33,10 @@ interface ChatContextType {
   closeProfile: () => void;
   broadcastBannerUpdate: (username: string, bannerColor: string, bannerText: string) => void;
   unreadCount: number;
+  realtimeStatus: 'connecting' | 'connected' | 'disconnected';
+  onlinePresenceUsers: PresenceUser[];
+  onlineUserCount: number;
+  refreshMessages: () => Promise<void>;
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -45,32 +50,91 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   const [friends, setFriends] = useState<Friend[]>(() => getStoredFriends());
   const [unreadCount, setUnreadCount] = useState(0);
   const [activeProfileUser, setActiveProfileUser] = useState<RedditUserProfileData | null>(null);
+  const [realtimeStatus, setRealtimeStatus] = useState<'connecting' | 'connected' | 'disconnected'>('connecting');
+  const [onlinePresenceUsers, setOnlinePresenceUsers] = useState<PresenceUser[]>([]);
+
   const realtimeChannelRef = useRef<RealtimeChannel | null>(null);
+  const channelRef = useRef<ChatChannel>(channel);
+  const activeDmPartnerRef = useRef<Friend | null>(activeDmPartner);
+  const guestSessionId = useRef<string>(Math.random().toString(36).substring(2, 9));
+
+  // Sync refs to avoid stale closures in WebSocket event listeners
+  useEffect(() => {
+    channelRef.current = channel;
+  }, [channel]);
+
+  useEffect(() => {
+    activeDmPartnerRef.current = activeDmPartner;
+  }, [activeDmPartner]);
 
   // Initialize and run weekly cleanup on boot
   useEffect(() => {
     void cleanOldSupabaseMessages();
   }, []);
 
-  // Supabase Realtime Broadcast WebSocket Subscription (Pushes messages to other users instantly)
+  // Track presence for the current traveler
+  const trackMyPresence = useCallback(() => {
+    const ch = realtimeChannelRef.current;
+    if (!ch) return;
+
+    const isUserCreator = Boolean(
+      profile.isCreator ||
+      profile.email === 'mjhanesultancruz1514@gmail.com' ||
+      user?.email === 'mjhanesultancruz1514@gmail.com'
+    );
+
+    const displayName = isUserCreator
+      ? 'Jinssi'
+      : (profile.username || (user?.email ? user.email.split('@')[0] : 'Guest Traveler'));
+
+    const guestId = guestSessionId.current;
+
+    const myPresence: PresenceUser = {
+      id: user?.id || `guest-${guestId}`,
+      username: displayName,
+      avatarConfig: profile.avatarConfig || { seed: displayName },
+      badge: isUserCreator ? 'Creator & Developer' : (profile.badge || 'Cozy Explorer'),
+      isCreator: isUserCreator,
+      onlineAt: new Date().toISOString(),
+    };
+
+    void ch.track(myPresence);
+  }, [user, profile]);
+
+  // Supabase Realtime WebSocket Subscription (Broadcast + Presence)
   useEffect(() => {
+    setRealtimeStatus('connecting');
+
     const ch = supabase.channel('jinssi_chat_room', {
-      config: { broadcast: { self: false } },
+      config: {
+        broadcast: { self: false },
+        presence: { key: user?.id || 'guest-' + Math.random().toString(36).substring(2, 9) },
+      },
     });
 
+    // 1. Broadcast listener for instant incoming chat messages
     ch.on('broadcast', { event: 'chat_message' }, ({ payload }: { payload: ChatMessage }) => {
       if (!payload || !payload.id) return;
 
-      // 1. Save incoming message to local archive
+      // Save to local cache
       saveMessageLocally(payload);
 
-      // 2. Append to active message feed if not already present
-      setMessages((prev) => {
-        if (prev.some((m) => m.id === payload.id)) return prev;
-        return [...prev, payload];
-      });
+      // Check if this message belongs in the current visible channel
+      const curChannel = channelRef.current;
+      const curDmPartner = activeDmPartnerRef.current;
 
-      // 3. Increment unread indicator if chat is closed
+      const shouldDisplay =
+        (payload.channel === 'world' && curChannel === 'world') ||
+        (payload.channel === 'dm' && curChannel === 'dm' && isDmForPartner(payload, curDmPartner));
+
+      if (shouldDisplay) {
+        setMessages((prev) => {
+          if (prev.some((m) => m.id === payload.id)) return prev;
+          return [...prev, payload];
+        });
+      }
+
+      // Increment unread indicator if chat window is minimized
       setIsOpen((open) => {
         if (!open) {
           setUnreadCount((c) => c + 1);
@@ -79,7 +143,35 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       });
     });
 
-    // Realtime World Sync for profile banners
+    // 2. Realtime Presence Sync: Track all live connected travelers worldwide
+    ch.on('presence', { event: 'sync' }, () => {
+      const state = ch.presenceState();
+      const presenceList: PresenceUser[] = [];
+      const seenIds = new Set<string>();
+
+      Object.values(state).forEach((presences) => {
+        if (Array.isArray(presences)) {
+          presences.forEach((p: unknown) => {
+            const item = p as Partial<PresenceUser> & { id?: string };
+            if (item && item.id && !seenIds.has(item.id)) {
+              seenIds.add(item.id);
+              presenceList.push({
+                id: item.id,
+                username: item.username || 'Traveler',
+                avatarConfig: item.avatarConfig || {},
+                badge: item.badge || 'Cozy Explorer',
+                isCreator: Boolean(item.isCreator),
+                onlineAt: item.onlineAt || new Date().toISOString(),
+              });
+            }
+          });
+        }
+      });
+
+      setOnlinePresenceUsers(presenceList);
+    });
+
+    // 3. Realtime World Sync for profile banners
     ch.on(
       'broadcast',
       { event: 'user_profile_banner_update' },
@@ -118,7 +210,28 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
 
     ch.subscribe((status) => {
       if (status === 'SUBSCRIBED') {
-        console.log('Connected to Cozy Realtime Chat WebSocket.');
+        setRealtimeStatus('connected');
+        console.log('🟢 World Sync Connected: Realtime WebSocket & Presence Active.');
+        // Track presence immediately upon subscribing
+        const isUserCreator = Boolean(
+          profile.isCreator ||
+          profile.email === 'mjhanesultancruz1514@gmail.com' ||
+          user?.email === 'mjhanesultancruz1514@gmail.com'
+        );
+        const displayName = isUserCreator
+          ? 'Jinssi'
+          : (profile.username || (user?.email ? user.email.split('@')[0] : 'Guest Traveler'));
+
+        void ch.track({
+          id: user?.id || `guest-${Math.random().toString(36).substring(2, 9)}`,
+          username: displayName,
+          avatarConfig: profile.avatarConfig || { seed: displayName },
+          badge: isUserCreator ? 'Creator & Developer' : (profile.badge || 'Cozy Explorer'),
+          isCreator: isUserCreator,
+          onlineAt: new Date().toISOString(),
+        });
+      } else if (status === 'CLOSED' || status === 'CHANNEL_ERROR') {
+        setRealtimeStatus('disconnected');
       }
     });
 
@@ -130,7 +243,14 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
-  // Poll / Refresh messages
+  // Update presence whenever user authentication or profile changes
+  useEffect(() => {
+    if (realtimeStatus === 'connected') {
+      trackMyPresence();
+    }
+  }, [user, profile, realtimeStatus, trackMyPresence]);
+
+  // Poll / Refresh messages from Supabase
   const refreshMessages = useCallback(async () => {
     const list = await fetchSupabaseMessages(channel, user?.id, activeDmPartner);
     setMessages(list);
@@ -140,7 +260,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     void refreshMessages();
     const timer = setInterval(() => {
       void refreshMessages();
-    }, 5000);
+    }, 4000);
     return () => clearInterval(timer);
   }, [refreshMessages]);
 
@@ -323,6 +443,10 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
         closeProfile,
         broadcastBannerUpdate,
         unreadCount,
+        realtimeStatus,
+        onlinePresenceUsers,
+        onlineUserCount: Math.max(1, onlinePresenceUsers.length),
+        refreshMessages,
       }}
     >
       {children}

@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { categories, type Game } from '@/data/games';
 import type { Article } from '@/types/article';
 import type { Story } from '@/data/stories';
+import { isRequestedStory } from '@/data/stories';
 import { GUTENBERG_ID_MAP } from '@/services/gutenberg';
 import { Header, type View } from '@/components/Header';
 import { GameDirectory } from '@/components/GameDirectory';
@@ -287,6 +288,12 @@ function AppContent() {
   };
 
   const handleSelectStory = (story: Story, chapterNumber: number = 1) => {
+    if (isRequestedStory(story) && !user) {
+      triggerAuthPrompt(
+        `Sign in with your Jinssi account to read "${story.title}" and access all community-requested books!`
+      );
+      return;
+    }
     setActiveStory(story);
     setSelectedStorySlug(story.slug);
     setSelectedStoryChapterNumber(chapterNumber);

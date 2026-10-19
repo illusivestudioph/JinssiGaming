@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import type { Story, StoryChapter, StoryGenre } from '@/data/stories';
 import { storyGenres } from '@/data/stories';
 import { supabase } from '@/lib/supabase';
@@ -29,6 +29,9 @@ interface BookImporterModalProps {
   onClose: () => void;
   onSaveBook: (story: Story) => void;
   onOpenStoryEditor?: (templateStory: Story) => void;
+  initialUrl?: string;
+  initialRequester?: string;
+  initialIsRequested?: boolean;
 }
 
 type ImportTab = 'url' | 'upload';
@@ -38,6 +41,9 @@ export function BookImporterModal({
   onClose,
   onSaveBook,
   onOpenStoryEditor,
+  initialUrl,
+  initialRequester,
+  initialIsRequested,
 }: BookImporterModalProps) {
   const [activeTab, setActiveTab] = useState<ImportTab>('url');
 
@@ -56,6 +62,36 @@ export function BookImporterModal({
 
   // Staged Story Preview (editable before saving)
   const [stagedStory, setStagedStory] = useState<Story | null>(null);
+
+  useEffect(() => {
+    if (isOpen) {
+      if (initialUrl) {
+        setUrlInput(initialUrl);
+      }
+    } else {
+      setUrlInput('');
+      setStagedStory(null);
+      setUrlError('');
+      setUrlStatusMsg('');
+      setUploadError('');
+      setUploadStatusMsg('');
+    }
+  }, [isOpen, initialUrl]);
+
+  const applyRequestedDefaults = (story: Story): Story => {
+    if (initialIsRequested || initialRequester) {
+      return {
+        ...story,
+        isRequestedBook: true,
+        isMembersOnly: true,
+        requestedBy: initialRequester || story.requestedBy || 'Community Member',
+        tags: story.tags?.includes('Community Request')
+          ? story.tags
+          : ['Community Request', ...(story.tags || [])],
+      };
+    }
+    return story;
+  };
 
   if (!isOpen) return null;
 
@@ -784,7 +820,59 @@ export function BookImporterModal({
                   />
                 </div>
 
+                {/* Community Requested Book & Members-Only Access Controls */}
+                <div className="p-3 rounded-xl bg-peach-50/80 border border-peach-200 space-y-2">
+                  <label className="flex items-center gap-2 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={Boolean(stagedStory.isRequestedBook)}
+                      onChange={(e) =>
+                        setStagedStory({
+                          ...stagedStory,
+                          isRequestedBook: e.target.checked,
+                          isMembersOnly: e.target.checked,
+                          tags: e.target.checked
+                            ? stagedStory.tags?.includes('Community Request')
+                              ? stagedStory.tags
+                              : ['Community Request', ...(stagedStory.tags || [])]
+                            : stagedStory.tags?.filter((t) => t !== 'Community Request') || [],
+                        })
+                      }
+                      className="rounded text-peach-500 focus:ring-peach-400"
+                    />
+                    <span className="text-xs font-bold text-ink-900 flex items-center gap-1.5">
+                      <span>🔒 Community Requested Book (Members-Only Access)</span>
+                    </span>
+                  </label>
+
+                  {stagedStory.isRequestedBook && (
+                    <div className="pt-1">
+                      <label className="block text-[10px] font-bold text-peach-900 uppercase tracking-wider mb-1">
+                        Requested by (Member Name or Community Wishlist)
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="e.g. Aria M., ArchaeologyFan, Community Wishlist"
+                        value={stagedStory.requestedBy || ''}
+                        onChange={(e) =>
+                          setStagedStory({
+                            ...stagedStory,
+                            requestedBy: e.target.value,
+                          })
+                        }
+                        className="site-input w-full py-1.5 px-2.5 text-xs rounded-lg"
+                      />
+                    </div>
+                  )}
+                </div>
+
                 <div className="flex items-center gap-2 flex-wrap text-xs text-tan-600 font-sans">
+                  {stagedStory.isRequestedBook && (
+                    <span className="px-2 py-0.5 rounded-full bg-peach-500 text-white font-bold text-[10px] flex items-center gap-1 shadow-cozy-xs">
+                      <span>🔒</span>
+                      <span>Members Only</span>
+                    </span>
+                  )}
                   {stagedStory.isPdfEbook ? (
                     <span className="px-2 py-0.5 rounded-full bg-peach-100 text-peach-800 font-bold text-[10px]">
                       📄 PDF E-Book ({stagedStory.pageCount || 1} Pages)

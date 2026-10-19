@@ -1,6 +1,7 @@
 import type { Story } from '@/data/stories';
-import { CHILDREN_OF_MU_STORY, INITIAL_STORIES } from '@/data/stories';
+import { CHILDREN_OF_MU_STORY, INITIAL_STORIES, isRequestedStory } from '@/data/stories';
 import { useSiteContent } from '@/context/SiteContentContext';
+import { useAuth } from '@/context/AuthContext';
 import { ArrowRight } from '@/components/StreamlineIcons';
 import {
   StreamlineBookDuo,
@@ -19,12 +20,19 @@ export function HomeBookshelfSection({
   onNavigateToBookshelf,
 }: HomeBookshelfSectionProps) {
   const { stories } = useSiteContent();
+  const { user, triggerAuthPrompt } = useAuth();
 
   // Top featured books from published stories
   const featuredStories: Story[] =
     stories && stories.length > 0 ? stories.slice(0, 3) : INITIAL_STORIES.slice(0, 3);
 
   const handleReadStory = (story: Story) => {
+    if (isRequestedStory(story) && !user) {
+      triggerAuthPrompt(
+        `Sign in with your Jinssi account to read "${story.title}" and access all community-requested books!`
+      );
+      return;
+    }
     onSelectStory(story, 1);
   };
 
@@ -59,6 +67,7 @@ export function HomeBookshelfSection({
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-3">
         {featuredStories.map((story) => {
           const isPinned = Boolean(story.isPinned || story.id === CHILDREN_OF_MU_STORY.id);
+          const isRequested = isRequestedStory(story);
 
           return (
             <article
@@ -83,8 +92,16 @@ export function HomeBookshelfSection({
                     className="w-full h-full object-contain p-2 transition-transform duration-500 group-hover:scale-105"
                     loading="lazy"
                   />
-                  <div className="public-domain-tag absolute top-2.5 right-2.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-cozy-sm">
-                    {story.isPdfEbook ? `${story.pageCount || 290}-Page PDF` : `${story.totalChapters || story.chapters.length} Ch.`}
+                  <div className="absolute top-2.5 right-2.5 flex flex-col items-end gap-1">
+                    {isRequested && (
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-peach-500 text-white shadow-cozy-xs flex items-center gap-1">
+                        <span>🔒</span>
+                        <span>Member Exclusive</span>
+                      </span>
+                    )}
+                    <div className="public-domain-tag px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-cozy-sm">
+                      {story.isPdfEbook ? `${story.pageCount || 290}-Page PDF` : `${story.totalChapters || story.chapters.length} Ch.`}
+                    </div>
                   </div>
                 </div>
 
@@ -104,6 +121,9 @@ export function HomeBookshelfSection({
 
                   <p className="text-xs text-tan-500 font-bold mb-2">
                     By {story.author}
+                    {isRequested && story.requestedBy && (
+                      <span className="text-peach-700 font-semibold ml-2">• Requested by {story.requestedBy}</span>
+                    )}
                   </p>
 
                   <p className="text-xs sm:text-sm text-ink-700 font-sans line-clamp-2 leading-relaxed mb-4">
@@ -115,11 +135,11 @@ export function HomeBookshelfSection({
               <div className="px-5 pb-5 pt-2 border-t border-tan-200/60 flex items-center justify-between text-xs font-bold text-peach-600">
                 <span className="flex items-center gap-1.5 text-tan-500 font-normal">
                   <StreamlineCoffeeDuo className="w-3.5 h-3.5 text-peach-500" />
-                  {isPinned ? 'Featured Classic' : 'Jinssi Library'}
+                  {isRequested ? '🌟 Member Request' : isPinned ? 'Featured Classic' : 'Jinssi Library'}
                 </span>
                 <div className="flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
                   <span className={isPinned ? 'text-[var(--theme-accent)] font-extrabold' : ''}>
-                    {story.isPdfEbook ? '🎧 Read & Listen (PDF)' : '🎧 Read & Listen'}
+                    {isRequested && !user ? '🔒 Sign In to Read' : story.isPdfEbook ? '🎧 Read & Listen (PDF)' : '🎧 Read & Listen'}
                   </span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </div>

@@ -49,3 +49,13 @@ export interface RedditUserProfileData {
   readingStatus?: string;
   startInEditMode?: boolean;
 }
+
+export interface PresenceUser {
+  id: string;
+  username: string;
+  avatarConfig?: Partial<AdventurerConfig>;
+  badge?: string;
+  isCreator?: boolean;
+  onlineAt?: string;
+}
+

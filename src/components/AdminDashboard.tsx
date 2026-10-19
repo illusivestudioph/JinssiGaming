@@ -8,7 +8,7 @@ import { StoryEditor } from './admin/StoryEditor';
 import { StoreManager } from './admin/StoreManager';
 import { BookImporterModal } from './admin/BookImporterModal';
 import type { Story } from '@/data/stories';
-import type { RequestStatus } from '@/types/request';
+import type { RequestStatus, CommunityRequest } from '@/types/request';
 import { requestTypeLabels, requestStatusLabels } from '@/types/request';
 import { supabase } from '@/lib/supabase';
 import { convertImageToWebp } from '@/utils/imageOptimization';
@@ -128,6 +128,7 @@ export function AdminDashboard() {
 
   const [activeTab, setActiveTab] = useState<'assets' | 'games' | 'articles' | 'stories' | 'store' | 'requests'>('assets');
   const [showBookImporter, setShowBookImporter] = useState(false);
+  const [importingRequest, setImportingRequest] = useState<CommunityRequest | null>(null);
   const [editingGame, setEditingGame] = useState<Game | null>(null);
   const [editingArticle, setEditingArticle] = useState<Article | null>(null);
   const [editingStory, setEditingStory] = useState<Story | null>(null);
@@ -2333,14 +2334,28 @@ export function AdminDashboard() {
 
           <BookImporterModal
             isOpen={showBookImporter}
-            onClose={() => setShowBookImporter(false)}
+            onClose={() => {
+              setShowBookImporter(false);
+              setImportingRequest(null);
+            }}
             onSaveBook={(newStory) => {
               addStory(newStory);
+              if (importingRequest) {
+                updateRequestStatus(
+                  importingRequest.id,
+                  'fulfilled',
+                  `Added to the bookshelf as a community requested edition! Enjoy reading!`
+                );
+              }
+              setImportingRequest(null);
             }}
             onOpenStoryEditor={(staged) => {
               setEditingStory(staged);
               setIsNewStory(true);
             }}
+            initialUrl={importingRequest?.sourceUrl || ''}
+            initialRequester={importingRequest?.requesterName || ''}
+            initialIsRequested={Boolean(importingRequest)}
           />
         </div>
       )}
@@ -2504,6 +2519,7 @@ export function AdminDashboard() {
                           <button
                             type="button"
                             onClick={() => {
+                              setImportingRequest(req);
                               setShowBookImporter(true);
                               setActiveTab('stories');
                             }}

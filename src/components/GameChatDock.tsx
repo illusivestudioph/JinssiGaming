@@ -34,6 +34,10 @@ export function GameChatDock() {
     sendMessage,
     openProfile,
     openDmWith,
+    realtimeStatus,
+    onlinePresenceUsers,
+    onlineUserCount,
+    refreshMessages,
   } = useChat();
 
   const { user, profile, triggerAuthPrompt } = useAuth();
@@ -161,6 +165,27 @@ export function GameChatDock() {
         });
       }
     }
+
+    // 2.5 Realtime Live Connected Users (Users actively on the sanctuary worldwide right now)
+    onlinePresenceUsers.forEach((p) => {
+      const key = p.username.toLowerCase().replace(/^[@u/]+/, '');
+      const isCreator = Boolean(
+        p.isCreator ||
+        p.username.toLowerCase().includes('jinssi') ||
+        p.username.toLowerCase().includes('mjhane')
+      );
+      if (key && !map.has(key)) {
+        map.set(key, {
+          id: p.id,
+          username: isCreator ? 'Jinssi' : p.username,
+          avatarConfig: p.avatarConfig || { seed: p.username },
+          badge: isCreator ? 'Creator & Developer' : (p.badge || '🟢 Live Traveler'),
+          isOnline: true,
+          isCreator,
+          addedAt: p.onlineAt || new Date().toISOString(),
+        });
+      }
+    });
 
     // 3. Friends
     friends.forEach((f) => {
@@ -485,7 +510,7 @@ export function GameChatDock() {
     });
 
     return Array.from(map.values());
-  }, [messages, friends, user, profile]);
+  }, [messages, friends, user, profile, onlinePresenceUsers]);
 
   const filteredTravelers = useMemo(() => {
     return onlineTravelers.filter((t) => {
@@ -643,6 +668,51 @@ export function GameChatDock() {
                 </span>
               </button>
             </div>
+
+            {/* World Sync Live Status Badge */}
+            {viewMode === 'chat' && channel === 'world' && (
+              <div
+                className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold border transition-colors"
+                style={{
+                  backgroundColor:
+                    realtimeStatus === 'connected'
+                      ? 'rgba(16, 185, 129, 0.12)'
+                      : realtimeStatus === 'connecting'
+                      ? 'rgba(245, 158, 11, 0.12)'
+                      : 'rgba(239, 68, 68, 0.12)',
+                  borderColor:
+                    realtimeStatus === 'connected'
+                      ? 'rgba(16, 185, 129, 0.3)'
+                      : realtimeStatus === 'connecting'
+                      ? 'rgba(245, 158, 11, 0.3)'
+                      : 'rgba(239, 68, 68, 0.3)',
+                  color:
+                    realtimeStatus === 'connected'
+                      ? '#059669'
+                      : realtimeStatus === 'connecting'
+                      ? '#d97706'
+                      : '#dc2626',
+                }}
+                title={
+                  realtimeStatus === 'connected'
+                    ? `World Sync Live: Global Supabase connection active (${onlineUserCount} traveler(s) connected)`
+                    : 'Reconnecting to global network...'
+                }
+              >
+                <span
+                  className={`w-1.5 h-1.5 rounded-full ${
+                    realtimeStatus === 'connected'
+                      ? 'bg-emerald-500 animate-pulse'
+                      : realtimeStatus === 'connecting'
+                      ? 'bg-amber-500 animate-ping'
+                      : 'bg-rose-500'
+                  }`}
+                />
+                <span className="truncate max-w-[90px]">
+                  {realtimeStatus === 'connected' ? `World Sync (${onlineUserCount})` : 'Syncing...'}
+                </span>
+              </div>
+            )}
 
             {/* Minimize / Close */}
             <button
@@ -948,6 +1018,44 @@ export function GameChatDock() {
                 </div>
               )}
 
+              {/* World Channel Sync Status Bar */}
+              {channel === 'world' && (
+                <div className="px-3.5 py-1.5 bg-[#FCF8EE] border-b border-[#EBDCC9] flex items-center justify-between text-[11px] text-tan-600">
+                  <div className="flex items-center gap-1.5">
+                    <span
+                      className={`w-2 h-2 rounded-full ${
+                        realtimeStatus === 'connected'
+                          ? 'bg-emerald-500 animate-pulse'
+                          : realtimeStatus === 'connecting'
+                          ? 'bg-amber-500 animate-ping'
+                          : 'bg-rose-500'
+                      }`}
+                    />
+                    <span className="font-bold text-ink-900">
+                      {realtimeStatus === 'connected'
+                        ? 'World Sync Active'
+                        : realtimeStatus === 'connecting'
+                        ? 'Connecting to Global Network...'
+                        : 'Offline Mode'}
+                    </span>
+                    <span className="text-[10px] text-tan-500 font-mono">
+                      • {onlineUserCount} online
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      void refreshMessages();
+                      setActionFeedback('World Chat Synced! 🌸');
+                    }}
+                    className="text-[10px] font-bold text-peach-600 hover:text-peach-700 underline cursor-pointer"
+                    title="Force refresh messages from cloud"
+                  >
+                    Sync Now
+                  </button>
+                </div>
+              )}
+
               {/* Messages Scroll Area */}
               <div className="flex-1 p-3.5 overflow-y-auto space-y-3 bg-[#FEFCF7]">
                 {currentChannelMessages.length === 0 ? (
@@ -1189,8 +1297,9 @@ export function GameChatDock() {
                   </div>
 
                   {/* Retention & Privacy Notice */}
-                  <div className="text-[9px] text-tan-500 text-center">
-                    Synced with Supabase & pruned every 7 days. Your chat history is preserved locally.
+                  <div className="text-[9px] text-tan-500 text-center flex items-center justify-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                    <span>Real-time global sync via Supabase. Preserved locally for instant offline loading.</span>
                   </div>
                 </form>
               )}

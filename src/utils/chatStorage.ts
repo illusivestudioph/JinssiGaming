@@ -75,7 +75,7 @@ export const DEFAULT_WORLD_MESSAGES: ChatMessage[] = [
     senderAvatar: { seed: 'Jinssi', faceShape: 'oval', hair: 'long01', hairColor: '4a312c' },
     senderIsCreator: true,
     text: 'Welcome to our cozy gaming sanctuary! ✨ Feel free to chat, discuss game secrets, or say hello.',
-    createdAt: new Date(Date.now() - 1000 * 60 * 180).toISOString(),
+    createdAt: '2026-10-19T04:28:09.591Z',
   },
   {
     id: 'seed-world-2',
@@ -85,7 +85,7 @@ export const DEFAULT_WORLD_MESSAGES: ChatMessage[] = [
     senderAvatar: { seed: 'MochiCat', faceShape: 'round', hair: 'long04', hairColor: '4a312c' },
     senderIsCreator: false,
     text: 'Loving the walkthroughs and guides here! Anyone playing cozy farm sims tonight? ☕',
-    createdAt: new Date(Date.now() - 1000 * 60 * 60).toISOString(),
+    createdAt: '2026-10-19T06:28:09.591Z',
   },
   {
     id: 'seed-world-3',
@@ -95,7 +95,7 @@ export const DEFAULT_WORLD_MESSAGES: ChatMessage[] = [
     senderAvatar: { seed: 'MatchaKnight', faceShape: 'square', hair: 'short02', hairColor: '2c1b18' },
     senderIsCreator: false,
     text: 'Brewed some hot matcha and checking out the game reviews. Cozy vibes all around 🍵',
-    createdAt: new Date(Date.now() - 1000 * 60 * 20).toISOString(),
+    createdAt: '2026-10-19T07:08:09.591Z',
   },
 ];
 
@@ -153,7 +153,8 @@ export function saveMessageLocally(message: ChatMessage): void {
 }
 
 /**
- * Prunes messages older than 7 days from Supabase so the database is never flooded
+ * Prunes messages older than 7 days from Supabase so the database is never flooded.
+ * Preserves default seed messages.
  */
 export async function cleanOldSupabaseMessages(): Promise<void> {
   try {
@@ -168,7 +169,8 @@ export async function cleanOldSupabaseMessages(): Promise<void> {
     const { error } = await supabase
       .from('chat_messages')
       .delete()
-      .lt('created_at', sevenDaysAgo);
+      .lt('created_at', sevenDaysAgo)
+      .not('id', 'like', 'seed-world-%');
 
     if (error) {
       // Table might not exist yet; fail silently
@@ -183,17 +185,15 @@ export async function cleanOldSupabaseMessages(): Promise<void> {
 }
 
 /**
- * Fetches recent messages from Supabase and merges with local archive
- */
-/**
- * Fetches recent messages from Supabase and merges with local archive
+ * Fetches recent messages from Supabase.
+ * For 'world' channel, Supabase is the single authoritative source of truth.
+ * Local cache is kept in sync and used as fallback if offline.
  */
 export async function fetchSupabaseMessages(
   channel: ChatChannel,
-  currentUserId?: string,
+  _currentUserId?: string,
   dmPartner?: { id?: string; username?: string; isCreator?: boolean } | string | null
 ): Promise<ChatMessage[]> {
-  // Always start with locally saved messages
   const localList = getLocalMessages(channel, dmPartner);
 
   try {
@@ -202,7 +202,7 @@ export async function fetchSupabaseMessages(
       .select('id, channel, sender_id, sender_name, sender_avatar, receiver_id, receiver_name, text, created_at')
       .eq('channel', channel)
       .order('created_at', { ascending: true })
-      .limit(100);
+      .limit(150);
 
     const { data, error } = await query;
 
@@ -229,14 +229,26 @@ export async function fetchSupabaseMessages(
         };
       });
 
-      // Merge and save to local storage
-      remoteMessages.forEach(saveMessageLocally);
+      if (channel === 'world') {
+        if (remoteMessages.length > 0) {
+          // Authoritative sync: save current cloud world messages into local storage cache
+          try {
+            localStorage.setItem(LOCAL_STORAGE_KEY_WORLD, JSON.stringify(remoteMessages));
+          } catch {
+            // ignore quota errors
+          }
+          return remoteMessages;
+        }
+        // If DB returned 0 rows, use defaults
+        return DEFAULT_WORLD_MESSAGES;
+      }
 
-      // Return combined, deduplicated messages
+      // For DMs: merge remote with local to preserve complete conversation history
       const idMap = new Map<string, ChatMessage>();
       localList.forEach((m) => idMap.set(m.id, m));
       remoteMessages.forEach((m) => {
-        if (channel === 'world' || isDmForPartner(m, dmPartner)) {
+        saveMessageLocally(m);
+        if (isDmForPartner(m, dmPartner)) {
           idMap.set(m.id, m);
         }
       });
@@ -255,7 +267,9 @@ export async function fetchSupabaseMessages(
 /**
  * Sends message to Supabase and saves in local archive
  */
-export async function sendChatMessage(message: ChatMessage): Promise<void> {
+export async function sendChatMessage(
+  message: ChatMessage
+): Promise<{ success: boolean; error?: string }> {
   // Always save locally immediately
   saveMessageLocally(message);
 
@@ -275,10 +289,14 @@ export async function sendChatMessage(message: ChatMessage): Promise<void> {
     ]);
 
     if (error) {
-      console.debug('Message stored locally (Supabase table pending):', error.message);
+      console.warn('Supabase message insert error:', error.message);
+      return { success: false, error: error.message };
     }
-  } catch (err) {
-    console.debug('Supabase insert skipped, message preserved locally:', err);
+    return { success: true };
+  } catch (err: unknown) {
+    const errMessage = err instanceof Error ? err.message : 'Network error';
+    console.warn('Supabase insert exception:', err);
+    return { success: false, error: errMessage };
   }
 }
 

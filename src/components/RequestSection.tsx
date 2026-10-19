@@ -27,7 +27,7 @@ export function RequestSection({
   onNavigateToWalkthroughs,
 }: RequestSectionProps) {
   const { requests, addRequest, upvoteRequest, updateRequestStatus, removeRequest } = useSiteContent();
-  const { user, profile } = useAuth();
+  const { user, profile, triggerAuthPrompt } = useAuth();
 
   const isDev = Boolean(user?.email && isCreatorEmail(user.email) && profile.isCreator);
 
@@ -67,8 +67,22 @@ export function RequestSection({
     return local;
   }, [user]);
 
+  const handleOpenSubmitModal = () => {
+    if (!user) {
+      triggerAuthPrompt('Sign in with your Jinssi account to submit book, novel, and guide requests to our community sanctuary!');
+      return;
+    }
+    setFormRequesterName(profile.username || user.email?.split('@')[0] || 'Member');
+    setFormRequesterEmail(user.email || '');
+    setShowSubmitModal(true);
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!user) {
+      triggerAuthPrompt('Sign in with your Jinssi account to submit a request.');
+      return;
+    }
     if (!formTitle.trim()) return;
 
     addRequest({
@@ -77,8 +91,8 @@ export function RequestSection({
       description: formDescription.trim(),
       sourceUrl: formSourceUrl.trim() || undefined,
       authorOrDev: formAuthor.trim() || undefined,
-      requesterName: formRequesterName.trim() || 'Cozy Visitor',
-      requesterEmail: formRequesterEmail.trim() || undefined,
+      requesterName: formRequesterName.trim() || profile.username || 'Member',
+      requesterEmail: formRequesterEmail.trim() || user.email || undefined,
     });
 
     setSubmittedSuccess(true);
@@ -138,11 +152,42 @@ export function RequestSection({
           Submit your request below or upvote what fellow readers and gamers are eager to see next!
         </p>
 
+        {/* Member Status Notice */}
+        <div className="mt-4 flex justify-center">
+          {user ? (
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-2xl bg-cream-100/90 border border-tan-200 text-xs text-ink-800 font-sans shadow-cozy-xs">
+              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+              <span>
+                Signed in as <strong className="text-peach-700">{profile.username || user.email}</strong> • Member privileges unlocked to request & read books!
+              </span>
+            </div>
+          ) : (
+            <div className="inline-flex flex-col sm:flex-row items-center gap-2 sm:gap-3 px-4 py-2.5 rounded-2xl bg-peach-50 border border-peach-200 text-xs text-peach-900 font-sans shadow-cozy-xs">
+              <span className="flex items-center gap-1.5 font-bold text-peach-800">
+                <Sparkles className="w-3.5 h-3.5 text-peach-600" />
+                <span>Members Sanctuary:</span>
+              </span>
+              <span>Only signed-in members can submit requests and read community-requested books.</span>
+              <button
+                type="button"
+                onClick={() =>
+                  triggerAuthPrompt(
+                    'Sign in with your Jinssi account to submit book requests and read member-exclusive books!'
+                  )
+                }
+                className="px-3 py-1 rounded-xl bg-peach-500 hover:bg-peach-600 text-white font-bold text-xs shadow-cozy-xs transition-transform active:scale-95"
+              >
+                Sign In with Google
+              </button>
+            </div>
+          )}
+        </div>
+
         {/* Quick Action Button & Highlights */}
         <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
           <button
             type="button"
-            onClick={() => setShowSubmitModal(true)}
+            onClick={handleOpenSubmitModal}
             className="site-button bg-peach-500 hover:bg-peach-600 text-white font-bold text-sm px-6 py-3 rounded-2xl flex items-center gap-2 shadow-cozy-sm active:scale-95 transition-transform"
           >
             <Plus size={18} />
@@ -382,7 +427,13 @@ export function RequestSection({
                     {/* Upvote button */}
                     <button
                       type="button"
-                      onClick={() => upvoteRequest(req.id, voterId)}
+                      onClick={() => {
+                        if (!user) {
+                          triggerAuthPrompt('Sign in with your Jinssi account to upvote community requests!');
+                          return;
+                        }
+                        upvoteRequest(req.id, voterId);
+                      }}
                       className={`px-3 py-1.5 rounded-xl font-bold text-xs flex items-center gap-1.5 transition-all active:scale-95 ${
                         hasUpvoted
                           ? 'bg-peach-500 text-white shadow-cozy-sm'
@@ -519,6 +570,19 @@ export function RequestSection({
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
+                {/* Verified Member Badge */}
+                <div className="p-3 rounded-xl bg-peach-50 border border-peach-200 flex items-center justify-between text-xs text-peach-900 font-sans">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse" />
+                    <span>
+                      Logged in member: <strong className="text-peach-800">{profile.username || user?.email}</strong>
+                    </span>
+                  </div>
+                  <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-peach-200 text-peach-800">
+                    Verified
+                  </span>
+                </div>
+
                 {/* Type Selection */}
                 <div>
                   <label className="block text-xs font-bold text-ink-900 uppercase tracking-wider mb-1.5">

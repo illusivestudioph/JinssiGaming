@@ -1,7 +1,10 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
 import type { Story, StoryChapter } from '@/data/stories';
+import { isRequestedStory } from '@/data/stories';
+import { useAuth } from '@/context/AuthContext';
 import {
   ArrowLeft,
+  ArrowRight,
   BookOpen,
   Bookmark,
   ChevronLeft,
@@ -26,6 +29,8 @@ import {
   ExternalLink,
   FileText,
   Star,
+  Lock,
+  Sparkles,
 } from '@/components/StreamlineIcons';
 import { getGutenbergId, fetchGutenbergById } from '@/services/gutenberg';
 import { useMusic } from '@/context/MusicContext';
@@ -416,6 +421,83 @@ export function StoryReaderView({
         >
           Return to Bookshelf
         </button>
+      </div>
+    );
+  }
+
+  const { user, triggerAuthPrompt } = useAuth();
+
+  // If this is a community-requested book, only signed-in members can read it
+  const isRequested = isRequestedStory(story);
+  if (isRequested && !user) {
+    return (
+      <div
+        className={`story-reader-view min-h-screen flex flex-col items-center justify-center px-4 py-12 transition-colors duration-300 ${currentThemeStyle.bg} ${currentThemeStyle.text}`}
+      >
+        <div className="max-w-md w-full text-center space-y-6 animate-fade-in p-6 sm:p-8 rounded-3xl bg-cream-50/95 border-2 border-peach-200 shadow-2xl">
+          <div className="w-16 h-16 mx-auto rounded-3xl bg-peach-100 text-peach-600 border border-peach-200 flex items-center justify-center shadow-cozy-sm">
+            <Lock className="w-8 h-8 text-peach-600" />
+          </div>
+
+          <div className="space-y-1.5">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-peach-100 text-peach-800 border border-peach-200 shadow-cozy-xs">
+              <Sparkles className="w-3.5 h-3.5 text-peach-600" />
+              <span>Members-Only Sanctuary</span>
+            </div>
+            <h2 className="font-display font-extrabold text-2xl text-ink-900 tracking-tight">
+              Community Requested Book
+            </h2>
+            {story.requestedBy && (
+              <p className="text-xs text-peach-700 font-bold">
+                Requested by: {story.requestedBy}
+              </p>
+            )}
+          </div>
+
+          {/* Book Preview Card */}
+          <div className="p-3.5 rounded-2xl bg-white border border-tan-200 flex items-center gap-4 text-left shadow-cozy-xs">
+            <img
+              src={story.coverImage}
+              alt={story.title}
+              className="w-16 h-22 object-contain bg-cream-100 rounded-xl shadow-xs border border-tan-200 shrink-0 p-1"
+            />
+            <div className="min-w-0 flex-1">
+              <h4 className="font-display font-bold text-sm text-ink-900 line-clamp-1">{story.title}</h4>
+              <p className="text-xs text-tan-600 font-sans mt-0.5">By {story.author}</p>
+              <p className="text-[11px] text-peach-700 font-semibold mt-1">
+                {story.isPdfEbook ? 'Authentic Facsimile PDF Edition' : `${story.totalChapters || story.chapters.length} Chapters • Audiobook`}
+              </p>
+            </div>
+          </div>
+
+          <p className="text-xs text-ink-700 font-sans leading-relaxed">
+            This book was added by community request. Unabridged reading, synchronized audio narration, and bookmarks are exclusively accessible to signed-in members of the Jinssi sanctuary.
+          </p>
+
+          <div className="space-y-2.5 pt-2">
+            <button
+              type="button"
+              onClick={() =>
+                triggerAuthPrompt(
+                  `Sign in with your Google account to read "${story.title}" and access all community-requested books!`
+                )
+              }
+              className="w-full py-3.5 px-5 rounded-2xl bg-peach-500 hover:bg-peach-600 text-white font-bold text-sm shadow-cozy-sm transition-transform active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <Lock className="w-4 h-4" />
+              <span>Sign In to Read Book</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+
+            <button
+              type="button"
+              onClick={onBackToLibrary}
+              className="w-full py-2.5 px-4 rounded-xl text-tan-700 hover:text-ink-900 font-bold text-xs transition-colors cursor-pointer"
+            >
+              Return to Public Bookshelf
+            </button>
+          </div>
+        </div>
       </div>
     );
   }
