@@ -152,16 +152,20 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       Object.values(state).forEach((presences) => {
         if (Array.isArray(presences)) {
           presences.forEach((p: unknown) => {
-            const item = p as Partial<PresenceUser> & { id?: string };
-            if (item && item.id && !seenIds.has(item.id)) {
-              seenIds.add(item.id);
+            if (!p || typeof p !== 'object') return;
+            const item = p as Record<string, unknown>;
+            const resolvedId = String(item.id || item.presence_ref || `user-${Math.random().toString(36).substring(2, 7)}`);
+            const resolvedUsername = String(item.username || item.user || 'Traveler');
+
+            if (!seenIds.has(resolvedId)) {
+              seenIds.add(resolvedId);
               presenceList.push({
-                id: item.id,
-                username: item.username || 'Traveler',
-                avatarConfig: item.avatarConfig || {},
-                badge: item.badge || 'Cozy Explorer',
+                id: resolvedId,
+                username: resolvedUsername,
+                avatarConfig: (item.avatarConfig && typeof item.avatarConfig === 'object') ? item.avatarConfig : {},
+                badge: item.badge ? String(item.badge) : 'Cozy Explorer',
                 isCreator: Boolean(item.isCreator),
-                onlineAt: item.onlineAt || new Date().toISOString(),
+                onlineAt: item.onlineAt ? String(item.onlineAt) : new Date().toISOString(),
               });
             }
           });
@@ -182,7 +186,8 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       }) => {
         if (!payload || !payload.username) return;
 
-        const lowerKey = `jinssi_profile_banner_${payload.username.toLowerCase()}`;
+        const rawUser = String(payload.username || '').toLowerCase();
+        const lowerKey = `jinssi_profile_banner_${rawUser}`;
         const rawKey = `jinssi_profile_banner_${payload.username}`;
         const bannerData = { color: payload.bannerColor, text: payload.bannerText };
         try {
@@ -195,7 +200,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
         // Live Realtime World Sync: if viewing this user's profile card, update live
         setActiveProfileUser((prev) => {
           if (!prev) return null;
-          if (prev.username.toLowerCase() === payload.username.toLowerCase()) {
+          if (String(prev.username || '').toLowerCase() === rawUser) {
             return {
               ...prev,
               bannerColor: payload.bannerColor || prev.bannerColor,
@@ -309,8 +314,10 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
 
   // Add friend
   const addFriend = (newFriend: Omit<Friend, 'addedAt'>) => {
+    if (!newFriend || !newFriend.id) return;
+    const targetName = String(newFriend.username || '').toLowerCase();
     setFriends((prev) => {
-      if (prev.some((f) => f.id === newFriend.id || f.username.toLowerCase() === newFriend.username.toLowerCase())) {
+      if (prev.some((f) => f.id === newFriend.id || String(f.username || '').toLowerCase() === targetName)) {
         return prev;
       }
       const updated = [...prev, { ...newFriend, addedAt: new Date().toISOString() }];
@@ -329,10 +336,12 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   };
 
   const isFriend = (usernameOrId: string): boolean => {
+    if (!usernameOrId) return false;
+    const target = String(usernameOrId).toLowerCase().replace('@', '').replace('u/', '');
     return friends.some(
       (f) =>
         f.id === usernameOrId ||
-        f.username.toLowerCase() === usernameOrId.toLowerCase().replace('@', '').replace('u/', '')
+        String(f.username || '').toLowerCase() === target
     );
   };
 

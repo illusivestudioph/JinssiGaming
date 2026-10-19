@@ -18,6 +18,9 @@ import {
   StreamlineUser,
 } from '@/components/StreamlineIcons';
 
+const safeLower = (val: unknown): string => String(val ?? '').toLowerCase().trim();
+const cleanKey = (val: unknown): string => safeLower(val).replace(/^[@u/]+/, '');
+
 export function GameChatDock() {
   const {
     messages,
@@ -95,40 +98,49 @@ export function GameChatDock() {
     const map = new Map<string, Friend>();
 
     // Add friends first
-    friends.forEach((f) => {
-      const key = f.username.toLowerCase().replace(/^[@u/]+/, '');
-      map.set(key, f);
+    (friends || []).forEach((f) => {
+      if (!f) return;
+      const key = cleanKey(f.username);
+      if (key) map.set(key, f);
     });
 
     // Extract all travelers who have exchanged DMs with the user
-    messages.forEach((m) => {
-      if (m.channel === 'dm') {
-        const isSenderMe =
-          m.senderId === user?.id ||
-          (profile.isCreator && (m.senderIsCreator || m.senderName.toLowerCase() === 'jinssi'));
+    (messages || []).forEach((m) => {
+      if (!m || m.channel !== 'dm') return;
 
-        const otherId = isSenderMe ? (m.receiverId || 'traveler') : m.senderId;
-        const otherRaw = isSenderMe ? (m.receiverName || 'Traveler') : m.senderName;
-        const otherKey = otherRaw.toLowerCase().replace(/^[@u/]+/, '');
-        const isOtherDev =
-          otherKey === 'jinssi' ||
-          otherKey.includes('mjhane') ||
-          otherId === 'jinssi-creator' ||
-          otherId === 'creator-jinssi-dev-id';
+      const rawSender = String(m.senderName || '');
+      const isSenderCreator = Boolean(
+        m.senderIsCreator ||
+        rawSender.toLowerCase().includes('jinssi') ||
+        rawSender.toLowerCase().includes('mjhane')
+      );
 
-        const cleanOtherName = isOtherDev ? 'Jinssi' : otherRaw.split('@')[0];
+      const isSenderMe =
+        (user?.id && m.senderId === user.id) ||
+        (profile.isCreator && (isSenderCreator || rawSender.toLowerCase() === 'jinssi'));
 
-        if (otherKey && !map.has(otherKey) && cleanOtherName.toLowerCase() !== profile.username.toLowerCase()) {
-          map.set(otherKey, {
-            id: otherId,
-            username: cleanOtherName,
-            avatarConfig: isSenderMe ? {} : m.senderAvatar,
-            badge: isOtherDev ? 'Creator & Developer' : 'Cozy Explorer',
-            isOnline: true,
-            isCreator: isOtherDev,
-            addedAt: m.createdAt,
-          });
-        }
+      const otherId = isSenderMe ? (m.receiverId || 'traveler') : (m.senderId || 'traveler');
+      const otherRaw = isSenderMe ? (m.receiverName || 'Traveler') : (m.senderName || 'Traveler');
+      const otherKey = cleanKey(otherRaw);
+      const isOtherDev =
+        otherKey === 'jinssi' ||
+        otherKey.includes('mjhane') ||
+        otherId === 'jinssi-creator' ||
+        otherId === 'creator-jinssi-dev-id';
+
+      const cleanOtherName = isOtherDev ? 'Jinssi' : String(otherRaw).split('@')[0];
+      const myUsername = safeLower(profile.username);
+
+      if (otherKey && !map.has(otherKey) && safeLower(cleanOtherName) !== myUsername) {
+        map.set(otherKey, {
+          id: otherId,
+          username: cleanOtherName,
+          avatarConfig: isSenderMe ? {} : (m.senderAvatar || {}),
+          badge: isOtherDev ? 'Creator & Developer' : 'Cozy Explorer',
+          isOnline: true,
+          isCreator: isOtherDev,
+          addedAt: m.createdAt || new Date().toISOString(),
+        });
       }
     });
 
@@ -152,33 +164,37 @@ export function GameChatDock() {
 
     // 2. Current User (if logged in)
     if (user && profile.username) {
-      const myKey = profile.username.toLowerCase().replace(/^[@u/]+/, '');
+      const myKey = cleanKey(profile.username);
       if (myKey && !map.has(myKey)) {
         map.set(myKey, {
           id: user.id,
           username: profile.username,
-          avatarConfig: profile.avatarConfig,
-          badge: profile.badge,
+          avatarConfig: profile.avatarConfig || {},
+          badge: profile.badge || 'Cozy Explorer',
           isOnline: true,
-          isCreator: profile.isCreator,
+          isCreator: Boolean(profile.isCreator),
           addedAt: new Date().toISOString(),
         });
       }
     }
 
     // 2.5 Realtime Live Connected Users (Users actively on the sanctuary worldwide right now)
-    onlinePresenceUsers.forEach((p) => {
-      const key = p.username.toLowerCase().replace(/^[@u/]+/, '');
+    (onlinePresenceUsers || []).forEach((p) => {
+      if (!p) return;
+      const rawName = String(p.username || '');
+      const key = cleanKey(rawName);
+      if (!key) return;
+
       const isCreator = Boolean(
         p.isCreator ||
-        p.username.toLowerCase().includes('jinssi') ||
-        p.username.toLowerCase().includes('mjhane')
+        key.includes('jinssi') ||
+        key.includes('mjhane')
       );
-      if (key && !map.has(key)) {
+      if (!map.has(key)) {
         map.set(key, {
-          id: p.id,
-          username: isCreator ? 'Jinssi' : p.username,
-          avatarConfig: p.avatarConfig || { seed: p.username },
+          id: p.id || `live-${key}`,
+          username: isCreator ? 'Jinssi' : (p.username || 'Traveler'),
+          avatarConfig: p.avatarConfig || { seed: rawName },
           badge: isCreator ? 'Creator & Developer' : (p.badge || '🟢 Live Traveler'),
           isOnline: true,
           isCreator,
@@ -188,32 +204,35 @@ export function GameChatDock() {
     });
 
     // 3. Friends
-    friends.forEach((f) => {
-      const key = f.username.toLowerCase().replace(/^[@u/]+/, '');
-      if (!map.has(key)) {
+    (friends || []).forEach((f) => {
+      if (!f) return;
+      const key = cleanKey(f.username);
+      if (key && !map.has(key)) {
         map.set(key, { ...f, isOnline: true });
       }
     });
 
     // 4. Users from chat messages
-    messages.forEach((m) => {
+    (messages || []).forEach((m) => {
+      if (!m) return;
+      const rawSender = String(m.senderName || '');
       const isSenderCreator = Boolean(
         m.senderIsCreator ||
-        m.senderName.toLowerCase().includes('jinssi') ||
-        m.senderName.toLowerCase().includes('mjhane')
+        rawSender.toLowerCase().includes('jinssi') ||
+        rawSender.toLowerCase().includes('mjhane')
       );
-      const cleanName = isSenderCreator ? 'Jinssi' : m.senderName.split('@')[0];
-      const key = cleanName.toLowerCase().replace(/^[@u/]+/, '');
+      const cleanName = isSenderCreator ? 'Jinssi' : rawSender.split('@')[0];
+      const key = cleanKey(cleanName);
 
       if (key && !map.has(key)) {
         map.set(key, {
-          id: m.senderId,
+          id: m.senderId || `user-${key}`,
           username: cleanName,
           avatarConfig: m.senderAvatar || { seed: cleanName },
           badge: isSenderCreator ? 'Creator & Developer' : 'Cozy Explorer',
           isOnline: true,
           isCreator: isSenderCreator,
-          addedAt: m.createdAt,
+          addedAt: m.createdAt || new Date().toISOString(),
         });
       }
     });
@@ -513,10 +532,12 @@ export function GameChatDock() {
   }, [messages, friends, user, profile, onlinePresenceUsers]);
 
   const filteredTravelers = useMemo(() => {
+    const query = safeLower(userSearch);
     return onlineTravelers.filter((t) => {
-      const matchesSearch =
-        t.username.toLowerCase().includes(userSearch.toLowerCase()) ||
-        t.badge.toLowerCase().includes(userSearch.toLowerCase());
+      if (!t) return false;
+      const uName = safeLower(t.username);
+      const uBadge = safeLower(t.badge);
+      const matchesSearch = !query || uName.includes(query) || uBadge.includes(query);
 
       if (!matchesSearch) return false;
       if (userFilter === 'friends') {
@@ -795,12 +816,12 @@ export function GameChatDock() {
                   filteredTravelers.map((t) => {
                     const isJinssi = Boolean(
                       t.isCreator ||
-                      t.username.toLowerCase() === 'jinssi' ||
-                      t.badge === 'Creator & Developer'
+                      cleanKey(t.username) === 'jinssi' ||
+                      safeLower(t.badge) === 'creator & developer'
                     );
                     const isMe = Boolean(
                       (user && t.id === user.id) ||
-                      (profile.username && t.username.toLowerCase() === profile.username.toLowerCase())
+                      (profile.username && cleanKey(t.username) === cleanKey(profile.username))
                     );
                     const alreadyFriend = isFriend(t.username) || isFriend(t.id);
 
@@ -928,8 +949,9 @@ export function GameChatDock() {
                     onClick={() => {
                       const matchingTraveler = onlineTravelers.find(
                         (t) =>
-                          t.id === activeDmPartner.id ||
-                          t.username.toLowerCase() === activeDmPartner.username.toLowerCase()
+                          t &&
+                          (t.id === activeDmPartner.id ||
+                            cleanKey(t.username) === cleanKey(activeDmPartner.username))
                       );
                       openProfile({
                         id: activeDmPartner.id,
@@ -1072,17 +1094,19 @@ export function GameChatDock() {
                   </div>
                 ) : (
                   currentChannelMessages.map((msg) => {
+                    if (!msg) return null;
+                    const rawSender = String(msg.senderName || '');
                     const isJinssi = Boolean(
                       msg.senderIsCreator ||
-                      msg.senderName.toLowerCase().includes('jinssi') ||
-                      msg.senderName.toLowerCase().includes('mjhane')
+                      rawSender.toLowerCase().includes('jinssi') ||
+                      rawSender.toLowerCase().includes('mjhane')
                     );
-                    const cleanSenderName = isJinssi ? 'Jinssi' : msg.senderName.split('@')[0];
+                    const cleanSenderName = isJinssi ? 'Jinssi' : rawSender.split('@')[0];
                     const isMe =
                       Boolean(user?.id && msg.senderId === user.id) ||
                       (profile.isCreator && isJinssi) ||
-                      (user?.email && msg.senderName.toLowerCase() === user.email.toLowerCase()) ||
-                      (profile.username && cleanSenderName.toLowerCase() === profile.username.toLowerCase());
+                      (user?.email && safeLower(msg.senderName) === safeLower(user.email)) ||
+                      (profile.username && cleanKey(cleanSenderName) === cleanKey(profile.username));
                     const isAlreadyFriend = isFriend(cleanSenderName) || isFriend(msg.senderId);
 
                     // Messenger Style: User (Me) on the RIGHT
@@ -1117,7 +1141,7 @@ export function GameChatDock() {
 
                     // Messenger Style: Other Users on the LEFT with avatar & quick game chat action buttons
                     const matchingTraveler = onlineTravelers.find(
-                      (t) => t.id === msg.senderId || t.username.toLowerCase() === cleanSenderName.toLowerCase()
+                      (t) => t && (t.id === msg.senderId || cleanKey(t.username) === cleanKey(cleanSenderName))
                     );
 
                     const handleOpenMsgProfile = () => {
