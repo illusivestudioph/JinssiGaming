@@ -33,7 +33,7 @@ export function ArticleManager({
     return (
       a.title.toLowerCase().includes(q) ||
       a.category.toLowerCase().includes(q) ||
-      a.tags.some((t) => t.toLowerCase().includes(q))
+      (a.tags || []).some((t) => t.toLowerCase().includes(q))
     );
   });
 

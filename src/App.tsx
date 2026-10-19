@@ -18,6 +18,7 @@ import { StorePage } from '@/components/StorePage';
 import { PrivacyPolicyPage } from '@/components/PrivacyPolicyPage';
 import { TermsPage } from '@/components/TermsPage';
 import { ContactPage } from '@/components/ContactPage';
+import { RequestSection } from '@/components/RequestSection';
 import { CookieConsent } from '@/components/CookieConsent';
 import { AdSenseUnit } from '@/components/AdSenseUnit';
 import { GameCard } from '@/components/GameCard';
@@ -74,7 +75,7 @@ function AppContent() {
     const routeView = getRouteView();
     if (routeView) return routeView;
     const savedView = sessionStorage.getItem('jinssi-view');
-    return savedView === 'walkthroughs' || savedView === 'journal' || savedView === 'stories' || savedView === 'store' || savedView === 'about' || savedView === 'privacy' || savedView === 'terms' || savedView === 'contact' || savedView === 'admin'
+    return savedView === 'walkthroughs' || savedView === 'journal' || savedView === 'stories' || savedView === 'store' || savedView === 'requests' || savedView === 'about' || savedView === 'privacy' || savedView === 'terms' || savedView === 'contact' || savedView === 'admin'
       ? savedView
       : 'home';
   });
@@ -453,6 +454,15 @@ function AppContent() {
       return <StorePage />;
     }
 
+    if (view === 'requests') {
+      return (
+        <RequestSection
+          onNavigateToBookshelf={() => handleNavigate('stories')}
+          onNavigateToWalkthroughs={() => handleNavigate('walkthroughs')}
+        />
+      );
+    }
+
     if (view === 'privacy') return <PrivacyPolicyPage />;
     if (view === 'terms') return <TermsPage />;
     if (view === 'contact') return <ContactPage />;
@@ -477,6 +487,7 @@ function getPathForView(view: View) {
   if (view === 'journal') return '/journal';
   if (view === 'stories') return '/stories';
   if (view === 'store') return '/store';
+  if (view === 'requests') return '/requests';
   if (view === 'privacy') return '/privacy-policy';
   if (view === 'terms') return '/terms-of-use';
   return `/${view}`;
@@ -489,6 +500,7 @@ function getRouteView(): View | null {
   if (path === '/journal' || path.startsWith('/journal/')) return 'journal';
   if (path === '/stories' || path.startsWith('/stories/')) return 'stories';
   if (path === '/store' || path.startsWith('/store/')) return 'store';
+  if (path === '/requests') return 'requests';
   if (path === '/privacy-policy') return 'privacy';
   if (path === '/terms-of-use') return 'terms';
   if (path === '/contact') return 'contact';

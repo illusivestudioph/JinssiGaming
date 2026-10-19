@@ -266,7 +266,7 @@ export function ArticleEditor({
                   type="button"
                   onClick={() => setFormData({ ...formData, cozyScore: score })}
                   className={`w-10 h-10 rounded-xl font-bold flex items-center justify-center transition-all ${
-                    formData.cozyScore >= score
+                    (formData.cozyScore ?? 0) >= score
                       ? 'bg-peach-500 text-white shadow-cozy-sm scale-105'
                       : 'bg-cream-200 text-tan-400 hover:bg-cream-300'
                   }`}
@@ -345,7 +345,7 @@ export function ArticleEditor({
             </label>
             <input
               type="text"
-              value={formData.tags.join(', ')}
+              value={(formData.tags || []).join(', ')}
               onChange={(e) =>
                 setFormData({
                   ...formData,

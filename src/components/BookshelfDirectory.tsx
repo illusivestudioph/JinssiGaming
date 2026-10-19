@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
 import type { Story } from '@/data/stories';
+import { useSiteContent } from '@/context/SiteContentContext';
 import {
   searchGutenbergBooks,
   convertGutenbergToStory,
@@ -43,13 +44,38 @@ interface SavedProgress {
 }
 
 export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
-  // Library search and filtering state
+  const { stories } = useSiteContent();
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState<string>('All Classics');
   const [books, setBooks] = useState<GutenbergBook[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [lastRead, setLastRead] = useState<SavedProgress | null>(null);
+
+  const matchingCustomStories = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    return stories.filter((story) => {
+      if (activeCategory === '⭐ My Saved Books') return false;
+      if (activeCategory === '📚 Curated Library') {
+        if (!q) return true;
+        return (
+          story.title.toLowerCase().includes(q) ||
+          story.author.toLowerCase().includes(q) ||
+          story.synopsis.toLowerCase().includes(q) ||
+          story.genre.toLowerCase().includes(q) ||
+          (story.tags && story.tags.some((t) => t.toLowerCase().includes(q)))
+        );
+      }
+      if (!q) return true;
+      return (
+        story.title.toLowerCase().includes(q) ||
+        story.author.toLowerCase().includes(q) ||
+        story.synopsis.toLowerCase().includes(q) ||
+        story.genre.toLowerCase().includes(q) ||
+        (story.tags && story.tags.some((t) => t.toLowerCase().includes(q)))
+      );
+    });
+  }, [stories, searchQuery, activeCategory]);
 
   const handleSearchChange = (val: string) => {
     setSearchQuery(val);
@@ -145,7 +171,7 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
 
   // Fetch books when search query, active preset, or page changes
   useEffect(() => {
-    if (activeCategory === '⭐ My Saved Books') {
+    if (activeCategory === '⭐ My Saved Books' || activeCategory === '📚 Curated Library') {
       setIsLoading(false);
       return;
     }
@@ -283,6 +309,20 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
 
         {/* Quick Category Filter Pills */}
         <div className="flex flex-wrap gap-2 justify-center items-center">
+          <button
+            onClick={() => handleSelectCategory('📚 Curated Library')}
+            className={`category-filter-pill px-4 py-1.5 rounded-xl text-xs font-bold transition-all shadow-cozy-sm flex items-center gap-1.5 ${
+              activeCategory === '📚 Curated Library'
+                ? 'category-filter-active bg-peach-500 text-white shadow-cozy-md scale-105'
+                : 'category-filter-inactive bg-cream-100 text-tan-600 hover:bg-cream-200 hover:text-ink-900 border border-tan-200'
+            }`}
+          >
+            <span>📚 Curated Library</span>
+            <span className="text-[10px] bg-peach-200 text-peach-800 px-1.5 py-0.2 rounded-full font-extrabold">
+              {stories.length}
+            </span>
+          </button>
+
           {COZY_GUTENBERG_PRESETS.map((preset) => (
             <button
               key={preset.label}
@@ -397,11 +437,216 @@ export function BookshelfDirectory({ onSelectStory }: BookshelfDirectoryProps) {
             </div>
           )}
         </div>
-      ) : (
+      ) : activeCategory === '📚 Curated Library' ? (
         /* ========================================================= */
-        /* GUTENBERG LIVE ARCHIVE VIEW                               */
+        /* CURATED LIBRARY STORIES VIEW                              */
         /* ========================================================= */
         <div>
+          <div className="mb-6 flex items-center justify-between">
+            <h2 className="font-display font-bold text-xl text-ink-900 flex items-center gap-2">
+              <span>Curated Library & Published Books</span>
+              <span className="text-xs px-2.5 py-0.5 rounded-full bg-peach-100 text-peach-800 font-bold">
+                {matchingCustomStories.length} Books
+              </span>
+            </h2>
+          </div>
+
+          {matchingCustomStories.length === 0 ? (
+            <div className="text-center py-16 bg-cream-50 rounded-3xl border-2 border-dashed border-tan-200 max-w-lg mx-auto">
+              <Library className="w-12 h-12 mx-auto text-tan-300 mb-3" />
+              <h3 className="font-display font-bold text-lg text-ink-900 mb-1">
+                No Stories Found
+              </h3>
+              <p className="text-xs text-ink-600 font-sans max-w-xs mx-auto mb-5">
+                {searchQuery ? `No stories match "${searchQuery}".` : 'No stories in this section yet.'}
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pt-3">
+              {matchingCustomStories.map((story) => {
+                const isSaved = isBookmarked(story.id);
+                return (
+                  <div
+                    key={story.id}
+                    className="notepad-card group flex flex-col justify-between hover:-translate-y-1 transition-all duration-300 shadow-cozy-md"
+                  >
+                    <div>
+                      <div className="book-cover-container h-56 relative overflow-hidden bg-cream-200 flex items-center justify-center p-2 rounded-t-[1.1rem]">
+                        <img
+                          src={story.coverImage}
+                          alt={story.coverAlt || story.title}
+                          className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
+                        />
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleToggleBookmark(story);
+                          }}
+                          title={isSaved ? 'Remove bookmark' : 'Bookmark this book'}
+                          className={`absolute top-3 right-3 p-2 rounded-xl backdrop-blur-xs transition-colors shadow-cozy-sm ${
+                            isSaved
+                              ? 'bg-peach-500 text-white shadow-cozy-sm'
+                              : 'bg-white/90 text-tan-500 hover:text-peach-600'
+                          }`}
+                        >
+                          <StreamlineBookmark className="w-4 h-4" />
+                        </button>
+                      </div>
+
+                      <div className="p-5">
+                        <div className="flex items-center gap-1.5 flex-wrap mb-1.5">
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-peach-100 text-peach-800">
+                            {story.genre}
+                          </span>
+                          {story.isPdfEbook && (
+                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800">
+                              PDF E-Book ({story.pageCount || 1}p)
+                            </span>
+                          )}
+                          {story.isPinned && (
+                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-peach-200 text-peach-900">
+                              ★ Pinned #1
+                            </span>
+                          )}
+                          {story.isPublicDomain && (
+                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-cream-200 text-tan-700">
+                              Public Domain
+                            </span>
+                          )}
+                        </div>
+
+                        <h3 className="font-display font-bold text-base text-ink-900 line-clamp-1 mb-1">
+                          {story.title}
+                        </h3>
+                        <p className="text-xs text-tan-500 font-bold mb-2">By {story.author}</p>
+                        <p className="text-xs text-ink-700 font-sans line-clamp-3 leading-relaxed mb-4">
+                          {story.synopsis}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="px-5 pb-5 pt-2 border-t border-tan-200">
+                      <button
+                        type="button"
+                        onClick={() => onSelectStory(story, 1)}
+                        className="w-full site-button bg-peach-500 hover:bg-peach-600 text-white text-xs font-bold py-2.5 rounded-xl flex items-center justify-center gap-2 shadow-cozy-sm transition-all"
+                      >
+                        <StreamlineBookDuo className="w-4 h-4" />
+                        <span>{story.isPdfEbook ? 'Read PDF Edition' : 'Read Unabridged'}</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      ) : (
+        /* ========================================================= */
+        /* GUTENBERG LIVE ARCHIVE VIEW WITH CURATED SHOWCASE        */
+        /* ========================================================= */
+        <div>
+          {/* Top Showcase: Curated Books (Shown on Page 1 or during search) */}
+          {matchingCustomStories.length > 0 && (page === 1 || Boolean(searchQuery.trim())) && (
+            <div className="mb-10 p-5 sm:p-6 bg-cream-50/70 rounded-3xl border border-tan-200 shadow-cozy-xs">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h3 className="font-display font-bold text-lg sm:text-xl text-ink-900 flex items-center gap-2">
+                    <span>📖 {searchQuery.trim() ? 'Curated Library Matches' : 'Curated Library & Pinned Classics'}</span>
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-peach-100 text-peach-800 font-bold">
+                      {matchingCustomStories.length}
+                    </span>
+                  </h3>
+                  <p className="text-xs text-tan-600 font-sans mt-0.5">
+                    Pre-loaded editions with verified chapters, audio narration, and PDF facsimile scans.
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {matchingCustomStories.map((story) => {
+                  const isSaved = isBookmarked(story.id);
+                  return (
+                    <div
+                      key={story.id}
+                      className="notepad-card group flex flex-col justify-between hover:-translate-y-1 transition-all duration-300 shadow-cozy-sm bg-white"
+                    >
+                      <div>
+                        <div className="book-cover-container h-52 relative overflow-hidden bg-cream-200 flex items-center justify-center p-2 rounded-t-[1.1rem]">
+                          <img
+                            src={story.coverImage}
+                            alt={story.coverAlt || story.title}
+                            className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
+                          />
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleToggleBookmark(story);
+                            }}
+                            title={isSaved ? 'Remove bookmark' : 'Bookmark this book'}
+                            className={`absolute top-3 right-3 p-2 rounded-xl backdrop-blur-xs transition-colors shadow-cozy-sm ${
+                              isSaved
+                                ? 'bg-peach-500 text-white shadow-cozy-sm'
+                                : 'bg-white/90 text-tan-500 hover:text-peach-600'
+                            }`}
+                          >
+                            <StreamlineBookmark className="w-4 h-4" />
+                          </button>
+                        </div>
+
+                        <div className="p-4">
+                          <div className="flex items-center gap-1.5 flex-wrap mb-1.5">
+                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-peach-100 text-peach-800">
+                              {story.genre}
+                            </span>
+                            {story.isPdfEbook && (
+                              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800">
+                                PDF E-Book
+                              </span>
+                            )}
+                            {story.isPinned && (
+                              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-peach-200 text-peach-900">
+                                ★ Pinned #1
+                              </span>
+                            )}
+                          </div>
+
+                          <h4 className="font-display font-bold text-sm sm:text-base text-ink-900 line-clamp-1 mb-0.5">
+                            {story.title}
+                          </h4>
+                          <p className="text-xs text-tan-500 font-bold mb-2">By {story.author}</p>
+                          <p className="text-xs text-ink-700 font-sans line-clamp-2 leading-relaxed mb-3">
+                            {story.synopsis}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="px-4 pb-4 pt-2 border-t border-tan-100">
+                        <button
+                          type="button"
+                          onClick={() => onSelectStory(story, 1)}
+                          className="w-full site-button bg-peach-500 hover:bg-peach-600 text-white text-xs font-bold py-2 rounded-xl flex items-center justify-center gap-1.5 shadow-cozy-sm transition-all"
+                        >
+                          <StreamlineBookDuo className="w-3.5 h-3.5" />
+                          <span>{story.isPdfEbook ? 'Read PDF' : 'Read Now'}</span>
+                          <ArrowRight className="w-3 h-3" />
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="mt-8 pt-4 border-t border-tan-200 text-center">
+                <span className="text-xs font-bold text-tan-600 uppercase tracking-wider">
+                  Below: Project Gutenberg 70,000+ Classic Archive
+                </span>
+              </div>
+            </div>
+          )}
           {isLoading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {Array.from({ length: 8 }).map((_, idx) => (

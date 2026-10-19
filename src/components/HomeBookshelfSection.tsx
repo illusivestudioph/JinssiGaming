@@ -1,12 +1,7 @@
-import { useState } from 'react';
 import type { Story } from '@/data/stories';
-import {
-  FALLBACK_GUTENBERG_CATALOG,
-  convertGutenbergToStory,
-  fetchAndParseGutenbergBook,
-  type GutenbergBook,
-} from '@/services/gutenberg';
-import { Clock, ArrowRight, Loader2 } from '@/components/StreamlineIcons';
+import { CHILDREN_OF_MU_STORY, INITIAL_STORIES } from '@/data/stories';
+import { useSiteContent } from '@/context/SiteContentContext';
+import { ArrowRight } from '@/components/StreamlineIcons';
 import {
   StreamlineBookDuo,
   StreamlineCoffeeDuo,
@@ -23,28 +18,14 @@ export function HomeBookshelfSection({
   onSelectStory,
   onNavigateToBookshelf,
 }: HomeBookshelfSectionProps) {
-  const [loadingBookId, setLoadingBookId] = useState<number | null>(null);
-  const [statusText, setStatusText] = useState('');
+  const { stories } = useSiteContent();
 
-  // 3 Premier public domain classics with real covers (The Children of Mu pinned #1)
-  const spotlightIds = [77375, 1661, 1342];
-  const featuredBooks: GutenbergBook[] = spotlightIds
-    .map((id) => FALLBACK_GUTENBERG_CATALOG.find((b) => b.id === id))
-    .filter((b): b is GutenbergBook => Boolean(b));
+  // Top featured books from published stories
+  const featuredStories: Story[] =
+    stories && stories.length > 0 ? stories.slice(0, 3) : INITIAL_STORIES.slice(0, 3);
 
-  const handleReadBook = async (book: GutenbergBook) => {
-    setLoadingBookId(book.id);
-    setStatusText(`Opening unabridged eBook #${book.id}...`);
-    try {
-      const realStory = await fetchAndParseGutenbergBook(book, (msg) => setStatusText(msg));
-      onSelectStory(realStory, 1);
-    } catch {
-      const fallback = convertGutenbergToStory(book);
-      onSelectStory(fallback, 1);
-    } finally {
-      setLoadingBookId(null);
-      setStatusText('');
-    }
+  const handleReadStory = (story: Story) => {
+    onSelectStory(story, 1);
   };
 
   return (
@@ -74,30 +55,15 @@ export function HomeBookshelfSection({
         </button>
       </div>
 
-      {statusText && (
-        <div className="mb-6 p-3 rounded-xl bg-peach-50 border border-peach-200 text-xs text-peach-700 font-bold flex items-center gap-2 animate-pulse">
-          <Loader2 className="w-4 h-4 animate-spin text-peach-500" />
-          <span>{statusText}</span>
-        </div>
-      )}
-
       {/* Featured Stories Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-3">
-        {featuredBooks.map((book) => {
-          const authorName = book.authors[0]?.name
-            ? book.authors[0].name.split(',').reverse().join(' ').trim()
-            : 'Classic Author';
-          const coverImage =
-            book.formats['image/jpeg'] ||
-            `https://www.gutenberg.org/cache/epub/${book.id}/pg${book.id}.cover.medium.jpg`;
-          const isLoadingThis = loadingBookId === book.id;
-
-          const isPinned = Boolean(book.isPinned || book.id === 77375);
+        {featuredStories.map((story) => {
+          const isPinned = Boolean(story.isPinned || story.id === CHILDREN_OF_MU_STORY.id);
 
           return (
             <article
-              key={book.id}
-              onClick={() => !isLoadingThis && handleReadBook(book)}
+              key={story.id}
+              onClick={() => handleReadStory(story)}
               className={`notepad-card group cursor-pointer flex flex-col justify-between hover:-translate-y-1 transition-all duration-300 shadow-cozy-md h-full rounded-2xl ${
                 isPinned ? 'ring-2 ring-[var(--theme-accent)] shadow-cozy-md' : ''
               }`}
@@ -112,54 +78,36 @@ export function HomeBookshelfSection({
                   ) : null}
 
                   <img
-                    src={coverImage}
-                    alt={`Actual cover for ${book.title}`}
+                    src={story.coverImage}
+                    alt={story.coverAlt || `Cover for ${story.title}`}
                     className="w-full h-full object-contain p-2 transition-transform duration-500 group-hover:scale-105"
                     loading="lazy"
                   />
                   <div className="public-domain-tag absolute top-2.5 right-2.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-cozy-sm">
-                    {isPinned ? '290-Page PDF' : 'Public Domain'}
+                    {story.isPdfEbook ? `${story.pageCount || 290}-Page PDF` : `${story.totalChapters || story.chapters.length} Ch.`}
                   </div>
                 </div>
 
                 <div className="p-5">
                   <div className="flex items-center gap-3 text-xs text-tan-500 font-sans mb-2">
-                    {isPinned ? (
-                      <>
-                        <span className="flex items-center gap-1.5 font-extrabold text-[var(--theme-accent)]">
-                          <StreamlineHeadphones className="w-3.5 h-3.5 text-[var(--theme-accent)]" />
-                          Audiobook & PDF
-                        </span>
-                        <span>•</span>
-                        <span className="font-semibold text-ink-700">1931 Unabridged</span>
-                      </>
-                    ) : (
-                      <>
-                        <span className="flex items-center gap-1 text-peach-600 font-semibold">
-                          <StreamlineHeadphones className="w-3.5 h-3.5" />
-                          Audiobook
-                        </span>
-                        <span>•</span>
-                        <span className="flex items-center gap-1">
-                          <Clock className="w-3.5 h-3.5" />
-                          {book.download_count?.toLocaleString()} readers
-                        </span>
-                      </>
-                    )}
+                    <span className="flex items-center gap-1.5 font-extrabold text-[var(--theme-accent,theme(colors.peach.600))]">
+                      <StreamlineHeadphones className="w-3.5 h-3.5" />
+                      {story.isPdfEbook ? 'Audiobook & PDF' : 'Audiobook & Reader'}
+                    </span>
+                    <span>•</span>
+                    <span className="font-semibold text-ink-700">{story.genre}</span>
                   </div>
 
                   <h3 className="font-display font-bold text-lg sm:text-xl text-ink-900 group-hover:text-peach-600 transition-colors line-clamp-1 mb-1.5 leading-snug">
-                    {book.title}
+                    {story.title}
                   </h3>
 
                   <p className="text-xs text-tan-500 font-bold mb-2">
-                    By {authorName}
+                    By {story.author}
                   </p>
 
                   <p className="text-xs sm:text-sm text-ink-700 font-sans line-clamp-2 leading-relaxed mb-4">
-                    {isPinned
-                      ? 'The lost continent of Mu in the Pacific, sacred Naacal stone tablets, and primeval civilizations.'
-                      : book.subjects.slice(0, 3).join(' • ')}
+                    {story.synopsis}
                   </p>
                 </div>
               </div>
@@ -167,22 +115,13 @@ export function HomeBookshelfSection({
               <div className="px-5 pb-5 pt-2 border-t border-tan-200/60 flex items-center justify-between text-xs font-bold text-peach-600">
                 <span className="flex items-center gap-1.5 text-tan-500 font-normal">
                   <StreamlineCoffeeDuo className="w-3.5 h-3.5 text-peach-500" />
-                  {isPinned ? 'Pinned Public Shelf' : 'Gutenberg Archive'}
+                  {isPinned ? 'Featured Classic' : 'Jinssi Library'}
                 </span>
                 <div className="flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
-                  {isLoadingThis ? (
-                    <span className="flex items-center gap-1 text-peach-600 font-bold">
-                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                      Opening...
-                    </span>
-                  ) : (
-                    <>
-                      <span className={isPinned ? 'text-[var(--theme-accent)] font-extrabold' : ''}>
-                        {isPinned ? '🎧 Read & Listen (PDF)' : '🎧 Read & Listen'}
-                      </span>
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </>
-                  )}
+                  <span className={isPinned ? 'text-[var(--theme-accent)] font-extrabold' : ''}>
+                    {story.isPdfEbook ? '🎧 Read & Listen (PDF)' : '🎧 Read & Listen'}
+                  </span>
+                  <ArrowRight className="w-3.5 h-3.5" />
                 </div>
               </div>
             </article>

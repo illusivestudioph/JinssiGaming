@@ -20,7 +20,7 @@ import {
 } from '@/components/StreamlineIcons';
 import { isCreatorEmail, CREATOR_EMAIL } from '@/types/profile';
 
-export type View = 'home' | 'walkthroughs' | 'journal' | 'stories' | 'store' | 'about' | 'privacy' | 'terms' | 'contact' | 'admin';
+export type View = 'home' | 'walkthroughs' | 'journal' | 'stories' | 'store' | 'about' | 'privacy' | 'terms' | 'contact' | 'admin' | 'requests';
 
 export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View) => void }) {
   const { logoImage } = useSiteContent();
@@ -106,6 +106,7 @@ export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View)
               <button aria-current={view === 'journal' ? 'page' : undefined} onClick={() => handleNavigate('journal')} className={`site-nav-link ${view === 'journal' ? 'text-peach-500 is-active' : 'text-tan-600'}`}>Journal</button>
               <button aria-current={view === 'stories' ? 'page' : undefined} onClick={() => handleNavigate('stories')} className={`site-nav-link ${view === 'stories' ? 'text-peach-500 is-active' : 'text-tan-600'}`}>Stories</button>
               <button aria-current={view === 'store' ? 'page' : undefined} onClick={() => handleNavigate('store')} className={`site-nav-link ${view === 'store' ? 'text-peach-500 is-active' : 'text-tan-600'}`}>Store</button>
+              <button aria-current={view === 'requests' ? 'page' : undefined} onClick={() => handleNavigate('requests')} className={`site-nav-link ${view === 'requests' ? 'text-peach-500 is-active' : 'text-tan-600'}`}>Requests</button>
               <button aria-current={view === 'about' ? 'page' : undefined} onClick={() => handleNavigate('about')} className={`site-nav-link ${view === 'about' ? 'text-peach-500 is-active' : 'text-tan-600'}`}>About</button>
               {profile.isCreator && isCreatorEmail(user?.email) && (
                 <button
@@ -287,6 +288,7 @@ export function Header({ view, onNavigate }: { view: View; onNavigate: (v: View)
               <button aria-current={view === 'journal' ? 'page' : undefined} onClick={() => handleNavigate('journal')} className={`site-nav-link text-left ${view === 'journal' ? 'text-peach-500' : 'text-tan-600'}`}>Journal</button>
               <button aria-current={view === 'stories' ? 'page' : undefined} onClick={() => handleNavigate('stories')} className={`site-nav-link text-left ${view === 'stories' ? 'text-peach-500' : 'text-tan-600'}`}>Stories</button>
               <button aria-current={view === 'store' ? 'page' : undefined} onClick={() => handleNavigate('store')} className={`site-nav-link text-left ${view === 'store' ? 'text-peach-500' : 'text-tan-600'}`}>Store</button>
+              <button aria-current={view === 'requests' ? 'page' : undefined} onClick={() => handleNavigate('requests')} className={`site-nav-link text-left ${view === 'requests' ? 'text-peach-500' : 'text-tan-600'}`}>Requests</button>
               <button aria-current={view === 'about' ? 'page' : undefined} onClick={() => handleNavigate('about')} className={`site-nav-link text-left ${view === 'about' ? 'text-peach-500' : 'text-tan-600'}`}>About</button>
               <button
                 type="button"

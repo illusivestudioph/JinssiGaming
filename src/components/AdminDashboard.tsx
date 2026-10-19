@@ -6,7 +6,10 @@ import { ArticleManager } from './admin/ArticleManager';
 import { ArticleEditor } from './admin/ArticleEditor';
 import { StoryEditor } from './admin/StoryEditor';
 import { StoreManager } from './admin/StoreManager';
+import { BookImporterModal } from './admin/BookImporterModal';
 import type { Story } from '@/data/stories';
+import type { RequestStatus } from '@/types/request';
+import { requestTypeLabels, requestStatusLabels } from '@/types/request';
 import { supabase } from '@/lib/supabase';
 import { convertImageToWebp } from '@/utils/imageOptimization';
 import { 
@@ -117,15 +120,22 @@ export function AdminDashboard() {
     addProduct,
     updateProduct,
     removeProduct,
-    reorderProduct
+    reorderProduct,
+    requests,
+    updateRequestStatus,
+    removeRequest,
   } = useSiteContent();
 
-  const [activeTab, setActiveTab] = useState<'assets' | 'games' | 'articles' | 'stories' | 'store'>('assets');
+  const [activeTab, setActiveTab] = useState<'assets' | 'games' | 'articles' | 'stories' | 'store' | 'requests'>('assets');
+  const [showBookImporter, setShowBookImporter] = useState(false);
   const [editingGame, setEditingGame] = useState<Game | null>(null);
   const [editingArticle, setEditingArticle] = useState<Article | null>(null);
   const [editingStory, setEditingStory] = useState<Story | null>(null);
   const [isNewArticle, setIsNewArticle] = useState(false);
   const [isNewStory, setIsNewStory] = useState(false);
+  const [requestFilter, setRequestFilter] = useState<string>('all');
+  const [editingReqNoteId, setEditingReqNoteId] = useState<string | null>(null);
+  const [adminNoteInput, setAdminNoteInput] = useState('');
   const [uploadingKey, setUploadingKey] = useState<string | null>(null);
   const [uploadedKey, setUploadedKey] = useState<string | null>(null);
   const [assetSaveMessage, setAssetSaveMessage] = useState('');
@@ -1809,6 +1819,7 @@ export function AdminDashboard() {
         <button onClick={() => setActiveTab('articles')} className={`font-bold pb-2 shrink-0 transition-colors ${activeTab === 'articles' ? 'text-peach-500 border-b-2 border-peach-500' : 'text-tan-500 hover:text-ink-900'}`}>Cozy Journal ({articles.length})</button>
         <button onClick={() => setActiveTab('stories')} className={`font-bold pb-2 shrink-0 transition-colors ${activeTab === 'stories' ? 'text-peach-500 border-b-2 border-peach-500' : 'text-tan-500 hover:text-ink-900'}`}>Cozy Bookshelf ({stories.length})</button>
         <button onClick={() => setActiveTab('store')} className={`font-bold pb-2 shrink-0 transition-colors ${activeTab === 'store' ? 'text-peach-500 border-b-2 border-peach-500' : 'text-tan-500 hover:text-ink-900'}`}>Store ({products.length})</button>
+        <button onClick={() => setActiveTab('requests')} className={`font-bold pb-2 shrink-0 transition-colors ${activeTab === 'requests' ? 'text-peach-500 border-b-2 border-peach-500' : 'text-tan-500 hover:text-ink-900'}`}>Requests ({requests.length})</button>
       </div>
 
       {activeTab === 'assets' && (
@@ -2188,46 +2199,55 @@ export function AdminDashboard() {
               </p>
             </div>
 
-            <button
-              onClick={() => {
-                const template: Story = {
-                  id: `story-${Date.now()}`,
-                  slug: `new-story-${Date.now()}`,
-                  title: 'New Story',
-                  synopsis: 'A cozy synopsis for your new book or web-novel...',
-                  author: 'Jinssi',
-                  authorRole: 'Fiction Writer',
-                  coverImage: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=800&q=80',
-                  coverAlt: 'Book cover illustration',
-                  status: 'Ongoing',
-                  genre: 'Cozy Fantasy',
-                  tags: ['Cozy', 'Relaxing'],
-                  totalChapters: 1,
-                  chapters: [
-                    {
-                      id: `ch-1-${Date.now()}`,
-                      chapterNumber: 1,
-                      title: 'Chapter 1: The Beginning',
-                      wordCount: 150,
-                      readTimeMinutes: 1,
-                      publishedDate: new Date().toLocaleDateString('en-US', {
-                        month: 'short',
-                        day: 'numeric',
-                        year: 'numeric',
-                      }),
-                      authorNote: 'Welcome to this new story!',
-                      content: ['Write or paste your first chapter paragraphs here...'],
-                    },
-                  ],
-                  rating: 5,
-                };
-                setEditingStory(template);
-                setIsNewStory(true);
-              }}
-              className="site-button bg-earth-500 hover:bg-earth-600 text-white font-bold text-xs flex items-center gap-1.5 shadow-cozy-sm"
-            >
-              <Plus size={16} /> Add New Story
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setShowBookImporter(true)}
+                className="site-button bg-peach-500 hover:bg-peach-600 text-white font-bold text-xs flex items-center gap-1.5 shadow-cozy-sm"
+              >
+                <Upload size={16} /> Add Book (Upload or URL)
+              </button>
+
+              <button
+                onClick={() => {
+                  const template: Story = {
+                    id: `story-${Date.now()}`,
+                    slug: `new-story-${Date.now()}`,
+                    title: 'New Story',
+                    synopsis: 'A cozy synopsis for your new book or web-novel...',
+                    author: 'Jinssi',
+                    authorRole: 'Fiction Writer',
+                    coverImage: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=800&q=80',
+                    coverAlt: 'Book cover illustration',
+                    status: 'Ongoing',
+                    genre: 'Cozy Fantasy',
+                    tags: ['Cozy', 'Relaxing'],
+                    totalChapters: 1,
+                    chapters: [
+                      {
+                        id: `ch-1-${Date.now()}`,
+                        chapterNumber: 1,
+                        title: 'Chapter 1: The Beginning',
+                        wordCount: 150,
+                        readTimeMinutes: 1,
+                        publishedDate: new Date().toLocaleDateString('en-US', {
+                          month: 'short',
+                          day: 'numeric',
+                          year: 'numeric',
+                        }),
+                        authorNote: 'Welcome to this new story!',
+                        content: ['Write or paste your first chapter paragraphs here...'],
+                      },
+                    ],
+                    rating: 5,
+                  };
+                  setEditingStory(template);
+                  setIsNewStory(true);
+                }}
+                className="site-button bg-earth-500 hover:bg-earth-600 text-white font-bold text-xs flex items-center gap-1.5 shadow-cozy-sm"
+              >
+                <Plus size={16} /> Write Blank Story
+              </button>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 gap-4">
@@ -2249,9 +2269,19 @@ export function AdminDashboard() {
                         <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-earth-100 text-earth-700">
                           {story.status}
                         </span>
+                        {story.isPdfEbook && (
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800">
+                            PDF E-Book ({story.pageCount || 1}p)
+                          </span>
+                        )}
                         {story.isPublicDomain && (
                           <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-cream-200 text-tan-700">
                             Public Domain
+                          </span>
+                        )}
+                        {story.isPinned && (
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-peach-200 text-peach-900">
+                            ★ Pinned #1
                           </span>
                         )}
                       </div>
@@ -2263,16 +2293,18 @@ export function AdminDashboard() {
                   </div>
 
                   <div className="flex items-center gap-2 w-full sm:w-auto justify-end border-t sm:border-t-0 pt-2 sm:pt-0 border-tan-100">
-                    <button
-                      onClick={() => {
-                        setEditingStory(story);
-                        setIsNewStory(false);
-                      }}
-                      className="p-2.5 text-earth-700 bg-earth-100 hover:bg-earth-200 font-bold rounded-xl flex items-center gap-1.5 text-xs transition-colors"
-                      title="Edit Story & Chapters"
-                    >
-                      <Edit2 size={15} /> Edit
-                    </button>
+                    {!story.isPdfEbook && (
+                      <button
+                        onClick={() => {
+                          setEditingStory(story);
+                          setIsNewStory(false);
+                        }}
+                        className="p-2.5 text-earth-700 bg-earth-100 hover:bg-earth-200 font-bold rounded-xl flex items-center gap-1.5 text-xs transition-colors"
+                        title="Edit Story & Chapters"
+                      >
+                        <Edit2 size={15} /> Edit
+                      </button>
+                    )}
                     <a
                       href={`/stories/${story.slug}/1`}
                       className="p-2.5 text-peach-700 bg-peach-100 hover:bg-peach-200 font-bold rounded-xl flex items-center gap-1.5 text-xs transition-colors"
@@ -2280,22 +2312,36 @@ export function AdminDashboard() {
                     >
                       <BookOpen size={15} /> Read
                     </a>
-                    <button
-                      onClick={() => {
-                        if (confirm(`Are you sure you want to delete "${story.title}"?`)) {
-                          removeStory(story.id);
-                        }
-                      }}
-                      className="p-2.5 text-red-500 bg-red-50 hover:bg-red-100 hover:text-red-700 rounded-xl transition-colors"
-                      title="Delete Story"
-                    >
-                      <Trash2 size={16} />
-                    </button>
+                    {story.id !== 'the-children-of-mu' && (
+                      <button
+                        onClick={() => {
+                          if (confirm(`Are you sure you want to delete "${story.title}"?`)) {
+                            removeStory(story.id);
+                          }
+                        }}
+                        className="p-2.5 text-red-500 bg-red-50 hover:bg-red-100 hover:text-red-700 rounded-xl transition-colors"
+                        title="Delete Story"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    )}
                   </div>
                 </div>
               );
             })}
           </div>
+
+          <BookImporterModal
+            isOpen={showBookImporter}
+            onClose={() => setShowBookImporter(false)}
+            onSaveBook={(newStory) => {
+              addStory(newStory);
+            }}
+            onOpenStoryEditor={(staged) => {
+              setEditingStory(staged);
+              setIsNewStory(true);
+            }}
+          />
         </div>
       )}
 
@@ -2309,6 +2355,184 @@ export function AdminDashboard() {
           onUploadImage={handleImageUpload}
           uploadingKey={uploadingKey}
         />
+      )}
+
+      {activeTab === 'requests' && (
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <h3 className="font-display font-bold text-xl text-ink-900">Community Requests ({requests.length})</h3>
+              <p className="text-xs text-tan-600 mt-0.5">
+                Review visitor suggestions for books, walkthroughs, and guides. Update status or add developer notes.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-bold text-tan-600">Filter:</span>
+              <select
+                value={requestFilter}
+                onChange={(e) => setRequestFilter(e.target.value)}
+                className="site-input py-1.5 px-3 text-xs rounded-xl font-bold"
+              >
+                <option value="all">All Statuses ({requests.length})</option>
+                <option value="pending">⏳ Under Review</option>
+                <option value="in-progress">☕ In Progress</option>
+                <option value="fulfilled">✨ Added to Site</option>
+                <option value="declined">📌 On Hold</option>
+              </select>
+            </div>
+          </div>
+
+          {requests.length === 0 ? (
+            <div className="notepad-card p-12 text-center text-tan-600 text-sm">
+              No community requests submitted yet.
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-4">
+              {requests
+                .filter((r) => requestFilter === 'all' || r.status === requestFilter)
+                .map((req) => {
+                  const typeBadge = requestTypeLabels[req.type];
+                  const statusBadge = requestStatusLabels[req.status];
+
+                  return (
+                    <div
+                      key={req.id}
+                      className="notepad-card p-4 sm:p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4"
+                    >
+                      <div className="flex-1 min-w-0 space-y-1.5">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${typeBadge.badgeClass}`}>
+                            {typeBadge.iconEmoji} {typeBadge.label}
+                          </span>
+                          <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${statusBadge.badgeClass}`}>
+                            {statusBadge.iconEmoji} {statusBadge.label}
+                          </span>
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-peach-100 text-peach-800">
+                            ❤️ {req.upvotes} Upvotes
+                          </span>
+                          <span className="text-[11px] text-tan-500">
+                            {new Date(req.createdAt).toLocaleDateString()}
+                          </span>
+                        </div>
+
+                        <h4 className="font-display font-bold text-base text-ink-900">{req.title}</h4>
+
+                        {req.description && (
+                          <p className="text-xs text-ink-700 font-sans">{req.description}</p>
+                        )}
+
+                        <div className="flex items-center gap-4 text-[11px] text-tan-600 font-sans flex-wrap">
+                          <span>
+                            From: <strong className="text-ink-800">{req.requesterName}</strong>
+                            {req.requesterEmail && ` (${req.requesterEmail})`}
+                          </span>
+                          {req.sourceUrl && (
+                            <a
+                              href={req.sourceUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-earth-700 hover:text-earth-900 font-bold underline flex items-center gap-1"
+                            >
+                              <ExternalLink size={12} /> Reference Link
+                            </a>
+                          )}
+                        </div>
+
+                        {req.adminNote && (
+                          <div className="p-2.5 bg-peach-50 rounded-xl border border-peach-200 text-xs text-peach-900 font-sans">
+                            <span className="font-bold text-[10px] text-peach-700 block uppercase">Developer Response:</span>
+                            {req.adminNote}
+                          </div>
+                        )}
+
+                        {editingReqNoteId === req.id && (
+                          <div className="pt-2 flex gap-2">
+                            <input
+                              type="text"
+                              placeholder="Write dev note or status update..."
+                              value={adminNoteInput}
+                              onChange={(e) => setAdminNoteInput(e.target.value)}
+                              className="site-input flex-1 py-1 px-2.5 text-xs rounded-xl"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => {
+                                updateRequestStatus(req.id, req.status, adminNoteInput.trim());
+                                setEditingReqNoteId(null);
+                              }}
+                              className="px-3 py-1 bg-peach-500 text-white font-bold text-xs rounded-xl"
+                            >
+                              Save
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setEditingReqNoteId(null)}
+                              className="px-3 py-1 bg-tan-200 text-ink-800 font-bold text-xs rounded-xl"
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="flex items-center gap-2 w-full md:w-auto justify-end border-t md:border-t-0 pt-2 md:pt-0 border-tan-100 flex-wrap">
+                        <select
+                          value={req.status}
+                          onChange={(e) => updateRequestStatus(req.id, e.target.value as RequestStatus)}
+                          className="text-xs font-bold bg-white border border-tan-300 rounded-xl px-2.5 py-1.5"
+                        >
+                          <option value="pending">⏳ Under Review</option>
+                          <option value="in-progress">☕ In Progress</option>
+                          <option value="fulfilled">✨ Added to Site</option>
+                          <option value="declined">📌 On Hold</option>
+                        </select>
+
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setEditingReqNoteId(req.id);
+                            setAdminNoteInput(req.adminNote || '');
+                          }}
+                          className="p-2 text-earth-700 bg-earth-100 hover:bg-earth-200 rounded-xl text-xs font-bold"
+                          title="Add / Edit Dev Note"
+                        >
+                          <Edit2 size={14} />
+                        </button>
+
+                        {req.type === 'book' && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setShowBookImporter(true);
+                              setActiveTab('stories');
+                            }}
+                            className="p-2 text-peach-700 bg-peach-100 hover:bg-peach-200 rounded-xl text-xs font-bold flex items-center gap-1"
+                            title="Import Book into Library"
+                          >
+                            <BookOpen size={14} /> Import
+                          </button>
+                        )}
+
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (confirm(`Delete request "${req.title}"?`)) {
+                              removeRequest(req.id);
+                            }
+                          }}
+                          className="p-2 text-red-500 bg-red-50 hover:bg-red-100 rounded-xl text-xs"
+                          title="Delete Request"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+            </div>
+          )}
+        </div>
       )}
     </div>
   );

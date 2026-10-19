@@ -3,6 +3,8 @@ import { games as initialGames, type Game, type WalkthroughSection } from '@/dat
 import type { Article } from '@/types/article';
 import { stories as initialStories, CHILDREN_OF_MU_STORY, type Story } from '@/data/stories';
 import { initialProducts, type StoreProduct } from '@/data/store';
+import { initialRequests } from '@/data/requests';
+import type { CommunityRequest, RequestStatus } from '@/types/request';
 import { supabase } from '@/lib/supabase';
 import { syncLiveJournalFeed, isJournalExpiredOrExpiring } from '@/services/liveJournalFeed';
 
@@ -28,6 +30,7 @@ export interface SavedContent {
   articles: Article[];
   stories: Story[];
   products: StoreProduct[];
+  requests: CommunityRequest[];
   heroImage: string;
   logoImage: string;
   ctaLinks: CtaLink[];
@@ -39,6 +42,7 @@ export interface SiteContentContextValue {
   articles: Article[];
   stories: Story[];
   products: StoreProduct[];
+  requests: CommunityRequest[];
   heroImage: string;
   logoImage: string;
   ctaLinks: CtaLink[];
@@ -65,6 +69,10 @@ export interface SiteContentContextValue {
   updateProduct: (product: StoreProduct) => void;
   removeProduct: (productId: string) => void;
   reorderProduct: (productId: string, direction: 'up' | 'down') => void;
+  addRequest: (req: Omit<CommunityRequest, 'id' | 'createdAt' | 'upvotes' | 'status' | 'upvotedBy'>) => void;
+  upvoteRequest: (requestId: string, userIdentifier: string) => void;
+  updateRequestStatus: (requestId: string, status: RequestStatus, adminNote?: string) => void;
+  removeRequest: (requestId: string) => void;
 }
 
 const SiteContentContext = createContext<SiteContentContextValue | null>(null);
@@ -76,6 +84,7 @@ const defaultContent: SavedContent = {
   articles: [],
   stories: initialStories,
   products: initialProducts,
+  requests: initialRequests,
   heroImage: '/banner.webp',
   logoImage: '/image.webp',
   ctaLinks: [
@@ -175,11 +184,25 @@ function normalizeContent(parsed: Partial<SavedContent> | null | undefined): Sav
   );
   const finalStories = [CHILDREN_OF_MU_STORY, ...withoutMu];
 
+  // Merge any curated initialStories if missing
+  const storyIdSet = new Set(finalStories.map((s) => s.id));
+  for (const initStory of initialStories) {
+    if (!storyIdSet.has(initStory.id)) {
+      finalStories.push(initStory);
+      storyIdSet.add(initStory.id);
+    }
+  }
+
   const mockProductIds = new Set(['cozy-farm-planner-pdf', 'cozy-completionist-checklist', 'cozy-notion-hub']);
   const cleanProducts = Array.isArray(parsed?.products)
     ? parsed.products.filter((p) => !mockProductIds.has(p.id) && !p.coverImage?.includes('unsplash.com'))
     : [];
   const normalizedProducts: StoreProduct[] = cleanProducts.length > 0 ? cleanProducts : initialProducts;
+
+  // Requests normalization
+  const normalizedRequests: CommunityRequest[] = Array.isArray(parsed?.requests) && parsed.requests.length > 0
+    ? parsed.requests
+    : initialRequests;
 
   // All games are manually managed by the user. Never delete, filter, or overwrite them with static mock data.
   const normalizedGames = Array.isArray(parsed?.games) && parsed.games.length > 0
@@ -191,6 +214,7 @@ function normalizeContent(parsed: Partial<SavedContent> | null | undefined): Sav
     articles: normalizedArticles,
     stories: finalStories,
     products: normalizedProducts,
+    requests: normalizedRequests,
     heroImage: parsed?.heroImage === '/banner.jpeg'
       ? defaultContent.heroImage
       : typeof parsed?.heroImage === 'string' ? parsed.heroImage : defaultContent.heroImage,
@@ -587,6 +611,68 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
       [list[idx], list[swapIdx]] = [list[swapIdx], list[idx]];
       return { ...c, products: list, updated_at: new Date().toISOString() };
     }),
+    requests: content.requests || initialRequests,
+    addRequest: (req) => {
+      const newReq: CommunityRequest = {
+        ...req,
+        id: `req-${Date.now()}`,
+        status: 'pending',
+        upvotes: 1,
+        upvotedBy: ['self'],
+        createdAt: new Date().toISOString(),
+      };
+      setContent((c) => ({
+        ...c,
+        requests: [newReq, ...(c.requests || initialRequests)],
+        updated_at: new Date().toISOString(),
+      }));
+    },
+    upvoteRequest: (requestId, userIdentifier) => {
+      setContent((c) => {
+        const list = c.requests || initialRequests;
+        const updated = list.map((item) => {
+          if (item.id === requestId) {
+            const upvoters = item.upvotedBy || [];
+            const hasVoted = upvoters.includes(userIdentifier);
+            const nextVoters = hasVoted
+              ? upvoters.filter((id) => id !== userIdentifier)
+              : [...upvoters, userIdentifier];
+            const nextUpvotes = hasVoted ? Math.max(0, item.upvotes - 1) : item.upvotes + 1;
+            return {
+              ...item,
+              upvotes: nextUpvotes,
+              upvotedBy: nextVoters,
+            };
+          }
+          return item;
+        });
+        return { ...c, requests: updated, updated_at: new Date().toISOString() };
+      });
+    },
+    updateRequestStatus: (requestId, status, adminNote) => {
+      setContent((c) => {
+        const list = c.requests || initialRequests;
+        const updated = list.map((item) => {
+          if (item.id === requestId) {
+            return {
+              ...item,
+              status,
+              adminNote: adminNote !== undefined ? adminNote : item.adminNote,
+              updatedAt: new Date().toISOString(),
+            };
+          }
+          return item;
+        });
+        return { ...c, requests: updated, updated_at: new Date().toISOString() };
+      });
+    },
+    removeRequest: (requestId) => {
+      setContent((c) => ({
+        ...c,
+        requests: (c.requests || initialRequests).filter((r) => r.id !== requestId),
+        updated_at: new Date().toISOString(),
+      }));
+    },
   }), [content, syncStatus, lastSyncedAt]);
 
   return <SiteContentContext.Provider value={value}>{children}</SiteContentContext.Provider>;
